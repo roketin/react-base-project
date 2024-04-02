@@ -28,3 +28,24 @@ export default {
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+## Folder Structure
+
+The project follows a standard folder structure for organizing the code:
+
+- `src`: Contains the source code of the React application.
+  - `components`: Contains reusable React components.
+  - `pages`: Contains the main pages of the application.
+  - `styles`: Contains global styles and CSS modules.
+  - `utils`: Contains utility functions and helper modules.
+- `public`: Contains static assets such as images, fonts, etc.
+- `tests`: Contains test files for the application.
+- `dist`: Contains the bundled and optimized production build of the application.
+
+Feel free to modify the folder structure according to your project's needs.
+
+## Plugins
+
+### State Management
+- Zustand
+- Redux toolkit [][https://redux-toolkit.js.org/]
