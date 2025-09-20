@@ -2,12 +2,12 @@ import Yup from '@/plugins/yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Form } from '@/modules/app/components/ui/form';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { Input } from '@/modules/app/components/ui/input';
 import Button from '@/modules/app/components/ui/button';
 import { BaseFormField } from '@/modules/app/components/base/base-form-field';
 import { BaseInputPassword } from '@/modules/app/components/base/base-input-password';
-import BaseAlertDialog from '@/modules/app/components/base/base-alert-dialog';
+import showAlert from '@/modules/app/components/base/show-alert';
 
 const formSchema = Yup.object().shape({
   username: Yup.string().default('').email().required().label('Email'),
@@ -24,29 +24,47 @@ const AuthLogin = () => {
     defaultValues: formSchema.getDefault(),
   });
 
-  const [open, setOpen] = useState<boolean>(false);
-
   /**
    * Submit form
    * @param values
    */
-  const onSubmit = useCallback((values: TFormSchema) => {
+  const onSubmit = useCallback(async (values: TFormSchema) => {
     console.log('Form Values', values);
-    setOpen(true);
+
+    // Show alert
+    showAlert(
+      {
+        title: 'Alert',
+        description:
+          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+        manualClose: true,
+      },
+      async ({ ok, setLoading, close }) => {
+        if (!ok) {
+          close();
+          return;
+        }
+
+        setLoading(true);
+
+        await setTimeout(() => {
+          setLoading(false);
+          close();
+
+          showAlert({
+            title: 'Success',
+            description: 'Success Set Data',
+            hideCancel: true,
+          });
+        }, 1000);
+      },
+    );
   }, []);
 
   console.log(form.formState.errors);
 
   return (
     <div className='md:w-[400px]'>
-      <BaseAlertDialog
-        open={open}
-        onOpenChange={setOpen}
-        title='Are you absolutely sure?'
-        description='        This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.'
-      />
-
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-3'>
           <div className='text-center'>

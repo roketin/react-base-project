@@ -1,29 +1,40 @@
-'use client';
-
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { type VariantProps } from 'class-variance-authority';
-import { cn } from '@/modules/app/libs/utils';
 import { buttonVariants } from '@/modules/app/components/ui/button-variants';
+import { cn } from '@/modules/app/libs/utils';
+import { LoaderPinwheel } from 'lucide-react';
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
+function Button({
+  className,
+  variant,
+  size,
+  asChild = false,
+  loading = false,
+  disabled,
+  children,
+  ...props
+}: React.ComponentProps<'button'> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+    loading?: boolean;
+  }) {
+  const Comp = asChild ? Slot : 'button';
+
+  return (
+    <Comp
+      data-slot='button'
+      className={cn(
+        buttonVariants({ variant, size, className }),
+        loading && 'opacity-50 cursor-not-allowed',
+      )}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {loading && <LoaderPinwheel className='animate-spin' />}
+      {children}
+    </Comp>
+  );
 }
-
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
-    return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
-        ref={ref}
-        {...props}
-      />
-    );
-  },
-);
-Button.displayName = 'Button';
 
 export default Button;

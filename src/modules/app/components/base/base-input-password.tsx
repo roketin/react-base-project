@@ -10,29 +10,31 @@ export const BaseInputPassword = ({
   onChange,
   placeholder,
   ...rest
-}: TBaseInputDefaultProps & React.InputHTMLAttributes<HTMLInputElement>) => {
+}: TBaseInputDefaultProps & React.ComponentProps<'input'>) => {
   const [show, setShow] = useState(false);
 
   return (
-    <div className='relative'>
+    <div className='flex'>
       <Input
         id={id}
         type={show ? 'text' : 'password'}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         placeholder={placeholder}
-        className='pr-8'
+        className='flex-1'
         {...rest}
+        append={
+          <Button
+            type='button'
+            variant='ghost'
+            size='sm'
+            className='flex-none'
+            onClick={() => setShow(!show)}
+          >
+            {show ? <EyeOff /> : <Eye />}
+          </Button>
+        }
       />
-      <Button
-        type='button'
-        variant='ghost'
-        size='sm'
-        className='absolute right-1 top-1/2 -translate-y-1/2'
-        onClick={() => setShow(!show)}
-      >
-        {show ? <EyeOff /> : <Eye />}
-      </Button>
     </div>
   );
 };

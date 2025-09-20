@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -9,19 +8,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/modules/app/components/ui/alert-dialog';
+import Button from '@/modules/app/components/ui/button';
+import { buttonVariants } from '@/modules/app/components/ui/button-variants';
+import type { VariantProps } from 'class-variance-authority';
 
-type TBaseAlertDialogProps = {
+export type TBaseAlertDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: React.ReactNode;
   description: React.ReactNode;
   okText?: string;
   cancelText?: string;
-  okColor?: string;
-  cancelColor?: string;
+  okVariant?: VariantProps<typeof buttonVariants>['variant'];
   onOk?: () => void;
   onCancel?: () => void;
   extraButtons?: React.ReactNode;
+  loading?: boolean;
+  icon?: React.ReactNode;
+  hideCancel?: boolean;
 };
 
 const BaseAlertDialog = ({
@@ -31,32 +35,35 @@ const BaseAlertDialog = ({
   description,
   okText = 'OK',
   cancelText = 'Cancel',
-  okColor,
-  cancelColor,
+  okVariant,
   onOk,
   onCancel,
   extraButtons,
+  loading,
+  icon,
+  hideCancel = false,
 }: TBaseAlertDialogProps) => (
   <AlertDialog open={open} onOpenChange={onOpenChange}>
     <AlertDialogContent>
       <AlertDialogHeader>
+        {icon && <div>{icon}</div>}
         <AlertDialogTitle>{title}</AlertDialogTitle>
         <AlertDialogDescription>{description}</AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         {extraButtons}
-        <AlertDialogCancel
-          className={cancelColor ? cancelColor : undefined}
-          onClick={onCancel}
-        >
-          {cancelText}
-        </AlertDialogCancel>
-        <AlertDialogAction
-          className={okColor ? okColor : undefined}
+        {!hideCancel && (
+          <AlertDialogCancel onClick={onCancel} disabled={loading}>
+            {cancelText}
+          </AlertDialogCancel>
+        )}
+        <Button
           onClick={onOk}
+          loading={loading}
+          variant={okVariant ?? 'default'}
         >
           {okText}
-        </AlertDialogAction>
+        </Button>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
