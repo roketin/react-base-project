@@ -5,7 +5,7 @@ import { cva } from 'class-variance-authority';
 import { X } from 'lucide-react';
 
 const inputVariants = cva(
-  'w-full min-w-0 rounded-md text-base shadow-xs outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+  'w-full min-w-0 rounded-md text-base outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
   {
     variants: {
       size: {
@@ -56,7 +56,7 @@ function Input({
   return (
     <div
       className={cn(
-        'relative flex w-full items-center rounded-md border bg-white dark:bg-input/30 transition-[color,box-shadow]',
+        'relative flex w-full items-center rounded-md border bg-white dark:bg-input/30 transition-[color,box-shadow] shadow-md shadow-slate-100',
         hasError
           ? 'border-destructive ring-destructive/40'
           : 'border-border focus-within:ring-ring/50 focus-within:ring-[3px]',

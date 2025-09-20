@@ -12,7 +12,7 @@
   "aliases": {
     "components": "src/modules/app/components",
     "utils": "@/modules/app/libs/utils",
-    "ui": "@/modules/app/components/ui",
+    "ui": "src/modules/app/components/ui",
     "lib": "@/modules/app/libs"
   },
   "iconLibrary": "lucide"

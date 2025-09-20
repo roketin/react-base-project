@@ -8,10 +8,18 @@ import Button from '@/modules/app/components/ui/button';
 import { BaseFormField } from '@/modules/app/components/base/base-form-field';
 import { BaseInputPassword } from '@/modules/app/components/base/base-input-password';
 import showAlert from '@/modules/app/components/base/show-alert';
+import { Badge } from '@/modules/app/components/ui/badge';
+import { showAlertValidation } from '@/modules/app/components/base/show-alert-validation';
 
 const formSchema = Yup.object().shape({
   username: Yup.string().default('').email().required().label('Email'),
   password: Yup.string().default('').required().label('Password'),
+  // parent: Yup.object().shape({
+  //   childA: Yup.object().shape({
+  //     subChild: Yup.string().default('').label('Sub Child'),
+  //   }),
+  //   childB: Yup.string().default('').required().label('Child B'),
+  // }),
 });
 
 type TFormSchema = Yup.InferType<typeof formSchema>;
@@ -31,9 +39,10 @@ const AuthLogin = () => {
   const onSubmit = useCallback(async (values: TFormSchema) => {
     console.log('Form Values', values);
 
-    // Show alert
+    // Show confirm
     showAlert(
       {
+        type: 'confirm',
         title: 'Alert',
         description:
           "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
@@ -51,26 +60,31 @@ const AuthLogin = () => {
           setLoading(false);
           close();
 
+          // Show confirmed
           showAlert({
+            type: 'alert',
             title: 'Success',
             description: 'Success Set Data',
-            hideCancel: true,
           });
         }, 1000);
       },
     );
   }, []);
 
-  console.log(form.formState.errors);
-
   return (
     <div className='md:w-[400px]'>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-3'>
+        <form
+          onSubmit={form.handleSubmit(onSubmit, showAlertValidation)}
+          className='space-y-3'
+        >
           <div className='text-center'>
             <h1 className='text-2xl mb-3'>Auth Login</h1>
-            <i className='block text-sm'>
-              File Location: src/modules/auth/components/pages/auth-login.tsx
+            <i className='block text-sm leading-relaxed'>
+              File Location:
+              <Badge variant='success' className='inline-block'>
+                src/modules/auth/components/pages/auth-login.tsx
+              </Badge>
             </i>
           </div>
 

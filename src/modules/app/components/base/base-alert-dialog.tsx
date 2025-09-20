@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
 } from '@/modules/app/components/ui/alert-dialog';
 import Button from '@/modules/app/components/ui/button';
-import { buttonVariants } from '@/modules/app/components/ui/button-variants';
+import { buttonVariants } from '@/modules/app/components/ui/variants/button-variants';
 import type { VariantProps } from 'class-variance-authority';
 
 export type TBaseAlertDialogProps = {
@@ -33,8 +33,8 @@ const BaseAlertDialog = ({
   onOpenChange,
   title,
   description,
-  okText = 'OK',
-  cancelText = 'Cancel',
+  okText = 'Yes',
+  cancelText = 'No',
   okVariant,
   onOk,
   onCancel,
@@ -42,31 +42,35 @@ const BaseAlertDialog = ({
   loading,
   icon,
   hideCancel = false,
-}: TBaseAlertDialogProps) => (
-  <AlertDialog open={open} onOpenChange={onOpenChange}>
-    <AlertDialogContent>
-      <AlertDialogHeader>
-        {icon && <div>{icon}</div>}
-        <AlertDialogTitle>{title}</AlertDialogTitle>
-        <AlertDialogDescription>{description}</AlertDialogDescription>
-      </AlertDialogHeader>
-      <AlertDialogFooter>
-        {extraButtons}
-        {!hideCancel && (
-          <AlertDialogCancel onClick={onCancel} disabled={loading}>
-            {cancelText}
-          </AlertDialogCancel>
-        )}
-        <Button
-          onClick={onOk}
-          loading={loading}
-          variant={okVariant ?? 'default'}
-        >
-          {okText}
-        </Button>
-      </AlertDialogFooter>
-    </AlertDialogContent>
-  </AlertDialog>
-);
+}: TBaseAlertDialogProps) => {
+  return (
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          {icon && <div>{icon}</div>}
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription asChild>
+            <div>{description}</div>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          {extraButtons}
+          {!hideCancel && (
+            <AlertDialogCancel onClick={onCancel} disabled={loading}>
+              {cancelText}
+            </AlertDialogCancel>
+          )}
+          <Button
+            onClick={onOk}
+            loading={loading}
+            variant={okVariant ?? 'default'}
+          >
+            {okText}
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
 
 export default BaseAlertDialog;

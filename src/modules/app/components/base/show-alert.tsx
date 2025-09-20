@@ -1,6 +1,6 @@
 import type { TBaseAlertDialogProps } from '@/modules/app/components/base/base-alert-dialog';
 import BaseAlertDialog from '@/modules/app/components/base/base-alert-dialog';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 
 type TAlertConfirmationConfig = Omit<
@@ -8,6 +8,7 @@ type TAlertConfirmationConfig = Omit<
   'open' | 'onOpenChange' | 'onOk' | 'onCancel'
 > & {
   manualClose?: boolean;
+  type?: 'confirm' | 'alert';
 };
 
 export type TAlertConfirmationCallback = {
@@ -67,8 +68,28 @@ const showAlert = (
       }
     }, [isLoading]);
 
+    const defaultConfigByType = useMemo<Partial<TBaseAlertDialogProps>>(() => {
+      if (config.type === 'alert') {
+        return {
+          hideCancel: true,
+          okText: 'Ok',
+        };
+      }
+
+      if (config.type === 'confirm') {
+        return {
+          handleCancel: false,
+          okText: 'Yes',
+          cancelText: 'No',
+        };
+      }
+
+      return {};
+    }, []);
+
     return (
       <BaseAlertDialog
+        {...defaultConfigByType}
         {...config}
         open={true}
         loading={isLoading}

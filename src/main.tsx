@@ -11,6 +11,8 @@ import AppNotFound from '@/modules/app/components/pages/app-not-found';
 // Routes
 import { authRoutes } from '@/modules/auth/routes/auth.routes';
 import AuthProtectedRoute from '@/modules/auth/hoc/auth-protected-route';
+import { homeRoutes } from '@/modules/home/routes/home.routes';
+import AppLayout from '@/modules/app/components/layouts/app-layout';
 
 const router = createBrowserRouter([
   {
@@ -28,15 +30,8 @@ const router = createBrowserRouter([
       // Private pages
       {
         path: '/admin',
-        element: (
-          <AuthProtectedRoute
-            element={
-              <div>
-                <Outlet />
-              </div>
-            }
-          />
-        ),
+        element: <AuthProtectedRoute element={<AppLayout />} />,
+        children: [...homeRoutes],
       },
 
       { path: '*', element: <AppNotFound /> },

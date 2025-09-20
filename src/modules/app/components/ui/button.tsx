@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { type VariantProps } from 'class-variance-authority';
-import { buttonVariants } from '@/modules/app/components/ui/button-variants';
+import { buttonVariants } from '@/modules/app/components/ui/variants/button-variants';
 import { cn } from '@/modules/app/libs/utils';
 import { LoaderPinwheel } from 'lucide-react';
 

@@ -1,3 +1,4 @@
+import { Badge } from '@/modules/app/components/ui/badge';
 import { Outlet } from 'react-router-dom';
 
 const AuthLayout = () => {
@@ -9,8 +10,11 @@ const AuthLayout = () => {
       <div className='flex-1 bg-slate-50 flex items-center justify-center'>
         <div className='text-center'>
           <h2 className='text-4xl mb-3'>Auth Layout</h2>
-          <i>
-            File location: src/modules/auth/components/layouts/auth-layout.tsx
+          <i className='block text-sm leading-relaxed'>
+            File Location:
+            <Badge variant='success' className='block'>
+              src/modules/auth/components/layouts/auth-layout.tsx
+            </Badge>
           </i>
         </div>
       </div>
