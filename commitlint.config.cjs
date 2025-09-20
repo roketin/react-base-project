@@ -14,11 +14,11 @@ module.exports = {
         'ci',
         'test',
         'revert',
-        'perf'
-      ]
+        'perf',
+      ],
     ],
     'type-case': [2, 'always', 'lowerCase'],
     'type-empty': [2, 'never'],
-    'scope-case': [2, 'always', 'lowerCase']
-  }
-}
+    'scope-case': [2, 'always', 'lowerCase'],
+  },
+};
