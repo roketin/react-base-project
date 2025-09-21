@@ -1,46 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  type RouteObject,
+} from 'react-router-dom';
 import '@/modules/app/assets/css/global.css';
+import { routes } from '@/modules/app/routes/app-routes';
 
-// App Pages
-import AppGlobalError from '@/modules/app/components/pages/app-global-error';
-import AppEntryPoint from '@/modules/app/components/pages/app-entry-point';
-import AppNotFound from '@/modules/app/components/pages/app-not-found';
-
-// Layout
-import AppLayout from '@/modules/app/components/layouts/app-layout';
-
-// Routes
-import { authRoutes } from '@/modules/auth/routes/auth.routes';
-import AuthProtectedRoute from '@/modules/auth/hoc/auth-protected-route';
-import { homeRoutes } from '@/modules/home/routes/home.routes';
-
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Outlet />,
-    errorElement: <AppGlobalError />,
-    children: [
-      {
-        index: true,
-        element: <AppEntryPoint />,
-      },
-
-      ...authRoutes,
-
-      // Private pages
-      {
-        path: '/admin',
-        element: <AuthProtectedRoute element={<AppLayout />} />,
-        // element: <AppLayout />,
-        children: [...homeRoutes],
-      },
-
-      { path: '*', element: <AppNotFound /> },
-    ],
-  },
-]);
+const router = createBrowserRouter(routes as RouteObject[]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

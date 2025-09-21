@@ -1,7 +1,7 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { toast } from 'sonner';
 import type { TApiResponse } from '@/modules/app/types/api.type';
-import useAuthStore from '@/modules/auth/store/auth.store';
+import useAuthStore from '@/modules/auth/stores/auth.store';
 
 const http = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -17,7 +17,7 @@ http.interceptors.request.use(
     const authStore = useAuthStore.getState();
 
     if (
-      authStore.isAuthenticated() &&
+      authStore.isAuthenticated?.() &&
       config.url !== '/authentication/refresh/token'
     ) {
       config.headers.Authorization = `Bearer ${authStore.token}`;

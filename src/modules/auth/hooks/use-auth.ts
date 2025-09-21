@@ -1,4 +1,4 @@
-import useAuthStore from '@/modules/auth/store/auth.store';
+import useAuthStore from '@/modules/auth/stores/auth.store';
 
 export function useAuth() {
   // Indicator for check is logged in or not

@@ -7,18 +7,14 @@ import Button from '@/modules/app/components/ui/button';
 import { BaseFormField } from '@/modules/app/components/base/base-form-field';
 import { BaseInputPassword } from '@/modules/app/components/base/base-input-password';
 import showAlert from '@/modules/app/components/base/show-alert';
-import { Badge } from '@/modules/app/components/ui/badge';
 import BaseForm from '@/modules/app/components/base/base-form';
+import { Link } from 'react-router-dom';
+import { linkTo } from '@/modules/app/hooks/use-named-route';
+import FileInfo from '@/modules/app/components/base/file-info';
 
 const formSchema = Yup.object().shape({
   username: Yup.string().default('').email().required().label('Email'),
   password: Yup.string().default('').required().label('Password'),
-  // parent: Yup.object().shape({
-  //   childA: Yup.object().shape({
-  //     subChild: Yup.string().default('').label('Sub Child'),
-  //   }),
-  //   childB: Yup.string().default('').required().label('Child B'),
-  // }),
 });
 
 type TFormSchema = Yup.InferType<typeof formSchema>;
@@ -78,15 +74,12 @@ const AuthLogin = () => {
         showErrorPopup
         layout='vertical'
       >
-        <div className=''>
-          <h1 className='text-2xl mb-3'>Auth Login</h1>
-          <i className='block text-sm'>
-            File Location:
-            <Badge variant='success' className='inline-block mt-2'>
-              src/modules/auth/components/pages/auth-login.tsx
-            </Badge>
-          </i>
+        <div>
+          <h1 className='font-bold text-2xl mb-0'>App Skeleton</h1>
+          <small>Sample page</small>
         </div>
+
+        <FileInfo src='src/modules/auth/components/pages/auth-login.tsx' />
 
         {/* Username */}
         <BaseFormField
@@ -122,6 +115,13 @@ const AuthLogin = () => {
               />
             )}
           /> */}
+
+        <Link
+          to={linkTo('AuthForgot')}
+          className='text-sm text-blue-700 text-right hover:underline'
+        >
+          Forgot Password?
+        </Link>
 
         <Button type='submit' className='w-full mt-3'>
           Login
