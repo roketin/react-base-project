@@ -8,11 +8,11 @@ const AuthLayout = () => {
         <Outlet />
       </div>
       <div className='flex-1 bg-slate-50 flex items-center justify-center'>
-        <div className='text-center'>
+        <div className=''>
           <h2 className='text-4xl mb-3'>Auth Layout</h2>
           <i className='block text-sm leading-relaxed'>
             File Location:
-            <Badge variant='success' className='block'>
+            <Badge variant='success' className='block mt-1'>
               src/modules/auth/components/layouts/auth-layout.tsx
             </Badge>
           </i>

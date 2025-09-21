@@ -1,7 +1,6 @@
 import Yup from '@/plugins/yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Form } from '@/modules/app/components/ui/form';
 import { useCallback } from 'react';
 import { Input } from '@/modules/app/components/ui/input';
 import Button from '@/modules/app/components/ui/button';
@@ -9,7 +8,7 @@ import { BaseFormField } from '@/modules/app/components/base/base-form-field';
 import { BaseInputPassword } from '@/modules/app/components/base/base-input-password';
 import showAlert from '@/modules/app/components/base/show-alert';
 import { Badge } from '@/modules/app/components/ui/badge';
-import { showAlertValidation } from '@/modules/app/components/base/show-alert-validation';
+import BaseForm from '@/modules/app/components/base/base-form';
 
 const formSchema = Yup.object().shape({
   username: Yup.string().default('').email().required().label('Email'),
@@ -36,7 +35,7 @@ const AuthLogin = () => {
    * Submit form
    * @param values
    */
-  const onSubmit = useCallback(async (values: TFormSchema) => {
+  const handleSubmit = useCallback(async (values: TFormSchema) => {
     console.log('Form Values', values);
 
     // Show confirm
@@ -73,43 +72,45 @@ const AuthLogin = () => {
 
   return (
     <div className='md:w-[400px]'>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit, showAlertValidation)}
-          className='space-y-3'
+      <BaseForm
+        form={form}
+        onSubmit={handleSubmit}
+        showErrorPopup
+        layout='vertical'
+      >
+        <div className=''>
+          <h1 className='text-2xl mb-3'>Auth Login</h1>
+          <i className='block text-sm'>
+            File Location:
+            <Badge variant='success' className='inline-block mt-2'>
+              src/modules/auth/components/pages/auth-login.tsx
+            </Badge>
+          </i>
+        </div>
+
+        {/* Username */}
+        <BaseFormField
+          control={form.control}
+          name='username'
+          label='Email'
+          withPlaceholder
+          description='Email ya bukan username 🔥'
         >
-          <div className='text-center'>
-            <h1 className='text-2xl mb-3'>Auth Login</h1>
-            <i className='block text-sm leading-relaxed'>
-              File Location:
-              <Badge variant='success' className='inline-block'>
-                src/modules/auth/components/pages/auth-login.tsx
-              </Badge>
-            </i>
-          </div>
+          <Input autoComplete='username' />
+        </BaseFormField>
 
-          {/* Username */}
-          <BaseFormField
-            control={form.control}
-            name='username'
-            label='Email'
-            withPlaceholder
-          >
-            <Input autoComplete='username' />
-          </BaseFormField>
+        {/* Type 1: Simple input */}
+        <BaseFormField
+          control={form.control}
+          name='password'
+          label='Password'
+          withPlaceholder
+        >
+          <BaseInputPassword />
+        </BaseFormField>
 
-          {/* Type 1: Simple input */}
-          <BaseFormField
-            control={form.control}
-            name='password'
-            label='Password'
-            withPlaceholder
-          >
-            <BaseInputPassword />
-          </BaseFormField>
-
-          {/* Type 2: Input with render */}
-          {/* <BaseFormField
+        {/* Type 2: Input with render */}
+        {/* <BaseFormField
             control={form.control}
             name='password'
             label='Password'
@@ -122,11 +123,10 @@ const AuthLogin = () => {
             )}
           /> */}
 
-          <Button type='submit' className='w-full mt-6'>
-            Login
-          </Button>
-        </form>
-      </Form>
+        <Button type='submit' className='w-full mt-3'>
+          Login
+        </Button>
+      </BaseForm>
     </div>
   );
 };

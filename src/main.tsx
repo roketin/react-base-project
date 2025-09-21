@@ -8,11 +8,13 @@ import AppGlobalError from '@/modules/app/components/pages/app-global-error';
 import AppEntryPoint from '@/modules/app/components/pages/app-entry-point';
 import AppNotFound from '@/modules/app/components/pages/app-not-found';
 
+// Layout
+import AppLayout from '@/modules/app/components/layouts/app-layout';
+
 // Routes
 import { authRoutes } from '@/modules/auth/routes/auth.routes';
 import AuthProtectedRoute from '@/modules/auth/hoc/auth-protected-route';
 import { homeRoutes } from '@/modules/home/routes/home.routes';
-import AppLayout from '@/modules/app/components/layouts/app-layout';
 
 const router = createBrowserRouter([
   {
@@ -31,6 +33,7 @@ const router = createBrowserRouter([
       {
         path: '/admin',
         element: <AuthProtectedRoute element={<AppLayout />} />,
+        // element: <AppLayout />,
         children: [...homeRoutes],
       },
 

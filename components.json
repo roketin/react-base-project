@@ -5,15 +5,16 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "@/modules/app/assets/css/global.css",
+    "css": "src/modules/app/assets/css/global.css",
     "baseColor": "neutral",
     "cssVariables": true
   },
   "aliases": {
-    "components": "src/modules/app/components",
+    "components": "@/modules/app/components",
     "utils": "@/modules/app/libs/utils",
-    "ui": "src/modules/app/components/ui",
+    "ui": "@/modules/app/components/ui",
     "lib": "@/modules/app/libs"
   },
-  "iconLibrary": "lucide"
+  "iconLibrary": "lucide",
+  "registries": {}
 }

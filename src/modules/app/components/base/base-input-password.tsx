@@ -10,7 +10,7 @@ export const BaseInputPassword = ({
   onChange,
   placeholder,
   ...rest
-}: TBaseInputDefaultProps & React.ComponentProps<'input'>) => {
+}: React.ComponentProps<'input'> & TBaseInputDefaultProps) => {
   const [show, setShow] = useState(false);
 
   return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   FormField,
   FormItem,
@@ -15,6 +15,7 @@ import type {
   ControllerFieldState,
   UseFormStateReturn,
 } from 'react-hook-form';
+import { useFormConfig } from '@/modules/app/contexts/form-config-context';
 
 type RenderFn<T extends FieldValues, N extends Path<T>> = (args: {
   field: ControllerRenderProps<T, N>;
@@ -32,6 +33,7 @@ type TBaseFormFieldProps<T extends FieldValues, N extends Path<T>> = {
   render?: RenderFn<T, N>; // Mode 2
   notRequired?: boolean;
   withPlaceholder?: boolean;
+  labelWidth?: string;
 };
 
 export function BaseFormField<T extends FieldValues, N extends Path<T>>({
@@ -39,47 +41,73 @@ export function BaseFormField<T extends FieldValues, N extends Path<T>>({
   name,
   label,
   description,
-  layout = 'vertical',
+  layout,
   children,
   render,
   notRequired = false,
   withPlaceholder = false,
+  labelWidth,
 }: TBaseFormFieldProps<T, N>) {
+  const formConfig = useFormConfig();
+
+  // Get label width from form or from self component
+  // Only work on horizontal layout
+  const computedWidth = useMemo<string>(
+    () => labelWidth ?? formConfig?.labelWidth ?? '200px',
+    [formConfig?.labelWidth, labelWidth],
+  );
+
+  // Get type layout from form or from self component
+  const computedLayout = useMemo<string>(
+    () => layout ?? formConfig?.layout ?? 'vertical',
+    [formConfig?.layout, layout],
+  );
+
   return (
     <FormField
       control={control}
       name={name}
       render={(renderProps) => (
-        <FormItem
-          className={
-            layout === 'horizontal' ? 'flex items-center space-x-4' : undefined
-          }
-        >
-          {label && (
-            <FormLabel className='mb-1 block'>
-              {label}
-              {!notRequired && (
-                <span className='text-red-500 text-lg'>*</span>
-              )}{' '}
-            </FormLabel>
-          )}
-          <FormControl>
-            {render
-              ? render(renderProps)
-              : React.cloneElement(
-                  children as React.ReactElement<Record<string, unknown>>,
-                  {
-                    ...renderProps.field,
-                    ...(withPlaceholder && typeof label === 'string'
-                      ? { placeholder: 'Input ' + label.toLowerCase() }
-                      : {}),
-                    id: String(name),
-                    name: String(name),
-                  },
-                )}
-          </FormControl>
-          {description && <FormDescription>{description}</FormDescription>}
-          <FormMessage />
+        <FormItem>
+          <div
+            className={computedLayout === 'horizontal' ? `grid` : undefined}
+            style={{
+              gridTemplateColumns: `${computedWidth} 1fr`,
+            }}
+          >
+            {label && (
+              <FormLabel className='block'>
+                {label}
+                {!notRequired && (
+                  <span className='text-destructive text-lg'>*</span>
+                )}{' '}
+              </FormLabel>
+            )}
+            <div>
+              <FormControl>
+                {render
+                  ? render(renderProps)
+                  : React.cloneElement(
+                      children as React.ReactElement<Record<string, unknown>>,
+                      {
+                        ...renderProps.field,
+                        ...(withPlaceholder && typeof label === 'string'
+                          ? { placeholder: 'Input ' + label.toLowerCase() }
+                          : {}),
+                        id: String(name),
+                        name: String(name),
+                      },
+                    )}
+              </FormControl>
+
+              {description && (
+                <FormDescription className='mt-1.5'>
+                  {description}
+                </FormDescription>
+              )}
+              <FormMessage className='mt-1.5' />
+            </div>
+          </div>
         </FormItem>
       )}
     />
