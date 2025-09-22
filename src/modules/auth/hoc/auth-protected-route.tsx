@@ -1,7 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import React, { memo } from 'react';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
-import { linkTo } from '@/modules/app/hooks/use-named-route';
 
 /**
  * High Order Component for protected route
@@ -12,7 +11,7 @@ const AuthProtectedRoute = ({ element }: { element: React.ReactNode }) => {
   const { isLoggedIn } = useAuth();
 
   if (!isLoggedIn()) {
-    return <Navigate to={linkTo('AuthLogin')} replace />;
+    return <Navigate to='/auth/login' replace />;
   }
 
   return element;

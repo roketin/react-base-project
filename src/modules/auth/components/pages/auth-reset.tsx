@@ -14,10 +14,22 @@ import { useAuthReset } from '@/modules/auth/services/auth.service';
 import { RInputPassword } from '@/modules/app/components/base/r-input-password';
 
 const formSchema = Yup.object().shape({
-  password: Yup.string().default('').required().label('Password'),
+  password: Yup.string()
+    .default('')
+    .required()
+    .min(8, 'Password must be at least 8 characters')
+    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .matches(/\d/, 'Password must contain at least one number')
+    .matches(
+      /[@$!%*?&]/,
+      'Password must contain at least one special character (@, $, !, %, *, ?, &)',
+    )
+    .label('Password'),
   password_confirm: Yup.string()
     .default('')
     .required()
+    .oneOf([Yup.ref('password')], 'Passwords must match')
     .label('Confirm Password'),
 });
 
