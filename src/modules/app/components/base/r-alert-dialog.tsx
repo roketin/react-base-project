@@ -50,7 +50,7 @@ const RAlertDialog = ({
           {icon && <div>{icon}</div>}
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription asChild>
-            <div>{description}</div>
+            <div className='text-sm'>{description}</div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

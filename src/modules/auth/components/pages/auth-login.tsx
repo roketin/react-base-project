@@ -6,12 +6,13 @@ import { Input } from '@/modules/app/components/ui/input';
 import Button from '@/modules/app/components/ui/button';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
 import { RInputPassword } from '@/modules/app/components/base/r-input-password';
-import showAlert from '@/modules/app/components/base/show-alert';
 import RForm from '@/modules/app/components/base/r-form';
 import { Link } from 'react-router-dom';
-import { linkTo } from '@/modules/app/hooks/use-named-route';
+import { linkTo, useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import FileInfo from '@/modules/app/components/base/file-info';
 import { AtSign, FileLock2 } from 'lucide-react';
+import { useAuthLogin } from '@/modules/auth/services/auth.service';
+import useAuthStore from '@/modules/auth/stores/auth.store';
 
 const formSchema = Yup.object().shape({
   username: Yup.string().default('').email().required().label('Email'),
@@ -28,43 +29,30 @@ const AuthLogin = () => {
     defaultValues: formSchema.getDefault(),
   });
 
+  // Login mutation
+  const { mutate, isPending: loading } = useAuthLogin();
+
+  // Set credential to store
+  const setCredential = useAuthStore((state) => state.setCredential);
+
+  // Navigate
+  const { navigate } = useNamedRoute();
+
   /**
    * Submit form
    * @param values
    */
-  const handleSubmit = useCallback(async (values: TFormSchema) => {
-    console.log('Form Values', values);
-
-    // Show confirm
-    showAlert(
-      {
-        type: 'confirm',
-        title: 'Confirm',
-        description: 'Are you sure you want to try logging in?',
-        manualClose: true,
-      },
-      async ({ ok, setLoading, close }) => {
-        if (!ok) {
-          close();
-          return;
-        }
-
-        setLoading(true);
-
-        await setTimeout(() => {
-          setLoading(false);
-          close();
-
-          // Show confirmed
-          showAlert({
-            type: 'alert',
-            title: 'Success',
-            description: 'Login successful',
-          });
-        }, 1000);
-      },
-    );
-  }, []);
+  const handleSubmit = useCallback(
+    (values: TFormSchema) => {
+      mutate(values, {
+        onSuccess(response) {
+          setCredential(response.data.access_token);
+          navigate('DashboardIndex');
+        },
+      });
+    },
+    [mutate, navigate, setCredential],
+  );
 
   return (
     <div className='md:w-[400px]'>
@@ -123,7 +111,7 @@ const AuthLogin = () => {
           Forgot Password?
         </Link>
 
-        <Button type='submit' className='w-full mt-3'>
+        <Button type='submit' className='w-full mt-3' loading={loading}>
           Login
         </Button>
       </RForm>

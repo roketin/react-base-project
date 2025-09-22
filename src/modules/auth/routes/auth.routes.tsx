@@ -11,9 +11,9 @@ export const authRoutes = createAppRoutes([
     element: <AuthLayout />,
     children: [
       { index: true, element: <Navigate to='login' replace /> },
-      { path: 'login', element: <AuthLogin />, name: 'AuthLogin' },
-      { path: 'forgot', element: <AuthForgot />, name: 'AuthForgot' },
-      { path: 'reset', element: <AuthReset />, name: 'AuthReset' },
+      { name: 'AuthLogin', path: 'login', element: <AuthLogin /> },
+      { name: 'AuthForgot', path: 'forgot', element: <AuthForgot /> },
+      { name: 'AuthReset', path: 'reset', element: <AuthReset /> },
     ],
   },
 ]);

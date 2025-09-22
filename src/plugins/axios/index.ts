@@ -16,10 +16,7 @@ http.interceptors.request.use(
     // Get authentication state from store
     const authStore = useAuthStore.getState();
 
-    if (
-      authStore.isAuthenticated?.() &&
-      config.url !== '/authentication/refresh/token'
-    ) {
+    if (authStore.isAuthenticated?.() && config.url !== '/auth/refresh') {
       config.headers.Authorization = `Bearer ${authStore.token}`;
     }
 
@@ -45,7 +42,7 @@ http.interceptors.response.use(
           ? responseData.errors.join('\n')
           : responseData.message;
 
-      toast('Information', {
+      toast.error('Information', {
         description: message ?? 'Something error ..',
       });
     }

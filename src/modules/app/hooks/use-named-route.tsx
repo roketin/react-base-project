@@ -110,9 +110,9 @@ export function linkTo(
  *   - linkTo: Function to generate a link object for a named route.
  */
 export function useNamedRoute() {
-  const navigate = useNavigate();
+  const navigateRaw = useNavigate();
 
-  function push(
+  function navigate(
     name: string,
     params: Record<string, string> = {},
     options?: {
@@ -121,8 +121,8 @@ export function useNamedRoute() {
     },
   ) {
     const to = linkTo(name, params, options);
-    navigate(to, { replace: to.replace });
+    navigateRaw(to, { replace: to.replace });
   }
 
-  return { push, linkTo };
+  return { navigate, linkTo };
 }

@@ -7,11 +7,17 @@ import {
 } from 'react-router-dom';
 import '@/modules/app/assets/css/global.css';
 import { routes } from '@/modules/app/routes/app-routes';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/plugins/tanstack-query';
+import { Toaster } from 'sonner';
 
 const router = createBrowserRouter(routes as RouteObject[]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <Toaster position='top-right' richColors />
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </React.StrictMode>,
 );

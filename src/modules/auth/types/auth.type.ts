@@ -1,26 +1,26 @@
 export type TAuthStore = {
   token: string;
-  refreshToken: string;
   authData: TAuthProfile | null;
   isAuthenticated: () => boolean;
-  setCredential: (token: string, refreshToken: string) => void;
+  setCredential: (token: string) => void;
   clearCredential: () => void;
   setAuthData: (data: TAuthProfile) => void;
 };
 
 export type TAuthLogin = {
-  email: string;
+  username: string;
   password: string;
 };
 
 export type TAuthLoginResponse = {
-  id: string;
-  name: string;
-  email: string;
-  expires_in: number;
-  expires_at: string;
   access_token: string;
-  refresh_token: string;
+};
+
+export type TAuthForgot = Pick<TAuthLogin, 'username'>;
+
+export type TAuthReset = {
+  password: string;
+  password_confirm: string;
 };
 
 export type TAuthRole = {

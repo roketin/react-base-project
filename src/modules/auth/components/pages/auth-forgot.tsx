@@ -5,16 +5,17 @@ import FileInfo from '@/modules/app/components/base/file-info';
 import showAlert from '@/modules/app/components/base/show-alert';
 import Button from '@/modules/app/components/ui/button';
 import { Input } from '@/modules/app/components/ui/input';
-import { linkTo } from '@/modules/app/hooks/use-named-route';
+import { linkTo, useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import Yup from '@/plugins/yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, CircleCheck } from 'lucide-react';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
+import { useAuthForgot } from '@/modules/auth/services/auth.service';
 
 const formSchema = Yup.object().shape({
-  email: Yup.string().default('').email().required().label('Email'),
+  username: Yup.string().default('').email().required().label('Email'),
 });
 
 type TFormSchema = Yup.InferType<typeof formSchema>;
@@ -27,44 +28,62 @@ const AuthForgot = () => {
     defaultValues: formSchema.getDefault(),
   });
 
+  const { navigate } = useNamedRoute();
+
+  // Forgot password mutation
+  const { mutate } = useAuthForgot();
+
   /**
    * Submit form
    * @param values
    */
-  const handleSubmit = useCallback(async (values: TFormSchema) => {
-    console.log('Form Values', values);
+  const handleSubmit = useCallback(
+    async (values: TFormSchema) => {
+      // Show confirm
+      showAlert(
+        {
+          type: 'confirm',
+          title: 'Confirm',
+          description: 'Are you sure you want to reset password?',
+          manualClose: true,
+        },
+        async ({ ok, setLoading, close }) => {
+          if (!ok) {
+            close();
+            return;
+          }
 
-    // Show confirm
-    showAlert(
-      {
-        type: 'confirm',
-        title: 'Alert',
-        description:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-        manualClose: true,
-      },
-      async ({ ok, setLoading, close }) => {
-        if (!ok) {
-          close();
-          return;
-        }
+          // Show loading
+          setLoading(true);
 
-        setLoading(true);
-
-        await setTimeout(() => {
-          setLoading(false);
-          close();
-
-          // Show confirmed
-          showAlert({
-            type: 'alert',
-            title: 'Success',
-            description: 'Success Set Data',
+          // Login mutation
+          mutate(values, {
+            onSuccess() {
+              showAlert(
+                {
+                  type: 'alert',
+                  title: 'Success',
+                  description: 'The reset link has been sent to your email.',
+                  icon: <CircleCheck className='text-green-600' size={50} />,
+                },
+                ({ ok }) => {
+                  if (ok) {
+                    navigate('AuthLogin');
+                  }
+                },
+              );
+              close();
+            },
+            onSettled() {
+              // Hide loading
+              setLoading(false);
+            },
           });
-        }, 1000);
-      },
-    );
-  }, []);
+        },
+      );
+    },
+    [mutate, navigate],
+  );
 
   return (
     <div className='md:w-[400px]'>
@@ -83,7 +102,7 @@ const AuthForgot = () => {
           {/* Email */}
           <RFormField
             control={form.control}
-            name='email'
+            name='username'
             label='Email'
             withPlaceholder
           >
