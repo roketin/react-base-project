@@ -7,12 +7,15 @@
   🚀 ReactJS Base Project
 </h1>
 
+<!-- Banner Section -->
 <p align="center">
   <img src="https://cms.roketin.com/uploads/Elemen_Brand_Roketin_03_ee99155544.jpg" alt="Roketin Banner" width="512px" />
 </p>
 <h3 align="center">
   💻 A Modern Base Project Dashboard with React.js.!
 </h3>
+
+---
 
 <!-- Badges Section -->
 <p align="center">
@@ -40,6 +43,57 @@
 </p>
 
 ---
+
+<!-- Introduction Section -->
+
+## 📖 Introduction
+
+This template have a bunch of folders, code examples and configurations.
+
+<!-- Features Section -->
+
+## 🌟 Features
+
+This project features all the latest tools and good practices in web development!
+
+### Framework
+
+- ⚛️ **[React.js](https://react.dev/)** – An open-source JavaScript library for building user interfaces (UIs), particularly single-page applications. One of the best
+
+### Data Fetching
+
+- ✳️ **[React Query](https://tanstack.com/query)** – Hooks for fetching, caching and updating asynchronous data in React
+
+### State Management and Hooks
+
+- 🐻 **[Zustand](https://zustand-demo.pmnd.rs)** – A small, fast and scalable bearbones state-management solution using simplified flux principles
+
+### Design System and Animations
+
+- 🎨 **[Shadcn](https://ui.shadcn.com/)** – A set of beautifully designed components that you can customize, extend, and build on.
+- ✨ **[Lucide Icons](https://lucide.dev/)** – A collection of popular icons to React projects
+
+### Form Validation
+
+- 📋 **[React Hook Form](https://react-hook-form.com)** – Performant, flexible and extensible forms with easy-to-use validation
+- 🚨 **[Zod](https://zod.dev)** – TypeScript-first schema validation with static type inference
+
+### Tests
+
+- ✨ **[Vitest](https://vitest.dev/)** – A Vite-native testing framework. Next Generation Testing Framework
+
+### Design Patterns
+
+- ⛔ **[ESLint](https://eslint.org)** – Find and fix problems in your JavaScript code
+- 🎀 **[Prettier](https://prettier.io)** – An opinionated code formatter, supporting multiple languages and code editors
+- 🐺 **[Husky](https://github.com/typicode/husky)** – Modern native Git hooks made easy
+- 💩 **[lint-staged](https://github.com/okonet/lint-staged)** – Run linters against staged git files and don't let 💩 slip into your code base
+- 📓 **[commitlint](https://commitlint.js.org)** – Helps your team adhering to a commit convention
+- 🏷️ **[Standard Version](https://github.com/conventional-changelog/standard-version)** – A utility for versioning using semver and CHANGELOG generation powered by Conventional Commits
+
+<!-- Procedures Section -->
+
+## ▶️ Getting Started
 
 # React + TypeScript + Vite
 
