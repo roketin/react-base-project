@@ -12,25 +12,21 @@
   <img src="https://cms.roketin.com/uploads/Elemen_Brand_Roketin_03_ee99155544.jpg" alt="Roketin Banner" width="512px" />
 </p>
 <h3 align="center">
-  💻 A Modern Base Project Dashboard with React.js.!
+  💻 A Modern Base Project Dashboard with React.js!
 </h3>
 
 ---
 
 <!-- Badges Section -->
 <p align="center">
-  <a href="./LICENSE" title="Show the MIT License">
-    <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="License MIT">
-  </a>
   <br>
-  <img src="https://forthebadge.com/images/badges/open-source.svg" alt="Open Source" />
   <img src="https://forthebadge.com/images/badges/made-with-typescript.svg" alt="Made with TypeScript" />
   <img src="https://forthebadge.com/images/badges/built-with-love.svg" alt="Built with Love" />
   <br>
 </p>
 
 ---
-
+<br />
 <p align="center">
  <a href="https://sonarcloud.io/summary/new_code?id=gmatthewsfeuer_next-plate">
    <img src="https://sonarcloud.io/api/project_badges/measure?project=gmatthewsfeuer_next-plate&metric=bugs" alt="Bugs" title="Bugs" />
@@ -54,7 +50,7 @@ This template have a bunch of folders, code examples and configurations.
 
 ## 🌟 Features
 
-This project features all the latest tools and good practices in web development!
+This base project features all the latest tools and good practices in web development!
 
 ### Framework
 
@@ -76,7 +72,7 @@ This project features all the latest tools and good practices in web development
 ### Form Validation
 
 - 📋 **[React Hook Form](https://react-hook-form.com)** – Performant, flexible and extensible forms with easy-to-use validation
-- 🚨 **[Zod](https://zod.dev)** – TypeScript-first schema validation with static type inference
+- 🚨 **[Yup](https://github.com/jquense/yup)** – Schema builder that concise yet expressive schema interface, equipped to model simple to complex data models
 
 ### Tests
 
@@ -132,95 +128,53 @@ See below the file tree to understand the project structure.
 
 ```txt
 📂 reactjs-base-project/
-┣ 📂 .husky/                      # Husky's folder
-┃ ┣ 📃 commit-msg                 # Commitlint git hook
-┃ ┗ 📃 pre-commit                 # Lint-staged git hook
-┣ 📂 .vscode/                     # VSCode's workspace **
-┣ 📂 public/                      # Public folder
-┃ ┣ 📃 favicon.ico                # Icon tab browser
+┣ 📂 .husky/                              # Husky's folder
+┃ ┣ 📃 commit-msg                         # Commitlint git hook
+┃ ┗ 📃 pre-commit                         # Lint-staged git hook
+┣ 📂 .vscode/                             # VSCode's workspace **
+┣ 📂 public/                              # Public folder
+┃ ┣ 📃 favicon.ico                        # Icon tab browser
 ┣ 📂 src/
 ┃ ┣ 📂 modules/                  
-┃ ┃ ┣ 📂 [module name, ex: home]
-┃ ┃ ┃ ┣ 📂 components
-┃ ┃ ┃ ┃ ┣ 📂 layouts
-┃ ┃ ┃ ┃ ┗ 📂 pages
-┃ ┃ ┃ ┣ 📂 hoc
-┃ ┃ ┃ ┣ 📂 hooks
-┃ ┃ ┃ ┣ 📂 routes
-┃ ┃ ┃ ┣ 📂 stores
-┃ ┃ ┃ ┗ 📂 types
-┃ ┣ 📂 plugins/                   # Plugins
-┃ ┃ ┣ 📂 axios                    # Axios config
-┃ ┃ ┗ 📂 yup                      # Yup config
-┃ ┣ 📃 main.tsx                   # Main file
+┃ ┃ ┣ 📂 [module name, ex: user]
+┃ ┃ ┃ ┗ 📂 [sub module name, ex: add user]
+┃ ┃ ┃   ┣ 📂 components
+┃ ┃ ┃   ┃ ┣  📂 layouts
+┃ ┃ ┃   ┃ ┗  📂 pages
+┃ ┃ ┃   ┣ 📂 hoc
+┃ ┃ ┃   ┣ 📂 hooks
+┃ ┃ ┃   ┣ 📂 routes
+┃ ┃ ┃   ┣ 📂 stores
+┃ ┃ ┃   ┗ 📂 types
+┃ ┣ 📂 plugins/                            # Plugins
+┃ ┃ ┣ 📂 axios                             # Axios config
+┃ ┃ ┗ 📂 yup                               # Yup config
+┃ ┣ 📃 main.tsx                            # Main file
 ┃ ┗ 📃 vite.env.d.ts
-┣ 📃 .gitignore                   # Git ignore
-┣ 📃 .prettierignore              # Prettier ignore
-┣ 📃 .prettierrc                  # Prettier config
-┣ 📃 commitlint.config.cjs        # Commit lint config
-┣ 📃 components.json              # React component config
-┣ 📃 eslint.config.js             # Eslint config
-┣ 📃 index.html                   # Index html
-┣ 📃 package.json                 # Package json
-┣ 📃 pnpm.lock.yaml               # Package lock
-┣ 📃 tsconfig.app.json            # Typescript config for frontend app
-┣ 📃 tsconfig.json                # TypeScript config wrapper
-┣ 📃 tsconfig.node.json           # TypeScript config for node
-┣ 📃 README.md                    # Main README
-┣ 📃 vite.config.js               # Vite config
+┣ 📃 .gitignore                            # Git ignore
+┣ 📃 .prettierignore                       # Prettier ignore
+┣ 📃 .prettierrc                           # Prettier config
+┣ 📃 commitlint.config.cjs                 # Commit lint config
+┣ 📃 components.json                       # React component config
+┣ 📃 eslint.config.js                      # Eslint config
+┣ 📃 index.html                            # Index html
+┣ 📃 package.json                          # Package json
+┣ 📃 pnpm.lock.yaml                        # Package lock
+┣ 📃 tsconfig.app.json                     # Typescript config for frontend app
+┣ 📃 tsconfig.json                         # TypeScript config wrapper
+┣ 📃 tsconfig.node.json                    # TypeScript config for node
+┣ 📃 README.md                             # Main README
+┣ 📃 vite.config.js                        # Vite config
 ```
 
 </details>
 
+<!-- Acknowledgment Section -->
 
-# React + TypeScript + Vite
+---
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### ❤️ Thanks for your attention!
 
-Currently, two official plugins are available:
+### 👨‍💻 Good Hacking!
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
-
-## Folder Structure
-
-The project follows a standard folder structure for organizing the code:
-
-- `src`: Contains the source code of the React application.
-  - `components`: Contains reusable React components.
-  - `pages`: Contains the main pages of the application.
-  - `styles`: Contains global styles and CSS modules.
-  - `utils`: Contains utility functions and helper modules.
-- `public`: Contains static assets such as images, fonts, etc.
-- `tests`: Contains test files for the application.
-- `dist`: Contains the bundled and optimized production build of the application.
-
-Feel free to modify the folder structure according to your project's needs.
-
-## Plugins
-
-### State Management
-- Zustand
-- Redux toolkit [][https://redux-toolkit.js.org/]
+---
