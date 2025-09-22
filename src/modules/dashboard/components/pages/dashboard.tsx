@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 
-const Home = () => {
+const Dashboard = () => {
   const [count, setCount] = useState(0);
 
-  // ❌ Ini seharusnya trigger error dari react-hooks/exhaustive-deps
   useEffect(() => {
     console.log('Count:', count);
-  }, [count]); // <-- count tidak masuk ke dependency array
+  }, [count]);
 
   return (
     <div>
@@ -16,4 +15,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;

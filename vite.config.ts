@@ -13,4 +13,16 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/test/setup.ts',
+    coverage: {
+      provider: 'v8',
+      reporter: ['html', 'text'],
+      reportsDirectory: './coverage',
+      include: ['src/**/*.ts'],
+      exclude: ['test/**', 'src/**/__tests__/**'],
+    },
+  },
 });
