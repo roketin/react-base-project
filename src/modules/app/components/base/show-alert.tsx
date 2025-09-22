@@ -1,10 +1,10 @@
-import type { TBaseAlertDialogProps } from '@/modules/app/components/base/base-alert-dialog';
-import BaseAlertDialog from '@/modules/app/components/base/base-alert-dialog';
+import type { TRAlertDialogProps } from '@/modules/app/components/base/r-alert-dialog';
+import RAlertDialog from '@/modules/app/components/base/r-alert-dialog';
 import { useCallback, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 
 type TAlertConfirmationConfig = Omit<
-  TBaseAlertDialogProps,
+  TRAlertDialogProps,
   'open' | 'onOpenChange' | 'onOk' | 'onCancel'
 > & {
   manualClose?: boolean;
@@ -68,7 +68,7 @@ const showAlert = (
       }
     }, [isLoading]);
 
-    const defaultConfigByType = useMemo<Partial<TBaseAlertDialogProps>>(() => {
+    const defaultConfigByType = useMemo<Partial<TRAlertDialogProps>>(() => {
       if (config.type === 'alert') {
         return {
           hideCancel: true,
@@ -88,7 +88,7 @@ const showAlert = (
     }, []);
 
     return (
-      <BaseAlertDialog
+      <RAlertDialog
         {...defaultConfigByType}
         {...config}
         open={true}

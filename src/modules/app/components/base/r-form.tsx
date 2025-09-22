@@ -5,7 +5,7 @@ import { cn } from '@/modules/app/libs/utils';
 import type { ReactNode } from 'react';
 import type { UseFormReturn, FieldValues } from 'react-hook-form';
 
-export type TBaseFormProps<TFormValues extends FieldValues> = {
+export type TRFormProps<TFormValues extends FieldValues> = {
   form: UseFormReturn<TFormValues>;
   onSubmit: (values: TFormValues) => void | Promise<void>;
   layout?: 'vertical' | 'horizontal';
@@ -16,7 +16,7 @@ export type TBaseFormProps<TFormValues extends FieldValues> = {
   spacing?: string;
 };
 
-const BaseForm = <TFormValues extends FieldValues>({
+const RForm = <TFormValues extends FieldValues>({
   form,
   onSubmit,
   showErrorPopup,
@@ -25,7 +25,7 @@ const BaseForm = <TFormValues extends FieldValues>({
   layout = 'horizontal',
   className = '',
   spacing = '',
-}: TBaseFormProps<TFormValues>) => {
+}: TRFormProps<TFormValues>) => {
   return (
     <Form {...form}>
       <FormConfigContext.Provider value={{ labelWidth, layout }}>
@@ -45,4 +45,4 @@ const BaseForm = <TFormValues extends FieldValues>({
     </Form>
   );
 };
-export default BaseForm;
+export default RForm;

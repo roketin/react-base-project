@@ -17,26 +17,26 @@ import type {
 } from 'react-hook-form';
 import { useFormConfig } from '@/modules/app/contexts/form-config-context';
 
-type RenderFn<T extends FieldValues, N extends Path<T>> = (args: {
+type TRenderFn<T extends FieldValues, N extends Path<T>> = (args: {
   field: ControllerRenderProps<T, N>;
   fieldState: ControllerFieldState;
   formState: UseFormStateReturn<T>;
 }) => React.ReactNode;
 
-type TBaseFormFieldProps<T extends FieldValues, N extends Path<T>> = {
+type TRFormFieldProps<T extends FieldValues, N extends Path<T>> = {
   control: Control<T>;
   name: N;
   label?: string | React.ReactNode;
   description?: string;
   layout?: 'vertical' | 'horizontal';
   children?: React.ReactElement; // Mode 1
-  render?: RenderFn<T, N>; // Mode 2
+  render?: TRenderFn<T, N>; // Mode 2
   notRequired?: boolean;
   withPlaceholder?: boolean;
   labelWidth?: string;
 };
 
-export function BaseFormField<T extends FieldValues, N extends Path<T>>({
+export function RFormField<T extends FieldValues, N extends Path<T>>({
   control,
   name,
   label,
@@ -47,7 +47,7 @@ export function BaseFormField<T extends FieldValues, N extends Path<T>>({
   notRequired = false,
   withPlaceholder = false,
   labelWidth,
-}: TBaseFormFieldProps<T, N>) {
+}: TRFormFieldProps<T, N>) {
   const formConfig = useFormConfig();
 
   // Get label width from form or from self component

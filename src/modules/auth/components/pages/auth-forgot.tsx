@@ -1,6 +1,6 @@
-import { BaseCard } from '@/modules/app/components/base/base-card';
-import BaseForm from '@/modules/app/components/base/base-form';
-import { BaseFormField } from '@/modules/app/components/base/base-form-field';
+import { RCard } from '@/modules/app/components/base/r-card';
+import RForm from '@/modules/app/components/base/r-form';
+import { RFormField } from '@/modules/app/components/base/r-form-field';
 import FileInfo from '@/modules/app/components/base/file-info';
 import showAlert from '@/modules/app/components/base/show-alert';
 import Button from '@/modules/app/components/ui/button';
@@ -68,11 +68,11 @@ const AuthForgot = () => {
 
   return (
     <div className='md:w-[400px]'>
-      <BaseCard
+      <RCard
         title='Forgot Password'
         description='Make sure you enter the email address that is registered in the system.'
       >
-        <BaseForm
+        <RForm
           form={form}
           onSubmit={handleSubmit}
           showErrorPopup
@@ -81,14 +81,14 @@ const AuthForgot = () => {
           <FileInfo src='src/modules/auth/components/pages/auth-forgot.tsx' />
 
           {/* Email */}
-          <BaseFormField
+          <RFormField
             control={form.control}
             name='email'
             label='Email'
             withPlaceholder
           >
             <Input autoComplete='username' />
-          </BaseFormField>
+          </RFormField>
 
           <Link
             to={linkTo('AuthLogin')}
@@ -100,8 +100,8 @@ const AuthForgot = () => {
           <Button type='submit' className='w-full mt-3'>
             Send
           </Button>
-        </BaseForm>
-      </BaseCard>
+        </RForm>
+      </RCard>
     </div>
   );
 };

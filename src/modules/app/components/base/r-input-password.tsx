@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { Input } from '@/modules/app/components/ui/input';
+import { Input, type TInputProps } from '@/modules/app/components/ui/input';
 import Button from '@/modules/app/components/ui/button';
 import type { TBaseInputDefaultProps } from '@/modules/app/types/component.type';
 import { Eye, EyeOff } from 'lucide-react';
 
-export const BaseInputPassword = ({
+export const RInputPassword = ({
   id,
   value,
   onChange,
   placeholder,
   ...rest
-}: React.ComponentProps<'input'> & TBaseInputDefaultProps) => {
+}: React.ComponentProps<'input'> & TBaseInputDefaultProps & TInputProps) => {
   const [show, setShow] = useState(false);
 
   return (

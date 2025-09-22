@@ -4,13 +4,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useCallback } from 'react';
 import { Input } from '@/modules/app/components/ui/input';
 import Button from '@/modules/app/components/ui/button';
-import { BaseFormField } from '@/modules/app/components/base/base-form-field';
-import { BaseInputPassword } from '@/modules/app/components/base/base-input-password';
+import { RFormField } from '@/modules/app/components/base/r-form-field';
+import { RInputPassword } from '@/modules/app/components/base/r-input-password';
 import showAlert from '@/modules/app/components/base/show-alert';
-import BaseForm from '@/modules/app/components/base/base-form';
+import RForm from '@/modules/app/components/base/r-form';
 import { Link } from 'react-router-dom';
 import { linkTo } from '@/modules/app/hooks/use-named-route';
 import FileInfo from '@/modules/app/components/base/file-info';
+import { AtSign, FileLock2 } from 'lucide-react';
 
 const formSchema = Yup.object().shape({
   username: Yup.string().default('').email().required().label('Email'),
@@ -38,9 +39,8 @@ const AuthLogin = () => {
     showAlert(
       {
         type: 'confirm',
-        title: 'Alert',
-        description:
-          "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
+        title: 'Confirm',
+        description: 'Are you sure you want to try logging in?',
         manualClose: true,
       },
       async ({ ok, setLoading, close }) => {
@@ -59,7 +59,7 @@ const AuthLogin = () => {
           showAlert({
             type: 'alert',
             title: 'Success',
-            description: 'Success Set Data',
+            description: 'Login successful',
           });
         }, 1000);
       },
@@ -68,7 +68,7 @@ const AuthLogin = () => {
 
   return (
     <div className='md:w-[400px]'>
-      <BaseForm
+      <RForm
         form={form}
         onSubmit={handleSubmit}
         showErrorPopup
@@ -82,33 +82,33 @@ const AuthLogin = () => {
         <FileInfo src='src/modules/auth/components/pages/auth-login.tsx' />
 
         {/* Username */}
-        <BaseFormField
+        <RFormField
           control={form.control}
           name='username'
           label='Email'
           withPlaceholder
-          description='Email ya bukan username 🔥'
+          description='Enter the email that is registered in the system.'
         >
-          <Input autoComplete='username' />
-        </BaseFormField>
+          <Input autoComplete='username' prepend={<AtSign size={16} />} />
+        </RFormField>
 
         {/* Type 1: Simple input */}
-        <BaseFormField
+        <RFormField
           control={form.control}
           name='password'
           label='Password'
           withPlaceholder
         >
-          <BaseInputPassword />
-        </BaseFormField>
+          <RInputPassword prepend={<FileLock2 size={16} />} />
+        </RFormField>
 
         {/* Type 2: Input with render */}
-        {/* <BaseFormField
+        {/* <RFormField
             control={form.control}
             name='password'
             label='Password'
             render={({ field }) => (
-              <BaseInputPassword
+              <RInputPassword
                 value={field.value}
                 onChange={field.onChange}
                 placeholder='Enter your password'
@@ -126,7 +126,7 @@ const AuthLogin = () => {
         <Button type='submit' className='w-full mt-3'>
           Login
         </Button>
-      </BaseForm>
+      </RForm>
     </div>
   );
 };

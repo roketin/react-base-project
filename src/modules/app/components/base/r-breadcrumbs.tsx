@@ -2,7 +2,7 @@ import type { AppRouteObject } from '@/modules/app/libs/routes-utils';
 import { useBreadcrumbStore } from '@/modules/app/stores/breadcrumbs.store';
 import { Link, useMatches } from 'react-router-dom';
 
-export function BaseBreadcrumbs() {
+export function RBreadcrumbs() {
   const matches = useMatches() as (ReturnType<typeof useMatches>[number] & {
     handle?: AppRouteObject['handle'];
   })[];

@@ -9,7 +9,7 @@ import {
 } from '@/modules/app/components/ui/card';
 import React from 'react';
 
-type TBaseCardProps = {
+type TRCardProps = {
   header?: React.ReactNode;
   title?: React.ReactNode;
   description?: React.ReactNode;
@@ -18,7 +18,7 @@ type TBaseCardProps = {
   footer?: React.ReactNode;
 };
 
-export const BaseCard: React.FC<TBaseCardProps> = ({
+export const RCard: React.FC<TRCardProps> = ({
   header,
   title,
   description,

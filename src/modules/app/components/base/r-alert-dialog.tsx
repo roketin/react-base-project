@@ -12,7 +12,7 @@ import Button from '@/modules/app/components/ui/button';
 import { buttonVariants } from '@/modules/app/components/ui/variants/button-variants';
 import type { VariantProps } from 'class-variance-authority';
 
-export type TBaseAlertDialogProps = {
+export type TRAlertDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: React.ReactNode;
@@ -28,7 +28,7 @@ export type TBaseAlertDialogProps = {
   hideCancel?: boolean;
 };
 
-const BaseAlertDialog = ({
+const RAlertDialog = ({
   open,
   onOpenChange,
   title,
@@ -42,7 +42,7 @@ const BaseAlertDialog = ({
   loading,
   icon,
   hideCancel = false,
-}: TBaseAlertDialogProps) => {
+}: TRAlertDialogProps) => {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -73,4 +73,4 @@ const BaseAlertDialog = ({
   );
 };
 
-export default BaseAlertDialog;
+export default RAlertDialog;

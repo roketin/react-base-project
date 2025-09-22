@@ -23,7 +23,7 @@ const inputVariants = cva(
 
 type TInputSize = 'default' | 'sm' | 'lg' | 'icon';
 
-type TInputProps = React.ComponentProps<'input'> & {
+export type TInputProps = React.ComponentProps<'input'> & {
   prepend?: React.ReactNode;
   append?: React.ReactNode;
   clearable?: boolean;
@@ -63,19 +63,15 @@ function Input({
         className,
       )}
     >
-      {prepend && (
-        <span className='flex items-center pl-3 text-muted-foreground'>
-          {prepend}
-        </span>
-      )}
+      {prepend && <span className='flex items-center pl-3'>{prepend}</span>}
 
       <input
         type={type}
         data-slot='input'
         className={cn(
           inputVariants({ size: props.density }),
-          prepend ? 'pl-10' : 'pl-3',
-          append ? 'pr-10' : 'pr-3',
+          prepend ? 'pl-3' : 'pl-3',
+          append ? 'pr-3' : 'pr-3',
           className,
         )}
         aria-invalid={ariaInvalid}
@@ -83,11 +79,7 @@ function Input({
         {...props}
       />
 
-      {append && (
-        <span className='flex items-center text-muted-foreground'>
-          {append}
-        </span>
-      )}
+      {append && <span className='flex items-center'>{append}</span>}
 
       {clearable && (
         <Button

@@ -1,7 +1,7 @@
 import { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react';
 import React, { useState, useMemo, useCallback } from 'react';
 
-type BaseMultiComboBoxProps<
+type RMultiComboBoxProps<
   T extends object,
   K extends keyof T,
   V extends keyof T,
@@ -17,11 +17,11 @@ type BaseMultiComboBoxProps<
   onSearch?: (query: string) => void;
 };
 
-export function BaseMultiComboBox<
+export function RMultiComboBox<
   T extends object,
   K extends keyof T,
   V extends keyof T,
->(props: BaseMultiComboBoxProps<T, K, V>) {
+>(props: RMultiComboBoxProps<T, K, V>) {
   const {
     items = [],
     labelKey,

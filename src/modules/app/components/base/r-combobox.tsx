@@ -16,11 +16,7 @@ import {
 } from '@/modules/app/components/ui/command';
 import { cn } from '@/modules/app/libs/utils';
 
-type BaseComboBoxProps<
-  T extends object,
-  K extends keyof T,
-  V extends keyof T,
-> = {
+type RComboBoxProps<T extends object, K extends keyof T, V extends keyof T> = {
   items: T[];
   labelKey: K;
   valueKey: V;
@@ -30,7 +26,7 @@ type BaseComboBoxProps<
   onSearch?: (query: string) => void;
 };
 
-export function BaseComboBox<
+export function RComboBox<
   T extends object,
   K extends keyof T,
   V extends keyof T,
@@ -42,7 +38,7 @@ export function BaseComboBox<
   clearable = false,
   searchValue,
   onSearch,
-}: BaseComboBoxProps<T, K, V>) {
+}: RComboBoxProps<T, K, V>) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
 
