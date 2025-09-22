@@ -91,9 +91,87 @@ This project features all the latest tools and good practices in web development
 - 📓 **[commitlint](https://commitlint.js.org)** – Helps your team adhering to a commit convention
 - 🏷️ **[Standard Version](https://github.com/conventional-changelog/standard-version)** – A utility for versioning using semver and CHANGELOG generation powered by Conventional Commits
 
-<!-- Procedures Section -->
+### ⚙️ Extra Configurations
 
-## ▶️ Getting Started
+<details>
+ <summary>Using Compiler</summary>
+
+ <h4>How to Activate</h4>
+
+Put the `babel.config.js` file (located in the path `src/scripts`) in the project root and delete `.babelrc` file.
+
+Uncomment the `wdyr` import line on `pages/_app.tsx`.
+
+That's it! Now you can monitore React re-renders!
+
+ <h4>How to Uninstall</h4>
+
+Just delete the `babel.config.js` and `wdyr.ts` files, remove `wdyr` import line on `pages/_app.tsx` and uninstall it:
+
+```bash
+# PNPM
+$ pnpm uninstall @welldone-software/why-did-you-render
+# NPM
+$ npm uninstall @welldone-software/why-did-you-render
+# Yarn
+$ yarn remove @welldone-software/why-did-you-render
+```
+
+</details>
+
+<!-- File Tree Section -->
+
+## 📁 File Tree
+
+See below the file tree to understand the project structure.
+
+<details>
+ <summary>View file tree</summary>
+
+> Folders and files marked with (`**`) are optional, so you can delete then.
+
+```txt
+📂 reactjs-base-project/
+┣ 📂 .husky/                      # Husky's folder
+┃ ┣ 📃 commit-msg                 # Commitlint git hook
+┃ ┗ 📃 pre-commit                 # Lint-staged git hook
+┣ 📂 .vscode/                     # VSCode's workspace **
+┣ 📂 public/                      # Public folder
+┃ ┣ 📃 favicon.ico                # Icon tab browser
+┣ 📂 src/
+┃ ┣ 📂 modules/                  
+┃ ┃ ┣ 📂 [module name, ex: home]
+┃ ┃ ┃ ┣ 📂 components
+┃ ┃ ┃ ┃ ┣ 📂 layouts
+┃ ┃ ┃ ┃ ┗ 📂 pages
+┃ ┃ ┃ ┣ 📂 hoc
+┃ ┃ ┃ ┣ 📂 hooks
+┃ ┃ ┃ ┣ 📂 routes
+┃ ┃ ┃ ┣ 📂 stores
+┃ ┃ ┃ ┗ 📂 types
+┃ ┣ 📂 plugins/                   # Plugins
+┃ ┃ ┣ 📂 axios                    # Axios config
+┃ ┃ ┗ 📂 yup                      # Yup config
+┃ ┣ 📃 main.tsx                   # Main file
+┃ ┗ 📃 vite.env.d.ts
+┣ 📃 .gitignore                   # Git ignore
+┣ 📃 .prettierignore              # Prettier ignore
+┣ 📃 .prettierrc                  # Prettier config
+┣ 📃 commitlint.config.cjs        # Commit lint config
+┣ 📃 components.json              # React component config
+┣ 📃 eslint.config.js             # Eslint config
+┣ 📃 index.html                   # Index html
+┣ 📃 package.json                 # Package json
+┣ 📃 pnpm.lock.yaml               # Package lock
+┣ 📃 tsconfig.app.json            # Typescript config for frontend app
+┣ 📃 tsconfig.json                # TypeScript config wrapper
+┣ 📃 tsconfig.node.json           # TypeScript config for node
+┣ 📃 README.md                    # Main README
+┣ 📃 vite.config.js               # Vite config
+```
+
+</details>
+
 
 # React + TypeScript + Vite
 
