@@ -1,7 +1,7 @@
+import Dashboard from '@/modules/dashboard/components/pages/dashboard';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
-import Dashboard from './dashboard';
 
 describe('Dashboard', () => {
   it('renders initial count', () => {
