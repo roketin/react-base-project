@@ -38,7 +38,7 @@ const AuthForgot = () => {
    * @param values
    */
   const handleSubmit = useCallback(
-    async (values: TFormSchema) => {
+    (values: TFormSchema) => {
       // Show confirm
       showAlert(
         {
@@ -47,7 +47,7 @@ const AuthForgot = () => {
           description: 'Are you sure you want to reset password?',
           manualClose: true,
         },
-        async ({ ok, setLoading, close }) => {
+        ({ ok, setLoading, close }) => {
           if (!ok) {
             close();
             return;

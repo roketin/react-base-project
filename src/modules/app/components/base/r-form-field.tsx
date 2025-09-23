@@ -76,7 +76,7 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
             }}
           >
             {label && (
-              <FormLabel className='block'>
+              <FormLabel className='block' htmlFor={name}>
                 {label}
                 {!notRequired && (
                   <span className='text-destructive text-lg'>*</span>
