@@ -1,4 +1,4 @@
-import type { AppRouteObject } from '@/modules/app/libs/routes-utils';
+import type { TAppRouteObject } from '@/modules/app/libs/routes-utils';
 import { routes } from '@/modules/app/routes/app-routes';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,10 +9,10 @@ import { useNavigate } from 'react-router-dom';
  * @returns An array of route objects each with an added `fullPath` property.
  */
 export function flattenRoutes(
-  routesToProcess: AppRouteObject[] = routes,
+  routesToProcess: TAppRouteObject[] = routes,
   parentPath = '',
-): (AppRouteObject & { fullPath: string })[] {
-  let flatRoutes: (AppRouteObject & { fullPath: string })[] = [];
+): (TAppRouteObject & { fullPath: string })[] {
+  let flatRoutes: (TAppRouteObject & { fullPath: string })[] = [];
 
   for (const route of routesToProcess) {
     const currentPath = route.path
@@ -40,7 +40,7 @@ export function flattenRoutes(
  */
 export function findRouteByName(
   name: string,
-): (AppRouteObject & { fullPath: string }) | undefined {
+): (TAppRouteObject & { fullPath: string }) | undefined {
   const flatRoutes = flattenRoutes();
   return flatRoutes.find((route) => route.name === name);
 }

@@ -6,5 +6,12 @@ const Dashboard = lazy(
 );
 
 export const dashboardRoutes = createAppRoutes([
-  { name: 'DashboardIndex', path: '', element: <Dashboard /> },
+  {
+    name: 'DashboardIndex',
+    path: '',
+    element: <Dashboard />,
+    handle: {
+      breadcrumb: 'Dashboard',
+    },
+  },
 ]);

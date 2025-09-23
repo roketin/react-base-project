@@ -1,41 +1,58 @@
-import type { AppRouteObject } from '@/modules/app/libs/routes-utils';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from '@/modules/app/components/ui/breadcrumb';
+import type { TAppRouteObject } from '@/modules/app/libs/routes-utils';
 import { useBreadcrumbStore } from '@/modules/app/stores/breadcrumbs.store';
 import { Link, useMatches } from 'react-router-dom';
 
 export function RBreadcrumbs() {
   const matches = useMatches() as (ReturnType<typeof useMatches>[number] & {
-    handle?: AppRouteObject['handle'];
+    handle?: TAppRouteObject['handle'];
   })[];
 
   const resolvers = useBreadcrumbStore((s) => s.resolvers);
 
-  const crumbs = matches
-    .filter((m) => m.handle?.breadcrumb)
-    .map((match, i) => {
-      const bc = match.handle!.breadcrumb!;
-      let label: string;
+  const filteredMatches = matches.filter((m) => m.handle?.breadcrumb);
 
-      if (typeof bc === 'string') {
-        label = bc;
+  const crumbs = filteredMatches.map((match, i) => {
+    const bc = match.handle!.breadcrumb!;
+    let label: string;
+
+    if (typeof bc === 'string') {
+      label = bc;
+    } else {
+      const value = bc(match);
+      if (typeof value === 'string') {
+        label = value;
       } else {
-        const value = bc(match);
-        if (typeof value === 'string') {
-          label = value;
-        } else {
-          const resolver = resolvers[value.type];
-          label = resolver?.(value.id) ?? `${value.type} ${value.id}`;
-        }
+        const resolver = resolvers[value.type];
+        label = resolver?.(value.id) ?? `${value.type} ${value.id}`;
       }
+    }
 
-      return (
-        <span key={i} className='flex items-center gap-2'>
-          <Link to={match.pathname} className='text-blue-600 hover:underline'>
+    const isLast = i === filteredMatches.length - 1;
+    const isOnly = filteredMatches.length === 1;
+
+    return (
+      <BreadcrumbItem key={i}>
+        {!isLast && !isOnly ? (
+          <Link to={match.pathname} className='hover:underline'>
             {label}
           </Link>
-          {i < matches.length - 1 && <span>/</span>}
-        </span>
-      );
-    });
+        ) : (
+          label
+        )}
+        {!isLast && <BreadcrumbSeparator className='hidden md:block' />}
+      </BreadcrumbItem>
+    );
+  });
 
-  return <nav className='flex space-x-1'>{crumbs}</nav>;
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>{crumbs}</BreadcrumbList>
+    </Breadcrumb>
+  );
 }

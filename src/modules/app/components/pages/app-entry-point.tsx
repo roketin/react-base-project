@@ -1,11 +1,11 @@
+import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import { LoaderPinwheel } from 'lucide-react';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const AppEntryPoint = () => {
   // Hooks
-  const navigate = useNavigate();
+  const { navigate } = useNamedRoute();
   const { isLoggedIn } = useAuth();
 
   // Show loading

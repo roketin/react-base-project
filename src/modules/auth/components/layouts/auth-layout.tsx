@@ -1,14 +1,14 @@
 import FileInfo from '@/modules/app/components/base/file-info';
-import { linkTo } from '@/modules/app/hooks/use-named-route';
+import { RNavigate } from '@/modules/app/components/base/r-navigate';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 const AuthLayout = () => {
   const { isLoggedIn } = useAuth();
 
   // When is logged in try to redirect to dashboard index
   if (isLoggedIn()) {
-    return <Navigate to={linkTo('DashboardIndex')} />;
+    return <RNavigate name='DashboardIndex' />;
   }
 
   return (

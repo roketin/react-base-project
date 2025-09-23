@@ -1,6 +1,6 @@
-import { Navigate } from 'react-router-dom';
 import React, { memo } from 'react';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
+import { RNavigate } from '@/modules/app/components/base/r-navigate';
 
 /**
  * High Order Component for protected route
@@ -11,7 +11,7 @@ const AuthProtectedRoute = ({ element }: { element: React.ReactNode }) => {
   const { isLoggedIn } = useAuth();
 
   if (!isLoggedIn()) {
-    return <Navigate to='/auth/login' replace />;
+    return <RNavigate name='AuthLogin' replace />;
   }
 
   return element;

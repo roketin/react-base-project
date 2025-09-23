@@ -1,7 +1,7 @@
 import type { BreadcrumbType } from '@/modules/app/stores/breadcrumbs.store';
 import type { RouteObject } from 'react-router-dom';
 
-export type BreadcrumbHandle =
+export type TBreadcrumbHandle =
   | string
   | ((match: {
       params: Record<string, string | undefined>;
@@ -9,14 +9,15 @@ export type BreadcrumbHandle =
       pathname: string;
     }) => string | { type: BreadcrumbType; id: string });
 
-export type AppRouteObject = Omit<RouteObject, 'children' | 'handle'> & {
+export type TAppRouteObject = Omit<RouteObject, 'children' | 'handle'> & {
   name?: string;
   handle?: {
-    breadcrumb?: BreadcrumbHandle;
+    breadcrumb?: TBreadcrumbHandle;
     [key: string]: unknown;
   };
-  children?: AppRouteObject[];
+  children?: TAppRouteObject[];
 };
-export function createAppRoutes(routes: AppRouteObject[]): AppRouteObject[] {
+
+export function createAppRoutes(routes: TAppRouteObject[]): TAppRouteObject[] {
   return routes;
 }
