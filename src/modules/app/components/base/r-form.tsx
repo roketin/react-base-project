@@ -30,6 +30,7 @@ const RForm = <TFormValues extends FieldValues>({
     <Form {...form}>
       <FormConfigContext.Provider value={{ labelWidth, layout }}>
         <form
+          data-testid='form'
           className={cn(
             'grid',
             spacing ? `gap-[${spacing}]` : 'gap-4',
