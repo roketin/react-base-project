@@ -11,7 +11,7 @@ const AppEntryPoint = () => {
   // Show loading
   useEffect(() => {
     const timeout = setTimeout(() => {
-      navigate(isLoggedIn() ? '/admin' : '/auth/login');
+      navigate(isLoggedIn() ? 'DashboardIndex' : 'AuthLogin');
     }, 300);
 
     return () => {
