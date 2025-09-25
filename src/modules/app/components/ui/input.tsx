@@ -1,27 +1,11 @@
 import Button from '@/modules/app/components/ui/button';
 import { cn } from '@/modules/app/libs/utils';
-import React, { useCallback } from 'react';
-import { cva } from 'class-variance-authority';
+import React, { useCallback, useMemo } from 'react';
 import { X } from 'lucide-react';
-
-const inputVariants = cva(
-  'w-full min-w-0 rounded-md text-base outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-  {
-    variants: {
-      size: {
-        default: 'h-9 px-3 py-1',
-        sm: 'h-8 px-2 py-1 text-sm',
-        lg: 'h-11 px-4 py-2 text-lg',
-        icon: 'h-9 w-9 p-0 text-base',
-      },
-    },
-    defaultVariants: {
-      size: 'default',
-    },
-  },
-);
-
-type TInputSize = 'default' | 'sm' | 'lg' | 'icon';
+import {
+  inputVariants,
+  type TInputSize,
+} from '@/modules/app/components/ui/variants/input-variants';
 
 export type TInputProps = React.ComponentProps<'input'> & {
   prepend?: React.ReactNode;
@@ -40,7 +24,7 @@ function Input({
   clearable = false,
   ...props
 }: TInputProps) {
-  const hasError = !!ariaInvalid;
+  const hasError = useMemo<boolean>(() => !!ariaInvalid, [ariaInvalid]);
 
   /**
    * Clear value
@@ -70,6 +54,7 @@ function Input({
         data-slot='input'
         className={cn(
           inputVariants({ size: props.density }),
+          'placeholder-gray-400',
           prepend ? 'pl-3' : 'pl-3',
           append ? 'pr-3' : 'pr-3',
           className,

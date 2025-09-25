@@ -1,60 +1,50 @@
 import AppSidebarHeader from '@/modules/app/components/layouts/app-sidebar-header';
+import { APP_MENUS } from '@/modules/app/components/layouts/menus';
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
 } from '@/modules/app/components/ui/sidebar';
-import * as React from 'react';
-
-// This is sample data.
-const data = {
-  versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
-  navMain: [
-    {
-      title: 'Getting Started',
-      url: '#',
-      items: [
-        {
-          title: 'Installation',
-          url: '#',
-          isActive: true,
-        },
-        {
-          title: 'Project Structure',
-          url: '#',
-        },
-      ],
-    },
-  ],
-};
+import { nameToPath } from '@/modules/app/hooks/use-named-route';
+import { cn } from '@/modules/app/libs/utils';
+import { NavLink } from 'react-router-dom';
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <AppSidebarHeader />
       <SidebarContent>
-        {data.navMain.map((item) => (
-          <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {item.items.map((item) => (
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {APP_MENUS.map((item) => {
+                const actualPath = nameToPath(item.name);
+                return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a href={item.url}>{item.title}</a>
-                    </SidebarMenuButton>
+                    <NavLink to={actualPath} end={actualPath === '/admin'}>
+                      {({ isActive }) => (
+                        <SidebarMenuButton
+                          tooltip={item.title}
+                          className={cn(
+                            isActive && '!bg-primary !text-primary-foreground',
+                          )}
+                        >
+                          {item.icon && <item.icon />}
+                          <span>{item.title}</span>
+                        </SidebarMenuButton>
+                      )}
+                    </NavLink>
                   </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarRail />
     </Sidebar>

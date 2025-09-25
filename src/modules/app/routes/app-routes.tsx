@@ -9,6 +9,7 @@ import AuthProtectedRoute from '@/modules/auth/hoc/auth-protected-route';
 import { Outlet } from 'react-router-dom';
 import { authRoutes } from '@/modules/auth/routes/auth.routes';
 import { dashboardRoutes } from '@/modules/dashboard/routes/dashboard.routes';
+import { sampleFormRoutes } from '@/modules/sample-form/routes/sample-form.routes';
 
 export const appRoutesConfig = [
   {
@@ -17,11 +18,13 @@ export const appRoutesConfig = [
     errorElement: <AppGlobalError />,
     children: [
       { index: true, element: <AppEntryPoint /> },
+
       ...authRoutes,
+
       {
         path: '/admin',
         element: <AuthProtectedRoute element={<AppLayout />} />,
-        children: [...dashboardRoutes],
+        children: [...dashboardRoutes, ...sampleFormRoutes],
       },
       { path: '*', element: <AppNotFound /> },
     ],

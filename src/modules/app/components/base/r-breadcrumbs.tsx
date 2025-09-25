@@ -7,6 +7,7 @@ import {
 import type { TAppRouteObject } from '@/modules/app/libs/routes-utils';
 import { useBreadcrumbStore } from '@/modules/app/stores/breadcrumbs.store';
 import { Link, useMatches } from 'react-router-dom';
+import { Fragment } from 'react';
 
 export function RBreadcrumbs() {
   const matches = useMatches() as (ReturnType<typeof useMatches>[number] & {
@@ -37,16 +38,18 @@ export function RBreadcrumbs() {
     const isOnly = filteredMatches.length === 1;
 
     return (
-      <BreadcrumbItem key={i}>
-        {!isLast && !isOnly ? (
-          <Link to={match.pathname} className='hover:underline'>
-            {label}
-          </Link>
-        ) : (
-          label
-        )}
+      <Fragment key={i}>
+        <BreadcrumbItem>
+          {!isLast && !isOnly ? (
+            <Link to={match.pathname} className='hover:underline'>
+              {label}
+            </Link>
+          ) : (
+            label
+          )}
+        </BreadcrumbItem>
         {!isLast && <BreadcrumbSeparator className='hidden md:block' />}
-      </BreadcrumbItem>
+      </Fragment>
     );
   });
 

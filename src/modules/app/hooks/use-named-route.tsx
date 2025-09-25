@@ -46,6 +46,22 @@ export function findRouteByName(
 }
 
 /**
+ * Returns the absolute fullPath of a route given its name.
+ *
+ * @param name - The name of the route.
+ * @returns The absolute fullPath string of the route (always starts with '/').
+ * @throws Error if the route with the specified name is not found.
+ */
+export function nameToPath(name: string): string {
+  const route = findRouteByName(name);
+  if (!route?.fullPath) {
+    throw new Error(`Route "${name}" not found`);
+  }
+  // Ensure the returned path starts with '/'
+  return route.fullPath.startsWith('/') ? route.fullPath : '/' + route.fullPath;
+}
+
+/**
  * Resolves a route path by replacing parameter placeholders with actual values.
  *
  * @param path - The route path string containing parameters (e.g., '/user/:id').

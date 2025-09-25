@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, X } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/modules/app/components/ui/popover';
-import Button from '@/modules/app/components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -15,6 +14,10 @@ import {
   CommandList,
 } from '@/modules/app/components/ui/command';
 import { cn } from '@/modules/app/libs/utils';
+import {
+  inputVariants,
+  type TInputSize,
+} from '@/modules/app/components/ui/variants/input-variants';
 
 type RComboBoxProps<T extends object, K extends keyof T, V extends keyof T> = {
   items: T[];
@@ -24,6 +27,9 @@ type RComboBoxProps<T extends object, K extends keyof T, V extends keyof T> = {
   clearable?: boolean;
   searchValue?: string;
   onSearch?: (query: string) => void;
+  density?: TInputSize;
+  placeholder?: string;
+  'aria-invalid'?: boolean | string;
 };
 
 export function RComboBox<
@@ -35,31 +41,40 @@ export function RComboBox<
   labelKey,
   valueKey,
   onChange,
-  clearable = false,
+  clearable = true,
   searchValue,
   onSearch,
+  density,
+  placeholder = 'Select item..',
+  'aria-invalid': ariaInvalid,
 }: RComboBoxProps<T, K, V>) {
+  const hasError = !!ariaInvalid;
+
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant='outline'
-          role='combobox'
-          aria-expanded={open}
-          className='w-[200px] justify-between'
+        <div
+          className={cn(
+            inputVariants({ size: density }),
+            'relative flex w-full items-center rounded-md border bg-white dark:bg-input/30 transition-[color,box-shadow] shadow-md shadow-slate-100 justify-between',
+            hasError
+              ? 'border-destructive ring-destructive/40'
+              : 'border-border focus-within:ring-ring/50 focus-within:ring-[3px]',
+          )}
         >
           <div className='flex items-center w-full justify-between'>
             <span>
-              {value
-                ? String(
-                    items.find((item) => item[valueKey] === value)?.[
-                      labelKey
-                    ] ?? '',
-                  )
-                : 'Select...'}
+              {value ? (
+                String(
+                  items.find((item) => item[valueKey] === value)?.[labelKey] ??
+                    '',
+                )
+              ) : (
+                <span className='text-gray-400'>{placeholder}</span>
+              )}
             </span>
             <div className='flex items-center gap-1'>
               {clearable && value && (
@@ -70,17 +85,17 @@ export function RComboBox<
                     setValue('');
                     onChange?.(null, null);
                   }}
-                  className='text-muted-foreground hover:text-foreground'
+                  className='rounded text-muted-foreground hover:bg-slate-50 p-1 cursor-pointer'
                 >
-                  ×
+                  <X size={14} />
                 </button>
               )}
-              <ChevronsUpDown className='opacity-50' />
+              <ChevronsUpDown className='opacity-50' size={14} />
             </div>
           </div>
-        </Button>
+        </div>
       </PopoverTrigger>
-      <PopoverContent className='w-[200px] p-0'>
+      <PopoverContent className='popover-content-width-full p-0'>
         <Command>
           <CommandInput
             placeholder='Search...'
@@ -91,7 +106,7 @@ export function RComboBox<
             }}
           />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No data found.</CommandEmpty>
             <CommandGroup>
               {items.map((item) => (
                 <CommandItem

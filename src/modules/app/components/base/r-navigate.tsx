@@ -4,9 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 
 export type TRNavigateProps = {
-  // Bisa pakai nama route
   name?: string;
-  // Atau path langsung
   path?: string;
   params?: Record<string, string>;
   query?: Record<string, string | number | boolean>;

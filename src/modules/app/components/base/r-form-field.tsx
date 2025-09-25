@@ -34,6 +34,7 @@ type TRFormFieldProps<T extends FieldValues, N extends Path<T>> = {
   notRequired?: boolean;
   withPlaceholder?: boolean;
   labelWidth?: string;
+  valuePropName?: 'value' | 'checked' | 'radio';
 };
 
 export function RFormField<T extends FieldValues, N extends Path<T>>({
@@ -47,6 +48,7 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
   notRequired = false,
   withPlaceholder = false,
   labelWidth,
+  valuePropName = 'value',
 }: TRFormFieldProps<T, N>) {
   const formConfig = useFormConfig();
 
@@ -67,49 +69,65 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
     <FormField
       control={control}
       name={name}
-      render={(renderProps) => (
-        <FormItem>
-          <div
-            className={computedLayout === 'horizontal' ? `grid` : undefined}
-            style={{
-              gridTemplateColumns: `${computedWidth} 1fr`,
-            }}
-          >
-            {label && (
-              <FormLabel className='block' htmlFor={name}>
-                {label}
-                {!notRequired && (
-                  <span className='text-destructive text-lg'>*</span>
-                )}{' '}
-              </FormLabel>
-            )}
-            <div>
-              <FormControl>
-                {render
-                  ? render(renderProps)
-                  : React.cloneElement(
-                      children as React.ReactElement<Record<string, unknown>>,
-                      {
-                        ...renderProps.field,
-                        ...(withPlaceholder && typeof label === 'string'
-                          ? { placeholder: 'Input ' + label.toLowerCase() }
-                          : {}),
-                        id: String(name),
-                        name: String(name),
-                      },
-                    )}
-              </FormControl>
+      render={(renderProps) => {
+        const { value, onChange, ...restField } = renderProps.field;
 
-              {description && (
-                <FormDescription className='mt-1.5'>
-                  {description}
-                </FormDescription>
+        const controlProps = () => {
+          switch (valuePropName) {
+            case 'checked':
+              return { checked: value, onCheckedChange: onChange };
+            case 'radio':
+              return { value, onValueChange: onChange };
+            default:
+              return { value, onChange };
+          }
+        };
+
+        return (
+          <FormItem>
+            <div
+              className={computedLayout === 'horizontal' ? `grid` : undefined}
+              style={{
+                gridTemplateColumns: `${computedWidth} 1fr`,
+              }}
+            >
+              {label && (
+                <FormLabel className='block' htmlFor={name}>
+                  {label}
+                  {!notRequired && (
+                    <span className='text-destructive text-lg'>*</span>
+                  )}{' '}
+                </FormLabel>
               )}
-              <FormMessage className='mt-1.5' />
+              <div>
+                <FormControl>
+                  {render
+                    ? render(renderProps)
+                    : React.cloneElement(
+                        children as React.ReactElement<Record<string, unknown>>,
+                        {
+                          ...restField,
+                          ...controlProps(),
+                          ...(withPlaceholder && typeof label === 'string'
+                            ? { placeholder: 'Enter ' + label.toLowerCase() }
+                            : {}),
+                          id: String(name),
+                          name: String(name),
+                        },
+                      )}
+                </FormControl>
+
+                {description && (
+                  <FormDescription className='mt-1.5'>
+                    {description}
+                  </FormDescription>
+                )}
+                <FormMessage className='mt-1.5' />
+              </div>
             </div>
-          </div>
-        </FormItem>
-      )}
+          </FormItem>
+        );
+      }}
     />
   );
 }
