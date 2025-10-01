@@ -12,7 +12,8 @@
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
-    "commit": "npx @commitlint/prompt-cli"
+    "commit": "npx @commitlint/prompt-cli",
+    "roketin": "node ./bin/roketin.js"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,html,css,scss,json}": [
@@ -36,6 +37,7 @@
     "@tanstack/react-query": "^5.89.0",
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.12.2",
+    "cfonts": "^3.3.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -58,6 +60,7 @@
     "@commitlint/config-conventional": "^19.1.0",
     "@commitlint/prompt-cli": "^19.8.1",
     "@eslint/js": "^9.35.0",
+    "@inquirer/prompts": "^7.8.6",
     "@tailwindcss/vite": "^4.1.13",
     "@tanstack/eslint-plugin-query": "^5.89.0",
     "@testing-library/jest-dom": "^6.8.0",

@@ -23,4 +23,5 @@ dist-ssr
 *.sln
 *.sw?
 
-coverage/
+coverage
+src/@types/i18next.d.ts

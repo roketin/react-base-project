@@ -5,13 +5,23 @@ declare module 'i18next' {
   interface CustomTypeOptions {
     defaultNS: 'app';
     resources: {
-      dashboard: {
+      account: {
         "title": string;
-        "increment": string;
-        "decrement": string;
+        "subTitle": string;
       }
-      sampleForm: {
+      app: {
         "title": string;
+        "subTitle": string;
+        "title": string;
+        "subTitle": string;
+      }
+      validation: {
+        "required": string;
+        "minLength": string;
+        "invalidEmail": string;
+        "required": string;
+        "minLength": string;
+        "invalidEmail": string;
       }
       auth: {
         "login.title": string;
@@ -29,19 +39,17 @@ declare module 'i18next' {
         "form.submit": string;
         "form.forgotPassword": string;
       }
-      app: {
+      dashboard: {
         "title": string;
-        "subTitle": string;
-        "title": string;
-        "subTitle": string;
+        "increment": string;
+        "decrement": string;
       }
-      validation: {
-        "required": string;
-        "minLength": string;
-        "invalidEmail": string;
-        "required": string;
-        "minLength": string;
-        "invalidEmail": string;
+      sampleForm: {
+        "title": string;
+      }
+      type: {
+        "title": string;
+        "subTitle": string;
       }
     };
   }
