@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import path from 'path';
-import { select, checkbox } from '@inquirer/prompts';
+import { select, checkbox, confirm } from '@inquirer/prompts'; // Added 'confirm'
 import cfonts from 'cfonts';
 
 const args = process.argv.slice(2);
@@ -44,28 +44,31 @@ cfonts.say('Module Generator', {
 
 // split path
 const parts = modulePathArg.split('/');
-const rawModuleName = parts[parts.length - 1];
-const moduleName = rawModuleName; // tetap untuk file naming
+const moduleName = parts[parts.length - 1]; // used for file naming
 
-// Sanitize only the first folder name in path to kebab-case, rest remain as input
-const firstFolder = sanitizeFolderName(parts[0]);
-const restFolders = parts.slice(1); // tetap seperti input
-let basePath;
+// --- PATH CORRECTION START ---
+// Build the base path segment by segment.
+// This ensures 'modules' is correctly inserted for all nested paths,
+// maintaining the pattern: src/modules/moduleA/modules/moduleB/...
+const pathSegments = ['./src/modules'];
 
-if (restFolders.length > 0) {
-  // Jika ada nested path, tambahkan folder 'modules'
-  basePath = path.resolve(
-    './src/modules',
-    firstFolder,
-    'modules',
-    ...restFolders,
-  );
-} else {
-  // Tidak ada nested path, jangan tambah 'modules'
-  basePath = path.resolve('./src/modules', firstFolder);
+for (let i = 0; i < parts.length; i++) {
+  const segment = sanitizeFolderName(parts[i]);
+
+  if (i === 0) {
+    // The first segment (top-level module) goes directly under src/modules
+    pathSegments.push(segment);
+  } else {
+    // All subsequent segments (nested modules) must be placed in a 'modules' subfolder
+    pathSegments.push('modules');
+    pathSegments.push(segment);
+  }
 }
 
-// Map type ke folder
+const basePath = path.resolve(...pathSegments);
+// --- PATH CORRECTION END ---
+
+// Map type to folder
 const folderMap = {
   page: 'components/pages',
   route: 'routes',
@@ -82,15 +85,28 @@ const folderMap = {
 const customChoices = Object.keys(folderMap);
 
 //#region -------------------------- Generator
-if (command === 'module') {
+if (command === 'module' || command === 'module-child') {
+  let isChild = command === 'module-child';
+
+  // Logic to ask if a nested 'module' command should be treated as 'module-child'
+  if (command === 'module' && parts.length > 1) {
+    const confirmChild = await confirm({
+      message: `The path '${modulePathArg}' is nested. Treat '${moduleName}' as a child module? (Selecting 'No' means the path will be registered flatly as '${parts.join('/')}')`,
+      default: true,
+    });
+    if (confirmChild) {
+      isChild = true;
+    }
+  }
+
   const mainChoice = await select({
-    message: 'Pilih tipe module yang ingin dibuat:',
+    message: 'Select the module type to generate:',
     choices: [
       {
         name: 'Standard (components/pages, route, locale, type)',
         value: 'view',
       },
-      { name: 'Semua folder', value: 'all' },
+      { name: 'All folders', value: 'all' },
       { name: 'Custom', value: 'custom' },
     ],
   });
@@ -102,14 +118,13 @@ if (command === 'module') {
     selected = ['page', 'route', 'locale', 'type'];
   } else if (mainChoice === 'custom') {
     const customSelected = await checkbox({
-      message: 'Pilih folder/file yang ingin dibuat:',
+      message: 'Select folders/files to generate:',
       choices: customChoices,
       loop: false,
     });
     selected = customSelected;
   }
 
-  // buat folder & file
   selected.forEach((type) => {
     const folder = folderMap[type];
     const fullPath = folder ? path.join(basePath, folder) : basePath;
@@ -120,7 +135,8 @@ if (command === 'module') {
         fileName = `${kebabCase(moduleName)}.tsx`;
         break;
       case 'route':
-        fileName = `${kebabCase(moduleName)}.routes.tsx`;
+        // Naming for child route files includes a '.child' suffix
+        fileName = `${kebabCase(moduleName)}.routes${isChild ? '.child' : ''}.tsx`;
         break;
       case 'store':
         fileName = `${kebabCase(moduleName)}.store.ts`;
@@ -128,9 +144,6 @@ if (command === 'module') {
       case 'hook':
         fileName = `use-${kebabCase(moduleName)}.ts`;
         break;
-      // case 'hoc':
-      //   fileName = `with${capitalize(moduleName)}.ts`;
-      //   break;
       case 'constant':
         fileName = `${kebabCase(moduleName)}.constant.ts`;
         break;
@@ -150,7 +163,9 @@ if (command === 'module') {
         fileName = `${kebabCase(moduleName)}.${type}`;
     }
     const filePath = path.join(fullPath, fileName);
-    createFile(filePath, getTemplate(type));
+
+    // If isChild is true, append to parent route (requires further logic)
+    createFile(filePath, getTemplate(type, { isChild, parts }));
     console.log(`Created: ${filePath}`);
   });
 } else {
@@ -159,34 +174,124 @@ if (command === 'module') {
 //#endregion -------------------------- Generator
 
 //#region -------------------------- Core Function & Utils
-function getTemplate(type) {
+
+/**
+ * Creates a route configuration.
+ * The path is determined by whether it's a child (last segment) or a standalone (full path).
+ * @param {string} finalModuleName - The name of the final component
+ * @param {boolean} isChild - If this is a child route (module-child command or confirmed as child)
+ * @param {string[]} moduleParts - All parts of the module path (e.g., ['testing', 'makan'])
+ * @returns {string} The simple route configuration string.
+ */
+function createRouteConfig(finalModuleName, isChild, moduleParts) {
+  const componentImport = capitalize(finalModuleName) + 'Index';
+
+  let routePath;
+  let pathComment;
+
+  if (isChild) {
+    // Child: Use only the last segment path. E.g., for 'testing/makan', path is 'makan'.
+    routePath = kebabCase(finalModuleName);
+    pathComment = `// Child route path uses only the segment name, as it's nested within a parent route.`;
+  } else {
+    // Not a child: Use the full path for flat registration. E.g., for 'testing/makan', path is 'testing/makan'.
+    routePath = moduleParts.map((p) => kebabCase(p)).join('/');
+    pathComment = `// Standalone route path uses the full segment path for flat registration: "${routePath}". This route MUST be registered at the root level.`;
+  }
+
+  // Ensure the index route is generated
+  const indexRoute = `
+      {
+        index: true,
+        name: "${capitalize(finalModuleName)}Index",
+        element: <${componentImport} />,
+      },
+      // Add other child routes here if needed
+    `;
+
+  const routeConfig = `[
+  {
+    path: "${routePath}", ${pathComment}
+    element: <Outlet />,
+    handle: {
+      breadcrumb: "${capitalize(finalModuleName)}",
+    },
+    children: [${indexRoute}
+    ],
+  },
+]`;
+  return routeConfig;
+}
+
+function getTemplate(type, options = {}) {
+  const { isChild, parts } = options;
+
   switch (type) {
     case 'page':
       return `
 const ${capitalize(moduleName)}Index = () => {
   return (
-    <div>${capitalize(moduleName)}</div>
+    <div>${capitalize(moduleName)} Page Content</div>
   )
 }
 
 export default ${capitalize(moduleName)}Index
 `;
 
-    case 'route':
-      return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
-import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
+    case 'route': {
+      const finalModuleName = moduleName;
 
-export const ${camelCase(moduleName)}Routes = createAppRoutes([
-  {
-    name: "${capitalize(moduleName)}Index",
-    path: "${parts.map((p) => kebabCase(p)).join('/')}",
-    element: <${capitalize(moduleName)}Index />,
-    handle: {
-      breadcrumb: "${capitalize(moduleName)}",
-    },
-  },
-]);
+      // Using relative file path (e.g., ../../account.routes.tsx) to locate the parent route
+      // This is an estimate. Real-world implementation requires AST parsing for file modification.
+      const parentRoutePathEstimate = path.join(
+        parts.length > 1 ? '../..' : '.',
+        kebabCase(parts[0]),
+        'routes',
+        `${kebabCase(parts[0])}.routes.tsx`,
+      );
+
+      // Template for Child Route (with .child.tsx suffix)
+      if (isChild) {
+        // Pass the entire 'parts' array to createRouteConfig
+        const routeConfig = createRouteConfig(finalModuleName, isChild, parts);
+
+        return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
+import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
+import { Outlet } from "react-router-dom";
+
+// This is a CHILD ROUTE.
+// It will not be automatically registered. You must import and nest it within a Parent Route
+// (e.g., in ${parentRoutePathEstimate}) manually.
+
+export const ${camelCase(moduleName)}ChildRoutes = createAppRoutes(${routeConfig});
 `;
+      }
+
+      // Template for Standard Route (for the main module that may have children or flat path)
+      if (
+        !fs.existsSync(
+          path.join(basePath, `${kebabCase(moduleName)}.routes.tsx`),
+        )
+      ) {
+        // Pass the entire 'parts' array to createRouteConfig
+        const routeConfig = createRouteConfig(finalModuleName, isChild, parts);
+
+        return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
+import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
+import { Outlet } from "react-router-dom";
+// import { ${camelCase(moduleName)}ChildRoutes } from "./${kebabCase(moduleName)}.routes.child"; // Example Child Route
+
+// To register child routes, add the child route elements to the 'children' array below.
+// Example: { path: "settings", children: ${camelCase(moduleName)}ChildRoutes }
+// Note: If this is a nested route, ensure you have correctly embedded it in the root router.
+
+export const ${camelCase(moduleName)}Routes = createAppRoutes(${routeConfig});
+`;
+      }
+
+      // If the standard route file already exists
+      return `// TODO: The route file already exists. Advanced logic is required to append nested child routes.`;
+    }
 
     case 'store':
       return `import { useState } from "react";
@@ -249,7 +354,7 @@ export function use${capitalize(moduleName)}Context() {
     case 'locale':
       return `{
       "title": "${capitalize(moduleName)}",
-      "subTitle": "Sub ${capitalize(moduleName)}"
+      "subtitle": "Sub ${capitalize(moduleName)}"
 }`;
 
     default:
@@ -261,8 +366,8 @@ function sanitizeFolderName(name) {
   return name
     .trim()
     .toLowerCase()
-    .replace(/\s+/g, '-') // spasi jadi dash
-    .replace(/[^a-z0-9-]/g, ''); // hapus karakter selain a-z, 0-9, dash
+    .replace(/\s+/g, '-') // spaces to dash
+    .replace(/[^a-z0-9-]/g, ''); // remove characters other than a-z, 0-9, dash
 }
 
 function ensureDir(dir) {

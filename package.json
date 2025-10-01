@@ -52,6 +52,7 @@
     "react-i18next": "^16.0.0",
     "react-router-dom": "^7.9.1",
     "sonner": "^2.0.7",
+    "ts-morph": "^27.0.0",
     "yup": "^1.7.0",
     "zustand": "^5.0.8"
   },
