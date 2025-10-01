@@ -1,4 +1,5 @@
 import Button from '@/modules/app/components/ui/button';
+import { Separator } from '@/modules/app/components/ui/separator';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import { useCallback } from 'react';
 
@@ -14,10 +15,11 @@ const Todo = () => {
 
   return (
     <div>
-      <div className='block mb-4'>
-        <Button onClick={handleAdd}>Sample Form</Button>
+      <div className='block'>
+        <Button onClick={handleAdd}>Add Page</Button>
       </div>
-      Sample List
+      <Separator className='my-4' />
+      Data Table (Coming Soon)
     </div>
   );
 };

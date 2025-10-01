@@ -34,7 +34,7 @@ type TRFormFieldProps<T extends FieldValues, N extends Path<T>> = {
   notRequired?: boolean;
   withPlaceholder?: boolean;
   labelWidth?: string;
-  valuePropName?: 'value' | 'checked' | 'radio';
+  valuePropName?: 'value' | 'checked' | 'radio' | 'slider' | 'datepicker';
 };
 
 export function RFormField<T extends FieldValues, N extends Path<T>>({
@@ -65,6 +65,12 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
     [formConfig?.layout, layout],
   );
 
+  // Get disabled state from form or from self component
+  const computedDisabled = useMemo<boolean>(
+    () => formConfig?.disabled ?? false,
+    [formConfig?.disabled],
+  );
+
   return (
     <FormField
       control={control}
@@ -77,6 +83,7 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
             case 'checked':
               return { checked: value, onCheckedChange: onChange };
             case 'radio':
+            case 'slider':
               return { value, onValueChange: onChange };
             default:
               return { value, onChange };
@@ -113,6 +120,7 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                             : {}),
                           id: String(name),
                           name: String(name),
+                          disabled: computedDisabled,
                         },
                       )}
                 </FormControl>

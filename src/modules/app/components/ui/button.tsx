@@ -3,7 +3,7 @@ import { Slot } from '@radix-ui/react-slot';
 import { type VariantProps } from 'class-variance-authority';
 import { buttonVariants } from '@/modules/app/components/ui/variants/button-variants';
 import { cn } from '@/modules/app/libs/utils';
-import { LoaderPinwheel } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 function Button({
   className,
@@ -31,7 +31,7 @@ function Button({
       disabled={disabled || loading}
       {...props}
     >
-      {loading && <LoaderPinwheel className='animate-spin' />}
+      {loading && <Loader2 className='animate-spin' />}
       {children}
     </Comp>
   );

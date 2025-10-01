@@ -14,6 +14,7 @@ export type TRFormProps<TFormValues extends FieldValues> = {
   className?: string;
   showErrorPopup?: boolean;
   spacing?: string;
+  disabled?: boolean;
 };
 
 const RForm = <TFormValues extends FieldValues>({
@@ -25,10 +26,11 @@ const RForm = <TFormValues extends FieldValues>({
   layout = 'horizontal',
   className = '',
   spacing = '',
+  disabled = false,
 }: TRFormProps<TFormValues>) => {
   return (
     <Form {...form}>
-      <FormConfigContext.Provider value={{ labelWidth, layout }}>
+      <FormConfigContext.Provider value={{ labelWidth, layout, disabled }}>
         <form
           data-testid='form'
           className={cn(

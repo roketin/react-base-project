@@ -5,12 +5,16 @@ type TCheckboxMultipleProps = {
   options: { label: string; value: string }[];
   checked?: string[];
   onCheckedChange?: (values: string[]) => void;
+  disabled?: boolean;
+  layout?: 'horizontal' | 'vertical';
 };
 
 export function RCheckboxMultiple({
   options,
   checked,
   onCheckedChange,
+  disabled,
+  layout = 'horizontal',
 }: TCheckboxMultipleProps) {
   /**
    * Handle toggle
@@ -28,7 +32,11 @@ export function RCheckboxMultiple({
   );
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div
+      className={
+        layout === 'horizontal' ? 'flex flex-row gap-4' : 'flex flex-col gap-2'
+      }
+    >
       {options.map(({ label, value }) => (
         <Checkbox
           key={value}
@@ -36,6 +44,7 @@ export function RCheckboxMultiple({
           value={value}
           checked={checked?.includes(value)}
           onCheckedChange={() => handleToggle(value)}
+          disabled={disabled}
         />
       ))}
     </div>

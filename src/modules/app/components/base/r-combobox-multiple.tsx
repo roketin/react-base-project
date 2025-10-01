@@ -39,6 +39,8 @@ type RMultiComboBoxProps<
   density?: TInputSize;
   placeholder?: string;
   'aria-invalid'?: boolean | string;
+  disabled?: boolean;
+  loading?: boolean;
 };
 
 export function RMultiComboBox<
@@ -55,6 +57,8 @@ export function RMultiComboBox<
     onChange,
     placeholder = 'Select items..',
     'aria-invalid': ariaInvalid,
+    disabled = false,
+    loading,
   } = props;
 
   const hasError = !!ariaInvalid;
@@ -71,6 +75,9 @@ export function RMultiComboBox<
     );
   }, [items, selectedValues, valueKey]);
 
+  /**
+   * Value handle
+   */
   const toggleValue = useCallback(
     (value: string) => {
       let newValues: string[];
@@ -94,6 +101,9 @@ export function RMultiComboBox<
     [selectedValues, values, setInternalValues, onChange, items, valueKey],
   );
 
+  /**
+   * Select all handle
+   */
   const toggleSelectAll = useCallback(() => {
     let newValues: string[];
     if (selectedValues.length === items.length) {
@@ -114,6 +124,9 @@ export function RMultiComboBox<
     }
   }, [selectedValues, items, values, setInternalValues, onChange, valueKey]);
 
+  /**
+   * Clear all data
+   */
   const clearSelection = useCallback(() => {
     if (values === undefined) {
       setInternalValues([]);
@@ -133,6 +146,7 @@ export function RMultiComboBox<
             hasError
               ? 'border-destructive ring-destructive/40'
               : 'border-border focus-within:ring-ring/50 focus-within:ring-[3px]',
+            disabled ? 'pointer-events-none opacity-60' : '',
           )}
         >
           {selectedItems.length > 0 ? (
@@ -199,6 +213,11 @@ export function RMultiComboBox<
         >
           <CommandInput placeholder='Search...' />
           <CommandList>
+            {loading && (
+              <div className='p-2 text-sm text-muted-foreground'>
+                Loading...
+              </div>
+            )}
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
               <CommandItem

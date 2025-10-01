@@ -16,6 +16,7 @@ type TRCardProps = {
   action?: React.ReactNode;
   children?: React.ReactNode;
   footer?: React.ReactNode;
+  wrapperClassName?: string;
 };
 
 export const RCard: React.FC<TRCardProps> = ({
@@ -25,8 +26,9 @@ export const RCard: React.FC<TRCardProps> = ({
   action,
   children,
   footer,
+  wrapperClassName,
 }) => (
-  <Card>
+  <Card className={wrapperClassName}>
     {(header || title || description || action) && (
       <CardHeader>
         {header}

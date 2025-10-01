@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
 import {
   Popover,
@@ -18,6 +17,7 @@ import {
   inputVariants,
   type TInputSize,
 } from '@/modules/app/components/ui/variants/input-variants';
+import { useState } from 'react';
 
 type RComboBoxProps<T extends object, K extends keyof T, V extends keyof T> = {
   items: T[];
@@ -30,6 +30,8 @@ type RComboBoxProps<T extends object, K extends keyof T, V extends keyof T> = {
   density?: TInputSize;
   placeholder?: string;
   'aria-invalid'?: boolean | string;
+  disabled?: boolean;
+  loading?: boolean;
 };
 
 export function RComboBox<
@@ -46,12 +48,14 @@ export function RComboBox<
   onSearch,
   density,
   placeholder = 'Select item..',
+  disabled,
   'aria-invalid': ariaInvalid,
+  loading,
 }: RComboBoxProps<T, K, V>) {
   const hasError = !!ariaInvalid;
 
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState('');
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState('');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -63,6 +67,7 @@ export function RComboBox<
             hasError
               ? 'border-destructive ring-destructive/40'
               : 'border-border focus-within:ring-ring/50 focus-within:ring-[3px]',
+            disabled ? 'pointer-events-none opacity-60' : '',
           )}
         >
           <div className='flex items-center w-full justify-between'>
@@ -101,11 +106,14 @@ export function RComboBox<
             placeholder='Search...'
             className='h-9'
             value={searchValue}
-            onValueChange={(val) => {
-              onSearch?.(val);
-            }}
+            onValueChange={onSearch}
           />
           <CommandList>
+            {loading && (
+              <div className='p-2 text-sm text-muted-foreground'>
+                Loading...
+              </div>
+            )}
             <CommandEmpty>No data found.</CommandEmpty>
             <CommandGroup>
               {items.map((item) => (

@@ -1,6 +1,6 @@
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
-import { LoaderPinwheel } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 
 const AppEntryPoint = () => {
@@ -21,7 +21,7 @@ const AppEntryPoint = () => {
 
   return (
     <div className='h-full w-full flex items-center justify-center gap-4'>
-      <LoaderPinwheel className='animate-spin' />
+      <Loader2 className='animate-spin' />
       <h3>App Skeleton</h3>
     </div>
   );
