@@ -13,15 +13,23 @@ import FileInfo from '@/modules/app/components/base/file-info';
 import { AtSign, FileLock2 } from 'lucide-react';
 import { useAuthLogin } from '@/modules/auth/services/auth.service';
 import useAuthStore from '@/modules/auth/stores/auth.store';
+import { useTranslation } from 'react-i18next';
 
 const formSchema = Yup.object().shape({
-  username: Yup.string().default('').email().required().label('Email'),
-  password: Yup.string().default('').required().label('Password'),
+  username: Yup.string()
+    .default('')
+    .email()
+    .required()
+    .label('auth:form.email'),
+  password: Yup.string().default('').required().label('auth:form.password'),
 });
 
 type TFormSchema = Yup.InferType<typeof formSchema>;
 
 const AuthLogin = () => {
+  // Translation
+  const { t } = useTranslation('auth');
+
   // Form instance
   const form = useForm<TFormSchema>({
     mode: 'onTouched',
@@ -63,8 +71,8 @@ const AuthLogin = () => {
         layout='vertical'
       >
         <div>
-          <h1 className='font-bold text-2xl mb-0'>App Skeleton</h1>
-          <small>Sample page</small>
+          <h1 className='font-bold text-2xl mb-0'>{t('login.title')}</h1>
+          <div>{t('login.subTitle')}</div>
         </div>
 
         <FileInfo src='src/modules/auth/components/pages/auth-login.tsx' />
@@ -73,9 +81,9 @@ const AuthLogin = () => {
         <RFormField
           control={form.control}
           name='username'
-          label='Email'
+          label={t('form.email')}
           withPlaceholder
-          description='Enter the email that is registered in the system.'
+          description={t('form.emailDesc')}
         >
           <Input autoComplete='username' prepend={<AtSign size={16} />} />
         </RFormField>
@@ -84,7 +92,7 @@ const AuthLogin = () => {
         <RFormField
           control={form.control}
           name='password'
-          label='Password'
+          label={t('form.password')}
           withPlaceholder
         >
           <RInputPassword prepend={<FileLock2 size={16} />} />
@@ -108,11 +116,11 @@ const AuthLogin = () => {
           to={linkTo('AuthForgot')}
           className='text-sm text-blue-700 text-right hover:underline'
         >
-          Forgot Password?
+          {t('form.forgotPassword')}
         </Link>
 
         <Button type='submit' className='w-full mt-3' loading={loading}>
-          Login
+          {t('form.submit')}
         </Button>
       </RForm>
     </div>

@@ -1,5 +1,5 @@
 import type { TAppRouteObject } from '@/modules/app/libs/routes-utils';
-import { routes } from '@/modules/app/routes/app-routes';
+import { routes } from '@/modules/app/routes/app.routes';
 import { useNavigate } from 'react-router-dom';
 
 /**

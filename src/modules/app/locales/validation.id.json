@@ -1,0 +1,5 @@
+{
+  "required": "{{label}} harus diisi",
+  "minLength": "{{label}} minimal {{min}} karakter",
+  "invalidEmail": "{{label}} bukan email yang valid"
+}

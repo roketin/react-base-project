@@ -6,6 +6,8 @@ import {
   SidebarTrigger,
 } from '@/modules/app/components/ui/sidebar';
 import { Separator } from '@radix-ui/react-separator';
+import { Loader2 } from 'lucide-react';
+import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
 export default function Page() {
@@ -22,7 +24,16 @@ export default function Page() {
           <RBreadcrumbs />
         </header>
         <div className='p-3'>
-          <Outlet />
+          <Suspense
+            fallback={
+              <div className='flex items-center justify-center gap-4 p-6'>
+                <Loader2 className='animate-spin' />
+                <h3>Please wait....</h3>
+              </div>
+            }
+          >
+            <Outlet />
+          </Suspense>
         </div>
       </SidebarInset>
     </SidebarProvider>

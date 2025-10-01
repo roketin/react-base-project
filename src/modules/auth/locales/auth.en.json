@@ -1,0 +1,13 @@
+{
+  "login": {
+    "title": "Login Test",
+    "subTitle": "Login Subtile Test"
+  },
+  "form": {
+    "email": "Email",
+    "emailDesc": "Enter the email that is registered in the system.",
+    "password": "Password",
+    "submit": "Login",
+    "forgotPassword": "Forgot Password?"
+  }
+}

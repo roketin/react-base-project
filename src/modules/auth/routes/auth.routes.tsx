@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom';
-import AuthLayout from '@/modules/auth/components/layouts/auth-layout';
 import { createAppRoutes } from '@/modules/app/libs/routes-utils';
 import { lazy } from 'react';
+import AuthLayout from '@/modules/auth/components/layouts/auth-layout';
 
 const AuthForgot = lazy(
   () => import('@/modules/auth/components/pages/auth-forgot'),

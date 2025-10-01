@@ -4,10 +4,11 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
+import i18nTypesPlugin from './src/plugins/i18n/vite-plugin-i18n-types.ts';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), i18nTypesPlugin()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),

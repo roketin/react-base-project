@@ -2,8 +2,9 @@ import { showAlertValidation } from '@/modules/app/components/base/show-alert-va
 import { Form } from '@/modules/app/components/ui/form';
 import { FormConfigContext } from '@/modules/app/contexts/form-config-context';
 import { cn } from '@/modules/app/libs/utils';
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import type { UseFormReturn, FieldValues } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 export type TRFormProps<TFormValues extends FieldValues> = {
   form: UseFormReturn<TFormValues>;
@@ -28,6 +29,36 @@ const RForm = <TFormValues extends FieldValues>({
   spacing = '',
   disabled = false,
 }: TRFormProps<TFormValues>) => {
+  const { trigger } = form;
+  const { i18n } = useTranslation();
+
+  // listener: re-validate hanya field yang sudah disentuh saat bahasa berubah
+  useEffect(() => {
+    const onLanguageChanged = () => {
+      const touchedFields = form.formState.touchedFields;
+      const errorFields = form.formState.errors;
+
+      const fieldsToTrigger = [
+        ...Object.keys(touchedFields ?? {}),
+        ...Object.keys(errorFields ?? {}),
+      ];
+
+      // hapus duplikat
+      const uniqueFields = Array.from(new Set(fieldsToTrigger));
+
+      if (uniqueFields.length > 0) {
+        // Cast uniqueFields to Array<keyof TFormValues & string>, then to Path<TFormValues>[]
+        trigger(
+          (uniqueFields as Array<keyof TFormValues & string>).map(
+            (field) => field as import('react-hook-form').Path<TFormValues>,
+          ),
+        );
+      }
+    };
+
+    i18n.on('languageChanged', onLanguageChanged);
+    return () => i18n.off('languageChanged', onLanguageChanged);
+  }, [i18n, trigger, form.formState.touchedFields, form.formState.errors]);
   return (
     <Form {...form}>
       <FormConfigContext.Provider value={{ labelWidth, layout, disabled }}>
