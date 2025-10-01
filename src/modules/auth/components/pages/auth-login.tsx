@@ -14,14 +14,15 @@ import { AtSign, FileLock2 } from 'lucide-react';
 import { useAuthLogin } from '@/modules/auth/services/auth.service';
 import useAuthStore from '@/modules/auth/stores/auth.store';
 import { useTranslation } from 'react-i18next';
+import { tl } from '@/modules/app/libs/locale-utils';
 
 const formSchema = Yup.object().shape({
   username: Yup.string()
     .default('')
     .email()
     .required()
-    .label('auth:form.email'),
-  password: Yup.string().default('').required().label('auth:form.password'),
+    .label(tl('auth:form.email')),
+  password: Yup.string().default('').required().label(tl('auth:form.password')),
 });
 
 type TFormSchema = Yup.InferType<typeof formSchema>;
