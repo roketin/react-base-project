@@ -26,6 +26,7 @@
 </p>
 
 ---
+
 <br />
 <p align="center">
  <a href="https://sonarcloud.io/summary/new_code?id=gmatthewsfeuer_next-plate">
@@ -135,7 +136,7 @@ See below the file tree to understand the project structure.
 ┣ 📂 public/                              # Public folder
 ┃ ┣ 📃 favicon.ico                        # Icon tab browser
 ┣ 📂 src/
-┃ ┣ 📂 modules/                  
+┃ ┣ 📂 modules/
 ┃ ┃ ┣ 📂 [module name, ex: user]
 ┃ ┃ ┃ ┗ 📂 [sub module name, ex: add user]
 ┃ ┃ ┃   ┣ 📂 components
@@ -178,3 +179,83 @@ See below the file tree to understand the project structure.
 ### 👨‍💻 Good Hacking!
 
 ---
+
+<br/><br/>
+
+# Roketin Module Generator
+
+A CLI tool designed to streamline the creation of new feature modules in a structured React/TypeScript application, complete with standard files (Page, Route, Store, Types, etc.) and intelligent handling for nested routing.
+
+---
+
+## 📖 Usage and Commands
+
+The generator supports two primary commands for module creation: `module` and `module-child`.
+
+### 1. `pnpm roketin module <module_path>` (Standard/Nested)
+
+This is the main command used for creating both top-level modules and nested modules where the routing type (flat or child) is determined interactively.
+
+| Example Command                        | Path Input         | Description                                               |
+| :------------------------------------- | :----------------- | :-------------------------------------------------------- |
+| `pnpm roketin module dashboard`        | `dashboard`        | Creates a top-level module under `src/modules/dashboard`. |
+| `pnpm roketin module account/settings` | `account/settings` | Triggers the **Interactive Prompt** to determine routing. |
+
+#### Interactive Prompt for Nested Paths
+
+If your `<module_path>` contains a slash (`/`), the tool will prompt you:
+
+> `The path 'account/settings' is nested. Treat 'settings' as a child module? (Selecting 'No' means the path will be registered flatly as 'account/settings')`
+
+| User Selection    | `isChild` | Route File Name             | Route Path Generated | Registration Strategy                                                                                                    |
+| :---------------- | :-------- | :-------------------------- | :------------------- | :----------------------------------------------------------------------------------------------------------------------- |
+| **Yes** (Default) | `true`    | `settings.routes.child.tsx` | `"settings"`         | **Nested:** Must be imported and placed in the `children` array of the parent's route file (e.g., `account.routes.tsx`). |
+| **No**            | `false`   | `settings.routes.tsx`       | `"account/settings"` | **Standalone:** Must be registered at the root level of your application router.                                         |
+
+### 2. `pnpm roketin module-child <module_path>` (Explicit Child)
+
+Use this command when you explicitly know the generated module will be a child route and must be nested under a parent. This bypasses the interactive prompt.
+
+| Example Command                             | Path Input        | Route File Name            | Route Path Generated | Registration Strategy                                                      |
+| :------------------------------------------ | :---------------- | :------------------------- | :------------------- | :------------------------------------------------------------------------- |
+| `pnpm roketin module-child account/profile` | `account/profile` | `profile.routes.child.tsx` | `"profile"`          | **Nested:** Requires manual nesting within the parent route configuration. |
+
+---
+
+## 📂 Generated File Structure
+
+The tool creates files based on the chosen structure (`view`, `all`, or `custom`) and follows an opinionated path pattern to clearly separate top-level and nested modules:
+
+**Path Pattern:** `src/modules/[TopLevelModule]/modules/[NestedModule]/...`
+
+| Generated File Type  | Folder Path (relative to base) | File Naming Convention          |
+| :------------------- | :----------------------------- | :------------------------------ |
+| **Page**             | `components/pages`             | `[kebab-case].tsx`              |
+| **Route (Standard)** | `routes`                       | `[kebab-case].routes.tsx`       |
+| **Route (Child)**    | `routes`                       | `[kebab-case].routes.child.tsx` |
+| **Store**            | `stores`                       | `[kebab-case].store.ts`         |
+| **Hook**             | `hooks`                        | `use-[kebab-case].ts`           |
+| **Type**             | `types`                        | `[kebab-case].type.ts`          |
+| **Locale**           | `locales`                      | `[kebab-case].en.json`          |
+
+---
+
+## 🛠️ Generated Route Logic (`createRouteConfig`)
+
+The `createRouteConfig` function determines the `path` and adds informative comments based on your choice:
+
+### Child Route (`isChild = true`)
+
+```typescript
+path: "settings", // Child route path uses only the segment name, as it's nested within a parent route.
+```
+
+_Intended for relative placement inside a parent route's `children` array._
+
+### Standalone/Flat Route (`isChild = false`)
+
+```typescript
+path: "account/settings", // Standalone route path uses the full segment path for flat registration: "account/settings". This route MUST be registered at the root level.
+```
+
+_Intended for direct placement in the root router configuration._
