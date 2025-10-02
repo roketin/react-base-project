@@ -210,7 +210,7 @@ If your `<module_path>` contains a slash (`/`), the tool will prompt you:
 | User Selection    | `isChild` | Route File Name             | Route Path Generated | Registration Strategy                                                                                                    |
 | :---------------- | :-------- | :-------------------------- | :------------------- | :----------------------------------------------------------------------------------------------------------------------- |
 | **Yes** (Default) | `true`    | `settings.routes.child.tsx` | `"settings"`         | **Nested:** Must be imported and placed in the `children` array of the parent's route file (e.g., `account.routes.tsx`). |
-| **No**            | `false`   | `settings.routes.tsx`       | `"account/settings"` | **Standalone:** Must be registered at the root level of your application router.                                         |
+| **No**            | `false`   | `settings.routes.tsx`       | `"account/settings"` | **Standalone:** Routes automatically registered in your application router.                                              |
 
 ### 2. `pnpm roketin module-child <module_path>` (Explicit Child)
 
