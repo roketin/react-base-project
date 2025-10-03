@@ -1,4 +1,4 @@
-import { COMMON_EXT } from '@/modules/app/constants/app.constant';
+import { DEFAULT_EXT } from '@/modules/app/constants/app.constant';
 
 /**
  * Get file extension from file
@@ -26,16 +26,16 @@ export const getFileExtensionFromString = (fileString: string): string => {
  */
 export type TGroupFileType = 'image' | 'pdf' | 'doc' | 'audio' | 'custom';
 export const getFileGroupType = (ext: string): TGroupFileType => {
-  if (COMMON_EXT.IMAGES.includes(ext)) {
+  if (DEFAULT_EXT.IMAGES.includes(ext)) {
     return 'image';
   }
-  if (COMMON_EXT.PDF.includes(ext)) {
+  if (DEFAULT_EXT.PDF.includes(ext)) {
     return 'pdf';
   }
-  if (COMMON_EXT.OFFICE.includes(ext)) {
+  if (DEFAULT_EXT.OFFICE.includes(ext)) {
     return 'doc';
   }
-  if (COMMON_EXT.AUDIO.includes(ext)) {
+  if (DEFAULT_EXT.AUDIO.includes(ext)) {
     return 'audio';
   }
   return 'custom';

@@ -29,6 +29,8 @@ type RComboBoxProps<T extends object, K extends keyof T, V extends keyof T> = {
   onSearch?: (query: string) => void;
   density?: TInputSize;
   placeholder?: string;
+  value?: string | null;
+  allowSearch?: boolean;
   'aria-invalid'?: boolean | string;
   disabled?: boolean;
   loading?: boolean;
@@ -48,6 +50,8 @@ export function RComboBox<
   onSearch,
   density,
   placeholder = 'Select item..',
+  value: valueProp,
+  allowSearch = true,
   disabled,
   'aria-invalid': ariaInvalid,
   loading,
@@ -55,7 +59,16 @@ export function RComboBox<
   const hasError = !!ariaInvalid;
 
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('');
+  const [internalValue, setInternalValue] = useState(valueProp ?? '');
+  const isControlled = valueProp !== undefined;
+  const currentValue = isControlled ? (valueProp ?? '') : internalValue;
+  const normalizedCurrentValue = String(currentValue ?? '');
+  const selectedItem = normalizedCurrentValue
+    ? (items.find(
+        (item) => String(item[valueKey]) === normalizedCurrentValue,
+      ) ?? null)
+    : null;
+  const selectedLabel = selectedItem ? String(selectedItem[labelKey]) : '';
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -72,22 +85,21 @@ export function RComboBox<
         >
           <div className='flex items-center w-full justify-between'>
             <span>
-              {value ? (
-                String(
-                  items.find((item) => item[valueKey] === value)?.[labelKey] ??
-                    '',
-                )
+              {normalizedCurrentValue ? (
+                selectedLabel
               ) : (
                 <span className='text-gray-400'>{placeholder}</span>
               )}
             </span>
             <div className='flex items-center gap-1'>
-              {clearable && value && (
+              {clearable && currentValue && (
                 <button
                   type='button'
                   onClick={(e) => {
                     e.stopPropagation();
-                    setValue('');
+                    if (!isControlled) {
+                      setInternalValue('');
+                    }
                     onChange?.(null, null);
                   }}
                   className='rounded text-muted-foreground hover:bg-slate-50 p-1 cursor-pointer'
@@ -102,12 +114,14 @@ export function RComboBox<
       </PopoverTrigger>
       <PopoverContent className='popover-content-width-full p-0'>
         <Command>
-          <CommandInput
-            placeholder='Search...'
-            className='h-9'
-            value={searchValue}
-            onValueChange={onSearch}
-          />
+          {allowSearch && (
+            <CommandInput
+              placeholder='Search...'
+              className='h-9'
+              value={searchValue ?? undefined}
+              onValueChange={onSearch}
+            />
+          )}
           <CommandList>
             {loading && (
               <div className='p-2 text-sm text-muted-foreground'>
@@ -120,10 +134,18 @@ export function RComboBox<
                 <CommandItem
                   key={String(item[valueKey])}
                   value={String(item[valueKey])}
-                  onSelect={(currentValue) => {
-                    const newValue = currentValue === value ? '' : currentValue;
-                    setValue(newValue);
-                    onChange?.(newValue || null, item);
+                  onSelect={(selectedValue) => {
+                    const normalizedSelected = String(selectedValue);
+                    const nextValue =
+                      normalizedSelected === normalizedCurrentValue
+                        ? ''
+                        : normalizedSelected;
+
+                    if (!isControlled) {
+                      setInternalValue(nextValue);
+                    }
+
+                    onChange?.(nextValue || null, nextValue ? item : null);
                     setOpen(false);
                   }}
                 >
@@ -131,7 +153,7 @@ export function RComboBox<
                   <Check
                     className={cn(
                       'ml-auto',
-                      value === String(item[valueKey])
+                      normalizedCurrentValue === String(item[valueKey])
                         ? 'opacity-100'
                         : 'opacity-0',
                     )}

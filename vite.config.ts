@@ -27,4 +27,16 @@ export default defineConfig({
       exclude: ['tests/render-with-config.tsx'],
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom'],
+          lucide: ['lucide-react'],
+          tanstack: ['@tanstack/react-table'],
+        },
+      },
+    },
+  },
 });

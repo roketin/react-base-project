@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/modules/app/libs/utils';
 import Button from '@/modules/app/components/ui/button';
-import { COMMON_EXT } from '@/modules/app/constants/app.constant';
+import { DEFAULT_EXT } from '@/modules/app/constants/app.constant';
 import {
   getFileExtensionFromFile,
   getFileExtensionFromString,
@@ -299,7 +299,7 @@ const RFileUploader = forwardRef<
 >((props, ref) => {
   const {
     onChange,
-    accept = COMMON_EXT.IMAGES,
+    accept = DEFAULT_EXT.IMAGES,
     value = null,
     width = '200px',
     height = '200px',

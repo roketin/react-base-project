@@ -68,21 +68,155 @@ for (let i = 0; i < parts.length; i++) {
 const basePath = path.resolve(...pathSegments);
 // --- PATH CORRECTION END ---
 
-// Map type to folder
-const folderMap = {
-  page: 'components/pages',
-  route: 'routes',
-  store: 'stores',
-  hook: 'hooks',
-  // hoc: 'hoc',
-  constant: 'constants',
-  type: 'types',
-  lib: 'libs',
-  context: 'contexts',
-  locale: 'locales',
+const TYPE_CONFIGS = {
+  page: {
+    folder: 'components/pages',
+    getFileName: ({ moduleName }) => `${kebabCase(moduleName)}.tsx`,
+    getContent: ({ moduleName }) => `
+const ${capitalize(moduleName)}Index = () => {
+  return (
+    <div>${capitalize(moduleName)} Page Content</div>
+  )
+}
+
+export default ${capitalize(moduleName)}Index
+`,
+  },
+  route: {
+    folder: 'routes',
+    getFileName: ({ moduleName, isChild }) =>
+      `${kebabCase(moduleName)}.routes${isChild ? '.child' : ''}.tsx`,
+    getContent: ({ moduleName, isChild, moduleParts, filePath }) => {
+      const finalModuleName = moduleName;
+      const parentRoutePathEstimate = path.join(
+        moduleParts.length > 1 ? '../..' : '.',
+        kebabCase(moduleParts[0]),
+        'routes',
+        `${kebabCase(moduleParts[0])}.routes.tsx`,
+      );
+
+      if (isChild) {
+        const routeConfig = createRouteConfig(
+          finalModuleName,
+          true,
+          moduleParts,
+        );
+
+        return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
+import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
+import { Outlet } from "react-router-dom";
+
+// This is a CHILD ROUTE.
+// It will not be automatically registered. You must import and nest it within a Parent Route
+// (e.g., in ${parentRoutePathEstimate}) manually.
+
+export const ${camelCase(moduleName)}ChildRoutes = createAppRoutes(${routeConfig});
+`;
+      }
+
+      if (fs.existsSync(filePath)) {
+        return null;
+      }
+
+      const routeConfig = createRouteConfig(
+        finalModuleName,
+        false,
+        moduleParts,
+      );
+
+      return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
+import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
+import { Outlet } from "react-router-dom";
+// import { ${camelCase(moduleName)}ChildRoutes } from "./${kebabCase(moduleName)}.routes.child"; // Example Child Route
+
+// To register child routes, add the child route elements to the 'children' array below.
+// Example: { path: "settings", children: ${camelCase(moduleName)}ChildRoutes }
+// Note: If this is a nested route, ensure you have correctly embedded it in the root router.
+
+export const ${camelCase(moduleName)}Routes = createAppRoutes(${routeConfig});
+`;
+    },
+  },
+  store: {
+    folder: 'stores',
+    getFileName: ({ moduleName }) => `${kebabCase(moduleName)}.store.ts`,
+    getContent: ({ moduleName }) => `import { useState } from "react";
+
+export function use${capitalize(moduleName)}Store() {
+  const [state, setState] = useState(null);
+  return { state, setState };
+}
+`,
+  },
+  hook: {
+    folder: 'hooks',
+    getFileName: ({ moduleName }) => `use-${kebabCase(moduleName)}.ts`,
+    getContent: ({ moduleName }) => `import { useEffect } from "react";
+
+export function use${capitalize(moduleName)}() {
+  useEffect(() => {
+    console.log("${capitalize(moduleName)} hook mounted");
+  }, []);
+}
+`,
+  },
+  service: {
+    folder: 'services',
+    getFileName: ({ moduleName }) => `${kebabCase(moduleName)}.service.ts`,
+    getContent: () => '',
+  },
+  constant: {
+    folder: 'constants',
+    getFileName: ({ moduleName }) => `${kebabCase(moduleName)}.constant.ts`,
+    getContent: ({ moduleName }) =>
+      `export const ${snakeCase(moduleName).toUpperCase()}_CONSTANT = {};`,
+  },
+  type: {
+    folder: 'types',
+    getFileName: ({ moduleName }) => `${kebabCase(moduleName)}.type.ts`,
+    getContent: ({ moduleName }) => `export type T${capitalize(moduleName)} = {
+  sample: string;
+};`,
+  },
+  lib: {
+    folder: 'libs',
+    getFileName: ({ moduleName }) => `${kebabCase(moduleName)}-lib.ts`,
+    getContent: ({ moduleName }) =>
+      `export function ${camelCase(moduleName)}Lib() {}`,
+  },
+  context: {
+    folder: 'contexts',
+    getFileName: ({ moduleName }) => `${kebabCase(moduleName)}-context.ts`,
+    getContent: ({ moduleName }) => `import { createContext, use } from "react";
+
+export type T${capitalize(moduleName)}Context = {
+  sample: string;
 };
 
-const customChoices = Object.keys(folderMap);
+export const ${pascalCase(moduleName)}Context = createContext<T${capitalize(moduleName)}Context | null>(null);
+
+export function use${capitalize(moduleName)}Context() {
+  const context = use(${pascalCase(moduleName)}Context);
+  if (!context) {
+    throw new Error('use${capitalize(moduleName)}Context must be used within a ${pascalCase(moduleName)}.');
+  }
+
+  return context;
+}
+
+`,
+  },
+  locale: {
+    folder: 'locales',
+    getFileName: ({ moduleName }) => `${kebabCase(moduleName)}.en.json`,
+    getContent: ({ moduleName }) => `{
+      "title": "${capitalize(moduleName)}",
+      "subtitle": "Sub ${capitalize(moduleName)}"
+}`,
+  },
+};
+
+const customChoices = Object.keys(TYPE_CONFIGS);
 
 //#region -------------------------- Generator
 if (command === 'module' || command === 'module-child') {
@@ -103,7 +237,7 @@ if (command === 'module' || command === 'module-child') {
     message: 'Select the module type to generate:',
     choices: [
       {
-        name: 'Standard (components/pages, route, locale, type)',
+        name: 'Standard (components/pages, route, locale, type, service)',
         value: 'view',
       },
       { name: 'All folders', value: 'all' },
@@ -115,7 +249,7 @@ if (command === 'module' || command === 'module-child') {
   if (mainChoice === 'all') {
     selected = customChoices;
   } else if (mainChoice === 'view') {
-    selected = ['page', 'route', 'locale', 'type'];
+    selected = ['page', 'route', 'locale', 'type', 'service'];
   } else if (mainChoice === 'custom') {
     const customSelected = await checkbox({
       message: 'Select folders/files to generate:',
@@ -126,47 +260,36 @@ if (command === 'module' || command === 'module-child') {
   }
 
   selected.forEach((type) => {
-    const folder = folderMap[type];
-    const fullPath = folder ? path.join(basePath, folder) : basePath;
-    ensureDir(fullPath);
-    let fileName;
-    switch (type) {
-      case 'page':
-        fileName = `${kebabCase(moduleName)}.tsx`;
-        break;
-      case 'route':
-        // Naming for child route files includes a '.child' suffix
-        fileName = `${kebabCase(moduleName)}.routes${isChild ? '.child' : ''}.tsx`;
-        break;
-      case 'store':
-        fileName = `${kebabCase(moduleName)}.store.ts`;
-        break;
-      case 'hook':
-        fileName = `use-${kebabCase(moduleName)}.ts`;
-        break;
-      case 'constant':
-        fileName = `${kebabCase(moduleName)}.constant.ts`;
-        break;
-      case 'type':
-        fileName = `${kebabCase(moduleName)}.type.ts`;
-        break;
-      case 'lib':
-        fileName = `${kebabCase(moduleName)}-lib.ts`;
-        break;
-      case 'context':
-        fileName = `${kebabCase(moduleName)}-context.ts`;
-        break;
-      case 'locale':
-        fileName = `${kebabCase(moduleName)}.en.json`;
-        break;
-      default:
-        fileName = `${kebabCase(moduleName)}.${type}`;
-    }
-    const filePath = path.join(fullPath, fileName);
+    const config = TYPE_CONFIGS[type];
 
-    // If isChild is true, append to parent route (requires further logic)
-    createFile(filePath, getTemplate(type, { isChild, parts }));
-    console.log(`Created: ${filePath}`);
+    if (!config) {
+      console.warn(`Unknown generator type: ${type}`);
+      return;
+    }
+
+    const fullPath = config.folder
+      ? path.join(basePath, config.folder)
+      : basePath;
+    ensureDir(fullPath);
+
+    const context = {
+      moduleName,
+      moduleParts: parts,
+      isChild,
+      basePath,
+    };
+
+    const fileName = config.getFileName(context);
+    const filePath = path.join(fullPath, fileName);
+    const content = config.getContent({ ...context, filePath });
+
+    if (content === null) {
+      console.log(`Skipped: ${filePath} (already exists)`);
+      return;
+    }
+
+    const created = createFile(filePath, content);
+    console.log(`${created ? 'Created' : 'Skipped'}: ${filePath}`);
   });
 } else {
   console.log(`Unknown command: ${command}`);
@@ -223,145 +346,6 @@ function createRouteConfig(finalModuleName, isChild, moduleParts) {
   return routeConfig;
 }
 
-function getTemplate(type, options = {}) {
-  const { isChild, parts } = options;
-
-  switch (type) {
-    case 'page':
-      return `
-const ${capitalize(moduleName)}Index = () => {
-  return (
-    <div>${capitalize(moduleName)} Page Content</div>
-  )
-}
-
-export default ${capitalize(moduleName)}Index
-`;
-
-    case 'route': {
-      const finalModuleName = moduleName;
-
-      // Using relative file path (e.g., ../../account.routes.tsx) to locate the parent route
-      // This is an estimate. Real-world implementation requires AST parsing for file modification.
-      const parentRoutePathEstimate = path.join(
-        parts.length > 1 ? '../..' : '.',
-        kebabCase(parts[0]),
-        'routes',
-        `${kebabCase(parts[0])}.routes.tsx`,
-      );
-
-      // Template for Child Route (with .child.tsx suffix)
-      if (isChild) {
-        // Pass the entire 'parts' array to createRouteConfig
-        const routeConfig = createRouteConfig(finalModuleName, isChild, parts);
-
-        return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
-import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
-import { Outlet } from "react-router-dom";
-
-// This is a CHILD ROUTE.
-// It will not be automatically registered. You must import and nest it within a Parent Route
-// (e.g., in ${parentRoutePathEstimate}) manually.
-
-export const ${camelCase(moduleName)}ChildRoutes = createAppRoutes(${routeConfig});
-`;
-      }
-
-      // Template for Standard Route (for the main module that may have children or flat path)
-      if (
-        !fs.existsSync(
-          path.join(basePath, `${kebabCase(moduleName)}.routes.tsx`),
-        )
-      ) {
-        // Pass the entire 'parts' array to createRouteConfig
-        const routeConfig = createRouteConfig(finalModuleName, isChild, parts);
-
-        return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
-import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
-import { Outlet } from "react-router-dom";
-// import { ${camelCase(moduleName)}ChildRoutes } from "./${kebabCase(moduleName)}.routes.child"; // Example Child Route
-
-// To register child routes, add the child route elements to the 'children' array below.
-// Example: { path: "settings", children: ${camelCase(moduleName)}ChildRoutes }
-// Note: If this is a nested route, ensure you have correctly embedded it in the root router.
-
-export const ${camelCase(moduleName)}Routes = createAppRoutes(${routeConfig});
-`;
-      }
-
-      // If the standard route file already exists
-      return `// TODO: The route file already exists. Advanced logic is required to append nested child routes.`;
-    }
-
-    case 'store':
-      return `import { useState } from "react";
-
-export function use${capitalize(moduleName)}Store() {
-  const [state, setState] = useState(null);
-  return { state, setState };
-}
-`;
-    case 'hook':
-      return `import { useEffect } from "react";
-
-export function use${capitalize(moduleName)}() {
-  useEffect(() => {
-    console.log("${capitalize(moduleName)} hook mounted");
-  }, []);
-}
-`;
-
-    case 'hoc':
-      return `import React from "react";
-
-export function with${capitalize(moduleName)}(Component) {
-  return function Wrapped(props) {
-    return <Component {...props} />;
-  };
-}
-`;
-
-    case 'constant':
-      return `export const ${snakeCase(moduleName).toUpperCase()}_CONSTANT = {};`;
-
-    case 'type':
-      return `export type T${capitalize(moduleName)} = {
-  sample: string;
-};`;
-
-    case 'lib':
-      return `export function ${camelCase(moduleName)}Lib() {}`;
-
-    case 'context':
-      return `import { createContext, use } from "react";
-
-export type T${capitalize(moduleName)}Context = {
-  sample: string;
-};
-
-export const ${pascalCase(moduleName)}Context = createContext<T${capitalize(moduleName)}Context | null>(null);
-
-export function use${capitalize(moduleName)}Context() {
-  const context = use(${pascalCase(moduleName)}Context);
-  if (!context) {
-    throw new Error('use${capitalize(moduleName)}Context must be used within a ${pascalCase(moduleName)}.');
-  }
-
-  return context;
-}
-
-`;
-    case 'locale':
-      return `{
-      "title": "${capitalize(moduleName)}",
-      "subtitle": "Sub ${capitalize(moduleName)}"
-}`;
-
-    default:
-      return '';
-  }
-}
-
 function sanitizeFolderName(name) {
   return name
     .trim()
@@ -375,7 +359,12 @@ function ensureDir(dir) {
 }
 
 function createFile(filePath, content = '') {
-  if (!fs.existsSync(filePath)) fs.writeFileSync(filePath, content);
+  if (fs.existsSync(filePath)) {
+    return false;
+  }
+
+  fs.writeFileSync(filePath, content);
+  return true;
 }
 
 function capitalize(str) {

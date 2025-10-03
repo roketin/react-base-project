@@ -1,6 +1,6 @@
 import {
-  COMMON_EXT,
-  COMMON_FILE_SIZE,
+  DEFAULT_EXT,
+  DEFAULT_FILE_SIZE,
 } from '@/modules/app/constants/app.constant';
 import {
   byteToMb,
@@ -87,8 +87,8 @@ export const fileOrStringRule = (
   },
 ) => {
   const {
-    allowedExts = COMMON_EXT.IMAGES,
-    size = COMMON_FILE_SIZE,
+    allowedExts = DEFAULT_EXT.IMAGES,
+    size = DEFAULT_FILE_SIZE,
     required,
   } = options || {};
 

@@ -142,7 +142,7 @@ See below the file tree to understand the project structure.
 ┃ ┃ ┃   ┣ 📂 components
 ┃ ┃ ┃   ┃ ┣  📂 layouts
 ┃ ┃ ┃   ┃ ┗  📂 pages
-┃ ┃ ┃   ┣ 📂 hoc
+┃ ┃ ┃   ┣ 📂 services
 ┃ ┃ ┃   ┣ 📂 hooks
 ┃ ┃ ┃   ┣ 📂 routes
 ┃ ┃ ┃   ┣ 📂 stores
@@ -235,6 +235,7 @@ The tool creates files based on the chosen structure (`view`, `all`, or `custom`
 | **Route (Child)**    | `routes`                       | `[kebab-case].routes.child.tsx` |
 | **Store**            | `stores`                       | `[kebab-case].store.ts`         |
 | **Hook**             | `hooks`                        | `use-[kebab-case].ts`           |
+| **Service**          | `services`                     | `[kebab-case].service.ts`       |
 | **Type**             | `types`                        | `[kebab-case].type.ts`          |
 | **Locale**           | `locales`                      | `[kebab-case].en.json`          |
 

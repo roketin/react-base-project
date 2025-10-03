@@ -1,4 +1,4 @@
-export const COMMON_EXT = {
+export const DEFAULT_EXT = {
   IMAGES: ['jpg', 'jpeg', 'png', 'webp'],
   PDF: ['pdf'],
   DOC: ['docx', 'doc'],
@@ -6,7 +6,12 @@ export const COMMON_EXT = {
   AUDIO: ['mp3', 'wav', 'ogg'],
 };
 
-export const COMMON_FILE_SIZE = {
+export const DEFAULT_FILE_SIZE = {
   min: 0,
   max: 1,
+};
+
+export const DEFAULT_QUERY_PARAMS = {
+  page: 1,
+  per_page: 10,
 };

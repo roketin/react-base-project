@@ -22,6 +22,15 @@ export const safeRound = (value: number, numDigits: number = 2): number => {
 };
 
 /**
+ * Handling data replaced to [] when undefined
+ * @param data
+ * @returns
+ */
+export function safeArray<T>(data: T[] | null | undefined): T[] {
+  return data ?? [];
+}
+
+/**
  * Exclude object
  * @param obj
  * @param keys
