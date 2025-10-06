@@ -22,7 +22,7 @@ import { cn } from '@/modules/app/libs/utils';
 import { CheckIcon, ChevronsUpDown, X, X as XIcon } from 'lucide-react';
 import { useState, useMemo, useCallback } from 'react';
 
-type RMultiComboBoxProps<
+export type RMultiComboBoxProps<
   T extends object,
   K extends keyof T,
   V extends keyof T,
@@ -142,7 +142,7 @@ export function RMultiComboBox<
         <div
           className={cn(
             inputVariants({ size: props.density }),
-            'relative flex w-full items-center rounded-md border bg-white dark:bg-input/30 transition-[color,box-shadow] shadow-md shadow-slate-100 justify-between',
+            'relative flex w-full items-center rounded-md border bg-white dark:bg-input/30 transition-[color,box-shadow] shadow-md shadow-slate-100 justify-between min-h-9 h-auto!',
             hasError
               ? 'border-destructive ring-destructive/40'
               : 'border-border focus-within:ring-ring/50 focus-within:ring-[3px]',

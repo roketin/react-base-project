@@ -19,7 +19,11 @@ import {
 } from '@/modules/app/components/ui/variants/input-variants';
 import { useState } from 'react';
 
-type RComboBoxProps<T extends object, K extends keyof T, V extends keyof T> = {
+export type RComboBoxProps<
+  T extends object,
+  K extends keyof T,
+  V extends keyof T,
+> = {
   items: T[];
   labelKey: K;
   valueKey: V;
@@ -42,8 +46,8 @@ export function RComboBox<
   V extends keyof T,
 >({
   items,
-  labelKey,
-  valueKey,
+  labelKey = 'label' as K,
+  valueKey = 'value' as V,
   onChange,
   clearable = true,
   searchValue,

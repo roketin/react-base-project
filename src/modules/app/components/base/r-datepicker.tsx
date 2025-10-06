@@ -15,7 +15,7 @@ import {
   type TInputSize,
 } from '@/modules/app/components/ui/variants/input-variants';
 
-type RDatePickerBaseProps = Omit<
+export type RDatePickerBaseProps = Omit<
   ComponentProps<typeof Calendar>,
   'selected' | 'onSelect' | 'onChange'
 > & {
