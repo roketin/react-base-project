@@ -7,6 +7,7 @@ import Button from '@/modules/app/components/ui/button';
 import { useFilter } from '@/modules/app/hooks/use-filter';
 import type { TFilterItem } from '@/modules/app/libs/filter-utils';
 import { memo, useCallback, useMemo, useState, useEffect } from 'react';
+import { Filter } from 'lucide-react';
 
 type TRFilterProps = {
   items: TFilterItem[];
@@ -229,6 +230,7 @@ export function RFilter({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant='outline' className='relative'>
+          <Filter />
           Filter
           {applied && (
             <span className='absolute top-1 right-1 h-2 w-2 rounded-full bg-primary' />

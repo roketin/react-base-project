@@ -23,6 +23,13 @@ import showAlert from '@/modules/app/components/base/show-alert';
 import { useAuthBootstrap } from '@/modules/auth/hooks/use-auth-bootstrap';
 import { useTranslation } from 'react-i18next';
 
+/**
+ * Main layout component for the application.
+ * It manages sidebar state, header with navigation, user profile popover,
+ * and language toggling. Displays a loading screen during authentication bootstrap.
+ *
+ * @returns JSX.Element representing the app layout.
+ */
 export default function AppLayout() {
   const { user, logout } = useAuth();
   const { navigate } = useNamedRoute();
@@ -30,8 +37,10 @@ export default function AppLayout() {
   const { i18n } = useTranslation('app');
 
   /**
-   * Memoize the computation of user initials to avoid unnecessary recalculations
-   * on every render unless the user name changes.
+   * Computes and memoizes the user's initials based on their name.
+   * Returns up to two uppercase initials or a default string if no name is present.
+   *
+   * @returns {string} User initials or default abbreviation.
    */
   const initials = useMemo(() => {
     if (user?.name) {
@@ -42,13 +51,15 @@ export default function AppLayout() {
         .slice(0, 2)
         .toUpperCase();
     }
-    return 'AD';
+    return 'RKT';
   }, [user?.name]);
 
   /**
-   * useCallback memoizes the logout handler to prevent recreation of the function
-   * on every render, which can improve performance especially when passed down as props.
-   * This function triggers a confirmation alert before logging out the user.
+   * Handles user logout with a confirmation prompt.
+   * Shows a modal alert to confirm logout, and upon confirmation,
+   * triggers logout, closes the alert, and navigates to the login page.
+   *
+   * @returns {void}
    */
   const handleLogout = useCallback(() => {
     showAlert(
@@ -69,25 +80,38 @@ export default function AppLayout() {
     );
   }, [logout, navigate]);
 
+  /**
+   * Toggles the application language between English ('en') and Indonesian ('id').
+   * Uses i18n instance to change the language asynchronously.
+   *
+   * @returns {void}
+   */
   const toggleLanguage = useCallback(() => {
     const nextLang = i18n.language === 'en' ? 'id' : 'en';
     void i18n.changeLanguage(nextLang);
   }, [i18n]);
 
+  /**
+   * Memoizes the label for the language toggle button.
+   * Displays 'ID' when current language is English and 'EN' otherwise.
+   *
+   * @returns {string} Language toggle label.
+   */
   const languageLabel = useMemo(
     () => (i18n.language === 'en' ? 'ID' : 'EN'),
     [i18n.language],
   );
 
-  // Display a dedicated bootstrap screen while authentication state is prepared
+  // Render a bootstrap loading screen while authentication state is initializing.
   if (isBootstrapping) {
     return <AppBootstrapLoading />;
   }
 
   return (
     /**
-     * SidebarProvider wraps the layout to provide context for sidebar state management.
-     * The layout includes the sidebar, header with navigation breadcrumbs, and user profile popover.
+     * SidebarProvider supplies context for sidebar state management.
+     * The layout includes the sidebar, a header with navigation breadcrumbs,
+     * language toggle, user profile popover, and main content outlet.
      */
     <SidebarProvider>
       <AppSidebar />
@@ -107,7 +131,7 @@ export default function AppLayout() {
             </div>
           </div>
 
-          {/* Language toggle and user profile */}
+          {/* Language toggle and user profile section */}
           <div className='flex items-center gap-2'>
             <Button
               variant='outline'
@@ -120,7 +144,7 @@ export default function AppLayout() {
             </Button>
             <Popover>
               <PopoverTrigger asChild>
-                <button className='group flex items-center gap-3 px-3 py-2 text-left  transition hover:border-primary/40 hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40'>
+                <button className='group flex items-center gap-3 px-3 py-2 transition hover:border-primary/40 hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 hover:rounded-md'>
                   <div className='text-right leading-tight'>
                     <p className='text-sm font-medium group-hover:text-primary'>
                       {user?.name ?? 'Administrator'}

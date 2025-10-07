@@ -17,15 +17,16 @@ const routeModules = import.meta.glob('@/modules/**/routes/*.routes.tsx', {
 });
 
 /**
- * Loads all route modules except the excluded ones and aggregates their route definitions.
- * It supports both default exports and named exports of arrays of routes.
- * @returns {TAppRouteObject[]} An array of route objects collected from various modules.
+ * Dynamically loads route definitions from all modules except the current one.
+ * Supports both default exports and named exports containing arrays of routes.
+ *
+ * @returns {TAppRouteObject[]} Aggregated array of route objects from various feature modules.
  */
 export function loadRoutes(): TAppRouteObject[] {
   const routes: TAppRouteObject[] = [];
 
   for (const path in routeModules) {
-    // ❌ Skip this file to avoid circular inclusion
+    // Skip this file to avoid circular dependency and redundant inclusion
     if (path.includes('app.routes')) {
       continue;
     }
@@ -33,12 +34,12 @@ export function loadRoutes(): TAppRouteObject[] {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mod: any = routeModules[path];
 
-    // Ambil export sesuai format
+    // If module has a default export which is an array of routes, add them
     if (mod.default) {
       routes.push(...(mod.default as TAppRouteObject[]));
     }
 
-    // Kalau pakai named export (misalnya export const dashboardRoutes)
+    // Also check for named exports that are arrays of routes and add them
     for (const key of Object.keys(mod)) {
       if (Array.isArray(mod[key])) {
         routes.push(...(mod[key] as TAppRouteObject[]));
@@ -49,13 +50,22 @@ export function loadRoutes(): TAppRouteObject[] {
   return routes;
 }
 
+/**
+ * Recursively applies authentication and permission guards to route elements.
+ * Wraps route elements with AuthProtectedRoute if authentication or permissions are required.
+ *
+ * @param {TAppRouteObject[]} routes - Array of route objects to process.
+ * @returns {TAppRouteObject[]} New array of route objects with applied route guards.
+ */
 function applyRouteGuards(routes: TAppRouteObject[]): TAppRouteObject[] {
   return routes.map((route) => {
+    // Recursively apply guards to child routes if present
     const guardedChildren = route.children
       ? applyRouteGuards(route.children)
       : undefined;
 
     const permissions = route.handle?.permissions;
+    // Determine if the route requires authentication either explicitly or via permissions
     const requiresAuth =
       Boolean(route.handle?.isRequiredAuth) ||
       Boolean(permissions && permissions.length > 0);
@@ -63,7 +73,9 @@ function applyRouteGuards(routes: TAppRouteObject[]): TAppRouteObject[] {
     let element = route.element;
 
     if (requiresAuth) {
+      // If route has children, fallback to Outlet; otherwise fallback is null
       const fallback = route.children ? <Outlet /> : null;
+      // Wrap the element with AuthProtectedRoute to enforce authentication and permissions
       element = (
         <AuthProtectedRoute
           element={element ?? fallback}
@@ -80,12 +92,21 @@ function applyRouteGuards(routes: TAppRouteObject[]): TAppRouteObject[] {
   });
 }
 
+/**
+ * Splits an array of route objects into two groups:
+ * - absoluteRoutes: routes with paths starting with '/' (absolute paths)
+ * - nestedRoutes: routes with relative paths or no path specified
+ *
+ * @param {TAppRouteObject[]} routes - Array of route objects to split.
+ * @returns {{ absoluteRoutes: TAppRouteObject[], nestedRoutes: TAppRouteObject[] }} Object containing separated route arrays.
+ */
 function splitFeatureRoutes(routes: TAppRouteObject[]) {
   const absoluteRoutes: TAppRouteObject[] = [];
   const nestedRoutes: TAppRouteObject[] = [];
 
   for (const route of routes) {
     const path = route.path;
+    // Classify routes as absolute or nested based on whether path starts with '/'
     if (typeof path === 'string' && path.startsWith('/')) {
       absoluteRoutes.push(route);
     } else {
@@ -98,7 +119,7 @@ function splitFeatureRoutes(routes: TAppRouteObject[]) {
 
 /**
  * The main route configuration for the application.
- * Defines the root path, error handling, authentication routes, protected admin routes, and fallback routes.
+ * Defines root-level routes, global error handling, authentication-protected admin routes, and fallback routes.
  */
 const featureRoutes = loadRoutes();
 const { absoluteRoutes, nestedRoutes } = splitFeatureRoutes(featureRoutes);

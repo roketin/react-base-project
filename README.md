@@ -219,6 +219,34 @@ useEffect(() => {
 }, [register, unregister, userDetail]);
 ```
 
+#### Example: Replacing Breadcrumb Text from a Page
+
+Use the breadcrumb store inside a page (or layout) to substitute the breadcrumb label with context-specific text such as an entity name fetched from the server.
+
+```tsx
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useBreadcrumbStore } from '@/modules/app/stores/breadcrumbs.store';
+import { useGetUserDetail } from '@/modules/users/services/user.service';
+
+export default function UserDetailPage() {
+  const { id = '' } = useParams();
+  const { data } = useGetUserDetail(id);
+
+  const register = useBreadcrumbStore((state) => state.register);
+  const unregister = useBreadcrumbStore((state) => state.unregister);
+
+  useEffect(() => {
+    register('user', () => data?.name ?? `User ${id}`);
+    return () => unregister('user');
+  }, [data?.name, id, register, unregister]);
+
+  return <UserDetailContent user={data} />;
+}
+```
+
+With this setup, any route whose `handle.breadcrumb` resolves to `{ type: 'user', id }` automatically displays the name returned by the resolver instead of the static fallback.
+
 ### Permissions & Guards
 
 - Declare permissions in `src/modules/app/constants/permission.constant.ts` and reuse the exported `PERMISSIONS`.
@@ -240,8 +268,12 @@ import { createAppRoutes } from '@/modules/app/libs/routes-utils';
 import { lazy } from 'react';
 import { Outlet } from 'react-router-dom';
 
-const ProfileIndex = lazy(() => import('@/modules/profile/components/pages/profile-index'));
-const ProfileEdit = lazy(() => import('@/modules/profile/components/pages/profile-edit'));
+const ProfileIndex = lazy(
+  () => import('@/modules/profile/components/pages/profile-index'),
+);
+const ProfileEdit = lazy(
+  () => import('@/modules/profile/components/pages/profile-edit'),
+);
 
 export default createAppRoutes([
   {
@@ -368,7 +400,7 @@ _Intended for relative placement inside a parent route's `children` array._
 ### Standalone/Flat Route (`isChild = false`)
 
 ```typescript
-path: "account/settings", // Standalone route path uses the full segment path for flat registration: "account/settings". This route MUST be registered at the root level.
+path: "account/settings", // Standalone route path uses the full segment path for flat registration: "account/settings". This route automatically registered on app router
 ```
 
 _Intended for direct placement in the root router configuration._
