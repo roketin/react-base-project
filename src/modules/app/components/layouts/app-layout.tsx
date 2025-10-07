@@ -16,16 +16,18 @@ import {
 } from '@/modules/app/components/ui/popover';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import { Separator } from '@radix-ui/react-separator';
-import { LogOut, UserRound } from 'lucide-react';
+import { LogOut, UserRound, Languages } from 'lucide-react';
 import { Suspense, useCallback, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import showAlert from '@/modules/app/components/base/show-alert';
 import { useAuthBootstrap } from '@/modules/auth/hooks/use-auth-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 export default function AppLayout() {
   const { user, logout } = useAuth();
   const { navigate } = useNamedRoute();
   const { isBootstrapping } = useAuthBootstrap();
+  const { i18n } = useTranslation('app');
 
   /**
    * Memoize the computation of user initials to avoid unnecessary recalculations
@@ -67,6 +69,16 @@ export default function AppLayout() {
     );
   }, [logout, navigate]);
 
+  const toggleLanguage = useCallback(() => {
+    const nextLang = i18n.language === 'en' ? 'id' : 'en';
+    void i18n.changeLanguage(nextLang);
+  }, [i18n]);
+
+  const languageLabel = useMemo(
+    () => (i18n.language === 'en' ? 'ID' : 'EN'),
+    [i18n.language],
+  );
+
   // Display a dedicated bootstrap screen while authentication state is prepared
   if (isBootstrapping) {
     return <AppBootstrapLoading />;
@@ -95,8 +107,17 @@ export default function AppLayout() {
             </div>
           </div>
 
-          {/* User profile and logout popover */}
-          <div>
+          {/* Language toggle and user profile */}
+          <div className='flex items-center gap-2'>
+            <Button
+              variant='outline'
+              size='sm'
+              className='flex items-center gap-2'
+              onClick={toggleLanguage}
+            >
+              <Languages className='size-4' />
+              <span className='text-xs font-semibold'>{languageLabel}</span>
+            </Button>
             <Popover>
               <PopoverTrigger asChild>
                 <button className='group flex items-center gap-3 px-3 py-2 text-left  transition hover:border-primary/40 hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40'>

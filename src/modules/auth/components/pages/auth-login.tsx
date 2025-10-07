@@ -65,6 +65,7 @@ const AuthLogin = () => {
         onSubmit={handleSubmit}
         showErrorPopup
         layout='vertical'
+        disabled={loading}
       >
         <div>
           <h1 className='font-bold text-2xl mb-0'>{t('login.title')}</h1>

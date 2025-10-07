@@ -1,14 +1,17 @@
+import { RBrand } from '@/modules/app/components/base/r-brand';
 import { RLoading } from '@/modules/app/components/base/r-loading';
 
 export function AppBootstrapLoading() {
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center bg-white text-slate-900'>
-      <h1 className='text-5xl font-bold flowing-gradient-text'>
-        Roketin Skeleton
-      </h1>
-      <span className='mt-4 text-sm text-gray-400'>
-        <RLoading label='Please wait..' />
-      </span>
+    <div className='flex min-h-screen flex-col items-center justify-center gap-8 bg-white text-slate-900'>
+      <RBrand
+        direction='vertical'
+        align='center'
+        className='text-center'
+        showTagline={false}
+        titleClassName='flowing-gradient-text text-4xl font-bold sm:text-5xl'
+      />
+      <RLoading label='Loading workspace…' />
 
       <style>{`
         @keyframes flowingGradient {
