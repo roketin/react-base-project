@@ -1,7 +1,7 @@
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
-import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
+import { RLoading } from '@/modules/app/components/base/r-loading';
 
 const AppEntryPoint = () => {
   // Hooks
@@ -20,10 +20,11 @@ const AppEntryPoint = () => {
   }, [isLoggedIn, navigate]);
 
   return (
-    <div className='h-full w-full flex items-center justify-center gap-4'>
-      <Loader2 className='animate-spin' />
-      <h3>App Skeleton</h3>
-    </div>
+    <RLoading
+      label='App Skeleton'
+      className='h-full w-full'
+      labelClassName='text-lg font-semibold'
+    />
   );
 };
 export default AppEntryPoint;

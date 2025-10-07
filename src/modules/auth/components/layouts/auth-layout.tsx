@@ -2,10 +2,10 @@ import FileInfo from '@/modules/app/components/base/file-info';
 import { RNavigate } from '@/modules/app/components/base/r-navigate';
 import Button from '@/modules/app/components/ui/button';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
-import { Loader2 } from 'lucide-react';
 import { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
+import { RLoading } from '@/modules/app/components/base/r-loading';
 
 const AuthLayout = () => {
   // locale
@@ -30,10 +30,7 @@ const AuthLayout = () => {
       <div className='md:flex-1 flex items-center justify-center'>
         <Suspense
           fallback={
-            <div className='h-full w-full flex items-center justify-center gap-4'>
-              <Loader2 className='animate-spin' />
-              <h3>Please wait....</h3>
-            </div>
+            <RLoading label='Please wait....' className='h-full w-full' />
           }
         >
           <Outlet />

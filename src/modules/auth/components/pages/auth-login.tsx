@@ -12,7 +12,6 @@ import { linkTo, useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import FileInfo from '@/modules/app/components/base/file-info';
 import { AtSign, FileLock2 } from 'lucide-react';
 import { useAuthLogin } from '@/modules/auth/services/auth.service';
-import useAuthStore from '@/modules/auth/stores/auth.store';
 import { useTranslation } from 'react-i18next';
 import { tl } from '@/modules/app/libs/locale-utils';
 
@@ -41,9 +40,6 @@ const AuthLogin = () => {
   // Login mutation
   const { mutate, isPending: loading } = useAuthLogin();
 
-  // Set credential to store
-  const setCredential = useAuthStore((state) => state.setCredential);
-
   // Navigate
   const { navigate } = useNamedRoute();
 
@@ -54,13 +50,12 @@ const AuthLogin = () => {
   const handleSubmit = useCallback(
     (values: TFormSchema) => {
       mutate(values, {
-        onSuccess(response) {
-          setCredential(response.data.access_token);
+        onSuccess() {
           navigate('DashboardIndex');
         },
       });
     },
-    [mutate, navigate, setCredential],
+    [mutate, navigate],
   );
 
   return (

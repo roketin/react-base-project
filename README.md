@@ -170,6 +170,118 @@ See below the file tree to understand the project structure.
 
 </details>
 
+## 🧭 Routing, Breadcrumbs & Permissions
+
+This project ships with an opinionated setup around routing and navigation so you can focus on feature work. The sections below cover how to plug new modules into the router, expose breadcrumbs, and guard routes with permissions.
+
+### Routing Overview
+
+- Route definitions live in `src/modules/<feature>/routes/*.routes.tsx`.
+- Export an array via `createAppRoutes([...])` (the helper currently returns the same array but keeps the API consistent).
+- Files ending with `.routes.tsx` are auto-discovered by `app.routes.tsx`, merged, and mounted under `/admin` when the `path` is relative (no leading `/`). Supplying an absolute path (e.g. `'/auth'`) keeps the route at the root level.
+- Use the optional `name` field on a route so that `useNamedRoute()` and `RNavigate` can resolve URLs by name.
+
+```tsx
+// src/modules/sample-form/routes/sample-form.routes.tsx
+export const sampleFormRoutes = createAppRoutes([
+  {
+    path: 'sample-form',
+    element: <Outlet />,
+    handle: {
+      breadcrumb: 'Sample Form',
+      permissions: [PERMISSIONS.SAMPLE_FORM_VIEW],
+    },
+    children: [
+      { name: 'SampleFormIndex', index: true, element: <SampleForm /> },
+      { name: 'SampleFormAdd', path: 'add', element: <SampleFormSave /> },
+    ],
+  },
+]);
+```
+
+### Breadcrumbs
+
+- `AppLayout` renders `<RBreadcrumbs />`, which inspects the active route `handle.breadcrumb` values coming from `useMatches()`.
+- `handle.breadcrumb` accepts either a static string or a function. The function receives `{ params, data, pathname }` from the matched route.
+- For dynamic labels, return an object with `{ type, id }`. Register a resolver for that `type` through the breadcrumb store.
+
+```tsx
+// Route definition
+handle: {
+  breadcrumb: ({ params }) => ({ type: 'user', id: params.id ?? '' }),
+}
+
+// Component example
+const { register, unregister } = useBreadcrumbStore();
+useEffect(() => {
+  register('user', (id) => userDetail?.name ?? `User ${id}`);
+  return () => unregister('user');
+}, [register, unregister, userDetail]);
+```
+
+### Permissions & Guards
+
+- Declare permissions in `src/modules/app/constants/permission.constant.ts` and reuse the exported `PERMISSIONS`.
+- Attaching `handle.permissions` (or `handle.isRequiredAuth`) to a route triggers `AuthProtectedRoute`, which checks login status via `useAuth()` and validates the current user’s permissions.
+- Unauthorized access renders `AppForbidden`, while unauthenticated users are redirected to the login page via `RNavigate`.
+
+```tsx
+handle: {
+  permissions: [PERMISSIONS.SAMPLE_FORM_VIEW, PERMISSIONS.SAMPLE_FORM_CREATE],
+}
+```
+
+### Simple Usage Example
+
+```tsx
+// src/modules/profile/routes/profile.routes.tsx
+import { PERMISSIONS } from '@/modules/app/constants/permission.constant';
+import { createAppRoutes } from '@/modules/app/libs/routes-utils';
+import { lazy } from 'react';
+import { Outlet } from 'react-router-dom';
+
+const ProfileIndex = lazy(() => import('@/modules/profile/components/pages/profile-index'));
+const ProfileEdit = lazy(() => import('@/modules/profile/components/pages/profile-edit'));
+
+export default createAppRoutes([
+  {
+    path: 'profile',
+    element: <Outlet />,
+    handle: {
+      breadcrumb: 'Profile',
+      permissions: [PERMISSIONS.DASHBOARD_VIEW],
+    },
+    children: [
+      { name: 'ProfileIndex', index: true, element: <ProfileIndex /> },
+      {
+        name: 'ProfileEdit',
+        path: 'edit',
+        element: <ProfileEdit />,
+        handle: {
+          breadcrumb: 'Edit Profile',
+        },
+      },
+    ],
+  },
+]);
+```
+
+```tsx
+// Inside a component
+import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
+
+const { navigate, linkTo } = useNamedRoute();
+
+return (
+  <>
+    <Button onClick={() => navigate('ProfileEdit')}>Go to edit</Button>
+    <Link to={linkTo('ProfileIndex')}>Back to profile</Link>
+  </>
+);
+```
+
+With these pieces in place, new modules automatically participate in layout navigation, display meaningful breadcrumbs, and stay behind the correct permission gates.
+
 <!-- Acknowledgment Section -->
 
 ---

@@ -47,14 +47,6 @@ export function RFilter({
     persistKey,
   );
 
-  const [open, setOpen] = useState(false);
-
-  // Track whether filters have been applied based on existing params on mount
-  const [applied, setApplied] = useState(() => {
-    const params = getParams();
-    return Object.keys(params).length > 0;
-  });
-
   /**
    * Serialize filter values to JSON string for snapshot comparison.
    * Dates are converted to ISO strings for consistent serialization.
@@ -67,16 +59,33 @@ export function RFilter({
     [],
   );
 
-  // Snapshot of last applied filter values as serialized string
-  const [lastAppliedSnapshot, setLastAppliedSnapshot] = useState(() =>
-    serializeValues(values),
+  // Snapshot representing the default values derived from filter configuration
+  const defaultValues = useMemo(() => {
+    const record: Record<string, unknown> = {};
+    for (const item of items) {
+      record[item.id] = item.defaultValue ?? null;
+    }
+    return record;
+  }, [items]);
+
+  const defaultSnapshot = useMemo(
+    () => serializeValues(defaultValues),
+    [defaultValues, serializeValues],
   );
 
-  // Current snapshot derived from current values
+  // Snapshot of last applied filter values as serialized string
   const currentSnapshot = useMemo(
     () => serializeValues(values),
     [values, serializeValues],
   );
+
+  const [lastAppliedSnapshot, setLastAppliedSnapshot] =
+    useState(currentSnapshot);
+
+  const [open, setOpen] = useState(false);
+
+  // Track whether filters have been applied beyond their defaults
+  const [applied, setApplied] = useState(currentSnapshot !== defaultSnapshot);
 
   // Detect if there are unsaved changes by comparing snapshots
   const hasChanges = currentSnapshot !== lastAppliedSnapshot;
@@ -87,11 +96,11 @@ export function RFilter({
    */
   useEffect(() => {
     const params = getParams();
-    if (Object.keys(params).length > 0) {
+    if (Object.keys(params).length > 0 && currentSnapshot !== defaultSnapshot) {
       const mappedParams = mapFilterKeys(params);
       onApply?.(mappedParams);
       setApplied(true);
-      setLastAppliedSnapshot(serializeValues(values));
+      setLastAppliedSnapshot(currentSnapshot);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // run once on mount
@@ -171,7 +180,7 @@ export function RFilter({
     const mappedParams = mapFilterKeys(params);
     onApply?.(mappedParams);
     setOpen(false);
-    setApplied(true);
+    setApplied(currentSnapshot !== defaultSnapshot);
     setLastAppliedSnapshot(currentSnapshot);
   }, [
     onApply,
@@ -179,6 +188,7 @@ export function RFilter({
     mapFilterKeys,
     setLastAppliedSnapshot,
     currentSnapshot,
+    defaultSnapshot,
   ]);
 
   /**
