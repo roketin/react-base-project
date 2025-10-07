@@ -1,3 +1,4 @@
+import type { TPermission } from '@/modules/app/constants/permission.constant';
 import type { BreadcrumbType } from '@/modules/app/stores/breadcrumbs.store';
 import type { RouteObject } from 'react-router-dom';
 
@@ -25,6 +26,8 @@ export type TAppRouteObject = Omit<RouteObject, 'children' | 'handle'> & {
   name?: string;
   handle?: {
     breadcrumb?: TBreadcrumbHandle;
+    isRequiredAuth?: boolean;
+    permissions?: TPermission[];
     [key: string]: unknown;
   };
   children?: TAppRouteObject[];

@@ -10,16 +10,11 @@ import AppLayout from '@/modules/app/components/layouts/app-layout';
 import AuthProtectedRoute from '@/modules/auth/hoc/auth-protected-route';
 
 import { Outlet } from 'react-router-dom';
-import { authRoutes } from '@/modules/auth/routes/auth.routes';
 
 // Automatically imports all route files matching the pattern to gather route definitions dynamically
 const routeModules = import.meta.glob('@/modules/**/routes/*.routes.tsx', {
   eager: true,
 });
-
-// Exclude certain route files to prevent duplication or conflicts
-// These routes are handled separately or are entry points and should not be loaded here
-const excludedRoutes = ['auth.routes', 'app.routes'];
 
 /**
  * Loads all route modules except the excluded ones and aggregates their route definitions.
@@ -30,8 +25,8 @@ export function loadRoutes(): TAppRouteObject[] {
   const routes: TAppRouteObject[] = [];
 
   for (const path in routeModules) {
-    // ❌ Skip files that include any of the excluded routes
-    if (excludedRoutes.some((excluded) => path.includes(excluded))) {
+    // ❌ Skip this file to avoid circular inclusion
+    if (path.includes('app.routes')) {
       continue;
     }
 
@@ -54,11 +49,73 @@ export function loadRoutes(): TAppRouteObject[] {
   return routes;
 }
 
+function applyRouteGuards(routes: TAppRouteObject[]): TAppRouteObject[] {
+  return routes.map((route) => {
+    const guardedChildren = route.children
+      ? applyRouteGuards(route.children)
+      : undefined;
+
+    const permissions = route.handle?.permissions;
+    const requiresAuth =
+      Boolean(route.handle?.isRequiredAuth) ||
+      Boolean(permissions && permissions.length > 0);
+
+    let element = route.element;
+
+    if (requiresAuth) {
+      const fallback = route.children ? <Outlet /> : null;
+      element = (
+        <AuthProtectedRoute
+          element={element ?? fallback}
+          permissions={permissions}
+        />
+      );
+    }
+
+    return {
+      ...route,
+      element,
+      children: guardedChildren,
+    };
+  });
+}
+
+function splitFeatureRoutes(routes: TAppRouteObject[]) {
+  const absoluteRoutes: TAppRouteObject[] = [];
+  const nestedRoutes: TAppRouteObject[] = [];
+
+  for (const route of routes) {
+    const path = route.path;
+    if (typeof path === 'string' && path.startsWith('/')) {
+      absoluteRoutes.push(route);
+    } else {
+      nestedRoutes.push(route);
+    }
+  }
+
+  return { absoluteRoutes, nestedRoutes };
+}
+
 /**
  * The main route configuration for the application.
  * Defines the root path, error handling, authentication routes, protected admin routes, and fallback routes.
  */
-export const appRoutesConfig = [
+const featureRoutes = loadRoutes();
+const { absoluteRoutes, nestedRoutes } = splitFeatureRoutes(featureRoutes);
+
+const adminRoute =
+  nestedRoutes.length > 0
+    ? {
+        path: '/admin',
+        element: <AppLayout />,
+        handle: {
+          isRequiredAuth: true,
+        },
+        children: nestedRoutes,
+      }
+    : null;
+
+const rawAppRoutesConfig: TAppRouteObject[] = [
   {
     path: '/',
     element: <Outlet />,
@@ -66,17 +123,15 @@ export const appRoutesConfig = [
     children: [
       { index: true, element: <AppEntryPoint /> },
 
-      ...authRoutes,
+      ...absoluteRoutes,
 
-      {
-        path: '/admin',
-        element: <AuthProtectedRoute element={<AppLayout />} />,
-        children: loadRoutes(),
-      },
+      ...(adminRoute ? [adminRoute] : []),
       { path: '*', element: <AppNotFound /> },
     ],
   },
 ];
+
+export const appRoutesConfig = applyRouteGuards(rawAppRoutesConfig);
 
 // Creates the final route objects used by the router from the appRoutesConfig.
 export const routes = createAppRoutes(appRoutesConfig);

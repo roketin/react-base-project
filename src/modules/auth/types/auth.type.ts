@@ -1,3 +1,5 @@
+import type { TPermission } from '@/modules/app/constants/permission.constant';
+
 export type TAuthStore = {
   token: string;
   authData: TAuthProfile | null;
@@ -36,4 +38,5 @@ export type TAuthProfile = {
   name: string;
   email: string;
   role: string;
+  permissions?: TPermission[];
 };

@@ -28,17 +28,12 @@ export type TAnyFilterItem =
   | TFilterItem<Date | null>;
 
 /**
- * RFilter is a reusable filter popover component that manages multiple filter fields.
- * It handles the state of filter values, persistence via a storage key, and provides callbacks
- * for applying and resetting the filters. The component renders a popover with filter inputs
- * dynamically based on the provided items and allows users to apply or reset those filters.
+ * RFilter is a reusable popover filter component managing multiple filter fields.
+ * It maintains filter state, supports persistence via a storage key, and triggers callbacks on apply/reset.
+ * It auto-applies filters on mount if persisted values exist.
  *
- * @param {TRFilterProps} props - The component props including:
- *   - items: An array of filter items defining each filter field.
- *   - onApply: Optional callback triggered when filters are applied.
- *   - onReset: Optional callback triggered when filters are reset.
- *   - persistKey: Optional key to persist filter state across sessions.
- *   - mapKey: Optional function or object to map filter keys before applying or resetting.
+ * @param {TRFilterProps} props - Component props including filter items, callbacks, persistence key, and key mapping.
+ * @returns JSX element rendering a filter button and popover with filter fields.
  */
 export function RFilter({
   items,
@@ -53,21 +48,55 @@ export function RFilter({
   );
 
   const [open, setOpen] = useState(false);
+
+  // Track whether filters have been applied based on existing params on mount
   const [applied, setApplied] = useState(() => {
     const params = getParams();
     return Object.keys(params).length > 0;
   });
 
+  /**
+   * Serialize filter values to JSON string for snapshot comparison.
+   * Dates are converted to ISO strings for consistent serialization.
+   */
+  const serializeValues = useCallback(
+    (record: Record<string, unknown>) =>
+      JSON.stringify(record, (_, value) =>
+        value instanceof Date ? value.toISOString() : value,
+      ),
+    [],
+  );
+
+  // Snapshot of last applied filter values as serialized string
+  const [lastAppliedSnapshot, setLastAppliedSnapshot] = useState(() =>
+    serializeValues(values),
+  );
+
+  // Current snapshot derived from current values
+  const currentSnapshot = useMemo(
+    () => serializeValues(values),
+    [values, serializeValues],
+  );
+
+  // Detect if there are unsaved changes by comparing snapshots
+  const hasChanges = currentSnapshot !== lastAppliedSnapshot;
+
+  /**
+   * Auto-apply persisted filters on component mount.
+   * Calls onApply with mapped keys if any persisted filters exist.
+   */
   useEffect(() => {
     const params = getParams();
     if (Object.keys(params).length > 0) {
       const mappedParams = mapFilterKeys(params);
       onApply?.(mappedParams);
       setApplied(true);
+      setLastAppliedSnapshot(serializeValues(values));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // run once on mount
 
+  // Prepare fields data for rendering filter inputs
   const fields = useMemo(
     () =>
       items.map((item) => ({
@@ -79,9 +108,12 @@ export function RFilter({
   );
 
   /**
-   * Utility function to map filter keys according to mapKey prop.
-   * It returns a new object with keys mapped by mapKey function or object.
-   * It also flattens nested objects like { from, to } into keys like 'date_multiple[from]'.
+   * Maps filter keys according to the mapKey prop.
+   * Supports flattening nested objects into bracket notation keys.
+   * Returns a new object with keys transformed by mapKey function or mapping object.
+   *
+   * @param {Record<string, unknown>} obj - Original filter params.
+   * @returns {Record<string, unknown>} Mapped and flattened filter params.
    */
   const mapFilterKeys = useCallback(
     (obj: Record<string, unknown>): Record<string, unknown> => {
@@ -131,8 +163,8 @@ export function RFilter({
   );
 
   /**
-   * Handles applying the current filter values.
-   * Calls the onApply callback with the current filter parameters.
+   * Applies current filter values.
+   * Calls onApply with mapped filter params, closes popover, updates applied state and snapshot.
    */
   const handleApply = useCallback(() => {
     const params = getParams();
@@ -140,11 +172,19 @@ export function RFilter({
     onApply?.(mappedParams);
     setOpen(false);
     setApplied(true);
-  }, [onApply, getParams, mapFilterKeys]);
+    setLastAppliedSnapshot(currentSnapshot);
+  }, [
+    onApply,
+    getParams,
+    mapFilterKeys,
+    setLastAppliedSnapshot,
+    currentSnapshot,
+  ]);
 
   /**
-   * Handles resetting all filters to their default or cleared state.
-   * Calls the onReset callback with the cleared filter values.
+   * Resets all filters to default/cleared state.
+   * Calls onReset with mapped cleared values, closes popover, updates applied state and snapshot.
+   * Ensures all mapped keys exist in cleared values with null if missing.
    */
   const handleReset = useCallback(() => {
     const clearedValues = reset();
@@ -159,12 +199,14 @@ export function RFilter({
     onReset?.(mappedClearedValues);
     setOpen(false);
     setApplied(false);
-  }, [reset, onReset, mapFilterKeys, mapKey]);
+    setLastAppliedSnapshot(serializeValues(clearedValues));
+  }, [reset, onReset, mapFilterKeys, mapKey, serializeValues]);
 
   /**
-   * Updates the value of a specific filter field identified by its id.
-   * @param {string} id - The identifier of the filter field to update.
-   * @param {unknown} value - The new value to set for the filter field.
+   * Updates the value of a specific filter field by id.
+   *
+   * @param {string} id - Filter field identifier.
+   * @param {unknown} value - New value to set.
    */
   const handleFieldChange = useCallback(
     (id: string, value: unknown) => {
@@ -176,10 +218,7 @@ export function RFilter({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant={applied ? 'secondary' : 'outline'}
-          className='relative'
-        >
+        <Button variant='outline' className='relative'>
           Filter
           {applied && (
             <span className='absolute top-1 right-1 h-2 w-2 rounded-full bg-primary' />
@@ -208,7 +247,9 @@ export function RFilter({
             <Button variant='outline' onClick={handleReset}>
               Reset
             </Button>
-            <Button onClick={handleApply}>Filter</Button>
+            <Button onClick={handleApply} disabled={!hasChanges}>
+              Filter
+            </Button>
           </div>
         </div>
       </PopoverContent>
@@ -217,15 +258,14 @@ export function RFilter({
 }
 
 /**
- * RFilterField is a memoized component that renders a single filter field.
- * Depending on the filter item's type, it renders either an input field or a select combo box.
- * It accepts the current value and calls the onChange callback whenever the user updates the field,
- * passing the id and new value upward to the parent component.
+ * RFilterField renders a single filter input field based on the filter item.
+ * It displays label if provided and invokes item's render method with current value and onChange handler.
  *
- * @param {object} props - The component props:
- *   - item: The filter item metadata defining the field type and properties.
- *   - value: The current value of the filter field.
- *   - onChange: Callback function to notify value changes (id, newValue).
+ * @param {object} props - Component props.
+ * @param {TFilterItem} props.item - Filter item metadata and render function.
+ * @param {*} props.value - Current value of the filter field.
+ * @param {(id: string, val: any) => void} props.onChange - Callback for value changes.
+ * @returns JSX element of the filter field.
  */
 const RFilterField = memo(
   ({
