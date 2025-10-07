@@ -20,6 +20,12 @@ http.interceptors.request.use(
       config.headers.Authorization = `Bearer ${authStore.token}`;
     }
 
+    const lang = localStorage.getItem('@r-lang');
+    if (lang) {
+      config.params = config.params ?? {};
+      config.params.lang = lang;
+    }
+
     return config;
   },
   (error) => error,
