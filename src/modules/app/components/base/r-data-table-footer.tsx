@@ -8,6 +8,7 @@ import {
 } from '@/modules/app/components/ui/pagination';
 import { cn } from '@/modules/app/libs/utils';
 import type { TApiResponsePaginateMeta } from '@/modules/app/types/api.type';
+import type { TDisableable } from '@/modules/app/types/component.type';
 import {
   ChevronFirst,
   ChevronLast,
@@ -16,20 +17,18 @@ import {
 } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 
-export type TRDataTableFooterProps = {
-  meta: TApiResponsePaginateMeta | null;
-  pagesToShow: number;
-  onChange: (data: { [key: string]: number | string }) => void;
-  disabled: boolean;
+export type TRDataTableFooterProps = TDisableable & {
+  meta?: TApiResponsePaginateMeta | null;
+  pagesToShow?: number;
+  onChange?: (data: Record<string, number | string>) => void;
 };
 
-const LIMIT_OPTIONS = [
-  { value: 10 },
-  { value: 20 },
-  { value: 50 },
-  { value: 100 },
-];
+const LIMIT_OPTIONS = [10, 20, 50, 100];
 
+/**
+ * RDataTableFooter component - renders pagination controls and entry limit selector
+ * @param props - component properties including pagination metadata, pages to show, onChange handler, and disabled state
+ */
 const RDataTableFooter = ({
   meta,
   pagesToShow = 5,
@@ -45,6 +44,10 @@ const RDataTableFooter = ({
     to,
   } = meta ?? {};
 
+  /**
+   * Calculates the total number of pages based on metadata or total/perPage values.
+   * Ensures the page count is at least 1.
+   */
   const pageCount = useMemo(() => {
     const resolvedLastPage =
       metaLastPage ?? (perPage > 0 ? Math.ceil(total / perPage) : 0);
@@ -54,13 +57,21 @@ const RDataTableFooter = ({
     return Math.max(1, Math.floor(resolvedLastPage));
   }, [metaLastPage, perPage, total]);
 
+  /**
+   * Normalizes the current page to ensure it is within valid bounds [1, pageCount].
+   */
   const currentPage = useMemo(() => {
     if (pageCount === 0) return 1;
     return Math.min(Math.max(rawCurrentPage, 1), pageCount);
   }, [pageCount, rawCurrentPage]);
 
+  // Ensures pagesToShow is a positive integer, defaults to 1 if invalid
   const safePagesToShow = Math.max(Math.floor(pagesToShow), 1);
 
+  /**
+   * Computes the array of page numbers to display in the pagination control,
+   * centered around the current page and limited by pagesToShow.
+   */
   const pageNumbers = useMemo<number[]>(() => {
     if (pageCount < 1) return [];
 
@@ -72,45 +83,62 @@ const RDataTableFooter = ({
     return Array.from({ length: end - start + 1 }, (_, index) => start + index);
   }, [currentPage, pageCount, safePagesToShow]);
 
+  /**
+   * Calculates the starting entry number currently visible.
+   * Uses 'from' from metadata if available, otherwise calculates based on current page and perPage.
+   */
   const showingFrom = useMemo(() => {
     if (!total) return 0;
     if (typeof from === 'number') return from;
     return (currentPage - 1) * perPage + 1;
   }, [currentPage, from, perPage, total]);
 
+  /**
+   * Calculates the ending entry number currently visible.
+   * Uses 'to' from metadata if available, otherwise calculates based on current page, perPage, and total.
+   */
   const showingTo = useMemo(() => {
     if (!total) return 0;
     if (typeof to === 'number') return to;
     return Math.min(currentPage * perPage, total);
   }, [currentPage, perPage, to, total]);
 
+  // Boolean flags indicating if navigation to previous or next pages is possible
   const canGoPrev = currentPage > 1;
   const canGoNext = currentPage < pageCount;
   const isDisabled = disabled || pageCount < 1;
 
+  // Determine the first and last visible page numbers in the pagination control
   const firstVisiblePage = pageNumbers[0] ?? 1;
   const lastVisiblePage =
     pageNumbers[pageNumbers.length - 1] ?? firstVisiblePage;
 
+  // Flags to determine whether to show ellipsis and first/last page links
   const showLeadingEllipsis = firstVisiblePage > 2;
   const showFirstPage = firstVisiblePage > 1;
   const showTrailingEllipsis = lastVisiblePage < pageCount - 1;
   const showLastPage = lastVisiblePage < pageCount;
 
   /**
-   * Change Page
-   * @param page
+   * Callback to handle page changes triggered by user interaction.
+   * Prevents changes when disabled or if page is out of range or unchanged.
    */
   const handleChangePage = useCallback(
     (page: number) => {
       if (disabled) return;
       if (page === currentPage) return;
       if (page < 1 || page > pageCount) return;
-      onChange({ page });
+      onChange?.({ page });
     },
     [currentPage, disabled, onChange, pageCount],
   );
 
+  /**
+   * Render the pagination footer layout including:
+   * - Entry count display
+   * - Entries per page selector (RComboBox)
+   * - Pagination controls with buttons for first, previous, page numbers, next, and last
+   */
   return (
     <div
       className={cn(
@@ -130,12 +158,12 @@ const RDataTableFooter = ({
         <div className='w-[70px]'>
           <RComboBox
             items={LIMIT_OPTIONS}
-            labelKey='value'
-            valueKey='value'
             clearable={false}
             allowSearch={false}
-            value={'' + (meta?.per_page ?? 10)}
-            onChange={(val) => onChange({ page: 1, per_page: val ?? 10 })}
+            value={String(perPage)}
+            onChange={(val) =>
+              onChange?.({ page: 1, per_page: Number(val ?? perPage) })
+            }
           />
         </div>
       </div>

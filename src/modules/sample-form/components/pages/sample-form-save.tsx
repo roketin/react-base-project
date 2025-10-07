@@ -11,10 +11,7 @@ import { RInputPassword } from '@/modules/app/components/base/r-input-password';
 import Button from '@/modules/app/components/ui/button';
 import { Checkbox } from '@/modules/app/components/ui/checkbox';
 import { Input } from '@/modules/app/components/ui/input';
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from '@/modules/app/components/ui/radio-group';
+import { RRadio } from '@/modules/app/components/base/r-radio';
 import { Slider } from '@/modules/app/components/ui/slider';
 import { Switch } from '@/modules/app/components/ui/switch';
 import { Textarea } from '@/modules/app/components/ui/textarea';
@@ -120,23 +117,15 @@ const TodoSave = () => {
             </RFormField>
 
             {/* Radio */}
-            <RFormField
-              control={form.control}
-              name='radio'
-              label='Radio'
-              valuePropName='radio'
-            >
-              <RadioGroup className='flex'>
-                <RadioGroupItem id='A' value='A'>
-                  A
-                </RadioGroupItem>
-                <RadioGroupItem id='B' value='B'>
-                  B
-                </RadioGroupItem>
-                <RadioGroupItem id='C' value='C'>
-                  C
-                </RadioGroupItem>
-              </RadioGroup>
+            <RFormField control={form.control} name='radio' label='Radio'>
+              <RRadio
+                options={[
+                  { value: 'A', label: 'A' },
+                  { value: 'B', label: 'B' },
+                  { value: 'C', label: 'C' },
+                ]}
+                layout='horizontal'
+              />
             </RFormField>
 
             {/* Combobox */}

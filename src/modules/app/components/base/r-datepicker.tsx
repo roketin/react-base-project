@@ -7,6 +7,10 @@ import {
 import Button from '@/modules/app/components/ui/button';
 import { Calendar } from '@/modules/app/components/ui/calendar';
 import { useCallback, useMemo, useState, type ComponentProps } from 'react';
+import type {
+  TAriaInvalidProp,
+  TDisableable,
+} from '@/modules/app/types/component.type';
 import { format } from 'date-fns';
 import type { DateRange, Matcher, OnSelectHandler } from 'react-day-picker';
 import { cn } from '@/modules/app/libs/utils';
@@ -18,14 +22,14 @@ import {
 export type RDatePickerBaseProps = Omit<
   ComponentProps<typeof Calendar>,
   'selected' | 'onSelect' | 'onChange'
-> & {
-  disabled?: boolean;
-  disabledDate?: Matcher | Matcher[];
-  formatString?: string;
-  placeholder?: string;
-  density?: TInputSize;
-  'aria-invalid'?: boolean | string;
-};
+> &
+  TDisableable &
+  TAriaInvalidProp & {
+    disabledDate?: Matcher | Matcher[];
+    formatString?: string;
+    placeholder?: string;
+    density?: TInputSize;
+  };
 
 type RDatePickerProps =
   | (RDatePickerBaseProps & {
@@ -39,6 +43,13 @@ type RDatePickerProps =
       onChange?: OnSelectHandler<DateRange>;
     });
 
+/**
+ * RDatePicker component provides a customizable date picker UI supporting both single date and date range selection modes.
+ * It leverages a popover to display the calendar and allows disabling dates, formatting display, and customizing appearance.
+ *
+ * @param {RDatePickerProps} props - Properties to configure the date picker behavior and appearance.
+ * @returns JSX.Element representing the date picker input and popover calendar.
+ */
 const RDatePicker = ({
   disabled,
   disabledDate,
@@ -51,11 +62,17 @@ const RDatePicker = ({
   'aria-invalid': ariaInvalid,
   ...props
 }: RDatePickerProps) => {
+  // Determine if the input should display an error state based on aria-invalid prop
   const hasError = !!ariaInvalid;
 
+  // State to control the open/close state of the popover calendar
   const [open, setOpen] = useState(false);
 
-  // Label by mode
+  /**
+   * Memoized label rendering logic based on mode and selected value.
+   * - For 'single' mode, formats the selected date or shows placeholder.
+   * - For 'range' mode, formats the date range if both from and to are selected, otherwise shows placeholder.
+   */
   const renderLabel = useMemo<string>(() => {
     if (mode === 'single') {
       return value
@@ -72,11 +89,15 @@ const RDatePicker = ({
   }, [formatString, mode, placeholder, value]);
 
   /**
-   * Handle date selected event
-   * @param date
+   * Callback handler invoked when a date or date range is selected in the calendar.
+   * - Calls the onChange prop with the new value.
+   * - Closes the popover automatically for single mode or when a complete range is selected.
+   *
+   * @param {Date | DateRange | undefined} date - The newly selected date or date range.
    */
   const handleSelect = useCallback(
     (date: Date | DateRange | undefined) => {
+      // Invoke the onChange callback with the selected date(s)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (onChange as ((value: any) => void) | undefined)?.(date);
 
@@ -97,6 +118,7 @@ const RDatePicker = ({
   );
 
   if (mode === 'single') {
+    // Selected date for single mode
     const selectedProp: Date | undefined = value;
 
     return (
@@ -132,6 +154,7 @@ const RDatePicker = ({
       </Popover>
     );
   } else {
+    // Selected date range for range mode
     const selectedProp: DateRange | undefined = value;
 
     return (
@@ -169,6 +192,7 @@ const RDatePicker = ({
                 variant='ghost'
                 size='sm'
                 onClick={() =>
+                  // Reset the selected date range to undefined
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   (onChange as ((val: any) => void) | undefined)?.({
                     from: undefined,

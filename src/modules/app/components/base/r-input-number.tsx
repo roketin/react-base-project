@@ -1,8 +1,9 @@
 import { Input } from '@/modules/app/components/ui/input';
-import { omit, safeRound } from '@/modules/app/libs/utils';
+import { safeRound } from '@/modules/app/libs/utils';
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type ChangeEvent,
@@ -36,6 +37,104 @@ export type TRInputNumberProps = Omit<ComponentProps<'input'>, 'onChange'> & {
  * - hasPercentRestriction: if true, values > 100 show "OVER"
  * - allowDecimal: allow decimal input (default: true)
  */
+type TPatternOptions = {
+  allowDecimal: boolean;
+  allowExtraDecimal: boolean;
+  decimalLimit: number;
+  negative: boolean;
+};
+
+type TFormatConfig = {
+  allowDecimal: boolean;
+  decimalLimit: number;
+};
+
+const GROUP_SEPARATOR_REGEX = /\B(?=(\d{3})+(?!\d))/g;
+
+const stripGrouping = (value: string) => value.replace(/,/g, '');
+
+const removeLeadingZeros = (value: string) =>
+  /^0\d+/.test(value) ? value.replace(/^0+/, '') : value;
+
+const isZeroValue = (value: string) => {
+  if (value === '') return true;
+  const numeric = Number(value);
+  return !Number.isNaN(numeric) && numeric === 0;
+};
+
+const createPattern = ({
+  allowDecimal,
+  allowExtraDecimal,
+  decimalLimit,
+  negative,
+}: TPatternOptions) => {
+  const signPart = negative ? '-?' : '';
+  const decimalPart = allowDecimal
+    ? allowExtraDecimal
+      ? '(?:\\.\\d*)?'
+      : `(?:\\.\\d{0,${decimalLimit}})?`
+    : '';
+
+  return new RegExp(`^${signPart}\\d*${decimalPart}$`);
+};
+
+const formatInteger = (value: string) =>
+  value.replace(GROUP_SEPARATOR_REGEX, ',');
+
+const formatDisplayValue = (
+  raw: string,
+  { allowDecimal, decimalLimit }: TFormatConfig,
+  hasPercentRestriction: boolean,
+) => {
+  if (!raw) return '';
+
+  const sanitized = stripGrouping(raw);
+
+  if (hasPercentRestriction && Number(sanitized) > 100) {
+    return 'OVER';
+  }
+
+  const sign = sanitized.startsWith('-') ? '-' : '';
+  const unsigned = sanitized.replace('-', '');
+
+  const shouldFormatDecimal = allowDecimal && decimalLimit > 0;
+
+  let integerPart = unsigned;
+  let decimalPart = '';
+
+  if (shouldFormatDecimal) {
+    const numeric = Number(`${sign}${unsigned}`);
+
+    if (Number.isFinite(numeric)) {
+      const rounded = safeRound(numeric, decimalLimit);
+      const normalized = Math.abs(rounded).toFixed(decimalLimit);
+      [integerPart, decimalPart] = normalized.split('.') as [string, string];
+    } else {
+      [integerPart, decimalPart = ''] = unsigned.split('.');
+    }
+
+    decimalPart = decimalPart.padEnd(decimalLimit, '0').slice(0, decimalLimit);
+  } else {
+    integerPart = unsigned.split('.')[0] ?? '';
+  }
+
+  const groupedInteger = integerPart
+    ? formatInteger(integerPart)
+    : shouldFormatDecimal
+      ? '0'
+      : '';
+
+  const decimalSegment =
+    shouldFormatDecimal && decimalLimit > 0 ? `.${decimalPart}` : '';
+
+  return `${sign}${groupedInteger}${decimalSegment}`.trim();
+};
+
+const toRawString = (value: TRInputNumberProps['value']) => {
+  if (value === null || value === undefined) return '';
+  return stripGrouping(String(value));
+};
+
 const RInputNumber = ({
   decimalLimit = 2,
   onChange,
@@ -48,59 +147,63 @@ const RInputNumber = ({
   allowDecimal = true,
   ...props
 }: TRInputNumberProps) => {
-  const [displayValue, setDisplayValue] = useState<string>(String(value || ''));
+  const {
+    onKeyDown: inputOnKeyDown,
+    onBlur: inputOnBlur,
+    onFocus: inputOnFocus,
+    onPaste: inputOnPaste,
+    ...restProps
+  } = props;
+
+  const formatConfig = useMemo<TFormatConfig>(
+    () => ({
+      allowDecimal,
+      decimalLimit: allowDecimal ? decimalLimit : 0,
+    }),
+    [allowDecimal, decimalLimit],
+  );
+
+  const inputPattern = useMemo(
+    () =>
+      createPattern({
+        allowDecimal,
+        allowExtraDecimal,
+        decimalLimit,
+        negative,
+      }),
+    [allowDecimal, allowExtraDecimal, decimalLimit, negative],
+  );
+
+  const blockedKeys = useMemo(() => {
+    const keys = new Set(['e', 'E', '+']);
+    if (!allowDecimal) keys.add('.');
+    if (!negative) keys.add('-');
+    return keys;
+  }, [allowDecimal, negative]);
+
+  const initialRaw = toRawString(value);
+  const [displayValue, setDisplayValue] = useState<string>(() => {
+    if (!initialRaw) return '';
+    return isFormatOnChange
+      ? formatDisplayValue(initialRaw, formatConfig, hasPercentRestriction)
+      : initialRaw;
+  });
+
   const isChangedByOnChange = useRef(false);
-  const rawValueRef = useRef<string>(String(value || ''));
+  const rawValueRef = useRef<string>(initialRaw);
 
   /**
    * Formats the input value according to decimalLimit and formatting rules.
    * Adds thousand separators and pads decimals as needed.
    * Shows "OVER" if hasPercentRestriction is true and value exceeds 100.
    */
-  const handleFormat = useCallback(
-    (originalValue: string | number | readonly string[] | undefined) => {
-      if (
-        originalValue === '' ||
-        originalValue === null ||
-        originalValue === undefined
-      ) {
-        setDisplayValue('');
-        return;
-      }
-
-      if (decimalLimit === 0) {
-        setDisplayValue(`${originalValue}`);
-        return;
-      }
-
-      if (hasPercentRestriction && Number(originalValue) > 100) {
-        setDisplayValue(`OVER`);
-        return;
-      }
-
-      const val =
-        typeof originalValue === 'number'
-          ? safeRound(originalValue, decimalLimit)
-          : originalValue;
-
-      let [integerPart, decimalPart = ''] = String(val || '')
-        .replace(/,/g, '')
-        .split('.');
-
-      integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-      decimalPart = decimalPart
-        .padEnd(decimalLimit, '0')
-        .slice(0, decimalLimit);
-
-      const formattedValue =
-        decimalLimit > 0 && integerPart !== ''
-          ? `${integerPart}.${decimalPart}`
-          : '';
-
-      setDisplayValue(formattedValue);
+  const applyFormattedDisplay = useCallback(
+    (raw: string) => {
+      setDisplayValue(
+        raw ? formatDisplayValue(raw, formatConfig, hasPercentRestriction) : '',
+      );
     },
-    [decimalLimit, hasPercentRestriction],
+    [formatConfig, hasPercentRestriction],
   );
 
   /**
@@ -108,17 +211,26 @@ const RInputNumber = ({
    * only if the value wasn't changed by the user's typing.
    */
   useEffect(() => {
-    if (!isChangedByOnChange.current && isFormatOnChange) {
-      if (value !== null && value !== undefined && value !== '') {
-        rawValueRef.current = String(value);
-        handleFormat(value);
-      } else {
-        rawValueRef.current = '';
-        setDisplayValue('');
-      }
+    if (isChangedByOnChange.current) {
+      isChangedByOnChange.current = false;
+      return;
     }
-    isChangedByOnChange.current = false;
-  }, [value, handleFormat, isFormatOnChange]);
+
+    const nextRaw = toRawString(value);
+    rawValueRef.current = nextRaw;
+
+    if (!isFormatOnChange) {
+      setDisplayValue(nextRaw);
+      return;
+    }
+
+    if (!nextRaw) {
+      setDisplayValue('');
+      return;
+    }
+
+    applyFormattedDisplay(nextRaw);
+  }, [value, isFormatOnChange, applyFormattedDisplay]);
 
   /**
    * Prevents invalid keys during typing.
@@ -127,26 +239,25 @@ const RInputNumber = ({
    */
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
-      const invalidKeys = ['e', 'E', '+', '-'];
-
-      if (!allowDecimal) {
-        invalidKeys.push('.');
-      }
-
-      if (negative && event.key === '-') {
-        const currentValue = (event.target as HTMLInputElement).value;
-        if (currentValue.length === 0 || currentValue === '0') return;
+      if (event.key === '-' && negative) {
+        const target = event.currentTarget;
+        const { value: currentValue, selectionStart } = target;
+        if (selectionStart === 0 && !currentValue.includes('-')) {
+          inputOnKeyDown?.(event);
+          return;
+        }
         event.preventDefault();
+        inputOnKeyDown?.(event);
         return;
       }
 
-      if (invalidKeys.includes(event.key)) {
+      if (blockedKeys.has(event.key)) {
         event.preventDefault();
       }
 
-      props.onKeyDown?.(event);
+      inputOnKeyDown?.(event);
     },
-    [allowDecimal, negative, props],
+    [blockedKeys, negative, inputOnKeyDown],
   );
 
   /**
@@ -158,34 +269,18 @@ const RInputNumber = ({
     (event: ChangeEvent<HTMLInputElement>) => {
       let { value } = event.target;
 
-      if (/^0\d+/.test(value)) {
-        value = value.replace(/^0+/, '');
+      value = removeLeadingZeros(value);
+
+      if (!inputPattern.test(value)) {
+        return;
       }
 
-      let regexPattern: RegExp;
-      if (negative) {
-        if (allowExtraDecimal) {
-          regexPattern = /^-?\d*(\.?\d*)?$/;
-        } else {
-          regexPattern = new RegExp(`^-?\\d*(\\.\\d{0,${decimalLimit}})?$`);
-        }
-      } else {
-        if (allowExtraDecimal) {
-          regexPattern = /^\d*(\.?\d*)?$/;
-        } else {
-          regexPattern = new RegExp(`^\\d*(\\.\\d{0,${decimalLimit}})?$`);
-        }
-      }
-      const regex = regexPattern;
-
-      if (regex.test(value)) {
-        rawValueRef.current = value;
-        setDisplayValue(value);
-        isChangedByOnChange.current = true;
-        onChange?.(+value);
-      }
+      rawValueRef.current = value;
+      setDisplayValue(value);
+      isChangedByOnChange.current = true;
+      onChange?.(+value);
     },
-    [allowExtraDecimal, decimalLimit, negative, onChange],
+    [inputPattern, onChange],
   );
 
   /**
@@ -194,26 +289,24 @@ const RInputNumber = ({
    */
   const handleBlur = useCallback(
     (event: FocusEvent<HTMLInputElement>) => {
-      if (isOnBlurFormat && !event.target.matches(':focus')) {
-        const rawValue = rawValueRef.current.replace(/,/g, '');
-
-        if (rawValue === '') {
-          setDisplayValue('');
-          return;
-        }
-
-        if (Number(rawValue) > 100 && hasPercentRestriction) {
-          setDisplayValue('OVER');
-          return;
-        }
-
-        handleFormat(rawValue);
-        onChange?.(+rawValue);
+      if (!isOnBlurFormat || event.target.matches(':focus')) {
+        inputOnBlur?.(event);
+        return;
       }
 
-      props.onBlur?.(event);
+      const rawValue = stripGrouping(rawValueRef.current);
+
+      if (!rawValue) {
+        setDisplayValue('');
+        inputOnBlur?.(event);
+        return;
+      }
+
+      applyFormattedDisplay(rawValue);
+      onChange?.(+rawValue);
+      inputOnBlur?.(event);
     },
-    [handleFormat, hasPercentRestriction, isOnBlurFormat, onChange, props],
+    [applyFormattedDisplay, isOnBlurFormat, onChange, inputOnBlur],
   );
 
   /**
@@ -224,21 +317,16 @@ const RInputNumber = ({
     (event: FocusEvent<HTMLInputElement>) => {
       const raw = rawValueRef.current;
 
-      if (
-        raw === '0' ||
-        raw === '0.0' ||
-        raw === '0.00' ||
-        parseFloat(raw) === 0
-      ) {
+      if (isZeroValue(raw)) {
         setDisplayValue('');
         rawValueRef.current = '';
       } else if (raw) {
-        setDisplayValue(raw.replace(/,/g, ''));
+        setDisplayValue(stripGrouping(raw));
       }
 
-      props.onFocus?.(event);
+      inputOnFocus?.(event);
     },
-    [props],
+    [inputOnFocus],
   );
 
   /**
@@ -249,37 +337,28 @@ const RInputNumber = ({
     (event: ClipboardEvent<HTMLInputElement>) => {
       event.preventDefault();
 
-      let pastedData = event.clipboardData.getData('Text').replace(/,/g, '');
+      const cleaned = negative
+        ? stripGrouping(event.clipboardData.getData('Text')).replace(
+            /[^0-9.-]/g,
+            '',
+          )
+        : stripGrouping(event.clipboardData.getData('Text')).replace(
+            /[^0-9.]/g,
+            '',
+          );
 
-      pastedData = negative
-        ? pastedData.replace(/[^0-9.-]/g, '')
-        : pastedData.replace(/[^0-9.]/g, '');
-
-      let regexPatternPaste: RegExp | string;
-      if (negative) {
-        if (allowExtraDecimal) {
-          regexPatternPaste = /^-?\d*(\.?\d*)?$/;
-        } else {
-          regexPatternPaste = `^-?\\d*(\\.\\d{0,${decimalLimit}})?$`;
-        }
-      } else {
-        if (allowExtraDecimal) {
-          regexPatternPaste = /^\d*(\.?\d*)?$/;
-        } else {
-          regexPatternPaste = `^\\d*(\\.\\d{0,${decimalLimit}})?$`;
-        }
+      if (!inputPattern.test(cleaned)) {
+        return;
       }
-      const regex = new RegExp(regexPatternPaste);
 
-      if (regex.test(pastedData)) {
-        rawValueRef.current = pastedData;
-        setDisplayValue(pastedData);
+      rawValueRef.current = cleaned;
+      setDisplayValue(cleaned);
+      isChangedByOnChange.current = true;
+      onChange?.(+cleaned);
 
-        isChangedByOnChange.current = true;
-        onChange?.(+pastedData);
-      }
+      inputOnPaste?.(event);
     },
-    [allowExtraDecimal, decimalLimit, negative, onChange],
+    [inputPattern, negative, onChange, inputOnPaste],
   );
 
   return (
@@ -290,7 +369,7 @@ const RInputNumber = ({
       onBlur={handleBlur}
       onFocus={handleFocus}
       onPaste={handlePaste}
-      {...omit(props, ['onKeyDown', 'onBlur', 'onFocus', 'onPaste'])}
+      {...restProps}
     />
   );
 };

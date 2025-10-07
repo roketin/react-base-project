@@ -1,8 +1,9 @@
 import { DEFAULT_EXT } from '@/modules/app/constants/app.constant';
 
 /**
- * Get file extension from file
- * @param file
+ * Extracts the file extension from a File object.
+ * @param {File} file - The file from which to extract the extension.
+ * @returns {string} The lowercase file extension without the leading dot.
  */
 export const getFileExtensionFromFile = (file: File): string => {
   const extensionMatch = RegExp(/\.([0-9a-z]+)(?:[?#]|$)/i).exec(file.name);
@@ -10,9 +11,9 @@ export const getFileExtensionFromFile = (file: File): string => {
 };
 
 /**
- * Get file extension from string
- * @param fileString
- * @returns
+ * Extracts the file extension from a filename string.
+ * @param {string} fileString - The filename or path string.
+ * @returns {string} The lowercase file extension without the leading dot.
  */
 export const getFileExtensionFromString = (fileString: string): string => {
   const extensionMatch = RegExp(/\.([0-9a-z]+)(?:[?#]|$)/i).exec(fileString);
@@ -20,11 +21,15 @@ export const getFileExtensionFromString = (fileString: string): string => {
 };
 
 /**
- * Get file group segment
- * @param ext
- * @returns
+ * Defines the possible file group types.
  */
 export type TGroupFileType = 'image' | 'pdf' | 'doc' | 'audio' | 'custom';
+
+/**
+ * Determines the file group type based on the file extension.
+ * @param {string} ext - The file extension to classify.
+ * @returns {TGroupFileType} The corresponding file group type.
+ */
 export const getFileGroupType = (ext: string): TGroupFileType => {
   if (DEFAULT_EXT.IMAGES.includes(ext)) {
     return 'image';
@@ -42,10 +47,10 @@ export const getFileGroupType = (ext: string): TGroupFileType => {
 };
 
 /**
- * Format Bytes
- * @param bytes
- * @param decimals
- * @returns
+ * Converts a byte value into a human-readable string with appropriate units.
+ * @param {number} bytes - The number of bytes.
+ * @param {number} [decimals=2] - The number of decimal places to include.
+ * @returns {string} The formatted string representing the bytes in suitable units.
  */
 export function formatBytes(bytes: number, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -60,28 +65,33 @@ export function formatBytes(bytes: number, decimals = 2) {
 }
 
 /**
- * Convert byte to MB
- * @param num
- * @returns
+ * Converts a numeric value to bytes assuming the input is in megabytes.
+ * @param {number} num - The number in megabytes.
+ * @returns {number} The equivalent number of bytes.
  */
 export const byteToMb = (num: number) => 1024 * 1024 * num;
 
+/**
+ * Initiates a download of a Blob object as a file with a specified filename.
+ * @param {Blob} blob - The Blob object to download.
+ * @param {string} [name='file.txt'] - The desired filename for the downloaded file.
+ */
 export const downloadBlob = (blob: Blob, name = 'file.txt') => {
-  // Convert your blob into a Blob URL (a special url that points to an object in the browser's memory)
+  // Create a URL representing the Blob object in memory
   const blobUrl = URL.createObjectURL(blob);
 
-  // Create a link element
+  // Create an anchor element for download
   const link = document.createElement('a');
 
-  // Set link's href to point to the Blob URL
+  // Set the href attribute to the Blob URL and assign the download filename
   link.href = blobUrl;
   link.download = name;
 
-  // Append link to the body
+  // Append the anchor to the document body to make it part of the DOM
   document.body.appendChild(link);
 
-  // Dispatch click event on the link
-  // This is necessary as link.click() does not work on the latest firefox
+  // Programmatically trigger a click event on the anchor to start download
+  // This approach ensures compatibility with browsers like Firefox
   link.dispatchEvent(
     new MouseEvent('click', {
       bubbles: true,
@@ -90,6 +100,6 @@ export const downloadBlob = (blob: Blob, name = 'file.txt') => {
     }),
   );
 
-  // Remove link from body
+  // Remove the anchor element from the DOM after triggering the download
   document.body.removeChild(link);
 };

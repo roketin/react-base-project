@@ -26,34 +26,98 @@ import {
   type TGroupFileType,
 } from '@/modules/app/libs/file-utils';
 
+const ICON_MAP: Record<'image' | 'music' | 'excel', React.ReactNode> = {
+  image: <FileImage size={50} />,
+  music: <AudioWaveform size={50} />,
+  excel: <FileSpreadsheet size={50} />,
+};
+
+async function compressImage(file: File): Promise<File> {
+  return new Promise<File>((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        URL.revokeObjectURL(url);
+        reject(new Error('Canvas context not available'));
+        return;
+      }
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(
+        (blob) => {
+          URL.revokeObjectURL(url);
+
+          if (!blob) {
+            reject(new Error('Compression failed'));
+            return;
+          }
+
+          resolve(
+            new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now(),
+            }),
+          );
+        },
+        'image/jpeg',
+        0.7,
+      );
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Image load error'));
+    };
+
+    img.src = url;
+  });
+}
+
 export type TRFileUploaderRef = {
   focus: () => void;
   removeFile: () => void;
 };
 
 export type TRFileUploaderProps = {
-  value: File | string | null;
-  accept: string[];
-  width: string;
-  height: string;
-  disabledUpload: boolean;
-  disabledDelete: boolean;
-  showPreview: boolean;
-  thumbnailSize: 'cover' | 'contain';
-  onChange: (file: File | null) => void;
-  onRemove: () => void;
-  onPreview: (file: File | string) => void;
-  icon: 'image' | 'music' | 'excel';
+  value?: File | string | null;
+  accept?: string[];
+  width?: string;
+  height?: string;
+  disabledUpload?: boolean;
+  disabledDelete?: boolean;
+  showPreview?: boolean;
+  thumbnailSize?: 'cover' | 'contain';
+  onChange?: (file: File | null) => void;
+  onRemove?: () => void;
+  onPreview?: (file: File | string) => void;
+  icon?: 'image' | 'music' | 'excel';
   compress?: boolean;
   onBlur?: () => void;
 };
 
-export type TRFileUploaderThumbsProps = Partial<TRFileUploaderProps> & {
-  file: File | null;
-  fileThumbnail: string | null;
-  groupType: TGroupFileType;
-  isValidAcceptWithType: boolean;
-  handleFileChange: (file: File) => void;
+type TRFileUploaderThumbsProps = {
+  acceptAttr?: string;
+  disabledUpload: boolean;
+  disabledDelete: boolean;
+  width: string;
+  height: string;
+  showPreview: boolean;
+  thumbnailSize: 'cover' | 'contain';
+  icon: 'image' | 'music' | 'excel';
+  previewSrc: string | null;
+  previewTarget: File | string | null;
+  fileName?: string;
+  isImagePreview: boolean;
+  onPreview?: (file: File | string) => void;
+  handleFileChange: (file: File | null) => void;
   handleFileRemove: () => void;
 };
 
@@ -68,17 +132,17 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
       disabledDelete,
       width,
       height,
-      accept,
-      fileThumbnail,
+      acceptAttr,
+      previewSrc,
+      previewTarget,
       showPreview,
-      file,
-      isValidAcceptWithType,
+      fileName,
+      isImagePreview,
       thumbnailSize,
       onPreview,
       handleFileChange,
       handleFileRemove,
       icon,
-      groupType,
     } = props;
 
     const fileRef = useRef<HTMLInputElement>(null);
@@ -97,8 +161,7 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
      */
     const handleFileChange_internal = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
-        const currentFile = (e.target.files?.[0] ?? null) as File;
-        handleFileChange(currentFile);
+        handleFileChange(e.target.files?.[0] ?? null);
       },
       [handleFileChange],
     );
@@ -146,10 +209,7 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
         e.preventDefault();
         setIsDragOver(false);
         if (!disabledUpload) {
-          const droppedFile = e.dataTransfer.files?.[0];
-          if (droppedFile) {
-            handleFileChange(droppedFile);
-          }
+          handleFileChange(e.dataTransfer.files?.[0] ?? null);
         }
       },
       [disabledUpload, handleFileChange],
@@ -163,33 +223,23 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
       },
     }));
 
-    /**
-     * Memoized value to determine if deleting the file is allowed.
-     */
-    const isAllowDelete = useMemo<boolean>(
-      () => Boolean((file || fileThumbnail) && !disabledDelete),
-      [file, fileThumbnail, disabledDelete],
+    const isAllowDelete = useMemo(
+      () => Boolean((previewSrc || fileName) && !disabledDelete),
+      [previewSrc, fileName, disabledDelete],
     );
 
-    /**
-     * Memoized value to determine if previewing the file is allowed.
-     */
-    const isAllowPreview = useMemo<boolean>(
-      () => Boolean((file || fileThumbnail) && showPreview),
-      [file, fileThumbnail, showPreview],
+    const isAllowPreview = useMemo(
+      () => Boolean(previewTarget && showPreview),
+      [previewTarget, showPreview],
     );
 
-    /**
-     * Render the thumbnail content based on file type and availability.
-     * @returns React.ReactNode
-     */
-    const renderThumbnail = () => {
-      if (fileThumbnail) {
-        if (groupType === 'image' && isValidAcceptWithType) {
+    const thumbnailContent = useMemo(() => {
+      if (previewSrc) {
+        if (isImagePreview) {
           return (
             <img
-              src={fileThumbnail}
-              alt={fileThumbnail}
+              src={previewSrc}
+              alt={fileName ?? 'preview'}
               style={{ width, height }}
               className={cn({
                 'object-cover': thumbnailSize === 'cover',
@@ -198,31 +248,35 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
             />
           );
         }
+
         return (
-          <div className='flex items-center flex-col justify-center h-full'>
+          <div className='flex h-full flex-col items-center justify-center px-2 text-center'>
             <FileArchive size={50} />
-            <div className='text-xs mt-3 text-center w-full break-words px-2'>
-              {file?.name}
-            </div>
+            {fileName && (
+              <div className='mt-3 w-full break-words text-xs'>{fileName}</div>
+            )}
           </div>
         );
       }
 
-      const icons: Record<string, React.ReactNode> = {
-        image: <FileImage size={50} />,
-        music: <AudioWaveform size={50} />,
-        excel: <FileSpreadsheet size={50} />,
-      };
-
       return (
-        <div className='flex items-center flex-col justify-center h-full'>
-          {icons[icon ?? 'image']}
+        <div className='flex h-full flex-col items-center justify-center'>
+          {ICON_MAP[icon]}
           {!disabledUpload && (
-            <div className='text-sm mt-2'>Choose File...</div>
+            <div className='mt-2 text-sm'>Choose File...</div>
           )}
         </div>
       );
-    };
+    }, [
+      previewSrc,
+      isImagePreview,
+      fileName,
+      disabledUpload,
+      icon,
+      height,
+      thumbnailSize,
+      width,
+    ]);
 
     return (
       <div style={{ width }}>
@@ -234,8 +288,8 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            'overflow-hidden rounded-md bg-gray-50 relative border border-gray-200 shadow-lg shadow-gray-50 transition-all ease-in-out',
-            !disabledUpload ? 'cursor-pointer hover:bg-gray-100' : '',
+            'overflow-hidden rounded-md bg-white relative border border-gray-200 shadow-lg shadow-gray-50 transition-all ease-in-out',
+            !disabledUpload ? 'cursor-pointer hover:bg-gray-50' : '',
             isDragOver ? 'border-blue-500' : '',
           )}
         >
@@ -258,8 +312,8 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
                 e.stopPropagation();
                 e.preventDefault();
 
-                if (onPreview && (file || fileThumbnail)) {
-                  onPreview(file || (fileThumbnail as string));
+                if (onPreview && previewTarget) {
+                  onPreview(previewTarget);
                 }
               }}
             >
@@ -267,17 +321,13 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
             </Button>
           )}
 
-          {renderThumbnail()}
+          {thumbnailContent}
 
           <input
             data-testid='fileInput'
             type='file'
             className='hidden'
-            accept={`${accept
-              ?.map((ext) => {
-                return `.${ext}`;
-              })
-              .join(',')}`}
+            accept={acceptAttr}
             ref={fileRef}
             onChange={handleFileChange_internal}
           />
@@ -293,193 +343,131 @@ RFileThumbnail.displayName = 'RFileThumbnail';
  * RFileUploader component manages the file upload state,
  * including compression, validation, and rendering the thumbnail component.
  */
-const RFileUploader = forwardRef<
-  TRFileUploaderRef,
-  Partial<TRFileUploaderProps>
->((props, ref) => {
-  const {
-    onChange,
-    accept = DEFAULT_EXT.IMAGES,
-    value = null,
-    width = '200px',
-    height = '200px',
-    disabledUpload = false,
-    disabledDelete = false,
-    onRemove,
-    onPreview,
-    showPreview = false,
-    thumbnailSize = 'cover',
-    icon = 'image',
-    compress = true,
-    onBlur,
-  } = props;
+const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
+  (props, ref) => {
+    const {
+      onChange,
+      accept = DEFAULT_EXT.IMAGES,
+      value = null,
+      width = '200px',
+      height = '200px',
+      disabledUpload = false,
+      disabledDelete = false,
+      onRemove,
+      onPreview,
+      showPreview = false,
+      thumbnailSize = 'cover',
+      icon = 'image',
+      compress = true,
+      onBlur,
+    } = props;
 
-  const [file, setFile] = useState<File | null>(null);
-  const [fileThumb, setFileThumb] = useState<string | null>();
+    const [file, setFile] = useState<File | null>(null);
+    const [remotePreview, setRemotePreview] = useState<string | null>(null);
+    const [objectUrl, setObjectUrl] = useState<string | null>(null);
 
-  /**
-   * Effect to synchronize local file state with the external value prop.
-   */
-  useEffect(() => {
-    if (value instanceof File) {
-      setFile(value);
-    } else if (value === '') {
-      setFileThumb(null);
-      setFile(null);
-    } else {
-      setFileThumb(value);
-    }
-  }, [value]);
+    useEffect(() => {
+      if (value instanceof File) {
+        setFile(value);
+        setRemotePreview(null);
+      } else {
+        setFile(null);
+        setRemotePreview(value ?? null);
+      }
+    }, [value]);
 
-  /**
-   * Memoized file thumbnail URL or string for preview.
-   */
-  const fileThumbnail = useMemo<string | null>(() => {
-    if (file) {
-      return URL.createObjectURL(file);
-    } else if (fileThumb) {
-      return fileThumb;
-    }
-    return null;
-  }, [file, fileThumb]);
+    useEffect(() => {
+      if (!file) {
+        setObjectUrl(null);
+        return;
+      }
 
-  /**
-   * Memoized file group type based on file extension.
-   */
-  const groupType = useMemo<TGroupFileType>(() => {
-    const fileActual =
-      file && fileThumbnail
-        ? getFileExtensionFromFile(file)
-        : getFileExtensionFromString(fileThumbnail ?? '');
-
-    return getFileGroupType(fileActual);
-  }, [file, fileThumbnail]);
-
-  /**
-   * Memoized boolean to check if file type is valid for image preview.
-   */
-  const isValidAcceptWithType = useMemo<boolean>(
-    () => groupType === 'image',
-    [groupType],
-  );
-
-  /**
-   * Compress image file to reduce size before upload.
-   * @param file Image file to compress
-   * @returns Promise<File> compressed file
-   */
-  async function compressImage(file: File): Promise<File> {
-    return new Promise<File>((resolve, reject) => {
-      const img = new Image();
       const url = URL.createObjectURL(file);
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          URL.revokeObjectURL(url);
-          reject(new Error('Canvas context not available'));
+      setObjectUrl(url);
+
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    }, [file]);
+
+    const previewSrc = objectUrl ?? remotePreview;
+
+    const groupType = useMemo<TGroupFileType>(() => {
+      if (file) {
+        return getFileGroupType(getFileExtensionFromFile(file));
+      }
+      return getFileGroupType(getFileExtensionFromString(previewSrc ?? ''));
+    }, [file, previewSrc]);
+
+    const acceptAttr = useMemo(() => {
+      if (!accept?.length) return undefined;
+      return accept
+        .map((ext) => (ext.startsWith('.') ? ext : `.${ext}`))
+        .join(',');
+    }, [accept]);
+
+    const isImagePreview = groupType === 'image';
+
+    const handleFileChange = useCallback(
+      async (currentFile: File | null) => {
+        if (!currentFile) {
+          setFile(null);
+          setRemotePreview(null);
+          onChange?.(null);
+          onBlur?.();
           return;
         }
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              const compressedFile = new File([blob], file.name, {
-                type: 'image/jpeg',
-                lastModified: Date.now(),
-              });
-              URL.revokeObjectURL(url);
-              resolve(compressedFile);
-            } else {
-              URL.revokeObjectURL(url);
-              reject(new Error('Compression failed'));
-            }
-          },
-          'image/jpeg',
-          0.7,
-        );
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(new Error('Image load error'));
-      };
-      img.src = url;
-    });
-  }
 
-  /**
-   * Handle file change event, optionally compressing images before setting state.
-   * @param currentFile Selected file
-   */
-  const handleFileChange = useCallback(
-    async (currentFile: File) => {
-      if (currentFile) {
-        let fileToSet = currentFile;
+        let nextFile = currentFile;
+
         if (compress && currentFile.type.startsWith('image/')) {
           try {
-            fileToSet = await compressImage(currentFile);
+            nextFile = await compressImage(currentFile);
           } catch {
-            fileToSet = currentFile;
+            nextFile = currentFile;
           }
         }
-        setFile(fileToSet);
-        setFileThumb(null);
 
-        if (onChange) {
-          onChange(fileToSet);
-        }
+        setFile(nextFile);
+        setRemotePreview(null);
+        onChange?.(nextFile);
         onBlur?.();
-      }
-    },
-    [onChange, compress, onBlur],
-  );
+      },
+      [compress, onBlur, onChange],
+    );
 
-  /**
-   * Handle file removal, resetting state and calling callbacks.
-   */
-  const handleFileRemove = useCallback(() => {
-    setFile(null);
-    setFileThumb(null);
+    const handleFileRemove = useCallback(() => {
+      setFile(null);
+      setRemotePreview(null);
+      onRemove?.();
+      onChange?.(null);
+      onBlur?.();
+    }, [onBlur, onChange, onRemove]);
 
-    if (onRemove) {
-      onRemove();
-    }
-
-    if (onChange) {
-      onChange(null);
-    }
-    onBlur?.();
-  }, [onRemove, onChange, onBlur]);
-
-  return (
-    <div className='flex flex-col'>
-      <RFileThumbnail
-        ref={ref}
-        {...{
-          onChange,
-          accept,
-          disabledDelete,
-          disabledUpload,
-          height,
-          width,
-          handleFileChange,
-          handleFileRemove,
-          fileThumbnail,
-          onPreview,
-          showPreview,
-          file,
-          groupType,
-          isValidAcceptWithType,
-          thumbnailSize,
-          icon,
-          onBlur,
-        }}
-      />
-    </div>
-  );
-});
+    return (
+      <div className='flex flex-col'>
+        <RFileThumbnail
+          ref={ref}
+          acceptAttr={acceptAttr}
+          disabledDelete={disabledDelete}
+          disabledUpload={disabledUpload}
+          height={height}
+          width={width}
+          showPreview={showPreview}
+          thumbnailSize={thumbnailSize}
+          icon={icon}
+          previewSrc={previewSrc}
+          previewTarget={file ?? remotePreview ?? null}
+          fileName={file?.name}
+          isImagePreview={isImagePreview}
+          onPreview={onPreview}
+          handleFileChange={handleFileChange}
+          handleFileRemove={handleFileRemove}
+        />
+      </div>
+    );
+  },
+);
 
 RFileUploader.displayName = 'RFileUploader';
 

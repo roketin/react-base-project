@@ -10,9 +10,10 @@ import {
 } from '@/modules/app/components/ui/alert-dialog';
 import Button from '@/modules/app/components/ui/button';
 import { buttonVariants } from '@/modules/app/components/ui/variants/button-variants';
+import type { TLoadable } from '@/modules/app/types/component.type';
 import type { VariantProps } from 'class-variance-authority';
 
-export type TRAlertDialogProps = {
+export type TRAlertDialogProps = TLoadable & {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: React.ReactNode;
@@ -23,7 +24,6 @@ export type TRAlertDialogProps = {
   onOk?: () => void;
   onCancel?: () => void;
   extraButtons?: React.ReactNode;
-  loading?: boolean;
   icon?: React.ReactNode;
   hideCancel?: boolean;
 };

@@ -1,14 +1,28 @@
-import { Checkbox } from '@/modules/app/components/ui/checkbox';
 import { useCallback } from 'react';
+import { Checkbox } from '@/modules/app/components/ui/checkbox';
+import type {
+  TDisableable,
+  TLabelValueOption,
+  TLayoutOrientation,
+} from '@/modules/app/types/component.type';
 
-type TCheckboxMultipleProps = {
-  options: { label: string; value: string }[];
+type TCheckboxMultipleProps = TDisableable & {
+  options: TLabelValueOption<string, string>[];
   checked?: string[];
   onCheckedChange?: (values: string[]) => void;
-  disabled?: boolean;
-  layout?: 'horizontal' | 'vertical';
+  layout?: TLayoutOrientation;
 };
 
+/**
+ * RCheckboxMultiple component renders a group of checkboxes allowing multiple selections.
+ *
+ * @param {Object} props - Component properties
+ * @param {Array} props.options - Array of checkbox options with label and value
+ * @param {Array} [props.checked] - Array of currently checked values
+ * @param {Function} [props.onCheckedChange] - Callback invoked when checked values change
+ * @param {boolean} [props.disabled] - Disable all checkboxes if true
+ * @param {'horizontal'|'vertical'} [props.layout='horizontal'] - Layout direction of checkboxes
+ */
 export function RCheckboxMultiple({
   options,
   checked,
@@ -17,8 +31,11 @@ export function RCheckboxMultiple({
   layout = 'horizontal',
 }: TCheckboxMultipleProps) {
   /**
-   * Handle toggle
-   * @param value
+   * Toggles the checked state of a checkbox value.
+   * If the value is already checked, it will be removed; otherwise, it will be added.
+   * Calls onCheckedChange callback with the updated array of checked values.
+   *
+   * @param {string} value - The value of the checkbox to toggle
    */
   const handleToggle = useCallback(
     (value: string) => {
@@ -31,6 +48,7 @@ export function RCheckboxMultiple({
     [checked, onCheckedChange],
   );
 
+  // Render the checkboxes in specified layout with appropriate props
   return (
     <div
       className={

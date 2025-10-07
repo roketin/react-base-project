@@ -14,6 +14,7 @@ import type {
   TApiDefaultQueryParams,
   TApiResponsePaginateMeta,
 } from '@/modules/app/types/api.type';
+import type { TLoadable } from '@/modules/app/types/component.type';
 import {
   flexRender,
   getCoreRowModel,
@@ -33,39 +34,42 @@ import {
 } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
-export type TRDataTableProps<TData, TValue> = {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  loading: boolean;
-  fixed: boolean;
-  pagination: boolean;
-  onChange: (params: Partial<TApiDefaultQueryParams>) => void;
-  onChangeSelected: (ids: TRDataTableSelected) => void;
-  meta: TApiResponsePaginateMeta | null;
-  transformSort: (key: string) => string;
-  rowId: string | null;
-  header: React.ReactElement;
-  footer: React.ReactElement;
-  allowSearch: boolean;
-  initialSelected: TRDataTableSelected;
+export type TRDataTableProps<TData, TValue> = TLoadable & {
+  columns?: ColumnDef<TData, TValue>[];
+  data?: TData[];
+  fixed?: boolean;
+  pagination?: boolean;
+  onChange?: (params: Partial<TApiDefaultQueryParams>) => void;
+  onChangeSelected?: (ids: TRDataTableSelected) => void;
+  meta?: TApiResponsePaginateMeta | null;
+  transformSort?: (key: string) => string;
+  rowId?: string | null;
+  header?: React.ReactNode;
+  footer?: React.ReactNode;
+  allowSearch?: boolean;
+  initialSelected?: TRDataTableSelected;
+  searchPlaceholder?: string;
 };
 
-export type TRDataTableRef = {
-  getTable: () => Table<unknown>;
-};
-
-export type TRDataTableFooterProps = {
-  meta: TApiResponsePaginateMeta | null;
-  pagesToShow: number;
-  onChange: (page: number) => void;
-  disabled: boolean;
+export type TRDataTableRef<TData = unknown> = {
+  getTable: () => Table<TData>;
 };
 
 export type TRDataTableSelected = {
   [key: string]: boolean;
 };
 
-// RDataTableInner wires up tanstack table state along with pagination and selection handlers.
+/**
+ * RDataTableInner is the main internal component that integrates TanStack Table with
+ * pagination, sorting, selection, and search functionalities.
+ * It manages the table state and communicates changes back to the parent component.
+ *
+ * @template TData - The type of data displayed in the table rows.
+ * @template TValue - The type of values in the table columns.
+ * @param {TRDataTableProps<TData, TValue>} props - The properties for configuring the data table.
+ * @param {React.Ref<TRDataTableRef<TData>>} ref - The forwarded ref to expose table methods externally.
+ * @returns {JSX.Element} The rendered data table component.
+ */
 const RDataTableInner = <TData, TValue>(
   {
     columns = [],
@@ -75,22 +79,26 @@ const RDataTableInner = <TData, TValue>(
     pagination = true,
     onChange,
     onChangeSelected,
-    meta,
+    meta = null,
     transformSort,
     rowId = 'id',
     allowSearch = true,
     header,
     footer,
     initialSelected = {},
-  }: Partial<TRDataTableProps<TData, TValue>>,
-  ref: React.Ref<TRDataTableRef>,
+    searchPlaceholder = 'Search...',
+  }: TRDataTableProps<TData, TValue>,
+  ref: React.Ref<TRDataTableRef<TData>>,
 ) => {
-  const tableMeta = meta ?? null;
-
+  // State for tracking selected rows keyed by row ID.
   const [rowSelection, setRowSelection] =
     useState<TRDataTableSelected>(initialSelected);
+
+  // State for managing sorting state of the table.
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  // Initialize the TanStack React Table instance with manual sorting and pagination support.
+  // Row selection and sorting state are controlled externally via state hooks.
   const table = useReactTable({
     state: {
       rowSelection,
@@ -104,15 +112,18 @@ const RDataTableInner = <TData, TValue>(
     getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    getRowId: (row: any, index) => {
-      const id = rowId ? row[rowId] : index;
-      return id as string;
-    },
+    getRowId: rowId
+      ? // Provide a custom row ID getter if rowId prop is specified.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (row: any, index: number) => String(row[rowId] ?? index)
+      : undefined,
   });
 
   /**
-   * Relay table-related query param updates back to the parent consumers.
+   * Callback to notify parent components about changes in table query parameters such as
+   * sorting, pagination, and search.
+   *
+   * @param {Partial<TApiDefaultQueryParams>} params - Partial query parameters to update.
    */
   const onChangeTable = useCallback(
     (params: Partial<TApiDefaultQueryParams>) => {
@@ -123,7 +134,11 @@ const RDataTableInner = <TData, TValue>(
     [onChange],
   );
 
-  // Tracking sorting
+  /**
+   * Effect to synchronize sorting changes with the parent component.
+   * Transforms the sorting state into API query parameters and resets page to 1.
+   * Runs whenever sorting or transformSort function changes.
+   */
   useEffect(() => {
     const actualSort = sorting?.[0];
     const sortParams = (
@@ -143,21 +158,32 @@ const RDataTableInner = <TData, TValue>(
     onChangeTable({ ...sortParams, page: 1 });
   }, [onChangeTable, sorting, transformSort]);
 
-  // Tracking selected
+  /**
+   * Effect to notify parent components when the selected rows change.
+   * Runs whenever rowSelection state updates.
+   */
   useEffect(() => {
     if (onChangeSelected) {
       onChangeSelected(rowSelection);
     }
   }, [onChangeSelected, rowSelection]);
 
-  // Function for accessing table from outside
+  /**
+   * Expose imperative methods to parent components using ref.
+   * Provides access to the underlying TanStack table instance.
+   */
   useImperativeHandle(ref, () => ({
     getTable() {
       return table;
     },
   }));
 
-  // Toggle the sorting state of the clicked header, respecting the existing sort order.
+  /**
+   * Handles sorting toggles on column headers.
+   * Cycles through sorting states: none -> ascending -> descending -> none.
+   *
+   * @param {Header<TData, unknown>} header - The header cell that was clicked.
+   */
   const handleSort = useCallback((header: Header<TData, unknown>) => {
     if (!header.column.getCanSort()) return;
     const isSorted = header.column.getIsSorted();
@@ -166,7 +192,12 @@ const RDataTableInner = <TData, TValue>(
     if (isSorted === 'desc') return header.column.clearSorting();
   }, []);
 
-  // Render placeholder rows while data is loading to preserve table layout.
+  /**
+   * Renders placeholder skeleton rows to maintain table layout while data is loading.
+   * Displays skeleton cells matching the number of headers.
+   *
+   * @returns {JSX.Element} Skeleton rows for loading state.
+   */
   const renderSkeletonRows = () => (
     <>
       {table.getHeaderGroups().map((headerGroup) => (
@@ -174,7 +205,7 @@ const RDataTableInner = <TData, TValue>(
           {headerGroup.headers.map((header) => {
             return (
               <TableCell key={header.id}>
-                <Skeleton className='w-full h-[20px] rounded-md' />
+                <Skeleton className='h-[20px] w-full rounded-md' />
               </TableCell>
             );
           })}
@@ -183,25 +214,29 @@ const RDataTableInner = <TData, TValue>(
     </>
   );
 
-  // Debounce search
-  const debounced = useDebouncedCallback((search) => {
+  /**
+   * Debounced callback for handling search input changes.
+   * Delays invoking onChangeTable to reduce frequent queries.
+   */
+  const debouncedSearch = useDebouncedCallback((search: string) => {
     onChangeTable({ search, page: 1 });
-  }, 400);
+  }, 300);
 
   return (
     <div>
-      <div className='flex items-center gap-2 mb-4'>
-        {header}
+      <div className='mb-4 flex flex-wrap items-center gap-3 md:justify-between'>
         {allowSearch && (
-          <div className='relative'>
+          <div>
             <Input
               type='search'
-              placeholder='Search...'
-              onChange={(e) => debounced(e.target.value)}
+              placeholder={searchPlaceholder}
+              onChange={(e) => debouncedSearch(e.target.value)}
               prepend={<Search size={16} />}
+              className='min-w-[220px]'
             />
           </div>
         )}
+        {header}
       </div>
 
       <div className='rounded-md border'>
@@ -248,7 +283,7 @@ const RDataTableInner = <TData, TValue>(
               renderSkeletonRows()
             ) : (
               <>
-                {table.getRowModel().rows?.length ? (
+                {table.getRowModel().rows.length > 0 ? (
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
@@ -266,8 +301,8 @@ const RDataTableInner = <TData, TValue>(
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length}>
-                      <div className='w-full h-24 flex justify-center items-center'>
+                    <TableCell colSpan={columns?.length ?? 1}>
+                      <div className='flex h-24 w-full items-center justify-center text-sm text-muted-foreground'>
                         No results.
                       </div>
                     </TableCell>
@@ -280,7 +315,7 @@ const RDataTableInner = <TData, TValue>(
       </div>
       {pagination && (
         <RDataTableFooter
-          meta={tableMeta}
+          meta={meta}
           pagesToShow={5}
           onChange={onChangeTable}
           disabled={loading}
@@ -293,7 +328,7 @@ const RDataTableInner = <TData, TValue>(
 };
 
 export const RDataTable = forwardRef(RDataTableInner) as <TData, TValue>(
-  props: Partial<TRDataTableProps<TData, TValue>> & {
-    ref?: React.Ref<TRDataTableRef>;
+  props: TRDataTableProps<TData, TValue> & {
+    ref?: React.Ref<TRDataTableRef<TData>>;
   },
 ) => ReturnType<typeof RDataTableInner>;

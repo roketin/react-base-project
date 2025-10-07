@@ -1,21 +1,24 @@
 import { showAlertValidation } from '@/modules/app/components/base/show-alert-validation';
 import { Form } from '@/modules/app/components/ui/form';
 import { FormConfigContext } from '@/modules/app/contexts/form-config-context';
+import type {
+  TDisableable,
+  TLayoutOrientation,
+} from '@/modules/app/types/component.type';
 import { cn } from '@/modules/app/libs/utils';
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useMemo, type ReactNode } from 'react';
 import type { UseFormReturn, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-export type TRFormProps<TFormValues extends FieldValues> = {
+export type TRFormProps<TFormValues extends FieldValues> = TDisableable & {
   form: UseFormReturn<TFormValues>;
   onSubmit: (values: TFormValues) => void | Promise<void>;
-  layout?: 'vertical' | 'horizontal';
+  layout?: TLayoutOrientation;
   labelWidth?: string;
   children: ReactNode;
   className?: string;
   showErrorPopup?: boolean;
   spacing?: string;
-  disabled?: boolean;
 };
 
 const RForm = <TFormValues extends FieldValues>({
@@ -31,6 +34,11 @@ const RForm = <TFormValues extends FieldValues>({
 }: TRFormProps<TFormValues>) => {
   const { trigger } = form;
   const { i18n } = useTranslation();
+
+  const providerValue = useMemo(
+    () => ({ labelWidth, layout, disabled }),
+    [labelWidth, layout, disabled],
+  );
 
   // listener: re-validate hanya field yang sudah disentuh saat bahasa berubah
   useEffect(() => {
@@ -59,9 +67,10 @@ const RForm = <TFormValues extends FieldValues>({
     i18n.on('languageChanged', onLanguageChanged);
     return () => i18n.off('languageChanged', onLanguageChanged);
   }, [i18n, trigger, form.formState.touchedFields, form.formState.errors]);
+
   return (
     <Form {...form}>
-      <FormConfigContext.Provider value={{ labelWidth, layout, disabled }}>
+      <FormConfigContext.Provider value={providerValue}>
         <form
           data-testid='form'
           className={cn(

@@ -18,6 +18,11 @@ import {
   inputVariants,
   type TInputSize,
 } from '@/modules/app/components/ui/variants/input-variants';
+import type {
+  TAriaInvalidProp,
+  TDisableable,
+  TLoadable,
+} from '@/modules/app/types/component.type';
 import { cn } from '@/modules/app/libs/utils';
 import { CheckIcon, ChevronsUpDown, X, X as XIcon } from 'lucide-react';
 import { useState, useMemo, useCallback } from 'react';
@@ -26,22 +31,21 @@ export type RMultiComboBoxProps<
   T extends object,
   K extends keyof T,
   V extends keyof T,
-> = {
-  items?: T[];
-  labelKey?: K;
-  valueKey?: V;
-  values?: string[];
-  defaultValues?: string[];
-  onChange?: (values: string[], items: T[]) => void;
-  clearable?: boolean;
-  searchValue?: string;
-  onSearch?: (query: string) => void;
-  density?: TInputSize;
-  placeholder?: string;
-  'aria-invalid'?: boolean | string;
-  disabled?: boolean;
-  loading?: boolean;
-};
+> = TDisableable &
+  TLoadable &
+  TAriaInvalidProp & {
+    items?: T[];
+    labelKey?: K;
+    valueKey?: V;
+    values?: string[];
+    defaultValues?: string[];
+    onChange?: (values: string[], items: T[]) => void;
+    clearable?: boolean;
+    searchValue?: string;
+    onSearch?: (query: string) => void;
+    density?: TInputSize;
+    placeholder?: string;
+  };
 
 export function RMultiComboBox<
   T extends object,

@@ -16,6 +16,7 @@ import type {
   UseFormStateReturn,
 } from 'react-hook-form';
 import { useFormConfig } from '@/modules/app/contexts/form-config-context';
+import type { TLayoutOrientation } from '@/modules/app/types/component.type';
 
 type TRenderFn<T extends FieldValues, N extends Path<T>> = (args: {
   field: ControllerRenderProps<T, N>;
@@ -23,18 +24,20 @@ type TRenderFn<T extends FieldValues, N extends Path<T>> = (args: {
   formState: UseFormStateReturn<T>;
 }) => React.ReactNode;
 
+type ValuePropName = 'value' | 'checked' | 'radio' | 'slider';
+
 type TRFormFieldProps<T extends FieldValues, N extends Path<T>> = {
   control: Control<T>;
   name: N;
   label?: string | React.ReactNode;
   description?: string;
-  layout?: 'vertical' | 'horizontal';
-  children?: React.ReactElement; // Mode 1
-  render?: TRenderFn<T, N>; // Mode 2
+  layout?: TLayoutOrientation;
+  children?: React.ReactElement;
+  render?: TRenderFn<T, N>;
   notRequired?: boolean;
   withPlaceholder?: boolean;
   labelWidth?: string;
-  valuePropName?: 'value' | 'checked' | 'radio' | 'slider' | 'datepicker';
+  valuePropName?: ValuePropName;
 };
 
 export function RFormField<T extends FieldValues, N extends Path<T>>({
@@ -78,17 +81,16 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
       render={(renderProps) => {
         const { value, onChange, ...restField } = renderProps.field;
 
-        const controlProps = () => {
-          switch (valuePropName) {
-            case 'checked':
-              return { checked: value, onCheckedChange: onChange };
-            case 'radio':
-            case 'slider':
-              return { value, onValueChange: onChange };
-            default:
-              return { value, onChange };
-          }
-        };
+        const resolvedControlProps = (() => {
+          const mapped: Record<ValuePropName, Record<string, unknown>> = {
+            value: { value, onChange },
+            checked: { checked: value, onCheckedChange: onChange },
+            radio: { value, onValueChange: onChange },
+            slider: { value, onValueChange: onChange },
+          };
+
+          return mapped[valuePropName];
+        })();
 
         return (
           <FormItem>
@@ -110,13 +112,14 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                 <FormControl>
                   {render
                     ? render(renderProps)
-                    : React.cloneElement(
+                    : children &&
+                      React.cloneElement(
                         children as React.ReactElement<Record<string, unknown>>,
                         {
                           ...restField,
-                          ...controlProps(),
+                          ...resolvedControlProps,
                           ...(withPlaceholder && typeof label === 'string'
-                            ? { placeholder: 'Enter ' + label.toLowerCase() }
+                            ? { placeholder: `Enter ${label.toLowerCase()}` }
                             : {}),
                           id: String(name),
                           name: String(name),

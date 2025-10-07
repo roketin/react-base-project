@@ -102,12 +102,13 @@ const SampleFormIndex = () => {
           id: 'status',
           label: 'Status',
           options: statuses,
+          layout: 'horizontal',
         }),
         filterItem.checkboxMultiple({
           id: 'tags',
           label: 'Tags',
           options: tags,
-          layout: 'vertical',
+          layout: 'horizontal',
         }),
         filterItem.slider({
           id: 'budget',

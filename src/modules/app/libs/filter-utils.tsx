@@ -1,21 +1,18 @@
 import { Input } from '@/modules/app/components/ui/input';
 import { Switch } from '@/modules/app/components/ui/switch';
-import {
-  RadioGroup,
-  RadioGroupItem,
-} from '@/modules/app/components/ui/radio-group';
 import { RCheckboxMultiple } from '@/modules/app/components/base/r-checkbox-multiple';
 import { RComboBox } from '@/modules/app/components/base/r-combobox';
 import { RMultiComboBox } from '@/modules/app/components/base/r-combobox-multiple';
 import { RDatePicker } from '@/modules/app/components/base/r-datepicker';
 import { Slider } from '@/modules/app/components/ui/slider';
+import { RRadio } from '@/modules/app/components/base/r-radio';
 import type { RComboBoxProps } from '@/modules/app/components/base/r-combobox';
 import type { RMultiComboBoxProps } from '@/modules/app/components/base/r-combobox-multiple';
 import type { RDatePickerBaseProps } from '@/modules/app/components/base/r-datepicker';
 import type { TInputProps } from '@/modules/app/components/ui/input';
 import type { ComponentProps, ReactNode } from 'react';
 import type { DateRange } from 'react-day-picker';
-import { cn } from '@/modules/app/libs/utils';
+import type { RRadioOption } from '@/modules/app/components/base/r-radio';
 
 type TFilterRenderer<TValue> = (args: {
   value: TValue;
@@ -31,15 +28,29 @@ type TFilterBase<TValue> = {
 
 export type TFilterItem<TValue = unknown> = TFilterBase<TValue>;
 
+type PrimitiveOption = string | number;
+
+type FilterComponentOptions<
+  TValue,
+  TComponentProps,
+  TOmitted extends keyof TComponentProps = never,
+  TExtra extends object = Record<never, never>,
+> = {
+  id: string;
+  label?: ReactNode;
+  defaultValue?: TValue;
+} & Omit<TComponentProps, TOmitted> &
+  TExtra;
+
 // ---------------------------------------------------------------------------
 // Built-in helper factories
 // ---------------------------------------------------------------------------
 
-type TFilterInputOptions = {
-  id: string;
-  label?: ReactNode;
-  defaultValue?: string | null;
-} & Omit<TInputProps, 'id' | 'value' | 'onChange'>;
+type TFilterInputOptions = FilterComponentOptions<
+  string | null,
+  TInputProps,
+  'id' | 'value' | 'onChange'
+>;
 
 export function filterInput({
   id,
@@ -63,25 +74,33 @@ export function filterInput({
 }
 
 type TFilterComboBoxOptions<
-  T extends object,
-  K extends keyof T,
-  V extends keyof T,
-> = {
-  id: string;
-  label?: ReactNode;
-  defaultValue?: string | null;
-} & Omit<RComboBoxProps<T, K, V>, 'value' | 'onChange'>;
+  TItem extends object | PrimitiveOption,
+  TLabel extends TItem extends object
+    ? keyof TItem
+    : never = TItem extends object ? keyof TItem : never,
+  TValue extends TItem extends object
+    ? keyof TItem
+    : never = TItem extends object ? keyof TItem : never,
+> = FilterComponentOptions<
+  string | null,
+  RComboBoxProps<TItem, TLabel, TValue>,
+  'value' | 'onChange'
+>;
 
 export function filterComboBox<
-  T extends object,
-  K extends keyof T,
-  V extends keyof T,
+  TItem extends object | PrimitiveOption,
+  TLabel extends TItem extends object
+    ? keyof TItem
+    : never = TItem extends object ? keyof TItem : never,
+  TValue extends TItem extends object
+    ? keyof TItem
+    : never = TItem extends object ? keyof TItem : never,
 >({
   id,
   label,
   defaultValue,
   ...props
-}: TFilterComboBoxOptions<T, K, V>): TFilterItem<string | null> {
+}: TFilterComboBoxOptions<TItem, TLabel, TValue>): TFilterItem<string | null> {
   return {
     id,
     label,
@@ -100,11 +119,11 @@ type TFilterComboBoxMultipleOptions<
   T extends object,
   K extends keyof T,
   V extends keyof T,
-> = {
-  id: string;
-  label?: ReactNode;
-  defaultValue?: string[];
-} & Omit<RMultiComboBoxProps<T, K, V>, 'values' | 'onChange'>;
+> = FilterComponentOptions<
+  string[] | null,
+  RMultiComboBoxProps<T, K, V>,
+  'values' | 'onChange'
+>;
 
 export function filterComboBoxMultiple<
   T extends object,
@@ -116,28 +135,30 @@ export function filterComboBoxMultiple<
   defaultValue,
   ...props
 }: TFilterComboBoxMultipleOptions<T, K, V>): TFilterItem<string[] | null> {
-  const normalizedDefault: string[] | null = defaultValue ?? null;
-
   return {
     id,
     label,
-    defaultValue: normalizedDefault,
+    defaultValue: defaultValue ?? null,
     render: ({ value, onChange }) => (
       <RMultiComboBox
         {...props}
         values={value ?? []}
-        onChange={(nextValues) => onChange(nextValues)}
+        onChange={(nextValues) =>
+          onChange(nextValues.length > 0 ? nextValues : null)
+        }
       />
     ),
   };
 }
 
-type TFilterSwitchOptions = {
-  id: string;
-  label?: ReactNode;
-  defaultValue?: boolean;
-  description?: ReactNode;
-} & Omit<ComponentProps<typeof Switch>, 'checked' | 'onCheckedChange' | 'id'>;
+type TFilterSwitchOptions = FilterComponentOptions<
+  boolean | null,
+  ComponentProps<typeof Switch>,
+  'checked' | 'onCheckedChange' | 'id',
+  {
+    description?: ReactNode;
+  }
+>;
 
 export function filterSwitch({
   id,
@@ -168,15 +189,11 @@ export function filterSwitch({
   };
 }
 
-type TFilterRadioOptions = {
-  id: string;
-  label?: ReactNode;
-  defaultValue?: string | null;
-  options: Array<{ value: string; label: ReactNode }>;
-  direction?: 'vertical' | 'horizontal';
-} & Omit<
-  ComponentProps<typeof RadioGroup>,
-  'value' | 'onValueChange' | 'defaultValue'
+type TFilterRadioOptions = FilterComponentOptions<
+  string | null,
+  ComponentProps<typeof RRadio>,
+  'value' | 'defaultValue' | 'onChange' | 'options',
+  { options: RRadioOption[] }
 >;
 
 export function filterRadio({
@@ -184,8 +201,6 @@ export function filterRadio({
   label,
   defaultValue,
   options,
-  direction = 'vertical',
-  className,
   ...props
 }: TFilterRadioOptions): TFilterItem<string | null> {
   return {
@@ -193,33 +208,18 @@ export function filterRadio({
     label,
     defaultValue: defaultValue ?? null,
     render: ({ value, onChange }) => (
-      <RadioGroup
+      <RRadio
         {...props}
-        className={cn(
-          direction === 'horizontal' ? 'flex flex-wrap gap-4' : 'grid gap-3',
-          className,
-        )}
-        value={value ?? undefined}
-        onValueChange={(next) => onChange(next || null)}
-      >
-        {options.map((option) => (
-          <RadioGroupItem
-            key={option.value}
-            value={option.value}
-            id={`${id}-${option.value}`}
-            label={option.label}
-          />
-        ))}
-      </RadioGroup>
+        options={options}
+        value={value ?? null}
+        onChange={(nextValue) => onChange(nextValue)}
+      />
     ),
   };
 }
 
-type TFilterCheckboxMultipleOptions = {
-  id: string;
-  label?: ReactNode;
-  defaultValue?: string[];
-} & Omit<
+type TFilterCheckboxMultipleOptions = FilterComponentOptions<
+  string[] | null,
   ComponentProps<typeof RCheckboxMultiple>,
   'checked' | 'onCheckedChange'
 >;
@@ -246,14 +246,13 @@ export function filterCheckboxMultiple({
   };
 }
 
-type TFilterSliderOptions = {
-  id: string;
-  label?: ReactNode;
-  defaultValue?: number[];
-  formatValue?: (value: number[]) => ReactNode;
-} & Omit<
+type TFilterSliderOptions = FilterComponentOptions<
+  number[] | null,
   ComponentProps<typeof Slider>,
-  'value' | 'defaultValue' | 'onValueChange' | 'id'
+  'value' | 'defaultValue' | 'onValueChange' | 'id',
+  {
+    formatValue?: (value: number[]) => ReactNode;
+  }
 >;
 
 export function filterSlider({
@@ -294,11 +293,10 @@ export function filterSlider({
   };
 }
 
-type TFilterDatepickerOptions = {
-  id: string;
-  label?: ReactNode;
-  defaultValue?: Date | null;
-} & RDatePickerBaseProps;
+type TFilterDatepickerOptions = FilterComponentOptions<
+  Date | null,
+  RDatePickerBaseProps
+>;
 
 export function filterDatepicker({
   id,
@@ -321,28 +319,27 @@ export function filterDatepicker({
   };
 }
 
-type TFilterDatepickerMultipleOptions = {
-  id: string;
-  label?: ReactNode;
-  defaultValue?: DateRange;
-} & RDatePickerBaseProps;
+type TFilterDatepickerMultipleOptions = FilterComponentOptions<
+  DateRange | null,
+  RDatePickerBaseProps
+>;
 
 export function filterDatepickerMultiple({
   id,
   label,
   defaultValue,
   ...props
-}: TFilterDatepickerMultipleOptions): TFilterItem<DateRange> {
+}: TFilterDatepickerMultipleOptions): TFilterItem<DateRange | null> {
   return {
     id,
     label,
-    defaultValue: defaultValue,
+    defaultValue: defaultValue ?? null,
     render: ({ value, onChange }) => (
       <RDatePicker
         {...props}
         mode='range'
         value={value ?? undefined}
-        onChange={(nextValue) => onChange(nextValue)}
+        onChange={(nextValue) => onChange(nextValue ?? null)}
       />
     ),
   };
@@ -387,5 +384,6 @@ export type {
   TFilterCheckboxMultipleOptions,
   TFilterSliderOptions,
   TFilterDatepickerOptions,
+  TFilterDatepickerMultipleOptions,
   CustomFilterOptions,
 };
