@@ -12,30 +12,33 @@ import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuthReset } from '@/modules/auth/services/auth.service';
 import { RInputPassword } from '@/modules/app/components/base/r-input-password';
+import { useTranslation } from 'react-i18next';
+import { tl } from '@/modules/app/libs/locale-utils';
 
 const formSchema = Yup.object().shape({
   password: Yup.string()
     .default('')
     .required()
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .matches(/\d/, 'Password must contain at least one number')
-    .matches(
-      /[@$!%*?&]/,
-      'Password must contain at least one special character (@, $, !, %, *, ?, &)',
-    )
-    .label('Password'),
+    .min(8)
+    .matches(/[a-z]/, () => tl('validation:passwordLowerCase'))
+    .matches(/[A-Z]/, () => tl('validation:passwordUpperCase'))
+    .matches(/\d/, () => tl('validation:passwordOneNumber'))
+    .matches(/[@$!%*?&]/, () => tl('validation:passwordSpecialChar'))
+    .label(tl('auth:form.newPassword')),
   password_confirm: Yup.string()
     .default('')
     .required()
-    .oneOf([Yup.ref('password')], 'Passwords must match')
-    .label('Confirm Password'),
+    .oneOf([Yup.ref('password')], () => tl('validation:passwordMatch'))
+    .label(tl('auth:form.newPasswordConfirm')),
 });
 
 type TFormSchema = Yup.InferType<typeof formSchema>;
 
 const AuthReset = () => {
+  // Translation
+  const { t } = useTranslation('auth');
+  const { t: tApp } = useTranslation();
+
   // Form instance
   const form = useForm<TFormSchema>({
     mode: 'onTouched',
@@ -58,8 +61,8 @@ const AuthReset = () => {
       showAlert(
         {
           type: 'confirm',
-          title: 'Confirm',
-          description: 'Are you sure you want to change your password?',
+          title: tApp('confirm'),
+          description: t('reset.confirmDesc'),
           manualClose: true,
         },
         ({ ok, setLoading, close }) => {
@@ -77,8 +80,8 @@ const AuthReset = () => {
               showAlert(
                 {
                   type: 'alert',
-                  title: 'Success',
-                  description: 'Reset password successfully.',
+                  title: tApp('success'),
+                  description: t('reset.successDesc'),
                   icon: <Lock className='text-green-600' size={50} />,
                 },
                 ({ ok }) => {
@@ -97,28 +100,23 @@ const AuthReset = () => {
         },
       );
     },
-    [mutate, navigate],
+    [mutate, navigate, t, tApp],
   );
 
   return (
     <div className='md:w-[400px]'>
-      <RCard
-        title='Reset Password'
-        description='Make sure to remember the new password after saving it.'
-      >
+      <RCard title={t('reset.title')} description={t('reset.subTitle')}>
         <RForm
           form={form}
           onSubmit={handleSubmit}
           showErrorPopup
           layout='vertical'
         >
-          <FileInfo src='src/modules/auth/components/pages/auth-reset.tsx' />
-
           {/* New Password */}
           <RFormField
             control={form.control}
             name='password'
-            label='New Password'
+            label={t('form.newPassword')}
             withPlaceholder
           >
             <RInputPassword />
@@ -128,15 +126,17 @@ const AuthReset = () => {
           <RFormField
             control={form.control}
             name='password_confirm'
-            label='New Confirm Password'
+            label={t('form.newPasswordConfirm')}
             withPlaceholder
           >
             <RInputPassword />
           </RFormField>
 
           <Button type='submit' className='w-full mt-3'>
-            Save
+            {tApp('save')}
           </Button>
+
+          <FileInfo src='src/modules/auth/components/pages/auth-reset.tsx' />
         </RForm>
       </RCard>
     </div>

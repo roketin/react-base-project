@@ -17,6 +17,7 @@ import type {
 } from 'react-hook-form';
 import { useFormConfig } from '@/modules/app/contexts/form-config-context';
 import type { TLayoutOrientation } from '@/modules/app/types/component.type';
+import { useTranslation } from 'react-i18next';
 
 type TRenderFn<T extends FieldValues, N extends Path<T>> = (args: {
   field: ControllerRenderProps<T, N>;
@@ -53,6 +54,10 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
   labelWidth,
   valuePropName = 'value',
 }: TRFormFieldProps<T, N>) {
+  // Translation
+  const { t } = useTranslation();
+
+  // Form config
   const formConfig = useFormConfig();
 
   // Get label width from form or from self component
@@ -119,7 +124,9 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                           ...restField,
                           ...resolvedControlProps,
                           ...(withPlaceholder && typeof label === 'string'
-                            ? { placeholder: `Enter ${label.toLowerCase()}` }
+                            ? {
+                                placeholder: `${t('form.enter')} ${label.toLowerCase()}`,
+                              }
                             : {}),
                           id: String(name),
                           name: String(name),

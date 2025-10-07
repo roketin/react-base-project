@@ -13,14 +13,24 @@ import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { useAuthForgot } from '@/modules/auth/services/auth.service';
+import { tl } from '@/modules/app/libs/locale-utils';
+import { useTranslation } from 'react-i18next';
 
 const formSchema = Yup.object().shape({
-  username: Yup.string().default('').email().required().label('Email'),
+  username: Yup.string()
+    .default('')
+    .email()
+    .required()
+    .label(tl('auth:form.email')),
 });
 
 type TFormSchema = Yup.InferType<typeof formSchema>;
 
 const AuthForgot = () => {
+  // Translation
+  const { t } = useTranslation('auth');
+  const { t: tApp } = useTranslation();
+
   // Form instance
   const form = useForm<TFormSchema>({
     mode: 'onTouched',
@@ -43,8 +53,8 @@ const AuthForgot = () => {
       showAlert(
         {
           type: 'confirm',
-          title: 'Confirm',
-          description: 'Are you sure you want to reset password?',
+          title: tApp('confirm'),
+          description: t('forgot.confirmDesc'),
           manualClose: true,
         },
         ({ ok, setLoading, close }) => {
@@ -62,8 +72,8 @@ const AuthForgot = () => {
               showAlert(
                 {
                   type: 'alert',
-                  title: 'Success',
-                  description: 'The reset link has been sent to your email.',
+                  title: tApp('success'),
+                  description: t('forgot.successDesc'),
                   icon: <CircleCheck className='text-green-600' size={50} />,
                 },
                 ({ ok }) => {
@@ -82,28 +92,23 @@ const AuthForgot = () => {
         },
       );
     },
-    [mutate, navigate],
+    [mutate, navigate, t, tApp],
   );
 
   return (
     <div className='md:w-[400px]'>
-      <RCard
-        title='Forgot Password'
-        description='Make sure you enter the email address that is registered in the system.'
-      >
+      <RCard title={t('forgot.title')} description={t('forgot.subTitle')}>
         <RForm
           form={form}
           onSubmit={handleSubmit}
           showErrorPopup
           layout='vertical'
         >
-          <FileInfo src='src/modules/auth/components/pages/auth-forgot.tsx' />
-
           {/* Email */}
           <RFormField
             control={form.control}
             name='username'
-            label='Email'
+            label={t('form.email')}
             withPlaceholder
           >
             <Input autoComplete='username' />
@@ -113,12 +118,14 @@ const AuthForgot = () => {
             to={linkTo('AuthLogin')}
             className='text-sm text-blue-700 hover:underline flex items-center'
           >
-            <ChevronLeft /> Back
+            <ChevronLeft /> {tApp('back')}
           </Link>
 
           <Button type='submit' className='w-full mt-3'>
-            Send
+            {tApp('send')}
           </Button>
+
+          <FileInfo src='src/modules/auth/components/pages/auth-forgot.tsx' />
         </RForm>
       </RCard>
     </div>

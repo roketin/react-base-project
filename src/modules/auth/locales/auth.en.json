@@ -1,13 +1,27 @@
 {
   "login": {
-    "title": "Login Test",
-    "subTitle": "Login Subtile Test"
+    "title": "Login",
+    "subTitle": "Please log in first to access the dashboard."
+  },
+  "forgot": {
+    "title": "Forgot Password",
+    "subTitle": "Make sure you enter the email address that is registered in the system.",
+    "confirmDesc": "Are you sure you want to reset password?",
+    "successDesc": "The reset link has been sent to your email"
+  },
+  "reset": {
+    "title": "Reset Password",
+    "subTitle": "Make sure to remember the new password after saving it.",
+    "confirmDesc": "Are you sure you want to change your password?",
+    "successDesc": "Reset password successfully."
   },
   "form": {
     "email": "Email",
     "emailDesc": "Enter the email that is registered in the system.",
     "password": "Password",
     "submit": "Login",
-    "forgotPassword": "Forgot Password?"
+    "forgotPassword": "Forgot Password?",
+    "newPassword": "New Password",
+    "newPasswordConfirm": "New Confirm Password"
   }
 }

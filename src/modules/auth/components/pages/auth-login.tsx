@@ -14,6 +14,7 @@ import { AtSign, FileLock2 } from 'lucide-react';
 import { useAuthLogin } from '@/modules/auth/services/auth.service';
 import { useTranslation } from 'react-i18next';
 import { tl } from '@/modules/app/libs/locale-utils';
+import { RCard } from '@/modules/app/components/base/r-card';
 
 const formSchema = Yup.object().shape({
   username: Yup.string()
@@ -59,7 +60,7 @@ const AuthLogin = () => {
   );
 
   return (
-    <div className='md:w-[400px]'>
+    <RCard title={t('login.title')} description={t('login.subTitle')}>
       <RForm
         form={form}
         onSubmit={handleSubmit}
@@ -67,13 +68,6 @@ const AuthLogin = () => {
         layout='vertical'
         disabled={loading}
       >
-        <div>
-          <h1 className='font-bold text-2xl mb-0'>{t('login.title')}</h1>
-          <div>{t('login.subTitle')}</div>
-        </div>
-
-        <FileInfo src='src/modules/auth/components/pages/auth-login.tsx' />
-
         {/* Username */}
         <RFormField
           control={form.control}
@@ -99,7 +93,7 @@ const AuthLogin = () => {
         {/* <RFormField
             control={form.control}
             name='password'
-            label='Password'
+            label={t('form.password')}
             render={({ field }) => (
               <RInputPassword
                 value={field.value}
@@ -109,18 +103,22 @@ const AuthLogin = () => {
             )}
           /> */}
 
-        <Link
-          to={linkTo('AuthForgot')}
-          className='text-sm text-blue-700 text-right hover:underline'
-        >
-          {t('form.forgotPassword')}
-        </Link>
+        <div className='text-right'>
+          <Link
+            to={linkTo('AuthForgot')}
+            className='text-sm text-blue-700 hover:underline inline-block'
+          >
+            {t('form.forgotPassword')}
+          </Link>
+        </div>
 
         <Button type='submit' className='w-full mt-3' loading={loading}>
           {t('form.submit')}
         </Button>
+
+        <FileInfo src='src/modules/auth/components/pages/auth-login.tsx' />
       </RForm>
-    </div>
+    </RCard>
   );
 };
 

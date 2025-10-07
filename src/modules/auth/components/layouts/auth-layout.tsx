@@ -34,7 +34,7 @@ const AuthLayout = () => {
   }
 
   return (
-    <div className='h-full flex flex-col md:flex-row'>
+    <div className='h-full flex flex-col md:flex-row bg-slate-50'>
       <div className='md:flex-1 flex items-center justify-center'>
         <Suspense
           fallback={
@@ -45,13 +45,12 @@ const AuthLayout = () => {
         </Suspense>
       </div>
 
-      <div className='flex-1 bg-slate-50 flex flex-col items-center justify-center gap-4 px-6 text-center md:px-10 md:text-left'>
+      <div className='flex-1 bg-slate-100 flex flex-col items-center justify-center gap-4 px-6 text-center md:px-10 md:text-left'>
         <RBrand
           align='center'
           className='md:items-start md:text-left'
           subtitleClassName='text-sm text-muted-foreground'
         />
-        <FileInfo src='src/modules/auth/components/layouts/auth-layout.tsx' />
 
         {/* Language toggle button */}
         <Button
@@ -63,6 +62,8 @@ const AuthLayout = () => {
           <Languages className='size-4' />
           <span className='text-xs font-semibold'>{languageLabel}</span>
         </Button>
+
+        <FileInfo src='src/modules/auth/components/layouts/auth-layout.tsx' />
       </div>
     </div>
   );

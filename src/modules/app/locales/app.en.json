@@ -1,4 +1,15 @@
 {
   "title": "R-Skeleton",
-  "subTitle": "Roketin App Skeleton"
+  "subTitle": "Roketin App Skeleton",
+  "back": "Back",
+  "submit": "Submit",
+  "save": "Save",
+  "send": "Send",
+  "next": "Next",
+  "prev": "Prev",
+  "success": "Success!",
+  "confirm": "Confirm",
+  "form": {
+    "enter": "Enter"
+  }
 }

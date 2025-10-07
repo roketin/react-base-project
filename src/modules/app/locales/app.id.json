@@ -1,4 +1,15 @@
 {
-  "title": "R-Kerangka",
-  "subTitle": "Kerangka Aplikasi Roketin"
+  "title": "R-Skeleton",
+  "subTitle": "Kerangka Aplikasi Roketin",
+  "back": "Kembali",
+  "submit": "Kirim",
+  "save": "Simpan",
+  "send": "Kirim",
+  "next": "Berikutnya",
+  "prev": "Sebelumnya",
+  "success": "Berhasil!",
+  "confirm": "Konfirmasi",
+  "form": {
+    "enter": "Masukkan"
+  }
 }

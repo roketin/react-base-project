@@ -1,5 +1,10 @@
 {
-  "required": "{{label}} harus diisi",
-  "minLength": "{{label}} minimal {{min}} karakter",
-  "invalidEmail": "{{label}} bukan email yang valid"
+  "required": "{{label}} wajib diisi",
+  "minLength": "{{label}} harus terdiri dari minimal {{min}} karakter",
+  "invalidEmail": "{{label}} bukan alamat email yang valid",
+  "passwordMatch": "Kata sandi harus sama",
+  "passwordSpecialChar": "Kata sandi harus mengandung minimal satu karakter khusus (@, $, !, %, *, ?, &)",
+  "passwordOneNumber": "Kata sandi harus mengandung minimal satu angka",
+  "passwordUpperCase": "Kata sandi harus mengandung minimal satu huruf besar",
+  "passwordLowerCase": "Kata sandi harus mengandung minimal satu huruf kecil"
 }

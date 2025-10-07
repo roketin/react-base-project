@@ -1,5 +1,10 @@
 {
   "required": "{{label}} is required",
   "minLength": "{{label}} must be at least {{min}} characters",
-  "invalidEmail": "{{label}} is not a valid email"
+  "invalidEmail": "{{label}} is not a valid email",
+  "passwordMatch": "Passwords must match",
+  "passwordSpecialChar": "Password must contain at least one special character (@, $, !, %, *, ?, &)",
+  "passwordOneNumber": "Password must contain at least one number",
+  "passwordUpperCase": "Password must contain at least one uppercase letter",
+  "passwordLowerCase": "Password must contain at least one lowercase letter"
 }
