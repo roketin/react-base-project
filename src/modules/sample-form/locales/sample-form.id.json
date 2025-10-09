@@ -1,0 +1,44 @@
+{
+  "title": "Form Contoh",
+  "actions": {
+    "add": "Tambah Data"
+  },
+  "columns": {
+    "name": "Nama",
+    "code": "Kode",
+    "createdAt": "Tanggal Dibuat"
+  },
+  "filters": {
+    "keyword": {
+      "label": "Kata Kunci",
+      "placeholder": "Cari kata kunci"
+    },
+    "country": {
+      "label": "Negara",
+      "placeholder": "Pilih negara"
+    },
+    "countries": {
+      "label": "Daftar Negara",
+      "placeholder": "Pilih beberapa negara"
+    },
+    "date": {
+      "label": "Tanggal"
+    },
+    "dateMultiple": {
+      "label": "Rentang Tanggal"
+    },
+    "isActive": {
+      "label": "Hanya Aktif",
+      "description": "Tampilkan entri yang aktif saja"
+    },
+    "status": {
+      "label": "Status"
+    },
+    "tags": {
+      "label": "Tag"
+    },
+    "budget": {
+      "label": "Anggaran"
+    }
+  }
+}

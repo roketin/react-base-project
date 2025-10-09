@@ -1,3 +1,44 @@
 {
-  "title": "Sample Form"
+  "title": "Sample Form",
+  "actions": {
+    "add": "Add Page"
+  },
+  "columns": {
+    "name": "Name",
+    "code": "Code",
+    "createdAt": "Created Date"
+  },
+  "filters": {
+    "keyword": {
+      "label": "Keyword",
+      "placeholder": "Search keyword"
+    },
+    "country": {
+      "label": "Country",
+      "placeholder": "Choose country"
+    },
+    "countries": {
+      "label": "Countries",
+      "placeholder": "Choose countries"
+    },
+    "date": {
+      "label": "Date"
+    },
+    "dateMultiple": {
+      "label": "Date Range"
+    },
+    "isActive": {
+      "label": "Active Only",
+      "description": "Show only active entries"
+    },
+    "status": {
+      "label": "Status"
+    },
+    "tags": {
+      "label": "Tags"
+    },
+    "budget": {
+      "label": "Budget"
+    }
+  }
 }

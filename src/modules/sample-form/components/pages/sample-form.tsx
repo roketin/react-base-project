@@ -12,16 +12,7 @@ import { useGetSampleFormList } from '@/modules/sample-form/services/sample-form
 import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useCallback, useMemo } from 'react';
-
-const columns: ColumnDef<TSampleItem>[] = [
-  { header: 'Name', accessorKey: 'name', size: 230 },
-  { header: 'Code', accessorKey: 'code', size: 230 },
-  {
-    header: 'Created Date',
-    accessorKey: 'created_at',
-    size: 250,
-  },
-];
+import { useTranslation } from 'react-i18next';
 
 const countries = [
   { id: 'id', name: 'Indonesia' },
@@ -45,6 +36,7 @@ const toCurrencyRange = (values: number[]) => {
 };
 
 const SampleFormIndex = () => {
+  const { t } = useTranslation('sampleForm');
   const { navigate } = useNamedRoute();
 
   /**
@@ -55,64 +47,73 @@ const SampleFormIndex = () => {
   }, [navigate]);
 
   // Filters
+  const columns = useMemo<ColumnDef<TSampleItem>[]>(
+    () => [
+      { header: t('columns.name'), accessorKey: 'name', size: 230 },
+      { header: t('columns.code'), accessorKey: 'code', size: 230 },
+      { header: t('columns.createdAt'), accessorKey: 'created_at', size: 250 },
+    ],
+    [t],
+  );
+
   const filters = useMemo<TFilterItem[]>(
     () =>
       [
         filterItem.input({
           id: 'keyword',
-          label: 'Keyword',
-          placeholder: 'Search keyword',
+          label: t('filters.keyword.label'),
+          placeholder: t('filters.keyword.placeholder'),
         }),
         filterItem.combobox({
           id: 'country',
-          label: 'Country',
+          label: t('filters.country.label'),
           items: countries,
           labelKey: 'name',
           valueKey: 'id',
-          placeholder: 'Choose country',
+          placeholder: t('filters.country.placeholder'),
         }),
         filterItem.comboboxMultiple({
           id: 'countries',
-          label: 'Country',
+          label: t('filters.countries.label'),
           items: countries,
           labelKey: 'name',
           valueKey: 'id',
-          placeholder: 'Choose countries',
+          placeholder: t('filters.countries.placeholder'),
         }),
         filterItem.datepicker({
           id: 'date',
-          label: 'Date',
+          label: t('filters.date.label'),
           disabledDate: {
             before: new Date(),
           },
         }),
         filterItem.datepickerRange({
           id: 'date_multiple',
-          label: 'Date Multiple',
+          label: t('filters.dateMultiple.label'),
           disabledDate: {
             before: new Date(),
           },
         }),
         filterItem.switch({
           id: 'is_active',
-          label: 'Active Only',
-          description: 'Show only active entries',
+          label: t('filters.isActive.label'),
+          description: t('filters.isActive.description'),
         }),
         filterItem.radio({
           id: 'status',
-          label: 'Status',
+          label: t('filters.status.label'),
           options: statuses,
           layout: 'horizontal',
         }),
         filterItem.checkboxMultiple({
           id: 'tags',
-          label: 'Tags',
+          label: t('filters.tags.label'),
           options: tags,
           layout: 'horizontal',
         }),
         filterItem.slider({
           id: 'budget',
-          label: 'Budget',
+          label: t('filters.budget.label'),
           min: 0,
           max: 1000,
           step: 50,
@@ -120,7 +121,7 @@ const SampleFormIndex = () => {
           formatValue: toCurrencyRange,
         }),
       ] as TFilterItem[],
-    [],
+    [t],
   );
 
   const [qryParams, setQryParams] =
@@ -133,7 +134,7 @@ const SampleFormIndex = () => {
     <div>
       <div className='flex items-center justify-between'>
         <div className='inline-block'>
-          <Button onClick={handleAdd}>Add Page</Button>
+          <Button onClick={handleAdd}>{t('actions.add')}</Button>
         </div>
       </div>
 

@@ -118,14 +118,7 @@ const TodoSave = () => {
 
             {/* Radio */}
             <RFormField control={form.control} name='radio' label='Radio'>
-              <RRadio
-                options={[
-                  { value: 'A', label: 'A' },
-                  { value: 'B', label: 'B' },
-                  { value: 'C', label: 'C' },
-                ]}
-                layout='horizontal'
-              />
+              <RRadio options={items} layout='horizontal' />
             </RFormField>
 
             {/* Combobox */}
