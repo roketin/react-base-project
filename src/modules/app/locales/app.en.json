@@ -11,5 +11,11 @@
   "confirm": "Confirm",
   "form": {
     "enter": "Enter"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "sampleForm": "Sample Form",
+    "sampleFormAllEntries": "All Entries",
+    "sampleFormCreateNew": "Create New"
   }
 }

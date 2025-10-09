@@ -11,5 +11,11 @@
   "confirm": "Konfirmasi",
   "form": {
     "enter": "Masukkan"
+  },
+  "menu": {
+    "dashboard": "Dasbor",
+    "sampleForm": "Formulir Contoh",
+    "sampleFormAllEntries": "Semua Entri",
+    "sampleFormCreateNew": "Buat Baru"
   }
 }

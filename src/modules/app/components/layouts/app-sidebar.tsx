@@ -1,6 +1,9 @@
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import AppSidebarHeader from '@/modules/app/components/layouts/app-sidebar-header';
-import { APP_MENUS, type TMenu } from '@/modules/app/components/layouts/menus';
+import {
+  APP_SIDEBAR_MENUS,
+  type TSidebarMenu,
+} from '@/modules/app/constants/sidebar-menu.constant';
 import {
   Sidebar,
   SidebarContent,
@@ -20,8 +23,9 @@ import { cn } from '@/modules/app/libs/utils';
 import { ChevronDown, Dot } from 'lucide-react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-type SidebarMenuItemWithChildren = TMenu & {
+type SidebarMenuItemWithChildren = TSidebarMenu & {
   children?: SidebarMenuItemWithChildren[];
 };
 
@@ -29,9 +33,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { isCan } = useAuth();
   const location = useLocation();
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
+  const { t } = useTranslation('app');
+
+  const getMenuTitle = useCallback(
+    (menu: TSidebarMenu | SidebarMenuItemWithChildren) => {
+      if (menu.translationKey) {
+        return t(menu.translationKey);
+      }
+      return menu.title;
+    },
+    [t],
+  );
 
   const accessibleMenus = useMemo(() => {
-    const filter = (menus: TMenu[]): SidebarMenuItemWithChildren[] => {
+    const filter = (
+      menus: ReadonlyArray<TSidebarMenu>,
+    ): SidebarMenuItemWithChildren[] => {
       return menus.reduce<SidebarMenuItemWithChildren[]>((acc, item) => {
         const children = item.children ? filter(item.children) : undefined;
         const hasChildren = Boolean(children && children.length > 0);
@@ -46,10 +63,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       }, []);
     };
 
-    return filter(APP_MENUS);
+    return filter(APP_SIDEBAR_MENUS);
   }, [isCan]);
 
-  const getMenuPath = (menu: TMenu) => {
+  const getMenuPath = (menu: TSidebarMenu) => {
     if (!menu.name) return undefined;
     try {
       return nameToPath(menu.name);
@@ -59,7 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   const isRouteActive = useCallback(
-    (menu: TMenu, end = false) => {
+    (menu: TSidebarMenu, end = false) => {
       const pattern = getMenuPath(menu);
       if (!pattern) return false;
       const exactMatch = matchPath({ path: pattern, end }, location.pathname);
@@ -149,7 +166,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 ) : (
                   <Dot className='size-4' />
                 )}
-                {child.title}
+                {getMenuTitle(child)}
               </span>
               <ChevronDown
                 className={cn(
@@ -181,7 +198,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               ) : (
                 <Dot className='size-4' />
               )}
-              <span>{child.title}</span>
+              <span>{getMenuTitle(child)}</span>
             </Link>
           </SidebarMenuSubButton>
         </SidebarMenuSubItem>
@@ -202,21 +219,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
       <SidebarMenuItem key={key}>
         {path && canNavigate ? (
-          <SidebarMenuButton asChild isActive={isActive} tooltip={menu.title}>
+          <SidebarMenuButton
+            asChild
+            isActive={isActive}
+            tooltip={getMenuTitle(menu)}
+          >
             <Link to={path}>
               {menu.icon && <menu.icon />}
-              <span>{menu.title}</span>
+              <span>{getMenuTitle(menu)}</span>
             </Link>
           </SidebarMenuButton>
         ) : (
           <SidebarMenuButton
             isActive={isActive}
-            tooltip={menu.title}
+            tooltip={getMenuTitle(menu)}
             aria-disabled={!canNavigate}
             onClick={hasChildren ? () => toggleMenu(key) : undefined}
           >
             {menu.icon && <menu.icon />}
-            <span>{menu.title}</span>
+            <span>{getMenuTitle(menu)}</span>
           </SidebarMenuButton>
         )}
 

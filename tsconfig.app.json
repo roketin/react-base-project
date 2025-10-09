@@ -26,7 +26,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@tests/*": ["./tests/*"]
+      "@tests/*": ["./tests/*"],
+      "@config": ["./roketin.config"]
     }
   },
   "include": ["src", "tests", "tests/.tsx"]

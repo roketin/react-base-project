@@ -28,13 +28,35 @@ import {
   useSidebar,
   type SidebarContextProps,
 } from '@/modules/app/contexts/sidebar-context';
+import roketinConfig from '@config';
 
-const SIDEBAR_COOKIE_NAME = 'sidebar_state';
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
-const SIDEBAR_WIDTH = '16rem';
-const SIDEBAR_WIDTH_MOBILE = '18rem';
-const SIDEBAR_WIDTH_ICON = '3rem';
-const SIDEBAR_KEYBOARD_SHORTCUT = 'b';
+const sidebarSettings = roketinConfig.sidebar?.settings ?? {};
+
+const formatCssSize = (
+  value: string | number | undefined,
+  fallback: string,
+) => {
+  if (typeof value === 'number') {
+    return `${value}px`;
+  }
+  return value ?? fallback;
+};
+
+const sidebarStorageType =
+  sidebarSettings.stateStorage?.type ?? 'local-storage';
+const SIDEBAR_STORAGE_KEY =
+  sidebarSettings.stateStorage?.key ?? 'sidebar_state';
+const SIDEBAR_STORAGE_TYPE =
+  sidebarStorageType === 'session-storage'
+    ? 'session-storage'
+    : 'local-storage';
+const SIDEBAR_WIDTH = formatCssSize(sidebarSettings.width, '16rem');
+const SIDEBAR_WIDTH_MOBILE = formatCssSize(
+  sidebarSettings.widthMobile,
+  '18rem',
+);
+const SIDEBAR_WIDTH_ICON = formatCssSize(sidebarSettings.widthIcon, '3rem');
+const SIDEBAR_KEYBOARD_SHORTCUT = sidebarSettings.keyboardShortcut ?? 'b';
 
 function SidebarProvider({
   defaultOpen = true,
@@ -51,10 +73,23 @@ function SidebarProvider({
 }) {
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(false);
-
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
-  const [_open, _setOpen] = React.useState(defaultOpen);
+  const [_open, _setOpen] = React.useState<boolean>(() => {
+    if (typeof window === 'undefined') return defaultOpen;
+    try {
+      const storage =
+        SIDEBAR_STORAGE_TYPE === 'session-storage'
+          ? window.sessionStorage
+          : window.localStorage;
+      const storedValue = storage.getItem(SIDEBAR_STORAGE_KEY);
+      if (storedValue === 'true') return true;
+      if (storedValue === 'false') return false;
+    } catch {
+      // noop - fallback to defaultOpen
+    }
+    return defaultOpen;
+  });
   const open = openProp ?? _open;
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
@@ -65,11 +100,33 @@ function SidebarProvider({
         _setOpen(openState);
       }
 
-      // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      if (typeof window !== 'undefined') {
+        try {
+          const storage =
+            SIDEBAR_STORAGE_TYPE === 'session-storage'
+              ? window.sessionStorage
+              : window.localStorage;
+          storage.setItem(SIDEBAR_STORAGE_KEY, String(openState));
+        } catch {
+          // Ignore storage errors (private mode, etc.)
+        }
+      }
     },
     [setOpenProp, open],
   );
+
+  React.useEffect(() => {
+    if (openProp === undefined || typeof window === 'undefined') return;
+    try {
+      const storage =
+        SIDEBAR_STORAGE_TYPE === 'session-storage'
+          ? window.sessionStorage
+          : window.localStorage;
+      storage.setItem(SIDEBAR_STORAGE_KEY, String(openProp));
+    } catch {
+      // Ignore storage errors
+    }
+  }, [openProp]);
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {

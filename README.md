@@ -1,406 +1,234 @@
-<!-- markdownlint-disable MD014 -->
-<!-- markdownlint-disable MD026 -->
-<!-- markdownlint-disable MD033 -->
-<!-- markdownlint-disable MD041 -->
+<!-- markdownlint-disable MD014 MD026 MD033 MD041 -->
 
-<h1 align="center">
-  🚀 ReactJS Base Project
-</h1>
+<h1 align="center">🚀 ReactJS Base Project</h1>
 
-<!-- Banner Section -->
 <p align="center">
   <img src="https://cms.roketin.com/uploads/Elemen_Brand_Roketin_03_ee99155544.jpg" alt="Roketin Banner" width="512px" />
 </p>
-<h3 align="center">
-  💻 A Modern Base Project Dashboard with React.js!
-</h3>
+<h3 align="center">💻 A Modern Dashboard Starter powered by React, Vite, and Roketin conventions.</h3>
 
 ---
 
-<!-- Badges Section -->
-<p align="center">
-  <br>
-  <img src="https://forthebadge.com/images/badges/made-with-typescript.svg" alt="Made with TypeScript" />
-  <img src="https://forthebadge.com/images/badges/built-with-love.svg" alt="Built with Love" />
-  <br>
-</p>
+## 📚 Table of Contents
+
+1. [Overview](#-overview)
+2. [Tech Stack](#-tech-stack)
+3. [Quick Start](#-quick-start)
+4. [Available Scripts](#-available-scripts)
+5. [Configuration](#-configuration)
+6. [Localization & Sidebar Menus](#-localization--sidebar-menus)
+7. [Module Generator](#-module-generator)
+8. [Project Structure](#-project-structure)
+9. [Conventions & Tooling](#-conventions--tooling)
 
 ---
 
-<br />
-<p align="center">
- <a href="https://sonarcloud.io/summary/new_code?id=gmatthewsfeuer_next-plate">
-   <img src="https://sonarcloud.io/api/project_badges/measure?project=gmatthewsfeuer_next-plate&metric=bugs" alt="Bugs" title="Bugs" />
-   <img src="https://sonarcloud.io/api/project_badges/measure?project=gmatthewsfeuer_next-plate&metric=sqale_rating" alt="Maintainability Rating" title="Maintainability Rating" />
-   <img src="https://sonarcloud.io/api/project_badges/measure?project=gmatthewsfeuer_next-plate&metric=alert_status" alt="Quality Gate Status" title="Quality Gate Status" />
-   <img src="https://sonarcloud.io/api/project_badges/measure?project=gmatthewsfeuer_next-plate&metric=reliability_rating" alt="Reliability Rating" title="Reliability Rating" />
-   <img src="https://sonarcloud.io/api/project_badges/measure?project=gmatthewsfeuer_next-plate&metric=security_rating" alt="Security Rating" title="Security Rating" />
-   <img src="https://sonarcloud.io/api/project_badges/measure?project=gmatthewsfeuer_next-plate&metric=vulnerabilities" alt="Vulnerabilities" title="Vulnerabilities" />
- </a>
-</p>
+## 🧭 Overview
+
+This repository provides a batteries-included dashboard scaffold using the Roketin design system. It ships with authenticated layouts, reusable UI primitives, strict linting, and testing utilities so teams can focus on feature delivery instead of project setup.
 
 ---
 
-<!-- Introduction Section -->
+## 🛠 Tech Stack
 
-## 📖 Introduction
+- **Framework:** React 19 + Vite 7
+- **State & Data:** Zustand, React Query, Immer
+- **Routing & Auth:** React Router v7, custom guards, permission helpers
+- **UI & Styling:** shadcn/ui, Tailwind CSS (via `@tailwindcss/vite`), Lucide icons
+- **Forms & Validation:** React Hook Form, Yup, reusable form primitives
+- **Testing:** Vitest, @testing-library, MSW
+- **Quality:** ESLint (strict config), Prettier, Husky hooks, lint-staged, Commitlint
 
-This template have a bunch of folders, code examples and configurations.
+---
 
-<!-- Features Section -->
+## ⚡ Quick Start
 
-## 🌟 Features
-
-This base project features all the latest tools and good practices in web development!
-
-### Framework
-
-- ⚛️ **[React.js](https://react.dev/)** – An open-source JavaScript library for building user interfaces (UIs), particularly single-page applications. One of the best
-
-### Data Fetching
-
-- ✳️ **[React Query](https://tanstack.com/query)** – Hooks for fetching, caching and updating asynchronous data in React
-
-### State Management and Hooks
-
-- 🐻 **[Zustand](https://zustand-demo.pmnd.rs)** – A small, fast and scalable bearbones state-management solution using simplified flux principles
-
-### Design System and Animations
-
-- 🎨 **[Shadcn](https://ui.shadcn.com/)** – A set of beautifully designed components that you can customize, extend, and build on.
-- ✨ **[Lucide Icons](https://lucide.dev/)** – A collection of popular icons to React projects
-
-### Form Validation
-
-- 📋 **[React Hook Form](https://react-hook-form.com)** – Performant, flexible and extensible forms with easy-to-use validation
-- 🚨 **[Yup](https://github.com/jquense/yup)** – Schema builder that concise yet expressive schema interface, equipped to model simple to complex data models
-
-### Tests
-
-- ✨ **[Vitest](https://vitest.dev/)** – A Vite-native testing framework. Next Generation Testing Framework
-
-### Design Patterns
-
-- ⛔ **[ESLint](https://eslint.org)** – Find and fix problems in your JavaScript code
-- 🎀 **[Prettier](https://prettier.io)** – An opinionated code formatter, supporting multiple languages and code editors
-- 🐺 **[Husky](https://github.com/typicode/husky)** – Modern native Git hooks made easy
-- 💩 **[lint-staged](https://github.com/okonet/lint-staged)** – Run linters against staged git files and don't let 💩 slip into your code base
-- 📓 **[commitlint](https://commitlint.js.org)** – Helps your team adhering to a commit convention
-- 🏷️ **[Standard Version](https://github.com/conventional-changelog/standard-version)** – A utility for versioning using semver and CHANGELOG generation powered by Conventional Commits
-
-### ⚙️ Extra Configurations
-
-<details>
- <summary>Using Compiler</summary>
-
- <h4>How to Activate</h4>
-
-Put the `babel.config.js` file (located in the path `src/scripts`) in the project root and delete `.babelrc` file.
-
-Uncomment the `wdyr` import line on `pages/_app.tsx`.
-
-That's it! Now you can monitore React re-renders!
-
- <h4>How to Uninstall</h4>
-
-Just delete the `babel.config.js` and `wdyr.ts` files, remove `wdyr` import line on `pages/_app.tsx` and uninstall it:
+> Requires **Node.js ≥ 18** and **pnpm ≥ 9**.
 
 ```bash
-# PNPM
-$ pnpm uninstall @welldone-software/why-did-you-render
-# NPM
-$ npm uninstall @welldone-software/why-did-you-render
-# Yarn
-$ yarn remove @welldone-software/why-did-you-render
+# Install dependencies
+pnpm install
+
+# Start the dev server
+pnpm dev
+
+# Create a production build
+pnpm build
+
+# Run the test suite
+pnpm test
 ```
 
-</details>
+Environment variables live in `.env` (example values are committed). Update API endpoints or feature flags there as needed.
 
-<!-- File Tree Section -->
+---
 
-## 📁 File Tree
+## 📜 Available Scripts
 
-See below the file tree to understand the project structure.
+| Command              | Description                                              |
+| -------------------- | -------------------------------------------------------- |
+| `pnpm dev`           | Launches Vite dev server on port **5177**.               |
+| `pnpm build`         | Type-checks and bundles the app for production.          |
+| `pnpm preview`       | Serves the production build locally.                     |
+| `pnpm lint`          | Runs ESLint against the entire project.                  |
+| `pnpm test`          | Executes unit/integration tests with Vitest.             |
+| `pnpm test:coverage` | Generates coverage reports under `coverage/`.            |
+| `pnpm test:ui`       | Starts the Vitest UI runner.                             |
+| `pnpm commit`        | Interactive commit message helper (Commitlint prompt).   |
+| `pnpm roketin`       | Custom CLI for scaffolding modules and associated files. |
 
-<details>
- <summary>View file tree</summary>
+---
 
-> Folders and files marked with (`**`) are optional, so you can delete then.
+## 🔧 Configuration
 
-```txt
-📂 reactjs-base-project/
-┣ 📂 .husky/                              # Husky's folder
-┃ ┣ 📃 commit-msg                         # Commitlint git hook
-┃ ┗ 📃 pre-commit                         # Lint-staged git hook
-┣ 📂 .vscode/                             # VSCode's workspace **
-┣ 📂 public/                              # Public folder
-┃ ┣ 📃 favicon.ico                        # Icon tab browser
-┣ 📂 src/
-┃ ┣ 📂 modules/
-┃ ┃ ┣ 📂 [module name, ex: user]
-┃ ┃ ┃ ┗ 📂 [sub module name, ex: add user]
-┃ ┃ ┃   ┣ 📂 components
-┃ ┃ ┃   ┃ ┣  📂 layouts
-┃ ┃ ┃   ┃ ┗  📂 pages
-┃ ┃ ┃   ┣ 📂 services
-┃ ┃ ┃   ┣ 📂 hooks
-┃ ┃ ┃   ┣ 📂 routes
-┃ ┃ ┃   ┣ 📂 stores
-┃ ┃ ┃   ┗ 📂 types
-┃ ┣ 📂 plugins/                            # Plugins
-┃ ┃ ┣ 📂 axios                             # Axios config
-┃ ┃ ┗ 📂 yup                               # Yup config
-┃ ┣ 📃 main.tsx                            # Main file
-┃ ┗ 📃 vite.env.d.ts
-┣ 📃 .gitignore                            # Git ignore
-┣ 📃 .prettierignore                       # Prettier ignore
-┣ 📃 .prettierrc                           # Prettier config
-┣ 📃 commitlint.config.cjs                 # Commit lint config
-┣ 📃 components.json                       # React component config
-┣ 📃 eslint.config.js                      # Eslint config
-┣ 📃 index.html                            # Index html
-┣ 📃 package.json                          # Package json
-┣ 📃 pnpm.lock.yaml                        # Package lock
-┣ 📃 tsconfig.app.json                     # Typescript config for frontend app
-┣ 📃 tsconfig.json                         # TypeScript config wrapper
-┣ 📃 tsconfig.node.json                    # TypeScript config for node
-┣ 📃 README.md                             # Main README
-┣ 📃 vite.config.js                        # Vite config
-```
+Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file lets you rebrand, resize the sidebar, change filter persistence, switch admin prefixes, and more without touching component code.
 
-</details>
+| Section               | Keys                                                                                             | Purpose                                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `app`                 | `name`, `shortName`, `tagline`, `description`, `logoUrl`                                         | Populates global branding components (e.g., `RBrand`) and meta descriptions.                                    |
+| `theme`               | `appearance`, `sidebar.variant`, `sidebar.width`                                                 | Controls default color scheme and top-level layout sizing.                                                      |
+| `sidebar.settings`    | `stateStorage.type`, `stateStorage.key`, `width`, `widthMobile`, `widthIcon`, `keyboardShortcut` | Persists sidebar state (local/session storage) and defines responsive widths plus the keyboard toggle shortcut. |
+| `filters.persistence` | `enabled`, `strategy`, `keyPrefix`, `debounceMs`                                                 | Configures how `RFilter` saves user selections (`local-storage`, `session-storage`, or `query-params`).         |
+| `routes.admin`        | `basePath`                                                                                       | Mount point for authenticated feature routes (defaults to `/admin`).                                            |
+| `languages`           | `enabled`, `supported[]` (`code`, `label`, `isDefault`)                                          | Drives the language dropdown shown on the login screen and inside the authenticated header.                     |
 
-## 🧭 Routing, Breadcrumbs & Permissions
+### Config Breakdown
 
-This project ships with an opinionated setup around routing and navigation so you can focus on feature work. The sections below cover how to plug new modules into the router, expose breadcrumbs, and guard routes with permissions.
+- **`app`**: Supplies primary/alternate names and tagline; ideal for white-label deployments. `logoUrl` overrides the brand icon globally.
+- **`theme`**: `appearance` sets the initial color mode (`light`, `dark`, or `system`). `sidebar.variant` can be `sidebar`, `floating`, or `inset`, and `sidebar.width` accepts a pixel value.
+- **`sidebar.settings`**:
+  - `stateStorage.type`: Where to persist open/closed state (`local-storage` by default).
+  - `stateStorage.key`: Storage namespace so multiple apps can coexist on one domain.
+  - `width`, `widthMobile`, `widthIcon`: CSS-ready values exposed as custom properties.
+  - `keyboardShortcut`: Letter bound to `⌘/Ctrl + key` to toggle the sidebar.
+- **`filters.persistence`**: Enable or disable persistence. Choose a storage `strategy`, optionally set a `keyPrefix`, and throttle writes with `debounceMs`.
+- **`routes.admin`**: Change the admin prefix (e.g., `/app`) to relocate every nested feature route.
+- **`languages`**:
+  - `enabled`: Hides the language dropdown when set to `false`.
+  - `supported`: Each locale entry must define a `code` (used by i18next), `label` (UI display), and optional `isDefault`.
 
-### Routing Overview
+---
 
-- Route definitions live in `src/modules/<feature>/routes/*.routes.tsx`.
-- Export an array via `createAppRoutes([...])` (the helper currently returns the same array but keeps the API consistent).
-- Files ending with `.routes.tsx` are auto-discovered by `app.routes.tsx`, merged, and mounted under `/admin` when the `path` is relative (no leading `/`). Supplying an absolute path (e.g. `'/auth'`) keeps the route at the root level.
-- Use the optional `name` field on a route so that `useNamedRoute()` and `RNavigate` can resolve URLs by name.
+## 🌐 Localization & Sidebar Menus
 
-```tsx
-// src/modules/sample-form/routes/sample-form.routes.tsx
-export const sampleFormRoutes = createAppRoutes([
-  {
-    path: 'sample-form',
-    element: <Outlet />,
-    handle: {
-      breadcrumb: 'Sample Form',
-      permissions: [PERMISSIONS.SAMPLE_FORM_VIEW],
-    },
-    children: [
-      { name: 'SampleFormIndex', index: true, element: <SampleForm /> },
-      { name: 'SampleFormAdd', path: 'add', element: <SampleFormSave /> },
-    ],
-  },
-]);
-```
+- Update `src/modules/app/locales/app.<lang>.json` when adding languages to `roketin.config.ts`.
+- Sidebar menu definitions in `src/modules/app/constants/sidebar-menu.constant.ts` include a `translationKey`. `AppSidebar` maps it through `t(translationKey)` at runtime, so every language must provide the corresponding `menu.*` translation.
+- Example locale snippet:
 
-### Breadcrumbs
-
-- `AppLayout` renders `<RBreadcrumbs />`, which inspects the active route `handle.breadcrumb` values coming from `useMatches()`.
-- `handle.breadcrumb` accepts either a static string or a function. The function receives `{ params, data, pathname }` from the matched route.
-- For dynamic labels, return an object with `{ type, id }`. Register a resolver for that `type` through the breadcrumb store.
-
-```tsx
-// Route definition
-handle: {
-  breadcrumb: ({ params }) => ({ type: 'user', id: params.id ?? '' }),
-}
-
-// Component example
-const { register, unregister } = useBreadcrumbStore();
-useEffect(() => {
-  register('user', (id) => userDetail?.name ?? `User ${id}`);
-  return () => unregister('user');
-}, [register, unregister, userDetail]);
-```
-
-#### Example: Replacing Breadcrumb Text from a Page
-
-Use the breadcrumb store inside a page (or layout) to substitute the breadcrumb label with context-specific text such as an entity name fetched from the server.
-
-```tsx
-import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useBreadcrumbStore } from '@/modules/app/stores/breadcrumbs.store';
-import { useGetUserDetail } from '@/modules/users/services/user.service';
-
-export default function UserDetailPage() {
-  const { id = '' } = useParams();
-  const { data } = useGetUserDetail(id);
-
-  const register = useBreadcrumbStore((state) => state.register);
-  const unregister = useBreadcrumbStore((state) => state.unregister);
-
-  useEffect(() => {
-    register('user', () => data?.name ?? `User ${id}`);
-    return () => unregister('user');
-  }, [data?.name, id, register, unregister]);
-
-  return <UserDetailContent user={data} />;
+```json
+{
+  "menu": {
+    "dashboard": "Dashboard",
+    "sampleForm": "Sample Form"
+  }
 }
 ```
 
-With this setup, any route whose `handle.breadcrumb` resolves to `{ type: 'user', id }` automatically displays the name returned by the resolver instead of the static fallback.
+---
 
-### Permissions & Guards
+## 🧩 Module Generator
 
-- Declare permissions in `src/modules/app/constants/permission.constant.ts` and reuse the exported `PERMISSIONS`.
-- Attaching `handle.permissions` (or `handle.isRequiredAuth`) to a route triggers `AuthProtectedRoute`, which checks login status via `useAuth()` and validates the current user’s permissions.
-- Unauthorized access renders `AppForbidden`, while unauthenticated users are redirected to the login page via `RNavigate`.
+The CLI backing `pnpm roketin` lives in **`bin/roketin.js`** and scaffolds feature modules under `src/modules`. It understands nested structures, child routes, and optional assets.
 
-```tsx
-handle: {
-  permissions: [PERMISSIONS.SAMPLE_FORM_VIEW, PERMISSIONS.SAMPLE_FORM_CREATE],
-}
+### Basic Usage
+
+```bash
+# Create a new feature module (e.g., src/modules/reporting)
+pnpm roketin module reporting
+
+# Create a nested module (prompts whether it should be treated as a child route)
+pnpm roketin module reporting/summary
+
+# Force explicit child route generation
+pnpm roketin module-child reporting/summary
 ```
 
-### Simple Usage Example
+### Workflow
 
-```tsx
-// src/modules/profile/routes/profile.routes.tsx
-import { PERMISSIONS } from '@/modules/app/constants/permission.constant';
-import { createAppRoutes } from '@/modules/app/libs/routes-utils';
-import { lazy } from 'react';
-import { Outlet } from 'react-router-dom';
+1. **Greeting:** The CLI renders a Roketin banner with CFonts.
+2. **Path Parsing:** It splits the provided path (e.g., `reporting/summary`) and builds the target directory. Nested segments are placed under a cascading `modules` folder (`src/modules/reporting/modules/summary/…`) so each feature can contain its own sub-modules.
+3. **Generation Mode:** You choose between:
+   - `Standard`: Generates pages, routes, locale stub, types, and services (the default set).
+   - `All folders`: Scaffolds every supported artifact (hooks, contexts, stores, etc.).
+   - `Custom`: Lets you pick specific file types via a checkbox prompt.
+4. **Child Routes:** For nested paths, the CLI asks if the final segment should be treated as a child route. Child routes produce `.routes.child.tsx` files and include comments reminding you to mount them manually.
+5. **Idempotent Files:** Existing files are never overwritten—skipped items are logged for visibility.
 
-const ProfileIndex = lazy(
-  () => import('@/modules/profile/components/pages/profile-index'),
-);
-const ProfileEdit = lazy(
-  () => import('@/modules/profile/components/pages/profile-edit'),
-);
+### Generated Artifacts
 
-export default createAppRoutes([
-  {
-    path: 'profile',
-    element: <Outlet />,
-    handle: {
-      breadcrumb: 'Profile',
-      permissions: [PERMISSIONS.DASHBOARD_VIEW],
-    },
-    children: [
-      { name: 'ProfileIndex', index: true, element: <ProfileIndex /> },
-      {
-        name: 'ProfileEdit',
-        path: 'edit',
-        element: <ProfileEdit />,
-        handle: {
-          breadcrumb: 'Edit Profile',
-        },
-      },
-    ],
-  },
-]);
-```
+Depending on your selections, the generator can produce:
 
-```tsx
-// Inside a component
-import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
+- `components/pages/<feature>.tsx` – Page skeleton.
+- `routes/<feature>.routes(.child).tsx` – Route config using `createAppRoutes`.
+- `locales/<feature>.en.json` – Locale stub for feature-specific translations.
+- `services/<feature>.service.ts` – API placeholder.
+- `types/<feature>.type.ts` – Type definitions scaffold.
+- Optional extras: hooks, contexts, stores, libs, constants, etc.
 
-const { navigate, linkTo } = useNamedRoute();
-
-return (
-  <>
-    <Button onClick={() => navigate('ProfileEdit')}>Go to edit</Button>
-    <Link to={linkTo('ProfileIndex')}>Back to profile</Link>
-  </>
-);
-```
-
-With these pieces in place, new modules automatically participate in layout navigation, display meaningful breadcrumbs, and stay behind the correct permission gates.
-
-<!-- Acknowledgment Section -->
+> Tip: When you scaffold a child route, remember to import and nest it inside the parent route’s `children` list.
 
 ---
 
-### ❤️ Thanks for your attention!
+## 🗂 Project Structure
 
-### 👨‍💻 Good Hacking!
-
----
-
-<br/><br/>
-
-# Roketin Module Generator
-
-A CLI tool designed to streamline the creation of new feature modules in a structured React/TypeScript application, complete with standard files (Page, Route, Store, Types, etc.) and intelligent handling for nested routing.
-
----
-
-## 📖 Usage and Commands
-
-The generator supports two primary commands for module creation: `module` and `module-child`.
-
-### 1. `pnpm roketin module <module_path>` (Standard/Nested)
-
-This is the main command used for creating both top-level modules and nested modules where the routing type (flat or child) is determined interactively.
-
-| Example Command                        | Path Input         | Description                                               |
-| :------------------------------------- | :----------------- | :-------------------------------------------------------- |
-| `pnpm roketin module dashboard`        | `dashboard`        | Creates a top-level module under `src/modules/dashboard`. |
-| `pnpm roketin module account/settings` | `account/settings` | Triggers the **Interactive Prompt** to determine routing. |
-
-#### Interactive Prompt for Nested Paths
-
-If your `<module_path>` contains a slash (`/`), the tool will prompt you:
-
-> `The path 'account/settings' is nested. Treat 'settings' as a child module? (Selecting 'No' means the path will be registered flatly as 'account/settings')`
-
-| User Selection    | `isChild` | Route File Name             | Route Path Generated | Registration Strategy                                                                                                    |
-| :---------------- | :-------- | :-------------------------- | :------------------- | :----------------------------------------------------------------------------------------------------------------------- |
-| **Yes** (Default) | `true`    | `settings.routes.child.tsx` | `"settings"`         | **Nested:** Must be imported and placed in the `children` array of the parent's route file (e.g., `account.routes.tsx`). |
-| **No**            | `false`   | `settings.routes.tsx`       | `"account/settings"` | **Standalone:** Routes automatically registered in your application router.                                              |
-
-### 2. `pnpm roketin module-child <module_path>` (Explicit Child)
-
-Use this command when you explicitly know the generated module will be a child route and must be nested under a parent. This bypasses the interactive prompt.
-
-| Example Command                             | Path Input        | Route File Name            | Route Path Generated | Registration Strategy                                                      |
-| :------------------------------------------ | :---------------- | :------------------------- | :------------------- | :------------------------------------------------------------------------- |
-| `pnpm roketin module-child account/profile` | `account/profile` | `profile.routes.child.tsx` | `"profile"`          | **Nested:** Requires manual nesting within the parent route configuration. |
-
----
-
-## 📂 Generated File Structure
-
-The tool creates files based on the chosen structure (`view`, `all`, or `custom`) and follows an opinionated path pattern to clearly separate top-level and nested modules:
-
-**Path Pattern:** `src/modules/[TopLevelModule]/modules/[NestedModule]/...`
-
-| Generated File Type  | Folder Path (relative to base) | File Naming Convention          |
-| :------------------- | :----------------------------- | :------------------------------ |
-| **Page**             | `components/pages`             | `[kebab-case].tsx`              |
-| **Route (Standard)** | `routes`                       | `[kebab-case].routes.tsx`       |
-| **Route (Child)**    | `routes`                       | `[kebab-case].routes.child.tsx` |
-| **Store**            | `stores`                       | `[kebab-case].store.ts`         |
-| **Hook**             | `hooks`                        | `use-[kebab-case].ts`           |
-| **Service**          | `services`                     | `[kebab-case].service.ts`       |
-| **Type**             | `types`                        | `[kebab-case].type.ts`          |
-| **Locale**           | `locales`                      | `[kebab-case].en.json`          |
-
----
-
-## 🛠️ Generated Route Logic (`createRouteConfig`)
-
-The `createRouteConfig` function determines the `path` and adds informative comments based on your choice:
-
-### Child Route (`isChild = true`)
-
-```typescript
-path: "settings", // Child route path uses only the segment name, as it's nested within a parent route.
 ```
+reactjs-base-project/
+├── roketin.config.ts          # Central app/theme/sidebar configuration
+├── package.json
+├── pnpm-lock.yaml
+├── vite.config.ts             # Vite + Vitest configuration
+├── tsconfig.json              # Root TS config (references app/node configs)
+├── .husky/                    # Git hooks (Commitlint, lint-staged)
+├── bin/
+│   └── roketin.js             # Module generator CLI
+├── public/                    # Static assets served by Vite
+├── dist/                      # Build output (generated)
+├── coverage/                  # Test coverage reports (generated)
+├── tests/
+│   ├── setup.ts               # Vitest setup
+│   ├── setup-msw.ts           # MSW server bootstrap
+│   └── unit/                  # Example unit tests
+└── src/
+    ├── main.tsx               # App entry point
+    ├── vite-env.d.ts
+    ├── @types/                # Project-level TypeScript declarations
+    ├── plugins/               # Custom Vite plugins (e.g., i18n type generator)
+    └── modules/
+        ├── app/               # App shell, layouts, shared libs, locales
+        ├── auth/              # Authentication routes and layouts
+        ├── dashboard/         # Example dashboard module
+        └── sample-form/       # Rich form examples and reusable widgets
 
-_Intended for relative placement inside a parent route's `children` array._
+> `modules/[feature]` breakdown
 
-### Standalone/Flat Route (`isChild = false`)
+- `assets/`         # [Only app folder] static assets scoped to the shell (e.g., global CSS).
+- `components/`
+  - `base/`         # [Only app folder] reusable atoms/molecules prefixed with `r-` (`r-form.tsx`, `r-filter.tsx`, etc.).
+  - `layouts/`      # top-level layout pieces (`app-layout.tsx`, `app-sidebar.tsx`).
+  - `pages/`        # entry-point screens for the shell (`app-entry-point.tsx`, error states).
+  - `ui/`           # [Only app folder] shadcn-based primitives shared across modules; variant tokens live under `ui/variants/`.
+- `constants/`      # shared constants and enums (permissions, menus) using kebab-case filenames.
+- `contexts/`       # React contexts; filename convention: `<feature>-context.ts`.
+- `hooks/`          # custom hooks (`use-*.ts/x`), camel-cased after `use`.
+- `libs/`           # utility functions (storage, crypto, routing) using kebab-case names.
+- `locales/`        # i18n resources (`app.<lang>.json`, validation bundles).
+- `routes/`         # shell route aggregator (`app.routes.tsx`).
+- `stores/`         # Zustand stores (`*.store.ts` suffix).
+- `types/`          # shared TypeScript definitions (`*.type.ts` suffix).
+- `validators/`     # schema or validation helpers (`*.validator.ts`).
 
-```typescript
-path: "account/settings", // Standalone route path uses the full segment path for flat registration: "account/settings". This route automatically registered on app router
+
+> Directories such as `dist/`, `coverage/`, and `node_modules/` are generated and can be cleaned safely.
+
+---
+
+## ✅ Conventions & Tooling
+
+- **Linting:** ESLint with strict TypeScript rules and hook validation.
+- **Formatting:** Prettier runs automatically via Husky and lint-staged on staged files.
+- **Commits:** Commitlint enforces Conventional Commit messages; use `pnpm commit` for an interactive flow.
+- **Testing:** Vitest mimics Jest APIs, with MSW mocking network calls. Tests bootstrap via `tests/setup.ts`.
+- **Module Generation:** `pnpm roketin module <feature>/[sub-feature]` scaffolds new modules following project conventions.
+
+Have fun building! Contributions and issues are welcome. 🎉
 ```
-
-_Intended for direct placement in the root router configuration._

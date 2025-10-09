@@ -13,6 +13,7 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, 'src'),
       '@tests': path.resolve(__dirname, 'tests'),
+      '@config': path.resolve(__dirname, 'roketin.config.ts'),
     },
   },
   test: {

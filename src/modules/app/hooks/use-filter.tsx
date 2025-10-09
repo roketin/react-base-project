@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { TFilterItem } from '@/modules/app/libs/filter-utils';
+import type { TRoketinFilterPersistenceConfig } from '@/modules/app/types/app.type';
+import roketinConfig from '@config';
 import { useCallback, useMemo, useEffect } from 'react';
 import { useImmerReducer } from 'use-immer';
 
@@ -17,11 +19,63 @@ function safeParse<T>(str: string | null): T | null {
   }
 }
 
-function generateStorageKey(custom?: string) {
-  if (custom) return `filter_${custom}`;
-  if (typeof window === 'undefined') return 'filter_default';
+const defaultEnabledPersistence = {
+  enabled: true,
+  strategy: 'local-storage' as const,
+  keyPrefix: 'filter_',
+  debounceMs: 200,
+};
+
+type ResolvedPersistence =
+  | { enabled: false }
+  | {
+      enabled: true;
+      strategy: 'local-storage' | 'session-storage' | 'query-params';
+      keyPrefix: string;
+      debounceMs: number;
+    };
+
+function resolvePersistenceConfig(
+  config: TRoketinFilterPersistenceConfig | undefined,
+): ResolvedPersistence {
+  if (!config) {
+    return { ...defaultEnabledPersistence };
+  }
+
+  if (!config.enabled) {
+    return { enabled: false };
+  }
+
+  return {
+    enabled: true,
+    strategy: config.strategy,
+    keyPrefix: config.keyPrefix ?? defaultEnabledPersistence.keyPrefix,
+    debounceMs: config.debounceMs ?? defaultEnabledPersistence.debounceMs,
+  };
+}
+
+const resolvedPersistence = resolvePersistenceConfig(
+  roketinConfig.filters?.persistence,
+);
+
+const persistenceEnabled = resolvedPersistence.enabled;
+const persistenceKeyPrefix = resolvedPersistence.enabled
+  ? resolvedPersistence.keyPrefix
+  : defaultEnabledPersistence.keyPrefix;
+const persistenceDebounce = resolvedPersistence.enabled
+  ? resolvedPersistence.debounceMs
+  : defaultEnabledPersistence.debounceMs;
+const persistenceStrategy = resolvedPersistence.enabled
+  ? resolvedPersistence.strategy
+  : undefined;
+
+function generateStorageKey(custom: string | undefined) {
+  if (custom) return `${persistenceKeyPrefix}${custom}`;
+  if (typeof window === 'undefined') {
+    return `${persistenceKeyPrefix}default`;
+  }
   const pathname = window.location?.pathname.replace(/\//g, '_') || 'root';
-  return `filter${pathname}`;
+  return `${persistenceKeyPrefix}${pathname}`;
 }
 
 export function useFilter(items: TFilterItem[], persistKey?: string) {
@@ -56,10 +110,21 @@ export function useFilter(items: TFilterItem[], persistKey?: string) {
     },
     initialValues,
     (init: FilterValues) => {
-      if (typeof window === 'undefined') return init;
-      const stored = safeParse<FilterValues>(
-        window.localStorage.getItem(storageKey),
-      );
+      if (!persistenceEnabled || typeof window === 'undefined') return init;
+      const strategy =
+        persistenceStrategy ?? defaultEnabledPersistence.strategy;
+
+      if (strategy === 'query-params') {
+        const params = new URLSearchParams(window.location.search);
+        const stored = safeParse<FilterValues>(params.get(storageKey));
+        return stored ? { ...init, ...stored } : init;
+      }
+
+      const storage =
+        strategy === 'session-storage'
+          ? window.sessionStorage
+          : window.localStorage;
+      const stored = safeParse<FilterValues>(storage.getItem(storageKey));
       return stored ? { ...init, ...stored } : init;
     },
   );
@@ -73,8 +138,24 @@ export function useFilter(items: TFilterItem[], persistKey?: string) {
 
   const reset = useCallback(() => {
     dispatch({ type: 'RESET', initial: initialValues });
-    if (typeof window !== 'undefined') {
-      window.localStorage.removeItem(storageKey);
+    if (typeof window !== 'undefined' && persistenceEnabled) {
+      const strategy =
+        persistenceStrategy ?? defaultEnabledPersistence.strategy;
+      if (strategy === 'query-params') {
+        const url = new URL(window.location.href);
+        url.searchParams.delete(storageKey);
+        window.history.replaceState(
+          null,
+          '',
+          `${url.pathname}${url.search}${url.hash}`,
+        );
+      } else {
+        const storage =
+          strategy === 'session-storage'
+            ? window.sessionStorage
+            : window.localStorage;
+        storage.removeItem(storageKey);
+      }
     }
     return { ...initialValues };
   }, [dispatch, initialValues, storageKey]);
@@ -90,10 +171,34 @@ export function useFilter(items: TFilterItem[], persistKey?: string) {
 
   // persist effect
   useEffect(() => {
-    if (typeof window === 'undefined') return undefined;
+    if (!persistenceEnabled || typeof window === 'undefined') return undefined;
+    const strategy = persistenceStrategy ?? defaultEnabledPersistence.strategy;
+    const delay = persistenceDebounce ?? defaultEnabledPersistence.debounceMs;
+
     const timeout = window.setTimeout(() => {
-      window.localStorage.setItem(storageKey, JSON.stringify(values));
-    }, 200);
+      const serialized = JSON.stringify(values);
+      if (strategy === 'query-params') {
+        const url = new URL(window.location.href);
+        if (Object.keys(values).some((key) => values[key] != null)) {
+          url.searchParams.set(storageKey, serialized);
+        } else {
+          url.searchParams.delete(storageKey);
+        }
+        window.history.replaceState(
+          null,
+          '',
+          `${url.pathname}${url.search}${url.hash}`,
+        );
+        return;
+      }
+
+      const storage =
+        strategy === 'session-storage'
+          ? window.sessionStorage
+          : window.localStorage;
+      storage.setItem(storageKey, serialized);
+    }, delay);
+
     return () => clearTimeout(timeout);
   }, [values, storageKey]);
 

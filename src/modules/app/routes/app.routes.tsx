@@ -8,6 +8,7 @@ import AppEntryPoint from '@/modules/app/components/pages/app-entry-point';
 import AppNotFound from '@/modules/app/components/pages/app-not-found';
 import AppLayout from '@/modules/app/components/layouts/app-layout';
 import AuthProtectedRoute from '@/modules/auth/hoc/auth-protected-route';
+import roketinConfig from '@config';
 
 import { Outlet } from 'react-router-dom';
 
@@ -123,11 +124,15 @@ function splitFeatureRoutes(routes: TAppRouteObject[]) {
  */
 const featureRoutes = loadRoutes();
 const { absoluteRoutes, nestedRoutes } = splitFeatureRoutes(featureRoutes);
+const rawAdminBasePath = roketinConfig.routes?.admin?.basePath ?? '/admin';
+const adminBasePath = rawAdminBasePath.startsWith('/')
+  ? rawAdminBasePath
+  : `/${rawAdminBasePath}`;
 
 const adminRoute =
   nestedRoutes.length > 0
     ? {
-        path: '/admin',
+        path: adminBasePath,
         element: <AppLayout />,
         handle: {
           isRequiredAuth: true,

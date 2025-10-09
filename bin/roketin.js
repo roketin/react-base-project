@@ -1,79 +1,23 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import path from 'path';
-import { select, checkbox, confirm } from '@inquirer/prompts'; // Added 'confirm'
 import cfonts from 'cfonts';
+import { select, checkbox, confirm } from '@inquirer/prompts';
 
-const args = process.argv.slice(2);
-const command = args[0];
-const modulePathArg = args[1];
+const [command, rawModulePath] = process.argv.slice(2);
 
-if (!command || !modulePathArg) {
-  console.log('Usage: r-app module <module_path>');
-  process.exit(1);
-}
-
-//#region -------------------------- Title
-cfonts.say('Roketin', {
-  font: '3d',
-  align: 'left',
-  colors: ['system'],
-  background: 'transparent',
-  letterSpacing: 1,
-  lineHeight: 1,
-  space: true,
-  maxLength: '0',
-  gradient: false,
-  independentGradient: true,
-  transitionGradient: true,
-  rawMode: false,
-  env: 'node',
-});
-
-cfonts.say('Module Generator', {
-  font: 'chrome',
-  align: 'left',
-  colors: ['yellow', 'green'],
-  background: 'transparent',
-  letterSpacing: 1,
-  lineHeight: 1,
-  space: true,
-  maxLength: '0',
-});
-//#endregion -------------------------- Title
-
-// split path
-const parts = modulePathArg.split('/');
-const moduleName = parts[parts.length - 1]; // used for file naming
-
-// --- PATH CORRECTION START ---
-// Build the base path segment by segment.
-// This ensures 'modules' is correctly inserted for all nested paths,
-// maintaining the pattern: src/modules/moduleA/modules/moduleB/...
-const pathSegments = ['./src/modules'];
-
-for (let i = 0; i < parts.length; i++) {
-  const segment = sanitizeFolderName(parts[i]);
-
-  if (i === 0) {
-    // The first segment (top-level module) goes directly under src/modules
-    pathSegments.push(segment);
-  } else {
-    // All subsequent segments (nested modules) must be placed in a 'modules' subfolder
-    pathSegments.push('modules');
-    pathSegments.push(segment);
-  }
-}
-
-const basePath = path.resolve(...pathSegments);
-// --- PATH CORRECTION END ---
+const RESTRICTED_MODULES = new Set(['auth', 'app', 'dashboard']);
+const GENERATOR_PRESETS = {
+  view: ['page', 'route', 'locale', 'type', 'service'],
+};
 
 const TYPE_CONFIGS = {
   page: {
     folder: 'components/pages',
     getFileName: ({ moduleName }) => `${kebabCase(moduleName)}.tsx`,
-    getContent: ({ moduleName }) => `
-const ${capitalize(moduleName)}Index = () => {
+    getContent: ({
+      moduleName,
+    }) => `const ${capitalize(moduleName)}Index = () => {
   return (
     <div>${capitalize(moduleName)} Page Content</div>
   )
@@ -86,8 +30,7 @@ export default ${capitalize(moduleName)}Index
     folder: 'routes',
     getFileName: ({ moduleName, isChild }) =>
       `${kebabCase(moduleName)}.routes${isChild ? '.child' : ''}.tsx`,
-    getContent: ({ moduleName, isChild, moduleParts, filePath }) => {
-      const finalModuleName = moduleName;
+    getContent: ({ moduleName, moduleParts, isChild, filePath, overwrite }) => {
       const parentRoutePathEstimate = path.join(
         moduleParts.length > 1 ? '../..' : '.',
         kebabCase(moduleParts[0]),
@@ -95,13 +38,9 @@ export default ${capitalize(moduleName)}Index
         `${kebabCase(moduleParts[0])}.routes.tsx`,
       );
 
-      if (isChild) {
-        const routeConfig = createRouteConfig(
-          finalModuleName,
-          true,
-          moduleParts,
-        );
+      const routeConfig = createRouteConfig(moduleName, isChild, moduleParts);
 
+      if (isChild) {
         return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
 import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
 import { Outlet } from "react-router-dom";
@@ -114,15 +53,9 @@ export const ${camelCase(moduleName)}ChildRoutes = createAppRoutes(${routeConfig
 `;
       }
 
-      if (fs.existsSync(filePath)) {
+      if (!overwrite && fs.existsSync(filePath)) {
         return null;
       }
-
-      const routeConfig = createRouteConfig(
-        finalModuleName,
-        false,
-        moduleParts,
-      );
 
       return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
 import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
@@ -210,30 +143,193 @@ export function use${capitalize(moduleName)}Context() {
     folder: 'locales',
     getFileName: ({ moduleName }) => `${kebabCase(moduleName)}.en.json`,
     getContent: ({ moduleName }) => `{
-      "title": "${capitalize(moduleName)}",
-      "subtitle": "Sub ${capitalize(moduleName)}"
+  "title": "${capitalize(moduleName)}",
+  "subtitle": "Sub ${capitalize(moduleName)}"
 }`,
   },
 };
 
-const customChoices = Object.keys(TYPE_CONFIGS);
+/**
+ * Main entry point of the CLI tool.
+ * Validates input arguments, renders banner, processes commands,
+ * prompts user for options, and generates module artifacts accordingly.
+ * Handles both 'module' and 'module-child' commands.
+ */
+async function main() {
+  validateCliArgs(command, rawModulePath);
+  renderBanner();
 
-//#region -------------------------- Generator
-if (command === 'module' || command === 'module-child') {
-  let isChild = command === 'module-child';
-
-  // Logic to ask if a nested 'module' command should be treated as 'module-child'
-  if (command === 'module' && parts.length > 1) {
-    const confirmChild = await confirm({
-      message: `The path '${modulePathArg}' is nested. Treat '${moduleName}' as a child module? (Selecting 'No' means the path will be registered flatly as '${parts.join('/')}')`,
-      default: true,
-    });
-    if (confirmChild) {
-      isChild = true;
-    }
+  if (command !== 'module' && command !== 'module-child') {
+    console.log(`🔵 Unknown command: ${command}`);
+    process.exit(1);
   }
 
-  const mainChoice = await select({
+  const moduleParts = sanitizeModulePath(rawModulePath);
+  const moduleName = moduleParts[moduleParts.length - 1];
+
+  const basePath = buildModuleBasePath(moduleParts);
+  const allowOverwrite = await promptOverwriteIfNeeded(basePath);
+  ensureDirExists(basePath);
+
+  let isChild = command === 'module-child';
+  if (!isChild && moduleParts.length > 1) {
+    const treatAsChild = await confirm({
+      message: `The path '${rawModulePath}' is nested. Treat '${moduleName}' as a child module?`,
+      default: true,
+    });
+    isChild = treatAsChild;
+  }
+
+  const selectedTypes = await promptGenerationTypes();
+  if (selectedTypes.length === 0) {
+    console.log('🔵 No generator selected. Nothing to do.');
+    process.exit(0);
+  }
+
+  generateArtifacts({
+    basePath,
+    moduleName,
+    moduleParts,
+    types: selectedTypes,
+    isChild,
+    overwrite: allowOverwrite,
+  });
+}
+
+/**
+ * Validates the CLI arguments to ensure command and module path are provided.
+ * @param {string} cmd - The command passed in CLI.
+ * @param {string} pathArg - The module path argument.
+ * Exits the process with an error message if validation fails.
+ */
+function validateCliArgs(cmd, pathArg) {
+  if (!cmd || !pathArg) {
+    console.log('❌ Usage: pnpm roketin module <module_path>');
+    process.exit(1);
+  }
+}
+
+/**
+ * Renders the CLI banner using cfonts.
+ * Displays the tool name and description with styled fonts and colors.
+ */
+function renderBanner() {
+  cfonts.say('Roketin', {
+    font: '3d',
+    align: 'left',
+    colors: ['system'],
+    background: 'transparent',
+    letterSpacing: 1,
+    lineHeight: 1,
+    space: true,
+    maxLength: '0',
+    gradient: false,
+    independentGradient: true,
+    transitionGradient: true,
+    rawMode: false,
+    env: 'node',
+  });
+
+  cfonts.say('Module Generator', {
+    font: 'chrome',
+    align: 'left',
+    colors: ['yellow', 'green'],
+    background: 'transparent',
+    letterSpacing: 1,
+    lineHeight: 1,
+    space: true,
+    maxLength: '0',
+  });
+}
+
+/**
+ * Sanitizes the raw module path provided by the user.
+ * Splits the path into segments, normalizes folder names,
+ * and checks for restricted module names.
+ * @param {string} rawPath - Raw path string from CLI input.
+ * @returns {string[]} Array of sanitized path segments.
+ * Exits the process if path is invalid or contains restricted folders.
+ */
+function sanitizeModulePath(rawPath) {
+  const segments = rawPath
+    .split('/')
+    .map((segment) => sanitizeFolderName(segment))
+    .filter(Boolean);
+
+  if (segments.length === 0) {
+    console.error('❌ Module path is invalid.');
+    process.exit(1);
+  }
+
+  if (segments.some((segment) => RESTRICTED_MODULES.has(segment))) {
+    console.error(
+      '❌ You cannot create a module inside restricted folders: auth, app, or dashboard.',
+    );
+    process.exit(1);
+  }
+
+  return segments;
+}
+
+/**
+ * Builds the absolute base path for the module based on its parts.
+ * The path follows the pattern: ./src/modules/<module>/modules/<child_module>/...
+ * @param {string[]} parts - Array of module path segments.
+ * @returns {string} Absolute path string for the module base directory.
+ */
+function buildModuleBasePath(parts) {
+  const segments = ['./src/modules'];
+  parts.forEach((segment, index) => {
+    if (index === 0) {
+      segments.push(segment);
+    } else {
+      segments.push('modules', segment);
+    }
+  });
+  return path.resolve(...segments);
+}
+
+/**
+ * Prompts the user to confirm overwriting existing files if the base path exists.
+ * @param {string} basePath - The module base directory path.
+ * @returns {Promise<boolean>} Resolves to true if overwrite is allowed, otherwise exits.
+ */
+async function promptOverwriteIfNeeded(basePath) {
+  if (!fs.existsSync(basePath)) {
+    return false;
+  }
+
+  const overwrite = await confirm({
+    message: `The folder '${basePath}' already exists. Overwrite existing files?`,
+    default: false,
+  });
+
+  if (!overwrite) {
+    console.log('🚫 Aborted by user.');
+    process.exit(0);
+  }
+
+  return true;
+}
+
+/**
+ * Ensures that the specified directory exists.
+ * Creates the directory recursively if it does not exist.
+ * @param {string} dir - Directory path to ensure existence.
+ */
+function ensureDirExists(dir) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
+
+/**
+ * Prompts the user to select the types of module files/folders to generate.
+ * Offers presets, all, or custom selection.
+ * @returns {Promise<string[]>} Array of selected generator types.
+ */
+async function promptGenerationTypes() {
+  const choice = await select({
     message: 'Select the module type to generate:',
     choices: [
       {
@@ -245,84 +341,128 @@ if (command === 'module' || command === 'module-child') {
     ],
   });
 
-  let selected = [];
-  if (mainChoice === 'all') {
-    selected = customChoices;
-  } else if (mainChoice === 'view') {
-    selected = ['page', 'route', 'locale', 'type', 'service'];
-  } else if (mainChoice === 'custom') {
-    const customSelected = await checkbox({
-      message: 'Select folders/files to generate:',
-      choices: customChoices,
-      loop: false,
-    });
-    selected = customSelected;
+  if (choice === 'all') {
+    return Object.keys(TYPE_CONFIGS);
   }
 
-  selected.forEach((type) => {
+  if (choice === 'view') {
+    return GENERATOR_PRESETS.view;
+  }
+
+  const customSelected = await checkbox({
+    message: 'Select folders/files to generate:',
+    choices: Object.keys(TYPE_CONFIGS),
+    loop: false,
+  });
+
+  return customSelected;
+}
+
+/**
+ * Generates the module artifacts (files/folders) based on user selection.
+ * Writes files with generated content, respecting overwrite rules.
+ * Logs creation, overwrite, or skip statuses with emojis.
+ * @param {Object} params - Parameters object.
+ * @param {string} params.basePath - Base directory path for the module.
+ * @param {string} params.moduleName - Final module name segment.
+ * @param {string[]} params.moduleParts - Array of module path segments.
+ * @param {string[]} params.types - Selected types to generate.
+ * @param {boolean} params.isChild - Whether the module is a child module.
+ * @param {boolean} params.overwrite - Whether to overwrite existing files.
+ */
+function generateArtifacts({
+  basePath,
+  moduleName,
+  moduleParts,
+  types,
+  isChild,
+  overwrite,
+}) {
+  types.forEach((type) => {
     const config = TYPE_CONFIGS[type];
 
     if (!config) {
-      console.warn(`Unknown generator type: ${type}`);
+      console.warn(`⚠️ Unknown generator type: ${type}`);
       return;
     }
 
-    const fullPath = config.folder
+    const targetDir = config.folder
       ? path.join(basePath, config.folder)
       : basePath;
-    ensureDir(fullPath);
+    ensureDirExists(targetDir);
 
     const context = {
       moduleName,
-      moduleParts: parts,
+      moduleParts,
       isChild,
       basePath,
+      overwrite,
     };
 
     const fileName = config.getFileName(context);
-    const filePath = path.join(fullPath, fileName);
+    const filePath = path.join(targetDir, fileName);
     const content = config.getContent({ ...context, filePath });
 
     if (content === null) {
-      console.log(`Skipped: ${filePath} (already exists)`);
+      console.log(`🔵 Skipped: ${filePath}`);
       return;
     }
 
-    const created = createFile(filePath, content);
-    console.log(`${created ? 'Created' : 'Skipped'}: ${filePath}`);
-  });
-} else {
-  console.log(`Unknown command: ${command}`);
-}
-//#endregion -------------------------- Generator
+    const existed = fs.existsSync(filePath);
+    const written = writeFile(filePath, content, overwrite);
 
-//#region -------------------------- Core Function & Utils
+    if (!written) {
+      console.log(`🔵 Skipped: ${filePath}`);
+      return;
+    }
+
+    console.log(`${existed ? '🟣 Overwritten' : '🟢 Created'}: ${filePath}`);
+
+    if (type === 'route' && isChild) {
+      console.log(
+        `🔵 Reminder: register ${camelCase(
+          moduleName,
+        )}ChildRoutes inside the parent route's children array.`,
+      );
+    }
+  });
+}
 
 /**
- * Creates a route configuration.
- * The path is determined by whether it's a child (last segment) or a standalone (full path).
- * @param {string} finalModuleName - The name of the final component
- * @param {boolean} isChild - If this is a child route (module-child command or confirmed as child)
- * @param {string[]} moduleParts - All parts of the module path (e.g., ['testing', 'makan'])
- * @returns {string} The simple route configuration string.
+ * Writes content to a file, respecting overwrite flag.
+ * @param {string} filePath - Path of the file to write.
+ * @param {string} content - Content to write into the file.
+ * @param {boolean} overwrite - Whether to overwrite if file exists.
+ * @returns {boolean} True if file was written, false if skipped.
  */
-function createRouteConfig(finalModuleName, isChild, moduleParts) {
-  const componentImport = capitalize(finalModuleName) + 'Index';
-
-  let routePath;
-  let pathComment;
-
-  if (isChild) {
-    // Child: Use only the last segment path. E.g., for 'testing/makan', path is 'makan'.
-    routePath = kebabCase(finalModuleName);
-    pathComment = `// Child route path uses only the segment name, as it's nested within a parent route.`;
-  } else {
-    // Not a child: Use the full path for flat registration. E.g., for 'testing/makan', path is 'testing/makan'.
-    routePath = moduleParts.map((p) => kebabCase(p)).join('/');
-    pathComment = `// Standalone route path uses the full segment path for flat registration: "${routePath}". This route MUST be registered at the root level.`;
+function writeFile(filePath, content, overwrite) {
+  if (fs.existsSync(filePath) && !overwrite) {
+    return false;
   }
 
-  // Ensure the index route is generated
+  fs.writeFileSync(filePath, content);
+  return true;
+}
+
+/**
+ * Creates a route configuration string for react-router based on module info.
+ * Includes comments explaining path usage depending on child or standalone route.
+ * @param {string} finalModuleName - The last segment of the module name.
+ * @param {boolean} isChild - Whether this route is a child route.
+ * @param {string[]} moduleParts - Array of module path segments.
+ * @returns {string} Route configuration code as a string.
+ */
+function createRouteConfig(finalModuleName, isChild, moduleParts) {
+  const componentImport = `${capitalize(finalModuleName)}Index`;
+
+  const routePath = isChild
+    ? kebabCase(finalModuleName)
+    : moduleParts.map((part) => kebabCase(part)).join('/');
+
+  const pathComment = isChild
+    ? '// Child route path uses only the segment name, as it is nested within a parent route.'
+    : `// Standalone route path uses the full segment path for flat registration: "${routePath}".`;
+
   const indexRoute = `
       {
         index: true,
@@ -332,7 +472,7 @@ function createRouteConfig(finalModuleName, isChild, moduleParts) {
       // Add other child routes here if needed
     `;
 
-  const routeConfig = `[
+  return `[
   {
     path: "${routePath}", ${pathComment}
     element: <Outlet />,
@@ -343,30 +483,28 @@ function createRouteConfig(finalModuleName, isChild, moduleParts) {
     ],
   },
 ]`;
-  return routeConfig;
 }
 
+/**
+ * Sanitizes a folder name by trimming, converting to lowercase,
+ * replacing spaces with hyphens, and removing invalid characters.
+ * @param {string} name - Raw folder name string.
+ * @returns {string} Sanitized folder name.
+ */
 function sanitizeFolderName(name) {
   return name
     .trim()
     .toLowerCase()
-    .replace(/\s+/g, '-') // spaces to dash
-    .replace(/[^a-z0-9-]/g, ''); // remove characters other than a-z, 0-9, dash
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '');
 }
 
-function ensureDir(dir) {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-}
-
-function createFile(filePath, content = '') {
-  if (fs.existsSync(filePath)) {
-    return false;
-  }
-
-  fs.writeFileSync(filePath, content);
-  return true;
-}
-
+/**
+ * Capitalizes a string by splitting on spaces, hyphens, or underscores,
+ * capitalizing the first letter of each segment, and joining them.
+ * @param {string} str - Input string.
+ * @returns {string} Capitalized string with no separators.
+ */
 function capitalize(str) {
   return str
     .trim()
@@ -375,11 +513,21 @@ function capitalize(str) {
     .join('');
 }
 
+/**
+ * Converts a string to camelCase.
+ * @param {string} str - Input string.
+ * @returns {string} camelCase string.
+ */
 function camelCase(str) {
   const c = capitalize(str);
   return c.charAt(0).toLowerCase() + c.slice(1);
 }
 
+/**
+ * Converts a string to kebab-case.
+ * @param {string} str - Input string.
+ * @returns {string} kebab-case string.
+ */
 function kebabCase(str) {
   return str
     .trim()
@@ -390,6 +538,11 @@ function kebabCase(str) {
     .toLowerCase();
 }
 
+/**
+ * Converts a string to snake_case.
+ * @param {string} str - Input string.
+ * @returns {string} snake_case string.
+ */
 function snakeCase(str) {
   return str
     .trim()
@@ -400,6 +553,11 @@ function snakeCase(str) {
     .toLowerCase();
 }
 
+/**
+ * Converts a string to PascalCase.
+ * @param {string} str - Input string.
+ * @returns {string} PascalCase string.
+ */
 function pascalCase(str) {
   return str
     .trim()
@@ -407,4 +565,8 @@ function pascalCase(str) {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join('');
 }
-//#endregion -------------------------- Core Function & Utils
+
+main().catch((error) => {
+  console.error(`❌ ${error}`);
+  process.exit(1);
+});

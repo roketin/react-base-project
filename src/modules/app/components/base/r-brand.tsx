@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Rocket } from 'lucide-react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
+import roketinConfig from '@config';
 
 type RBrandProps = {
   className?: string;
@@ -30,13 +31,14 @@ export function RBrand({
   icon,
 }: RBrandProps) {
   const { t } = useTranslation('app');
+  const { app: appConfig } = roketinConfig;
 
   const { resolvedTitle, resolvedSubtitle } = useMemo(() => {
     return {
-      resolvedTitle: title ?? t('title'),
-      resolvedSubtitle: subtitle ?? t('subTitle'),
+      resolvedTitle: title ?? appConfig.name ?? t('title'),
+      resolvedSubtitle: subtitle ?? appConfig.tagline ?? t('subTitle'),
     };
-  }, [title, subtitle, t]);
+  }, [title, subtitle, appConfig.name, appConfig.tagline, t]);
 
   const hasTagline = showTagline && resolvedSubtitle;
 
