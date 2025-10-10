@@ -7,7 +7,6 @@ import RForm from '@/modules/app/components/base/r-form';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
 import { RInputNumber } from '@/modules/app/components/base/r-input-number';
 import { RInputPassword } from '@/modules/app/components/base/r-input-password';
-import Button from '@/modules/app/components/ui/button';
 import { Checkbox } from '@/modules/app/components/ui/checkbox';
 import { Input } from '@/modules/app/components/ui/input';
 import { RRadio } from '@/modules/app/components/base/r-radio';
@@ -19,6 +18,12 @@ import Yup from '@/plugins/yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
+import RBtn from '@/modules/app/components/base/r-btn';
+import { AlertTriangle, Save } from 'lucide-react';
+import RStickyWrapper from '@/modules/app/components/base/r-sticky-wrapper';
+import { cn } from '@/modules/app/libs/utils';
+import type { MaskitoOptions } from '@maskito/core';
+import { useMaskito } from '@maskito/react';
 
 const formSchema = Yup.object().shape({
   checkbox_single: Yup.bool().default(false).label('Checkbox Single'),
@@ -61,6 +66,27 @@ const items = [
   { value: 'D', label: 'Item D' },
 ];
 
+const digitsOnlyMask: MaskitoOptions = {
+  mask: [
+    /\d/,
+    /\d/,
+    '-',
+    /\d/,
+    /\d/,
+    /\d/,
+    '-',
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+    '-',
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/,
+  ],
+};
+
 const TodoSave = () => {
   const form = useForm<TFormSchema>({
     mode: 'onTouched',
@@ -79,138 +105,188 @@ const TodoSave = () => {
     console.log('values', values);
   }, []);
 
+  // Test maskito
+  const inputRef = useMaskito({ options: digitsOnlyMask });
+
   return (
-    <div className='grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10'>
-      <RForm
-        form={form}
-        onSubmit={handleSubmit}
-        className='gap-3'
-        labelWidth='200px'
-        showErrorPopup
-      >
-        {/* Checkbox Single */}
-        <RFormField
-          control={form.control}
-          name='checkbox_single'
-          label='Checkbox'
-          valuePropName='checked'
+    <>
+      <div className='grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10'>
+        <RForm
+          form={form}
+          onSubmit={handleSubmit}
+          className='gap-4'
+          labelWidth='200px'
+          showErrorPopup
         >
-          <Checkbox label='Checkbox Single' className='mt-2' />
-        </RFormField>
+          <RStickyWrapper
+            position='top'
+            offset={10}
+            offsetElements='#app-header'
+          >
+            {(isSticky) => (
+              <div
+                className={cn('wrapper-fly text-sm flex gap-3', {
+                  'fly-active text-destructive': isSticky,
+                })}
+              >
+                <AlertTriangle
+                  className='flex-none relative top-0.5'
+                  size={20}
+                />
+                <div className='flex-1'>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Veritatis illo voluptatem hic nam facilis voluptatum possimus
+                  illum ipsum eligendi at, facere accusamus minus explicabo iure
+                  aspernatur praesentium consectetur atque quas?
+                </div>
+              </div>
+            )}
+          </RStickyWrapper>
 
-        {/* Checkbox Multiple */}
-        <RFormField
-          control={form.control}
-          name='checkbox_multiple'
-          label='Checkbox Multiple'
-          valuePropName='checked'
-        >
-          <RCheckboxMultiple options={items} />
-        </RFormField>
+          {/* Checkbox Single */}
+          <RFormField
+            control={form.control}
+            name='checkbox_single'
+            label='Checkbox'
+            valuePropName='checked'
+          >
+            <Checkbox label='Checkbox Single' className='mt-2' />
+          </RFormField>
 
-        {/* Radio */}
-        <RFormField control={form.control} name='radio' label='Radio'>
-          <RRadio options={items} layout='horizontal' />
-        </RFormField>
+          {/* Checkbox Multiple */}
+          <RFormField
+            control={form.control}
+            name='checkbox_multiple'
+            label='Checkbox Multiple'
+            valuePropName='checked'
+          >
+            <RCheckboxMultiple options={items} />
+          </RFormField>
 
-        {/* Combobox */}
-        <RFormField control={form.control} name='select' label='Select'>
-          <RComboBox items={items} labelKey='label' valueKey='value' />
-        </RFormField>
+          {/* Radio */}
+          <RFormField control={form.control} name='radio' label='Radio'>
+            <RRadio options={items} layout='horizontal' />
+          </RFormField>
 
-        {/* Combobox */}
-        <RFormField
-          control={form.control}
-          name='select_multiple'
-          label='Select Multiple'
-        >
-          <RMultiComboBox items={items} labelKey='label' valueKey='value' />
-        </RFormField>
+          {/* Combobox */}
+          <RFormField control={form.control} name='select' label='Select'>
+            <RComboBox items={items} labelKey='label' valueKey='value' />
+          </RFormField>
 
-        {/* Switch */}
-        <RFormField
-          control={form.control}
-          name='switch'
-          label='Switch'
-          valuePropName='checked'
-        >
-          <Switch className='mt-2' />
-        </RFormField>
+          {/* Combobox */}
+          <RFormField
+            control={form.control}
+            name='select_multiple'
+            label='Select Multiple'
+          >
+            <RMultiComboBox items={items} labelKey='label' valueKey='value' />
+          </RFormField>
 
-        {/* Input */}
-        <RFormField
-          control={form.control}
-          name='input'
-          label='Input'
-          withPlaceholder
-        >
-          <Input />
-        </RFormField>
+          {/* Switch */}
+          <RFormField
+            control={form.control}
+            name='switch'
+            label='Switch'
+            valuePropName='checked'
+          >
+            <Switch className='mt-2' />
+          </RFormField>
 
-        {/* Input Password */}
-        <RFormField
-          control={form.control}
-          name='input_password'
-          label='Input Password'
-          withPlaceholder
-        >
-          <RInputPassword />
-        </RFormField>
+          {/* Input */}
+          <RFormField
+            control={form.control}
+            name='input'
+            label='Input'
+            withPlaceholder
+          >
+            <Input ref={inputRef} />
+          </RFormField>
 
-        {/* Input Number */}
-        <RFormField
-          control={form.control}
-          name='input_number'
-          label='Input Number'
-        >
-          <RInputNumber isOnBlurFormat placeholder='0' />
-        </RFormField>
+          {/* Input Password */}
+          <RFormField
+            control={form.control}
+            name='input_password'
+            label='Input Password'
+            withPlaceholder
+          >
+            <RInputPassword />
+          </RFormField>
 
-        {/* Textarea */}
-        <RFormField control={form.control} name='text_area' label='Text Area'>
-          <Textarea />
-        </RFormField>
+          {/* Input Number */}
+          <RFormField
+            control={form.control}
+            name='input_number'
+            label='Input Number'
+          >
+            <RInputNumber isOnBlurFormat placeholder='0' />
+          </RFormField>
 
-        {/* DatePicker */}
-        <RFormField
-          control={form.control}
-          name='date_picker'
-          label='Date Picker Single'
-        >
-          <RDatePicker mode='single' disabledDate={{ before: new Date() }} />
-        </RFormField>
+          {/* Textarea */}
+          <RFormField control={form.control} name='text_area' label='Text Area'>
+            <Textarea />
+          </RFormField>
 
-        {/* DatePicker */}
-        <RFormField
-          control={form.control}
-          name='date_picker_range'
-          label='Date Picker Range'
-        >
-          <RDatePicker mode='range' />
-        </RFormField>
+          {/* DatePicker */}
+          <RFormField
+            control={form.control}
+            name='date_picker'
+            label='Date Picker Single'
+          >
+            <RDatePicker mode='single' disabledDate={{ before: new Date() }} />
+          </RFormField>
 
-        {/* File Uploader */}
-        <RFormField control={form.control} name='image' label='Image Uploader'>
-          <RFileUploader />
-        </RFormField>
+          {/* DatePicker */}
+          <RFormField
+            control={form.control}
+            name='date_picker_range'
+            label='Date Picker Range'
+          >
+            <RDatePicker mode='range' />
+          </RFormField>
 
-        {/* Slider */}
-        <RFormField
-          control={form.control}
-          name='slider'
-          label='Slider'
-          valuePropName='slider'
-        >
-          <Slider min={0} max={100} step={1} className='mt-3' />
-        </RFormField>
+          {/* File Uploader */}
+          <RFormField
+            control={form.control}
+            name='image'
+            label='Image Uploader'
+          >
+            <RFileUploader />
+          </RFormField>
 
-        <div>
-          <Button type='submit'>Submit</Button>
-        </div>
-      </RForm>
+          {/* Slider */}
+          <RFormField
+            control={form.control}
+            name='slider'
+            label='Slider'
+            valuePropName='slider'
+          >
+            <Slider min={0} max={100} step={1} className='mt-2' />
+          </RFormField>
 
-      <pre className='text-sm'>{JSON.stringify(watchAllValues, null, 2)}</pre>
-    </div>
+          <RStickyWrapper position='bottom' offset={10}>
+            {(isSticky) => (
+              <div className={cn('wrapper-fly', { 'fly-active': isSticky })}>
+                <RBtn type='submit' iconStart={<Save />}>
+                  Submit
+                </RBtn>
+              </div>
+            )}
+          </RStickyWrapper>
+        </RForm>
+
+        <RStickyWrapper position='top' offset={10} offsetElements='#app-header'>
+          {(isSticky) => (
+            <pre
+              className={cn('text-sm p-4', {
+                'bg-primary/30 rounded-xl': isSticky,
+              })}
+            >
+              {JSON.stringify(watchAllValues, null, 2)}
+            </pre>
+          )}
+        </RStickyWrapper>
+      </div>
+    </>
   );
 };
 export default TodoSave;

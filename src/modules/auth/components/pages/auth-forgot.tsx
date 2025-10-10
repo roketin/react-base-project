@@ -95,7 +95,7 @@ const AuthForgot = () => {
 
   return (
     <div>
-      <h1 className='text-2xl font-semibold'>{t('forgot.title')}</h1>
+      <h1 className='text-2xl font-semibold mb-1'>{t('forgot.title')}</h1>
       <p className='mb-3 text-sm text-gray-400'>{t('forgot.subTitle')}</p>
       <RForm
         form={form}

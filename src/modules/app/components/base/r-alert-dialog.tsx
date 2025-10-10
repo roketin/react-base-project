@@ -8,10 +8,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/modules/app/components/ui/alert-dialog';
-import Button from '@/modules/app/components/ui/button';
 import { buttonVariants } from '@/modules/app/components/ui/variants/button-variants';
 import type { TLoadable } from '@/modules/app/types/component.type';
 import type { VariantProps } from 'class-variance-authority';
+import RBtn from '@/modules/app/components/base/r-btn';
 
 export type TRAlertDialogProps = TLoadable & {
   open: boolean;
@@ -60,13 +60,13 @@ const RAlertDialog = ({
               {cancelText}
             </AlertDialogCancel>
           )}
-          <Button
+          <RBtn
             onClick={onOk}
             loading={loading}
             variant={okVariant ?? 'default'}
           >
             {okText}
-          </Button>
+          </RBtn>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

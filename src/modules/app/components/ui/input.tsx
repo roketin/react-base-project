@@ -51,6 +51,7 @@ function Input({
       {prepend && <span className='flex items-center pl-3'>{prepend}</span>}
 
       <input
+        ref={props.ref}
         type={type}
         data-slot='input'
         className={cn(

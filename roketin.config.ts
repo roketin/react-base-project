@@ -14,21 +14,6 @@ export default defineRoketinConfig({
   },
 
   /**
-   * Theme related settings for the application.
-   * @property {string} appearance - Controls the overall appearance mode (e.g., 'system', 'light', 'dark').
-   * @property {object} sidebar - Configuration for the sidebar's visual style.
-   * @property {string} sidebar.variant - The style variant of the sidebar.
-   * @property {number} sidebar.width - The width of the sidebar in pixels.
-   */
-  theme: {
-    appearance: 'system',
-    sidebar: {
-      variant: 'sidebar',
-      width: 280,
-    },
-  },
-
-  /**
    * Sidebar behavior and layout configuration.
    * @property {object} settings - Configuration for sidebar settings.
    * @property {object} settings.stateStorage - Defines how sidebar state is persisted.

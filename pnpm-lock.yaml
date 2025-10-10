@@ -11,6 +11,12 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.64.0(react@19.2.0))
+      '@maskito/core':
+        specifier: ^3.11.1
+        version: 3.11.1
+      '@maskito/react':
+        specifier: ^3.11.1
+        version: 3.11.1(@maskito/core@3.11.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-alert-dialog':
         specifier: ^1.1.15
         version: 1.1.15(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -859,6 +865,16 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@maskito/core@3.11.1':
+    resolution: {integrity: sha512-zN5k/BiZXblo8mEFhsGnnXBCqKMkjEGArorOOcpB1/ymZyqF12Dk6IipEsSE6abMnWw4YF2tukzfq73BFZKz8A==}
+
+  '@maskito/react@3.11.1':
+    resolution: {integrity: sha512-Euqlm2mafBs1h9SPME0UEm8S/7CY1WwGusZSLScQoHx1dNCU+XVZl9cTDhnNI2/Ly+CnmcG/plgsGoeprabBHQ==}
+    peerDependencies:
+      '@maskito/core': ^3.11.1
+      react: '>=16.8'
+      react-dom: '>=16.8'
 
   '@mswjs/interceptors@0.39.7':
     resolution: {integrity: sha512-sURvQbbKsq5f8INV54YJgJEdk8oxBanqkTiXXd33rKmofFCwZLhLRszPduMZ9TA9b8/1CHc/IJmOlBHJk2Q5AQ==}
@@ -4743,6 +4759,14 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@maskito/core@3.11.1': {}
+
+  '@maskito/react@3.11.1(@maskito/core@3.11.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+    dependencies:
+      '@maskito/core': 3.11.1
+      react: 19.2.0
+      react-dom: 19.2.0(react@19.2.0)
 
   '@mswjs/interceptors@0.39.7':
     dependencies:

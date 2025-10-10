@@ -1,5 +1,5 @@
+import React, { type RefObject as MutableRefObject } from 'react';
 import { cn } from '@/modules/app/libs/utils';
-import React, { useMemo } from 'react';
 import {
   FormField,
   FormItem,
@@ -10,15 +10,16 @@ import {
 } from '@/modules/app/components/ui/form';
 import type {
   Control,
+  ControllerFieldState,
+  ControllerRenderProps,
   FieldValues,
   Path,
-  ControllerRenderProps,
-  ControllerFieldState,
   UseFormStateReturn,
 } from 'react-hook-form';
 import { useFormConfig } from '@/modules/app/contexts/form-config-context';
 import type { TLayoutOrientation } from '@/modules/app/types/component.type';
 import { useTranslation } from 'react-i18next';
+import { Separator } from '@/modules/app/components/ui/separator';
 
 type TRenderFn<T extends FieldValues, N extends Path<T>> = (args: {
   field: ControllerRenderProps<T, N>;
@@ -34,7 +35,7 @@ type TRFormFieldProps<T extends FieldValues, N extends Path<T>> = {
   label?: string | React.ReactNode;
   description?: string;
   layout?: TLayoutOrientation;
-  children?: React.ReactElement;
+  children?: React.ReactElement<Record<string, unknown>>;
   render?: TRenderFn<T, N>;
   notRequired?: boolean;
   withPlaceholder?: boolean;
@@ -55,97 +56,116 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
   labelWidth,
   valuePropName = 'value',
 }: TRFormFieldProps<T, N>) {
-  // Translation
   const { t } = useTranslation();
-
-  // Form config
   const formConfig = useFormConfig();
 
-  // Get label width from form or from self component
-  // Only work on horizontal layout
-  const computedWidth = useMemo<string>(
-    () => labelWidth ?? formConfig?.labelWidth ?? '200px',
-    [formConfig?.labelWidth, labelWidth],
-  );
-
-  // Get type layout from form or from self component
-  const computedLayout = useMemo<string>(
-    () => layout ?? formConfig?.layout ?? 'vertical',
-    [formConfig?.layout, layout],
-  );
-
-  // Get disabled state from form or from self component
-  const computedDisabled = useMemo<boolean>(
-    () => formConfig?.disabled ?? false,
-    [formConfig?.disabled],
-  );
+  const fieldId = String(name);
+  const computedWidth = labelWidth ?? formConfig?.labelWidth ?? '200px';
+  const layoutOrientation = (layout ??
+    formConfig?.layout ??
+    'vertical') as TLayoutOrientation;
+  const isHorizontal = layoutOrientation === 'horizontal';
+  const shouldShowRequired = !notRequired;
+  const isDisabled = formConfig?.disabled ?? false;
+  const showSeparator = isHorizontal && !formConfig?.hideHorizontalLine;
+  const placeholder =
+    withPlaceholder && typeof label === 'string'
+      ? `${t('form.enter')} ${label.toLowerCase()}`
+      : undefined;
 
   return (
     <FormField
       control={control}
       name={name}
       render={(renderProps) => {
-        const { value, onChange, ...restField } = renderProps.field;
+        const {
+          ref: fieldRef,
+          value,
+          onChange,
+          ...controllerField
+        } = renderProps.field;
 
-        const resolvedControlProps = (() => {
-          const mapped: Record<ValuePropName, Record<string, unknown>> = {
-            value: { value, onChange },
-            checked: { checked: value, onCheckedChange: onChange },
-            radio: { value, onValueChange: onChange },
-            slider: { value, onValueChange: onChange },
-          };
+        const controlPropMap: Record<ValuePropName, Record<string, unknown>> = {
+          value: { value, onChange },
+          checked: { checked: value, onCheckedChange: onChange },
+          radio: { value, onValueChange: onChange },
+          slider: { value, onValueChange: onChange },
+        };
 
-          return mapped[valuePropName];
-        })();
+        const resolvedControlProps =
+          controlPropMap[valuePropName] ?? controlPropMap.value;
+
+        const childRef =
+          React.isValidElement(children) &&
+          (
+            children as React.ReactElement & {
+              ref?: React.Ref<HTMLInputElement>;
+            }
+          ).ref;
+
+        const assignRefs = (node: HTMLInputElement | null) => {
+          if (typeof fieldRef === 'function') {
+            fieldRef(node);
+          } else if (fieldRef) {
+            (fieldRef as MutableRefObject<HTMLInputElement | null>).current =
+              node;
+          }
+
+          if (!childRef) return;
+
+          if (typeof childRef === 'function') {
+            childRef(node);
+          } else if (childRef) {
+            (childRef as MutableRefObject<HTMLInputElement | null>).current =
+              node;
+          }
+        };
+
+        const enhancedField = {
+          ...controllerField,
+          ...resolvedControlProps,
+          id: fieldId as N,
+          name: fieldId as N,
+          disabled: isDisabled,
+          ...(placeholder ? { placeholder } : {}),
+          ref: assignRefs,
+        };
+
+        const controlContent = render
+          ? render({
+              ...renderProps,
+              field: {
+                ...renderProps.field,
+                ...enhancedField,
+              },
+            })
+          : React.isValidElement(children)
+            ? React.cloneElement(children, enhancedField)
+            : null;
 
         return (
           <FormItem>
             <div
               className={cn(
                 'flex flex-col gap-2',
-                computedLayout === 'horizontal' && 'md:grid md:gap-0',
+                isHorizontal && 'md:grid md:gap-0',
               )}
               style={
-                computedLayout === 'horizontal'
+                isHorizontal
                   ? { gridTemplateColumns: `${computedWidth} 1fr` }
                   : undefined
               }
             >
               {label && (
-                <FormLabel
-                  className={cn(
-                    'block',
-                    computedLayout === 'horizontal' && 'md:pt-1',
-                  )}
-                  htmlFor={name}
-                >
+                <FormLabel className='block' htmlFor={fieldId}>
                   {label}
-                  {!notRequired && (
-                    <span className='text-destructive text-lg'>*</span>
-                  )}{' '}
+                  {shouldShowRequired && (
+                    <span className='text-lg text-destructive'>*</span>
+                  )}
                 </FormLabel>
               )}
               <div>
-                <FormControl>
-                  {render
-                    ? render(renderProps)
-                    : children &&
-                      React.cloneElement(
-                        children as React.ReactElement<Record<string, unknown>>,
-                        {
-                          ...restField,
-                          ...resolvedControlProps,
-                          ...(withPlaceholder && typeof label === 'string'
-                            ? {
-                                placeholder: `${t('form.enter')} ${label.toLowerCase()}`,
-                              }
-                            : {}),
-                          id: String(name),
-                          name: String(name),
-                          disabled: computedDisabled,
-                        },
-                      )}
-                </FormControl>
+                <FormControl>{controlContent}</FormControl>
 
                 {description && (
                   <FormDescription className='mt-1.5 text-xs'>
@@ -155,6 +175,9 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                 <FormMessage className='mt-1.5' />
               </div>
             </div>
+            {showSeparator && (
+              <Separator className='mt-4 border-t border-slate-100' />
+            )}
           </FormItem>
         );
       }}

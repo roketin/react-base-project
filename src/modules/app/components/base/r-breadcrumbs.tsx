@@ -7,8 +7,10 @@ import {
 import type { TAppRouteObject } from '@/modules/app/libs/routes-utils';
 import { useBreadcrumbStore } from '@/modules/app/stores/breadcrumbs.store';
 import { Fragment } from 'react';
+import { Home } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useMatches } from 'react-router-dom';
+import { linkTo } from '@/modules/app/hooks/use-named-route';
 
 export function RBreadcrumbs() {
   const matches = useMatches() as (ReturnType<typeof useMatches>[number] & {
@@ -16,7 +18,7 @@ export function RBreadcrumbs() {
   })[];
 
   const resolvers = useBreadcrumbStore((s) => s.resolvers);
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
 
   const filteredMatches = matches.filter((m) => m.handle?.breadcrumb);
 
@@ -43,11 +45,14 @@ export function RBreadcrumbs() {
       <Fragment key={i}>
         <BreadcrumbItem>
           {!isLast && !isOnly ? (
-            <Link to={match.pathname} className='hover:underline'>
+            <Link
+              to={match.pathname}
+              className='hover:underline hover:text-primary'
+            >
               {label}
             </Link>
           ) : (
-            label
+            <span className='text-primary'>{label}</span>
           )}
         </BreadcrumbItem>
         {!isLast && <BreadcrumbSeparator className='hidden md:block' />}
@@ -57,7 +62,18 @@ export function RBreadcrumbs() {
 
   return (
     <Breadcrumb>
-      <BreadcrumbList>{crumbs}</BreadcrumbList>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <Link
+            to={linkTo('DashboardIndex')}
+            className='flex gap-2 items-center hover:underline hover:text-primary'
+          >
+            <Home size={14} /> {t('title')}
+          </Link>
+        </BreadcrumbItem>
+        {crumbs.length > 0 && <BreadcrumbSeparator />}
+        {crumbs}
+      </BreadcrumbList>
     </Breadcrumb>
   );
 }

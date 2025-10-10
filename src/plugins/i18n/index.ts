@@ -37,11 +37,11 @@ i18n
     interpolation: {
       escapeValue: false, // react sudah auto escape
     },
-    lng: localStorage.getItem('@r-lang') || 'en',
+    lng: localStorage.getItem(roketinConfig.app.shortName + '-lang') || 'en',
   });
 
 i18n.on('languageChanged', (lng) => {
-  localStorage.setItem('@r-lang', lng);
+  localStorage.setItem(roketinConfig.app.shortName + '-lang', lng);
 });
 
 export default i18n;

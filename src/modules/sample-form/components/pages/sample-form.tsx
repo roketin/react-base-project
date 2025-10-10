@@ -1,7 +1,6 @@
 import RBtn from '@/modules/app/components/base/r-btn';
 import { RDataTable } from '@/modules/app/components/base/r-data-table';
 import { RFilter } from '@/modules/app/components/base/r-filter';
-import { Separator } from '@/modules/app/components/ui/separator';
 import { DEFAULT_QUERY_PARAMS } from '@/modules/app/constants/app.constant';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import { useObjectState } from '@/modules/app/hooks/use-object-state';
@@ -11,6 +10,7 @@ import type { TApiDefaultQueryParams } from '@/modules/app/types/api.type';
 import { useGetSampleFormList } from '@/modules/sample-form/services/sample-form.service';
 import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
 import type { ColumnDef } from '@tanstack/react-table';
+import { Plus } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -132,13 +132,11 @@ const SampleFormIndex = () => {
 
   return (
     <div>
-      <div className='flex items-center justify-between'>
-        <div className='inline-block'>
-          <RBtn onClick={handleAdd}>{t('actions.add')}</RBtn>
-        </div>
+      <div className='mb-3'>
+        <RBtn iconStart={<Plus />} onClick={handleAdd}>
+          {t('actions.add')}
+        </RBtn>
       </div>
-
-      <Separator className='my-4' />
 
       <RDataTable
         fixed

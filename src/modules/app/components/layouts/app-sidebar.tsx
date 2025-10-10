@@ -37,8 +37,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const getMenuTitle = useCallback(
     (menu: TSidebarMenu | SidebarMenuItemWithChildren) => {
-      if (menu.translationKey) {
-        return t(menu.translationKey);
+      if (menu.title) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return t(menu.title as any);
       }
       return menu.title;
     },

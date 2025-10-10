@@ -47,9 +47,7 @@ const sidebarStorageType =
 const SIDEBAR_STORAGE_KEY =
   sidebarSettings.stateStorage?.key ?? 'sidebar_state';
 const SIDEBAR_STORAGE_TYPE =
-  sidebarStorageType === 'session-storage'
-    ? 'session-storage'
-    : 'local-storage';
+  sidebarStorageType === 'local-storage' ? 'local-storage' : 'session-storage';
 const SIDEBAR_WIDTH = formatCssSize(sidebarSettings.width, '16rem');
 const SIDEBAR_WIDTH_MOBILE = formatCssSize(
   sidebarSettings.widthMobile,
@@ -276,7 +274,7 @@ function Sidebar({
           // Adjust the padding for floating and inset variants.
           variant === 'floating' || variant === 'inset'
             ? 'p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
-            : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l',
+            : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r border-slate-100 group-data-[side=right]:border-l',
           className,
         )}
         {...props}

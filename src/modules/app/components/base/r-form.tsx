@@ -19,6 +19,7 @@ export type TRFormProps<TFormValues extends FieldValues> = TDisableable & {
   className?: string;
   showErrorPopup?: boolean;
   spacing?: string;
+  hideHorizontalLine?: boolean;
 };
 
 const RForm = <TFormValues extends FieldValues>({
@@ -31,13 +32,14 @@ const RForm = <TFormValues extends FieldValues>({
   className = '',
   spacing = '',
   disabled = false,
+  hideHorizontalLine = false,
 }: TRFormProps<TFormValues>) => {
   const { trigger } = form;
   const { i18n } = useTranslation();
 
   const providerValue = useMemo(
-    () => ({ labelWidth, layout, disabled }),
-    [labelWidth, layout, disabled],
+    () => ({ labelWidth, layout, disabled, hideHorizontalLine }),
+    [labelWidth, layout, disabled, hideHorizontalLine],
   );
 
   // listener: re-validate hanya field yang sudah disentuh saat bahasa berubah

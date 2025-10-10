@@ -8,7 +8,7 @@ import { RInputPassword } from '@/modules/app/components/base/r-input-password';
 import RForm from '@/modules/app/components/base/r-form';
 import { Link } from 'react-router-dom';
 import { linkTo, useNamedRoute } from '@/modules/app/hooks/use-named-route';
-import { AtSign, FileLock2 } from 'lucide-react';
+import { ArrowRightIcon, AtSign, FileLock2 } from 'lucide-react';
 import { useAuthLogin } from '@/modules/auth/services/auth.service';
 import { useTranslation } from 'react-i18next';
 import { tl } from '@/modules/app/libs/locale-utils';
@@ -59,7 +59,7 @@ const AuthLogin = () => {
 
   return (
     <div>
-      <h1 className='text-2xl font-semibold'>{t('login.title')}</h1>
+      <h1 className='text-2xl font-semibold mb-1'>{t('login.title')}</h1>
       <p className='mb-3 text-sm text-gray-400'>{t('login.subTitle')}</p>
       <RForm
         form={form}
@@ -89,7 +89,12 @@ const AuthLogin = () => {
           <RInputPassword prepend={<FileLock2 size={16} />} />
         </RFormField>
 
-        <RBtn type='submit' className='w-full mt-3' loading={loading}>
+        <RBtn
+          type='submit'
+          className='w-full mt-3'
+          loading={loading}
+          iconEnd={<ArrowRightIcon />}
+        >
           {t('form.submit')}
         </RBtn>
 

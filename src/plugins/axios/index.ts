@@ -2,6 +2,7 @@ import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { toast } from 'sonner';
 import type { TApiResponse } from '@/modules/app/types/api.type';
 import useAuthStore from '@/modules/auth/stores/auth.store';
+import roketinConfig from '@config';
 
 const http = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -20,7 +21,7 @@ http.interceptors.request.use(
       config.headers.Authorization = `Bearer ${authStore.token}`;
     }
 
-    const lang = localStorage.getItem('@r-lang');
+    const lang = localStorage.getItem(roketinConfig.app.shortName + '-lang');
     if (lang) {
       config.params = config.params ?? {};
       config.params.lang = lang;

@@ -103,7 +103,7 @@ const AuthReset = () => {
 
   return (
     <div>
-      <h1 className='text-2xl font-semibold'>{t('reset.title')}</h1>
+      <h1 className='text-2xl font-semibold mb-1'>{t('reset.title')}</h1>
       <p className='mb-3 text-sm text-gray-400'>{t('reset.subTitle')}</p>
       <RForm
         form={form}

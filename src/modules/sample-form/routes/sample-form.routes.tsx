@@ -16,7 +16,7 @@ export const sampleFormRoutes = createAppRoutes([
     path: 'sample-form',
     element: <Outlet />,
     handle: {
-      breadcrumb: 'app:menu.sampleForm',
+      breadcrumb: 'sampleForm:title',
       permissions: [PERMISSIONS.SAMPLE_FORM_VIEW],
     },
     children: [
@@ -24,30 +24,30 @@ export const sampleFormRoutes = createAppRoutes([
         name: 'SampleFormIndex',
         index: true,
         element: <SampleForm />,
+        handle: {
+          title: 'sampleForm:menu.allEntries',
+        },
       },
       {
         name: 'SampleFormAdd',
         path: 'add',
         element: <SampleFormSave />,
         handle: {
-          breadcrumb: 'sampleForm:breadcrumbs.add',
+          title: 'sampleForm:menu.createNew',
+          breadcrumb: 'sampleForm:menu.createNew',
         },
       },
       {
         name: 'SampleFormEdit',
         path: ':id/edit',
         element: <SampleFormSave />,
-        handle: {
-          breadcrumb: 'sampleForm:breadcrumbs.edit',
-        },
+        handle: {},
       },
       {
         name: 'SampleFormDetail',
         path: ':id/detail',
         element: <SampleFormSave />,
-        handle: {
-          breadcrumb: 'sampleForm:breadcrumbs.detail',
-        },
+        handle: {},
       },
     ],
   },

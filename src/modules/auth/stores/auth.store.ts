@@ -2,6 +2,7 @@ import { cookieStorage } from '@/modules/app/libs/cookie-storage';
 import type { TAuthProfile, TAuthStore } from '@/modules/auth/types/auth.type';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import roketinConfig from '@config';
 
 const useAuthStore = create<TAuthStore>()(
   devtools(
@@ -32,7 +33,7 @@ const useAuthStore = create<TAuthStore>()(
         },
       }),
       {
-        name: '@cred',
+        name: roketinConfig.app.shortName + '-session',
         storage: cookieStorage,
         partialize: (state) => ({
           token: state.token,

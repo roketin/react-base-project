@@ -18,7 +18,7 @@ const AppSidebarHeader = () => {
             <a href='#' className='flex items-center gap-3 no-underline'>
               <RBrand
                 subtitleClassName='text-xs text-sidebar-foreground/70'
-                titleClassName='text-base font-semibold leading-tight text-sidebar-foreground'
+                titleClassName='text-base font-semibold leading-tight text-sidebar-foreground flowing-gradient-text'
                 iconClassName='size-10'
               />
             </a>

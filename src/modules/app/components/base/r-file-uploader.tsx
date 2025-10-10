@@ -27,9 +27,9 @@ import {
 } from '@/modules/app/libs/file-utils';
 
 const ICON_MAP: Record<'image' | 'music' | 'excel', React.ReactNode> = {
-  image: <FileImage size={50} />,
-  music: <AudioWaveform size={50} />,
-  excel: <FileSpreadsheet size={50} />,
+  image: <FileImage size={24} />,
+  music: <AudioWaveform size={24} />,
+  excel: <FileSpreadsheet size={24} />,
 };
 
 async function compressImage(file: File): Promise<File> {
@@ -260,11 +260,9 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
       }
 
       return (
-        <div className='flex h-full flex-col items-center justify-center'>
+        <div className='flex h-full items-center justify-center gap-2'>
           {ICON_MAP[icon]}
-          {!disabledUpload && (
-            <div className='mt-2 text-sm'>Choose File...</div>
-          )}
+          {!disabledUpload && <div className='text-sm'>Choose File...</div>}
         </div>
       );
     }, [
@@ -349,8 +347,8 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
       onChange,
       accept = DEFAULT_EXT.IMAGES,
       value = null,
-      width = '200px',
-      height = '200px',
+      width = '100%',
+      height = '150px',
       disabledUpload = false,
       disabledDelete = false,
       onRemove,

@@ -1,5 +1,9 @@
 {
   "title": "Sample Form",
+  "menu": {
+    "allEntries": "All Entries",
+    "createNew": "Create New"
+  },
   "actions": {
     "add": "Create New"
   },
@@ -7,11 +11,6 @@
     "name": "Name",
     "code": "Code",
     "createdAt": "Created Date"
-  },
-  "breadcrumbs": {
-    "add": "Add Page",
-    "edit": "Edit Page",
-    "detail": "Detail Page"
   },
   "filters": {
     "keyword": {

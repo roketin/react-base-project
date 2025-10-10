@@ -3,7 +3,7 @@ import { cva } from 'class-variance-authority';
 export type TInputSize = 'default' | 'sm' | 'lg' | 'icon';
 
 export const inputVariants = cva(
-  'w-full min-w-0 rounded-md text-base outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+  'w-full min-w-0 rounded text-base outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
   {
     variants: {
       size: {

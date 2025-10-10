@@ -7,7 +7,7 @@ type FieldWrapperOptions = {
 };
 
 const baseFieldWrapperClass =
-  'relative flex w-full items-center rounded-md border bg-white transition-[color,box-shadow] shadow-md shadow-slate-100 dark:bg-input/30';
+  'relative flex w-full items-center rounded border bg-white transition-[color,box-shadow] shadow-md shadow-slate-100 dark:bg-input/30';
 
 /**
  * Returns a consistent wrapper class name for interactive form fields.
@@ -22,7 +22,7 @@ export const getFieldWrapperClassName = ({
     baseFieldWrapperClass,
     hasError
       ? 'border-destructive ring-destructive/40'
-      : 'border-border focus-within:ring-ring/50 focus-within:ring-[3px]',
+      : 'border-slate-150 focus-within:ring-ring/50 focus-within:ring-[3px]',
     disabled ? 'pointer-events-none opacity-60' : '',
     className,
   );

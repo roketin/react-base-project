@@ -17,7 +17,7 @@ const router = createBrowserRouter(routes as RouteObject[]);
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Toaster position='top-right' richColors />
+      <Toaster position='bottom-right' richColors />
       <RouterProvider router={router} />
     </QueryClientProvider>
   </React.StrictMode>,

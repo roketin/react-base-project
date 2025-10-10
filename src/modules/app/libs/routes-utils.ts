@@ -1,5 +1,6 @@
 import type { TPermission } from '@/modules/app/constants/permission.constant';
 import type { BreadcrumbType } from '@/modules/app/stores/breadcrumbs.store';
+import type { TLocale } from '@/modules/app/types/locale.type';
 import type { RouteObject } from 'react-router-dom';
 
 /**
@@ -9,7 +10,7 @@ import type { RouteObject } from 'react-router-dom';
  * and returns either a string label or an object with a breadcrumb type and identifier.
  */
 export type TBreadcrumbHandle =
-  | string
+  | TLocale
   | ((match: {
       params: Record<string, string | undefined>;
       data?: unknown;
@@ -28,6 +29,7 @@ export type TAppRouteObject = Omit<RouteObject, 'children' | 'handle'> & {
     breadcrumb?: TBreadcrumbHandle;
     isRequiredAuth?: boolean;
     permissions?: TPermission[];
+    title?: TLocale;
     [key: string]: unknown;
   };
   children?: TAppRouteObject[];

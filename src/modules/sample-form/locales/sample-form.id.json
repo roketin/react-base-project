@@ -3,15 +3,14 @@
   "actions": {
     "add": "Tambah Data"
   },
+  "menu": {
+    "allEntries": "Semua Entri",
+    "createNew": "Buat Baru"
+  },
   "columns": {
     "name": "Nama",
     "code": "Kode",
     "createdAt": "Tanggal Dibuat"
-  },
-  "breadcrumbs": {
-    "add": "Halaman Tambah",
-    "edit": "Halaman Ubah",
-    "detail": "Halaman Detail"
   },
   "filters": {
     "keyword": {
