@@ -1,3 +1,4 @@
+import { cn } from '@/modules/app/libs/utils';
 import React, { useMemo } from 'react';
 import {
   FormField,
@@ -100,13 +101,24 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
         return (
           <FormItem>
             <div
-              className={computedLayout === 'horizontal' ? `grid` : undefined}
-              style={{
-                gridTemplateColumns: `${computedWidth} 1fr`,
-              }}
+              className={cn(
+                'flex flex-col gap-2',
+                computedLayout === 'horizontal' && 'md:grid md:gap-0',
+              )}
+              style={
+                computedLayout === 'horizontal'
+                  ? { gridTemplateColumns: `${computedWidth} 1fr` }
+                  : undefined
+              }
             >
               {label && (
-                <FormLabel className='block' htmlFor={name}>
+                <FormLabel
+                  className={cn(
+                    'block',
+                    computedLayout === 'horizontal' && 'md:pt-1',
+                  )}
+                  htmlFor={name}
+                >
                   {label}
                   {!notRequired && (
                     <span className='text-destructive text-lg'>*</span>
@@ -136,7 +148,7 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                 </FormControl>
 
                 {description && (
-                  <FormDescription className='mt-1.5'>
+                  <FormDescription className='mt-1.5 text-xs'>
                     {description}
                   </FormDescription>
                 )}

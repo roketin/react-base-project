@@ -1,7 +1,5 @@
-import { RCard } from '@/modules/app/components/base/r-card';
 import RForm from '@/modules/app/components/base/r-form';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
-import FileInfo from '@/modules/app/components/base/file-info';
 import showAlert from '@/modules/app/components/base/show-alert';
 import Button from '@/modules/app/components/ui/button';
 import { Input } from '@/modules/app/components/ui/input';
@@ -96,38 +94,36 @@ const AuthForgot = () => {
   );
 
   return (
-    <div className='md:w-[400px]'>
-      <RCard title={t('forgot.title')} description={t('forgot.subTitle')}>
-        <RForm
-          form={form}
-          onSubmit={handleSubmit}
-          showErrorPopup
-          layout='vertical'
+    <div>
+      <h1 className='text-2xl font-semibold'>{t('forgot.title')}</h1>
+      <p className='mb-3 text-sm text-gray-400'>{t('forgot.subTitle')}</p>
+      <RForm
+        form={form}
+        onSubmit={handleSubmit}
+        showErrorPopup
+        layout='vertical'
+      >
+        {/* Email */}
+        <RFormField
+          control={form.control}
+          name='username'
+          label={t('form.email')}
+          withPlaceholder
         >
-          {/* Email */}
-          <RFormField
-            control={form.control}
-            name='username'
-            label={t('form.email')}
-            withPlaceholder
-          >
-            <Input autoComplete='username' />
-          </RFormField>
+          <Input autoComplete='username' />
+        </RFormField>
 
-          <Link
-            to={linkTo('AuthLogin')}
-            className='text-sm text-blue-700 hover:underline flex items-center'
-          >
-            <ChevronLeft /> {tApp('back')}
-          </Link>
+        <Button type='submit' className='w-full mt-3'>
+          {tApp('send')}
+        </Button>
 
-          <Button type='submit' className='w-full mt-3'>
-            {tApp('send')}
-          </Button>
-
-          <FileInfo src='src/modules/auth/components/pages/auth-forgot.tsx' />
-        </RForm>
-      </RCard>
+        <Link
+          to={linkTo('AuthLogin')}
+          className='text-sm text-primary hover:underline flex items-center'
+        >
+          <ChevronLeft /> {tApp('back')}
+        </Link>
+      </RForm>
     </div>
   );
 };

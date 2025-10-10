@@ -1,7 +1,5 @@
-import { RCard } from '@/modules/app/components/base/r-card';
 import RForm from '@/modules/app/components/base/r-form';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
-import FileInfo from '@/modules/app/components/base/file-info';
 import showAlert from '@/modules/app/components/base/show-alert';
 import Button from '@/modules/app/components/ui/button';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
@@ -104,41 +102,39 @@ const AuthReset = () => {
   );
 
   return (
-    <div className='md:w-[400px]'>
-      <RCard title={t('reset.title')} description={t('reset.subTitle')}>
-        <RForm
-          form={form}
-          onSubmit={handleSubmit}
-          showErrorPopup
-          layout='vertical'
+    <div>
+      <h1 className='text-2xl font-semibold'>{t('reset.title')}</h1>
+      <p className='mb-3 text-sm text-gray-400'>{t('reset.subTitle')}</p>
+      <RForm
+        form={form}
+        onSubmit={handleSubmit}
+        showErrorPopup
+        layout='vertical'
+      >
+        {/* New Password */}
+        <RFormField
+          control={form.control}
+          name='password'
+          label={t('form.newPassword')}
+          withPlaceholder
         >
-          {/* New Password */}
-          <RFormField
-            control={form.control}
-            name='password'
-            label={t('form.newPassword')}
-            withPlaceholder
-          >
-            <RInputPassword />
-          </RFormField>
+          <RInputPassword />
+        </RFormField>
 
-          {/* New Confirm Password */}
-          <RFormField
-            control={form.control}
-            name='password_confirm'
-            label={t('form.newPasswordConfirm')}
-            withPlaceholder
-          >
-            <RInputPassword />
-          </RFormField>
+        {/* New Confirm Password */}
+        <RFormField
+          control={form.control}
+          name='password_confirm'
+          label={t('form.newPasswordConfirm')}
+          withPlaceholder
+        >
+          <RInputPassword />
+        </RFormField>
 
-          <Button type='submit' className='w-full mt-3'>
-            {tApp('save')}
-          </Button>
-
-          <FileInfo src='src/modules/auth/components/pages/auth-reset.tsx' />
-        </RForm>
-      </RCard>
+        <Button type='submit' className='w-full mt-3'>
+          {tApp('save')}
+        </Button>
+      </RForm>
     </div>
   );
 };

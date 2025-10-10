@@ -11,7 +11,8 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  /* --primary: #00a7c3; */
+  --primary: #c4275e;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -136,4 +137,10 @@ body {
     width: var(--radix-popover-trigger-width);
     max-height: var(--radix-popover-content-available-height);
   }
+}
+
+.bg-auth {
+  background-image:
+    repeating-radial-gradient(circle at 0 0, transparent 0, #f8f8f8 10px),
+    repeating-linear-gradient(#fff, #fff);
 }

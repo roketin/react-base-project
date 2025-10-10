@@ -6,18 +6,19 @@ import {
 } from '@/modules/app/components/ui/popover';
 import Button from '@/modules/app/components/ui/button';
 import { Calendar } from '@/modules/app/components/ui/calendar';
-import { useCallback, useMemo, useState, type ComponentProps } from 'react';
-import type {
-  TAriaInvalidProp,
-  TDisableable,
-} from '@/modules/app/types/component.type';
-import { format } from 'date-fns';
-import type { DateRange, Matcher, OnSelectHandler } from 'react-day-picker';
-import { cn } from '@/modules/app/libs/utils';
 import {
   inputVariants,
   type TInputSize,
 } from '@/modules/app/components/ui/variants/input-variants';
+import { getFieldWrapperClassName } from '@/modules/app/components/ui/variants/field-variants';
+import type {
+  TAriaInvalidProp,
+  TDisableable,
+} from '@/modules/app/types/component.type';
+import { cn } from '@/modules/app/libs/utils';
+import { format } from 'date-fns';
+import { useCallback, useMemo, useState, type ComponentProps } from 'react';
+import type { DateRange, Matcher, OnSelectHandler } from 'react-day-picker';
 
 export type RDatePickerBaseProps = Omit<
   ComponentProps<typeof Calendar>,
@@ -64,6 +65,14 @@ const RDatePicker = ({
 }: RDatePickerProps) => {
   // Determine if the input should display an error state based on aria-invalid prop
   const hasError = !!ariaInvalid;
+  const triggerClassName = getFieldWrapperClassName({
+    hasError,
+    disabled,
+    className: cn(
+      inputVariants({ size: density }),
+      'justify-between cursor-pointer',
+    ),
+  });
 
   // State to control the open/close state of the popover calendar
   const [open, setOpen] = useState(false);
@@ -124,16 +133,7 @@ const RDatePicker = ({
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <div
-            className={cn(
-              inputVariants({ size: density }),
-              'relative flex w-full items-center rounded-md border bg-white dark:bg-input/30 transition-[color,box-shadow] shadow-md shadow-slate-100 justify-between cursor-pointer',
-              hasError
-                ? 'border-destructive ring-destructive/40'
-                : 'border-border focus-within:ring-ring/50 focus-within:ring-[3px]',
-              disabled ? 'pointer-events-none opacity-60' : '',
-            )}
-          >
+          <div className={triggerClassName}>
             <div className='flex items-center gap-3'>
               <CalendarIcon size={14} />
               {renderLabel}
@@ -160,16 +160,7 @@ const RDatePicker = ({
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <div
-            className={cn(
-              inputVariants({ size: density }),
-              'relative flex w-full items-center rounded-md border bg-white dark:bg-input/30 transition-[color,box-shadow] shadow-md shadow-slate-100 justify-between cursor-pointer',
-              hasError
-                ? 'border-destructive ring-destructive/40'
-                : 'border-border focus-within:ring-ring/50 focus-within:ring-[3px]',
-              disabled ? 'pointer-events-none opacity-60' : '',
-            )}
-          >
+          <div className={triggerClassName}>
             <div className='flex items-center gap-3'>
               <CalendarIcon size={14} />
               {renderLabel}

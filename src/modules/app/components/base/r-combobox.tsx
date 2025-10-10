@@ -16,6 +16,7 @@ import {
   inputVariants,
   type TInputSize,
 } from '@/modules/app/components/ui/variants/input-variants';
+import { getFieldWrapperClassName } from '@/modules/app/components/ui/variants/field-variants';
 import type {
   TAriaInvalidProp,
   TDisableable,
@@ -149,20 +150,16 @@ export function RComboBox<
 
   // Get the label of the selected item for display.
   const selectedLabel = selectedItem ? getLabel(selectedItem) : '';
+  const triggerClassName = getFieldWrapperClassName({
+    hasError,
+    disabled,
+    className: cn(inputVariants({ size: density }), 'justify-between'),
+  });
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div
-          className={cn(
-            inputVariants({ size: density }),
-            'relative flex w-full items-center rounded-md border bg-white dark:bg-input/30 transition-[color,box-shadow] shadow-md shadow-slate-100 justify-between',
-            hasError
-              ? 'border-destructive ring-destructive/40'
-              : 'border-border focus-within:ring-ring/50 focus-within:ring-[3px]',
-            disabled ? 'pointer-events-none opacity-60' : '',
-          )}
-        >
+        <div className={triggerClassName}>
           <div className='flex items-center w-full justify-between'>
             <span>
               {normalizedCurrentValue ? (

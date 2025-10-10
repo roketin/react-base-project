@@ -1,4 +1,3 @@
-import { RCard } from '@/modules/app/components/base/r-card';
 import { RCheckboxMultiple } from '@/modules/app/components/base/r-checkbox-multiple';
 import { RComboBox } from '@/modules/app/components/base/r-combobox';
 import { RMultiComboBox } from '@/modules/app/components/base/r-combobox-multiple';
@@ -81,154 +80,136 @@ const TodoSave = () => {
   }, []);
 
   return (
-    <div className='md:max-w-[1000px] md:mx-auto'>
-      <div className='grid grid-cols-1 md:grid-cols-[300px_1fr] gap-4'>
-        <RCard>
-          <pre className='text-sm'>
-            {JSON.stringify(watchAllValues, null, 2)}
-          </pre>
-        </RCard>
-        <RCard>
-          <RForm
-            form={form}
-            onSubmit={handleSubmit}
-            className='gap-3'
-            labelWidth='200px'
-            showErrorPopup
-          >
-            {/* Checkbox Single */}
-            <RFormField
-              control={form.control}
-              name='checkbox_single'
-              label='Checkbox'
-              valuePropName='checked'
-            >
-              <Checkbox label='Checkbox Single' className='mt-2' />
-            </RFormField>
+    <div className='grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10'>
+      <RForm
+        form={form}
+        onSubmit={handleSubmit}
+        className='gap-3'
+        labelWidth='200px'
+        showErrorPopup
+      >
+        {/* Checkbox Single */}
+        <RFormField
+          control={form.control}
+          name='checkbox_single'
+          label='Checkbox'
+          valuePropName='checked'
+        >
+          <Checkbox label='Checkbox Single' className='mt-2' />
+        </RFormField>
 
-            {/* Checkbox Multiple */}
-            <RFormField
-              control={form.control}
-              name='checkbox_multiple'
-              label='Checkbox Multiple'
-              valuePropName='checked'
-            >
-              <RCheckboxMultiple options={items} />
-            </RFormField>
+        {/* Checkbox Multiple */}
+        <RFormField
+          control={form.control}
+          name='checkbox_multiple'
+          label='Checkbox Multiple'
+          valuePropName='checked'
+        >
+          <RCheckboxMultiple options={items} />
+        </RFormField>
 
-            {/* Radio */}
-            <RFormField control={form.control} name='radio' label='Radio'>
-              <RRadio options={items} layout='horizontal' />
-            </RFormField>
+        {/* Radio */}
+        <RFormField control={form.control} name='radio' label='Radio'>
+          <RRadio options={items} layout='horizontal' />
+        </RFormField>
 
-            {/* Combobox */}
-            <RFormField control={form.control} name='select' label='Select'>
-              <RComboBox items={items} labelKey='label' valueKey='value' />
-            </RFormField>
+        {/* Combobox */}
+        <RFormField control={form.control} name='select' label='Select'>
+          <RComboBox items={items} labelKey='label' valueKey='value' />
+        </RFormField>
 
-            {/* Combobox */}
-            <RFormField
-              control={form.control}
-              name='select_multiple'
-              label='Select Multiple'
-            >
-              <RMultiComboBox items={items} labelKey='label' valueKey='value' />
-            </RFormField>
+        {/* Combobox */}
+        <RFormField
+          control={form.control}
+          name='select_multiple'
+          label='Select Multiple'
+        >
+          <RMultiComboBox items={items} labelKey='label' valueKey='value' />
+        </RFormField>
 
-            {/* Switch */}
-            <RFormField
-              control={form.control}
-              name='switch'
-              label='Switch'
-              valuePropName='checked'
-            >
-              <Switch className='mt-2' />
-            </RFormField>
+        {/* Switch */}
+        <RFormField
+          control={form.control}
+          name='switch'
+          label='Switch'
+          valuePropName='checked'
+        >
+          <Switch className='mt-2' />
+        </RFormField>
 
-            {/* Input */}
-            <RFormField
-              control={form.control}
-              name='input'
-              label='Input'
-              withPlaceholder
-            >
-              <Input />
-            </RFormField>
+        {/* Input */}
+        <RFormField
+          control={form.control}
+          name='input'
+          label='Input'
+          withPlaceholder
+        >
+          <Input />
+        </RFormField>
 
-            {/* Input Password */}
-            <RFormField
-              control={form.control}
-              name='input_password'
-              label='Input Password'
-              withPlaceholder
-            >
-              <RInputPassword />
-            </RFormField>
+        {/* Input Password */}
+        <RFormField
+          control={form.control}
+          name='input_password'
+          label='Input Password'
+          withPlaceholder
+        >
+          <RInputPassword />
+        </RFormField>
 
-            {/* Input Number */}
-            <RFormField
-              control={form.control}
-              name='input_number'
-              label='Input Number'
-            >
-              <RInputNumber isOnBlurFormat placeholder='0' />
-            </RFormField>
+        {/* Input Number */}
+        <RFormField
+          control={form.control}
+          name='input_number'
+          label='Input Number'
+        >
+          <RInputNumber isOnBlurFormat placeholder='0' />
+        </RFormField>
 
-            {/* Textarea */}
-            <RFormField
-              control={form.control}
-              name='text_area'
-              label='Text Area'
-            >
-              <Textarea />
-            </RFormField>
+        {/* Textarea */}
+        <RFormField control={form.control} name='text_area' label='Text Area'>
+          <Textarea />
+        </RFormField>
 
-            {/* DatePicker */}
-            <RFormField
-              control={form.control}
-              name='date_picker'
-              label='Date Picker Single'
-            >
-              <RDatePicker
-                mode='single'
-                disabledDate={{ before: new Date() }}
-              />
-            </RFormField>
+        {/* DatePicker */}
+        <RFormField
+          control={form.control}
+          name='date_picker'
+          label='Date Picker Single'
+        >
+          <RDatePicker mode='single' disabledDate={{ before: new Date() }} />
+        </RFormField>
 
-            {/* DatePicker */}
-            <RFormField
-              control={form.control}
-              name='date_picker_range'
-              label='Date Picker Range'
-            >
-              <RDatePicker mode='range' />
-            </RFormField>
+        {/* DatePicker */}
+        <RFormField
+          control={form.control}
+          name='date_picker_range'
+          label='Date Picker Range'
+        >
+          <RDatePicker mode='range' />
+        </RFormField>
 
-            {/* File Uploader */}
-            <RFormField
-              control={form.control}
-              name='image'
-              label='Image Uploader'
-            >
-              <RFileUploader />
-            </RFormField>
+        {/* File Uploader */}
+        <RFormField control={form.control} name='image' label='Image Uploader'>
+          <RFileUploader />
+        </RFormField>
 
-            {/* Slider */}
-            <RFormField
-              control={form.control}
-              name='slider'
-              label='Slider'
-              valuePropName='slider'
-            >
-              <Slider min={0} max={100} step={1} className='mt-3' />
-            </RFormField>
+        {/* Slider */}
+        <RFormField
+          control={form.control}
+          name='slider'
+          label='Slider'
+          valuePropName='slider'
+        >
+          <Slider min={0} max={100} step={1} className='mt-3' />
+        </RFormField>
 
-            <div>
-              <Button type='submit'>Submit</Button>
-            </div>
-          </RForm>
-        </RCard>
-      </div>
+        <div>
+          <Button type='submit'>Submit</Button>
+        </div>
+      </RForm>
+
+      <pre className='text-sm'>{JSON.stringify(watchAllValues, null, 2)}</pre>
     </div>
   );
 };

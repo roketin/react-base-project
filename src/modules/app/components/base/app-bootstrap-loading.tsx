@@ -3,7 +3,7 @@ import { RLoading } from '@/modules/app/components/base/r-loading';
 
 export function AppBootstrapLoading() {
   return (
-    <div className='flex min-h-screen flex-col items-center justify-center gap-8 bg-white text-slate-900'>
+    <div className='flex min-h-screen flex-col items-center justify-center gap-8 bg-auth text-slate-900'>
       <RBrand
         direction='vertical'
         align='center'

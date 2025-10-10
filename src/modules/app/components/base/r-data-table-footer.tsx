@@ -1,5 +1,5 @@
+import RBtn from '@/modules/app/components/base/r-btn';
 import { RComboBox } from '@/modules/app/components/base/r-combobox';
-import Button from '@/modules/app/components/ui/button';
 import {
   Pagination,
   PaginationContent,
@@ -170,7 +170,7 @@ const RDataTableFooter = ({
 
       <Pagination className='ml-auto w-auto'>
         <PaginationContent>
-          <Button
+          <RBtn
             title='Go to First'
             size='icon'
             variant='ghost'
@@ -178,9 +178,9 @@ const RDataTableFooter = ({
             onClick={() => handleChangePage(1)}
           >
             <ChevronFirst size={20} />
-          </Button>
+          </RBtn>
 
-          <Button
+          <RBtn
             title='Go to Previous'
             size='icon'
             variant='ghost'
@@ -188,7 +188,7 @@ const RDataTableFooter = ({
             onClick={() => handleChangePage(currentPage - 1)}
           >
             <ChevronLeft size={20} />
-          </Button>
+          </RBtn>
 
           {showFirstPage && (
             <PaginationItem>
@@ -210,17 +210,16 @@ const RDataTableFooter = ({
 
           {pageNumbers.map((page) => (
             <PaginationItem key={page}>
-              <PaginationLink
+              <RBtn
                 size='sm'
-                isActive={currentPage === page}
+                variant={page === currentPage ? 'default' : 'ghost'}
                 className={cn('cursor-pointer', {
-                  'pointer-events-none bg-black border-black text-white':
-                    currentPage === page,
+                  'pointer-events-none': currentPage === page,
                 })}
                 onClick={() => handleChangePage(page)}
               >
                 {page}
-              </PaginationLink>
+              </RBtn>
             </PaginationItem>
           ))}
 
@@ -231,18 +230,18 @@ const RDataTableFooter = ({
           )}
           {showLastPage && (
             <PaginationItem>
-              <PaginationLink
+              <RBtn
                 size='sm'
-                isActive={currentPage === pageCount}
+                variant={pageCount === currentPage ? 'default' : 'ghost'}
                 className='cursor-pointer'
                 onClick={() => handleChangePage(pageCount)}
               >
                 {pageCount}
-              </PaginationLink>
+              </RBtn>
             </PaginationItem>
           )}
 
-          <Button
+          <RBtn
             title='Go to Next'
             size='icon'
             variant='ghost'
@@ -250,9 +249,9 @@ const RDataTableFooter = ({
             onClick={() => handleChangePage(currentPage + 1)}
           >
             <ChevronRight size={20} />
-          </Button>
+          </RBtn>
 
-          <Button
+          <RBtn
             title='Go to Last'
             size='icon'
             variant='ghost'
@@ -260,7 +259,7 @@ const RDataTableFooter = ({
             onClick={() => handleChangePage(pageCount)}
           >
             <ChevronLast size={20} />
-          </Button>
+          </RBtn>
         </PaginationContent>
       </Pagination>
     </div>

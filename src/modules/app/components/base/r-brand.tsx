@@ -58,7 +58,7 @@ export function RBrand({
     >
       <span
         className={clsx(
-          'flex size-10 items-center justify-center rounded-md bg-primary text-primary-foreground shadow-sm',
+          'flex size-10 items-center justify-center rounded-md bg-primary text-primary-foreground',
           iconClassName,
         )}
       >

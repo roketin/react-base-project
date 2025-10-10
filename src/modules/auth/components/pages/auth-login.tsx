@@ -8,12 +8,10 @@ import { RInputPassword } from '@/modules/app/components/base/r-input-password';
 import RForm from '@/modules/app/components/base/r-form';
 import { Link } from 'react-router-dom';
 import { linkTo, useNamedRoute } from '@/modules/app/hooks/use-named-route';
-import FileInfo from '@/modules/app/components/base/file-info';
 import { AtSign, FileLock2 } from 'lucide-react';
 import { useAuthLogin } from '@/modules/auth/services/auth.service';
 import { useTranslation } from 'react-i18next';
 import { tl } from '@/modules/app/libs/locale-utils';
-import { RCard } from '@/modules/app/components/base/r-card';
 import RBtn from '@/modules/app/components/base/r-btn';
 
 const formSchema = Yup.object().shape({
@@ -60,7 +58,9 @@ const AuthLogin = () => {
   );
 
   return (
-    <RCard title={t('login.title')} description={t('login.subTitle')}>
+    <div>
+      <h1 className='text-2xl font-semibold'>{t('login.title')}</h1>
+      <p className='mb-3 text-sm text-gray-400'>{t('login.subTitle')}</p>
       <RForm
         form={form}
         onSubmit={handleSubmit}
@@ -89,22 +89,20 @@ const AuthLogin = () => {
           <RInputPassword prepend={<FileLock2 size={16} />} />
         </RFormField>
 
-        <div className='text-right'>
-          <Link
-            to={linkTo('AuthForgot')}
-            className='text-sm text-blue-700 hover:underline inline-block'
-          >
-            {t('form.forgotPassword')}
-          </Link>
-        </div>
-
         <RBtn type='submit' className='w-full mt-3' loading={loading}>
           {t('form.submit')}
         </RBtn>
 
-        <FileInfo src='src/modules/auth/components/pages/auth-login.tsx' />
+        <div className='text-center'>
+          <Link
+            to={linkTo('AuthForgot')}
+            className='text-sm text-primary hover:underline inline-block'
+          >
+            {t('form.forgotPassword')}
+          </Link>
+        </div>
       </RForm>
-    </RCard>
+    </div>
   );
 };
 

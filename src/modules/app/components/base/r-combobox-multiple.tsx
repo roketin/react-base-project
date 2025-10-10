@@ -18,6 +18,7 @@ import {
   inputVariants,
   type TInputSize,
 } from '@/modules/app/components/ui/variants/input-variants';
+import { getFieldWrapperClassName } from '@/modules/app/components/ui/variants/field-variants';
 import type {
   TAriaInvalidProp,
   TDisableable,
@@ -140,19 +141,19 @@ export function RMultiComboBox<
     }
   }, [values, setInternalValues, onChange]);
 
+  const triggerClassName = getFieldWrapperClassName({
+    hasError,
+    disabled,
+    className: cn(
+      inputVariants({ size: props.density }),
+      'justify-between min-h-9 h-auto!',
+    ),
+  });
+
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <div
-          className={cn(
-            inputVariants({ size: props.density }),
-            'relative flex w-full items-center rounded-md border bg-white dark:bg-input/30 transition-[color,box-shadow] shadow-md shadow-slate-100 justify-between min-h-9 h-auto!',
-            hasError
-              ? 'border-destructive ring-destructive/40'
-              : 'border-border focus-within:ring-ring/50 focus-within:ring-[3px]',
-            disabled ? 'pointer-events-none opacity-60' : '',
-          )}
-        >
+        <div className={triggerClassName}>
           {selectedItems.length > 0 ? (
             <div className='flex flex-wrap gap-1 items-center w-full'>
               {selectedItems.map((item) => {

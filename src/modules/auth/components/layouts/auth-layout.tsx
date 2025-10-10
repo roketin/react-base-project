@@ -1,4 +1,3 @@
-import FileInfo from '@/modules/app/components/base/file-info';
 import { RNavigate } from '@/modules/app/components/base/r-navigate';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import { Suspense } from 'react';
@@ -17,31 +16,24 @@ const AuthLayout = () => {
   }
 
   return (
-    <div className='h-full flex flex-col md:flex-row bg-slate-50'>
-      <div className='md:flex-1 flex items-center justify-center'>
-        <Suspense
-          fallback={
-            <RLoading label='Please wait....' className='h-full w-full' />
-          }
-        >
-          <Outlet />
-        </Suspense>
-      </div>
-
-      <div className='flex-1 bg-slate-100 flex flex-col items-center justify-center gap-4 px-6 text-center md:px-10 md:text-left'>
-        <div className='md:w-[400px] inline-flex flex-col gap-4'>
-          <RBrand
-            align='center'
-            className='md:items-start md:text-left'
-            subtitleClassName='text-sm text-muted-foreground'
-          />
+    <div className='h-full flex items-center justify-center bg-auth p-5'>
+      <div className='flex w-full md:w-auto flex-col md:flex-row gap-4 bg-white p-3 rounded-lg shadow-xl shadow-gray-100 relative z-10'>
+        <div className='flex-1 order-1 md:order-0'>
+          <div className='w-full md:w-[350px] p-5'>
+            <Suspense
+              fallback={
+                <RLoading label='Please wait....' className='h-[300px]' />
+              }
+            >
+              <Outlet />
+            </Suspense>
+          </div>
+        </div>
+        <div className='p-3 md:p-10 bg-primary/10 rounded-lg flex flex-col justify-between flex-none order-0 md:order-1'>
+          <RBrand align='center' className='mb-4' />
 
           {/* Language dropdown */}
-          <div>
-            <RLangSwitcher />
-          </div>
-
-          <FileInfo src='src/modules/auth/components/layouts/auth-layout.tsx' />
+          <RLangSwitcher />
         </div>
       </div>
     </div>
