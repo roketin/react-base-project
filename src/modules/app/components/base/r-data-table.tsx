@@ -194,25 +194,29 @@ const RDataTableInner = <TData, TValue>(
 
   /**
    * Renders placeholder skeleton rows to maintain table layout while data is loading.
-   * Displays skeleton cells matching the number of headers.
+   * Always displays 8 skeleton rows, with skeleton cells matching the number of columns.
    *
    * @returns {JSX.Element} Skeleton rows for loading state.
    */
-  const renderSkeletonRows = () => (
-    <>
-      {table.getHeaderGroups().map((headerGroup) => (
-        <TableRow key={headerGroup.id}>
-          {headerGroup.headers.map((header) => {
-            return (
+  const renderSkeletonRows = () => {
+    // Get the first header group (assume all header groups have same columns)
+    const headerGroups = table.getHeaderGroups();
+    const headerGroup = headerGroups[0];
+    const headers = headerGroup ? headerGroup.headers : [];
+    return (
+      <>
+        {Array.from({ length: 8 }).map((_, idx) => (
+          <TableRow key={idx}>
+            {headers.map((header) => (
               <TableCell key={header.id}>
                 <Skeleton className='h-[20px] w-full rounded-md' />
               </TableCell>
-            );
-          })}
-        </TableRow>
-      ))}
-    </>
-  );
+            ))}
+          </TableRow>
+        ))}
+      </>
+    );
+  };
 
   /**
    * Debounced callback for handling search input changes.

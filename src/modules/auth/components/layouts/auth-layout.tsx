@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { RLoading } from '@/modules/app/components/base/r-loading';
 import { RBrand } from '@/modules/app/components/base/r-brand';
-import { LanguageSwitcher } from '@/modules/app/components/base/language-switcher';
+import RLangSwitcher from '@/modules/app/components/base/r-lang-switcher';
 
 const AuthLayout = () => {
   // Check current session
@@ -29,16 +29,20 @@ const AuthLayout = () => {
       </div>
 
       <div className='flex-1 bg-slate-100 flex flex-col items-center justify-center gap-4 px-6 text-center md:px-10 md:text-left'>
-        <RBrand
-          align='center'
-          className='md:items-start md:text-left'
-          subtitleClassName='text-sm text-muted-foreground'
-        />
+        <div className='md:w-[400px] inline-flex flex-col gap-4'>
+          <RBrand
+            align='center'
+            className='md:items-start md:text-left'
+            subtitleClassName='text-sm text-muted-foreground'
+          />
 
-        {/* Language dropdown */}
-        <LanguageSwitcher className='mx-auto md:ml-0' />
+          {/* Language dropdown */}
+          <div>
+            <RLangSwitcher />
+          </div>
 
-        <FileInfo src='src/modules/auth/components/layouts/auth-layout.tsx' />
+          <FileInfo src='src/modules/auth/components/layouts/auth-layout.tsx' />
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import { RBreadcrumbs } from '@/modules/app/components/base/r-breadcrumbs';
 import { AppBootstrapLoading } from '@/modules/app/components/base/app-bootstrap-loading';
-import { RLoading } from '@/modules/app/components/base/r-loading';
 import { AppSidebar } from '@/modules/app/components/layouts/app-sidebar';
 import {
   SidebarInset,
@@ -20,8 +19,8 @@ import { Suspense, useCallback, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import showAlert from '@/modules/app/components/base/show-alert';
 import { useAuthBootstrap } from '@/modules/auth/hooks/use-auth-bootstrap';
-import { LanguageSwitcher } from '@/modules/app/components/base/language-switcher';
-import Button from '@/modules/app/components/ui/button';
+import RLangSwitcher from '@/modules/app/components/base/r-lang-switcher';
+import RBtn from '@/modules/app/components/base/r-btn';
 
 /**
  * Main layout component for the application.
@@ -109,7 +108,7 @@ export default function AppLayout() {
 
           {/* Language toggle and user profile section */}
           <div className='flex items-center gap-2'>
-            <LanguageSwitcher />
+            <RLangSwitcher />
             <Popover>
               <PopoverTrigger asChild>
                 <button className='group flex items-center gap-3 px-3 py-2 transition hover:border-primary/40 hover:bg-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 hover:rounded-md'>
@@ -131,30 +130,28 @@ export default function AppLayout() {
                 className='w-56 border-border/70 p-0 shadow-lg'
               >
                 <div className='border-b border-border/60 px-4 py-3'>
-                  <p className='text-sm font-semibold'>
-                    {user?.name ?? 'Administrator'}
-                  </p>
+                  <p className='text-sm font-semibold'>{user?.name ?? '...'}</p>
                   <p className='text-xs text-muted-foreground'>
-                    {user?.email ?? 'admin@roketin.dev'}
+                    {user?.role ?? '...'}
                   </p>
                 </div>
                 <div className='flex flex-col gap-1 p-2'>
-                  <Button
+                  <RBtn
                     variant='ghost'
                     className='justify-start gap-2 text-sm'
                     disabled
                   >
                     <UserRound className='size-4' />
                     Profile (coming soon)
-                  </Button>
-                  <Button
+                  </RBtn>
+                  <RBtn
                     variant='ghost'
                     className='justify-start gap-2 text-sm text-destructive hover:text-destructive'
                     onClick={handleLogout}
                   >
                     <LogOut className='size-4' />
                     Logout
-                  </Button>
+                  </RBtn>
                 </div>
               </PopoverContent>
             </Popover>
@@ -166,11 +163,21 @@ export default function AppLayout() {
             <Suspense
               fallback={
                 <div className='min-h-[200px] rounded-3xl border border-border/60 bg-background/80 p-10 shadow-sm'>
-                  <RLoading
-                    label='Please wait...'
-                    iconClassName='size-6'
-                    className='h-full w-full'
-                  />
+                  <div className='flex h-full w-full flex-col gap-8 animate-pulse'>
+                    <div className='h-6 w-2/5 rounded bg-muted/60' />
+                    <div className='space-y-4'>
+                      <div className='h-3 w-full rounded bg-muted/50' />
+                      <div className='h-3 w-11/12 rounded bg-muted/40' />
+                      <div className='h-3 w-10/12 rounded bg-muted/40' />
+                      <div className='h-3 w-9/12 rounded bg-muted/30' />
+                    </div>
+                    <div className='space-y-3'>
+                      <div className='h-3 w-full rounded bg-muted/40' />
+                      <div className='h-3 w-10/12 rounded bg-muted/30' />
+                      <div className='h-3 w-9/12 rounded bg-muted/30' />
+                      <div className='h-3 w-7/12 rounded bg-muted/20' />
+                    </div>
+                  </div>
                 </div>
               }
             >

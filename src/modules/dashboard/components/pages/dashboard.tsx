@@ -1,4 +1,4 @@
-import Button from '@/modules/app/components/ui/button';
+import RBtn from '@/modules/app/components/base/r-btn';
 import { useState } from 'react';
 
 const Dashboard = () => {
@@ -7,9 +7,9 @@ const Dashboard = () => {
   return (
     <div>
       <p className='mb-3'>Count is {count}</p>
-      <Button size='sm' onClick={() => setCount((c) => c + 1)}>
+      <RBtn size='sm' onClick={() => setCount((c) => c + 1)}>
         Increment
-      </Button>
+      </RBtn>
     </div>
   );
 };

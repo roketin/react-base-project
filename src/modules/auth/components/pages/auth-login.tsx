@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useCallback } from 'react';
 import { Input } from '@/modules/app/components/ui/input';
-import Button from '@/modules/app/components/ui/button';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
 import { RInputPassword } from '@/modules/app/components/base/r-input-password';
 import RForm from '@/modules/app/components/base/r-form';
@@ -15,6 +14,7 @@ import { useAuthLogin } from '@/modules/auth/services/auth.service';
 import { useTranslation } from 'react-i18next';
 import { tl } from '@/modules/app/libs/locale-utils';
 import { RCard } from '@/modules/app/components/base/r-card';
+import RBtn from '@/modules/app/components/base/r-btn';
 
 const formSchema = Yup.object().shape({
   username: Yup.string()
@@ -89,20 +89,6 @@ const AuthLogin = () => {
           <RInputPassword prepend={<FileLock2 size={16} />} />
         </RFormField>
 
-        {/* Type 2: Input with render */}
-        {/* <RFormField
-            control={form.control}
-            name='password'
-            label={t('form.password')}
-            render={({ field }) => (
-              <RInputPassword
-                value={field.value}
-                onChange={field.onChange}
-                placeholder='Enter your password'
-              />
-            )}
-          /> */}
-
         <div className='text-right'>
           <Link
             to={linkTo('AuthForgot')}
@@ -112,9 +98,9 @@ const AuthLogin = () => {
           </Link>
         </div>
 
-        <Button type='submit' className='w-full mt-3' loading={loading}>
+        <RBtn type='submit' className='w-full mt-3' loading={loading}>
           {t('form.submit')}
-        </Button>
+        </RBtn>
 
         <FileInfo src='src/modules/auth/components/pages/auth-login.tsx' />
       </RForm>

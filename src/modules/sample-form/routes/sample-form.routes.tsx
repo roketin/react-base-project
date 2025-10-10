@@ -16,7 +16,7 @@ export const sampleFormRoutes = createAppRoutes([
     path: 'sample-form',
     element: <Outlet />,
     handle: {
-      breadcrumb: 'Sample Form',
+      breadcrumb: 'app:menu.sampleForm',
       permissions: [PERMISSIONS.SAMPLE_FORM_VIEW],
     },
     children: [
@@ -30,7 +30,7 @@ export const sampleFormRoutes = createAppRoutes([
         path: 'add',
         element: <SampleFormSave />,
         handle: {
-          breadcrumb: 'Add Page',
+          breadcrumb: 'sampleForm:breadcrumbs.add',
         },
       },
       {
@@ -38,7 +38,7 @@ export const sampleFormRoutes = createAppRoutes([
         path: ':id/edit',
         element: <SampleFormSave />,
         handle: {
-          breadcrumb: 'Edit Page',
+          breadcrumb: 'sampleForm:breadcrumbs.edit',
         },
       },
       {
@@ -46,7 +46,7 @@ export const sampleFormRoutes = createAppRoutes([
         path: ':id/detail',
         element: <SampleFormSave />,
         handle: {
-          breadcrumb: 'Detail Page',
+          breadcrumb: 'sampleForm:breadcrumbs.detail',
         },
       },
     ],

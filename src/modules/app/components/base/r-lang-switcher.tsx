@@ -1,43 +1,53 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Languages } from 'lucide-react';
+import { Check, ChevronDown, Languages } from 'lucide-react';
 import roketinConfig from '@config';
-import Button from '@/modules/app/components/ui/button';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/modules/app/components/ui/popover';
 import { cn } from '@/modules/app/libs/utils';
+import { toast } from 'sonner';
+import RBtn from '@/modules/app/components/base/r-btn';
 
-type LanguageSwitcherProps = {
-  buttonVariant?: React.ComponentProps<typeof Button>['variant'];
-  buttonSize?: React.ComponentProps<typeof Button>['size'];
+type TRLangSwitcherProps = {
+  buttonVariant?: React.ComponentProps<typeof RBtn>['variant'];
+  buttonSize?: React.ComponentProps<typeof RBtn>['size'];
   align?: 'start' | 'center' | 'end';
   className?: string;
   showCode?: boolean;
 };
 
-export function LanguageSwitcher({
+const RLangSwitcher = ({
   buttonVariant = 'outline',
   buttonSize = 'sm',
   align = 'end',
   className,
   showCode = true,
-}: LanguageSwitcherProps) {
+}: TRLangSwitcherProps) => {
+  // Retrieve supported languages configuration from roketinConfig
   const languagesConfig = roketinConfig.languages;
+
+  // Access i18n instance for language management
   const { i18n } = useTranslation('app');
+
+  // State to control whether the language popover is open or closed
   const [open, setOpen] = useState(false);
+
+  // Memoize the supported languages list to avoid unnecessary recalculations
   const languages = useMemo(
     () => languagesConfig?.supported ?? [],
     [languagesConfig],
   );
 
+  // Determine the default language from the supported languages list
   const defaultLanguage = useMemo(() => {
     if (languages.length === 0) return undefined;
     return languages.find((lang) => lang.isDefault) ?? languages[0];
   }, [languages]);
 
+  // Determine the current language based on i18n's active language or fallback to default
   const currentLanguage = useMemo(() => {
     if (!defaultLanguage) return undefined;
     return (
@@ -45,11 +55,16 @@ export function LanguageSwitcher({
     );
   }, [defaultLanguage, i18n.language, languages]);
 
-  const shouldRender =
-    Boolean(languagesConfig?.enabled) &&
-    languages.length > 1 &&
-    Boolean(currentLanguage);
+  // Decide if the language switcher should be rendered based on config and available languages
+  const shouldRender = useMemo<boolean>(
+    () =>
+      Boolean(languagesConfig?.enabled) &&
+      languages.length > 1 &&
+      Boolean(currentLanguage),
+    [currentLanguage, languages.length, languagesConfig?.enabled],
+  );
 
+  // This function handles changing the current language and closes the popover
   const handleSelect = useCallback(
     (code: string) => {
       if (code === i18n.language) {
@@ -58,6 +73,13 @@ export function LanguageSwitcher({
       }
       void i18n.changeLanguage(code);
       setOpen(false);
+
+      toast.success('Language switched to ' + code, {
+        cancel: {
+          label: 'Close',
+          onClick() {},
+        },
+      });
     },
     [i18n],
   );
@@ -69,10 +91,10 @@ export function LanguageSwitcher({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
+        <RBtn
           variant={buttonVariant}
           size={buttonSize}
-          className={cn('flex items-center gap-2', className)}
+          className={cn('inline-flex items-center gap-2', className)}
         >
           <Languages className='size-4' />
           <span className='text-xs font-semibold'>
@@ -80,12 +102,14 @@ export function LanguageSwitcher({
               ? currentLanguage.code.toUpperCase()
               : currentLanguage.label}
           </span>
-        </Button>
+          <ChevronDown />
+        </RBtn>
       </PopoverTrigger>
       <PopoverContent
         align={align}
         className='w-44 border-border/70 p-1 shadow-lg'
       >
+        {/* ✅ Render the list of available languages with active language highlighted */}
         <div className='flex flex-col'>
           {languages.map((lang) => {
             const isActive = lang.code === currentLanguage.code;
@@ -115,4 +139,6 @@ export function LanguageSwitcher({
       </PopoverContent>
     </Popover>
   );
-}
+};
+
+export default RLangSwitcher;

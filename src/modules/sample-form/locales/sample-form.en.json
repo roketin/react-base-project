@@ -1,12 +1,17 @@
 {
   "title": "Sample Form",
   "actions": {
-    "add": "Add Page"
+    "add": "Create New"
   },
   "columns": {
     "name": "Name",
     "code": "Code",
     "createdAt": "Created Date"
+  },
+  "breadcrumbs": {
+    "add": "Add Page",
+    "edit": "Edit Page",
+    "detail": "Detail Page"
   },
   "filters": {
     "keyword": {

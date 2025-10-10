@@ -90,7 +90,7 @@ Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file l
 | `sidebar.settings`    | `stateStorage.type`, `stateStorage.key`, `width`, `widthMobile`, `widthIcon`, `keyboardShortcut` | Persists sidebar state (local/session storage) and defines responsive widths plus the keyboard toggle shortcut. |
 | `filters.persistence` | `enabled`, `strategy`, `keyPrefix`, `debounceMs`                                                 | Configures how `RFilter` saves user selections (`local-storage`, `session-storage`, or `query-params`).         |
 | `routes.admin`        | `basePath`                                                                                       | Mount point for authenticated feature routes (defaults to `/admin`).                                            |
-| `languages`           | `enabled`, `supported[]` (`code`, `label`, `isDefault`)                                          | Drives the language dropdown shown on the login screen and inside the authenticated header.                     |
+| `languages`           | `enabled`, ``, `supported[]` (`code`, `label`, `isDefault`)                                      | Drives the language dropdown shown on the login screen and inside the authenticated header.                     |
 
 ### Config Breakdown
 
@@ -105,6 +105,7 @@ Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file l
 - **`routes.admin`**: Change the admin prefix (e.g., `/app`) to relocate every nested feature route.
 - **`languages`**:
   - `enabled`: Hides the language dropdown when set to `false`.
+  - `debug`: Debug i18n on console `false`.
   - `supported`: Each locale entry must define a `code` (used by i18next), `label` (UI display), and optional `isDefault`.
 
 ---

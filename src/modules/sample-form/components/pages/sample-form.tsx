@@ -1,6 +1,6 @@
+import RBtn from '@/modules/app/components/base/r-btn';
 import { RDataTable } from '@/modules/app/components/base/r-data-table';
 import { RFilter } from '@/modules/app/components/base/r-filter';
-import Button from '@/modules/app/components/ui/button';
 import { Separator } from '@/modules/app/components/ui/separator';
 import { DEFAULT_QUERY_PARAMS } from '@/modules/app/constants/app.constant';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
@@ -134,7 +134,7 @@ const SampleFormIndex = () => {
     <div>
       <div className='flex items-center justify-between'>
         <div className='inline-block'>
-          <Button onClick={handleAdd}>{t('actions.add')}</Button>
+          <RBtn onClick={handleAdd}>{t('actions.add')}</RBtn>
         </div>
       </div>
 

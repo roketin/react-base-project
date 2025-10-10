@@ -11,7 +11,7 @@ export const dashboardRoutes = createAppRoutes([
     path: '',
     element: <Dashboard />,
     handle: {
-      breadcrumb: 'Dashboard',
+      breadcrumb: 'app:menu.dashboard',
     },
   },
 ]);

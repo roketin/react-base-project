@@ -64,6 +64,7 @@ export type TRoketinLanguageConfig = {
 
 export type TRoketinLanguagesConfig = {
   enabled: boolean;
+  debug: boolean;
   supported: ReadonlyArray<TRoketinLanguageConfig>;
 };
 

@@ -7,7 +7,7 @@ import Button from '@/modules/app/components/ui/button';
 import { useFilter } from '@/modules/app/hooks/use-filter';
 import type { TFilterItem } from '@/modules/app/libs/filter-utils';
 import { memo, useCallback, useMemo, useState, useEffect } from 'react';
-import { Filter } from 'lucide-react';
+import { ChevronDown, Filter } from 'lucide-react';
 
 type TRFilterProps = {
   items: TFilterItem[];
@@ -43,10 +43,7 @@ export function RFilter({
   persistKey,
   mapKey,
 }: TRFilterProps) {
-  const { values, setValue, reset, getParams, storageKey } = useFilter(
-    items,
-    persistKey,
-  );
+  const { values, setValue, reset, getParams } = useFilter(items, persistKey);
 
   /**
    * Serialize filter values to JSON string for snapshot comparison.
@@ -232,6 +229,7 @@ export function RFilter({
         <Button variant='outline' className='relative'>
           <Filter />
           Filter
+          <ChevronDown />
           {applied && (
             <span className='absolute top-1 right-1 h-2 w-2 rounded-full bg-primary' />
           )}
@@ -242,10 +240,6 @@ export function RFilter({
         className='p-0 border-none shadow-none bg-transparent'
       >
         <div className='space-y-4 rounded-xl border p-4 shadow-sm bg-background'>
-          <div className='text-xs text-muted-foreground mb-1'>
-            Storage key: {storageKey}
-          </div>
-
           {fields.map(({ item, id, value }) => (
             <RFilterField
               key={id}

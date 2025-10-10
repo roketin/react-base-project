@@ -1,5 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import roketinConfig from '@config';
 
 type Resource = Record<string, Record<string, string>>;
 
@@ -30,7 +31,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
-    debug: import.meta.env.DEV,
+    debug: roketinConfig.languages.debug,
     ns: ['app'], // default namespace
     defaultNS: 'app',
     interpolation: {

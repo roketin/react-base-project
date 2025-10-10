@@ -8,6 +8,11 @@
     "code": "Kode",
     "createdAt": "Tanggal Dibuat"
   },
+  "breadcrumbs": {
+    "add": "Halaman Tambah",
+    "edit": "Halaman Ubah",
+    "detail": "Halaman Detail"
+  },
   "filters": {
     "keyword": {
       "label": "Kata Kunci",

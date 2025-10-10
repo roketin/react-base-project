@@ -6,8 +6,9 @@ import {
 } from '@/modules/app/components/ui/breadcrumb';
 import type { TAppRouteObject } from '@/modules/app/libs/routes-utils';
 import { useBreadcrumbStore } from '@/modules/app/stores/breadcrumbs.store';
-import { Link, useMatches } from 'react-router-dom';
 import { Fragment } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useMatches } from 'react-router-dom';
 
 export function RBreadcrumbs() {
   const matches = useMatches() as (ReturnType<typeof useMatches>[number] & {
@@ -15,6 +16,7 @@ export function RBreadcrumbs() {
   })[];
 
   const resolvers = useBreadcrumbStore((s) => s.resolvers);
+  const { t } = useTranslation();
 
   const filteredMatches = matches.filter((m) => m.handle?.breadcrumb);
 
@@ -23,11 +25,11 @@ export function RBreadcrumbs() {
     let label: string;
 
     if (typeof bc === 'string') {
-      label = bc;
+      label = t(bc, { defaultValue: bc });
     } else {
       const value = bc(match);
       if (typeof value === 'string') {
-        label = value;
+        label = t(value, { defaultValue: value });
       } else {
         const resolver = resolvers[value.type];
         label = resolver?.(value.id) ?? `${value.type} ${value.id}`;

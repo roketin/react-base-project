@@ -10,7 +10,7 @@ import type { RComboBoxProps } from '@/modules/app/components/base/r-combobox';
 import type { RMultiComboBoxProps } from '@/modules/app/components/base/r-combobox-multiple';
 import type { RDatePickerBaseProps } from '@/modules/app/components/base/r-datepicker';
 import type { TInputProps } from '@/modules/app/components/ui/input';
-import type { ComponentProps, ReactNode } from 'react';
+import { type ComponentProps, type ReactNode } from 'react';
 import type { DateRange } from 'react-day-picker';
 import type { RRadioOption } from '@/modules/app/components/base/r-radio';
 
