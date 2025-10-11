@@ -5,4 +5,4 @@ export const PERMISSIONS = {
   SAMPLE_FORM_UPDATE: 'sample-form.update',
 } as const;
 
-export type TPermission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
+export type TPermission = keyof typeof PERMISSIONS;

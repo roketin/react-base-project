@@ -1,4 +1,3 @@
-import { PERMISSIONS } from '@/modules/app/constants/permission.constant';
 import { createAppRoutes } from '@/modules/app/libs/routes-utils';
 import { lazy } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -17,7 +16,7 @@ export const sampleFormRoutes = createAppRoutes([
     element: <Outlet />,
     handle: {
       breadcrumb: 'sampleForm:title',
-      permissions: [PERMISSIONS.SAMPLE_FORM_VIEW],
+      permissions: ['SAMPLE_FORM_VIEW'],
     },
     children: [
       {
@@ -35,6 +34,7 @@ export const sampleFormRoutes = createAppRoutes([
         handle: {
           title: 'sampleForm:menu.createNew',
           breadcrumb: 'sampleForm:menu.createNew',
+          permissions: ['SAMPLE_FORM_CREATE'],
         },
       },
       {

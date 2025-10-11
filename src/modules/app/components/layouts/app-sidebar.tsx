@@ -51,13 +51,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       menus: ReadonlyArray<TSidebarMenu>,
     ): SidebarMenuItemWithChildren[] => {
       return menus.reduce<SidebarMenuItemWithChildren[]>((acc, item) => {
-        const children = item.children ? filter(item.children) : undefined;
-        const hasChildren = Boolean(children && children.length > 0);
         const hasPermission = !item.permission || isCan(item.permission);
+        if (!hasPermission) return acc;
 
-        if (!hasPermission && !hasChildren) {
-          return acc;
-        }
+        const children = item.children ? filter(item.children) : undefined;
 
         acc.push({ ...item, children });
         return acc;

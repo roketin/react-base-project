@@ -16,7 +16,6 @@ export type TAuthLogin = {
 
 export type TAuthLoginResponse = {
   access_token: string;
-  permissions: string[];
 };
 
 export type TAuthForgot = Pick<TAuthLogin, 'username'>;

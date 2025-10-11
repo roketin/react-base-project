@@ -10,8 +10,8 @@ type StatusPageProps = {
 
 const StatusPage = ({ code, title, description, action }: StatusPageProps) => {
   return (
-    <div className='h-full flex items-center justify-center px-4 text-center bg-pattern'>
-      <div className='space-y-6 max-w-md bg-background/30 backdrop-blur supports-[backdrop-filter]:backdrop-blur-sm p-16 rounded-lg shadow-xl shadow-gray-100 relative z-10'>
+    <div className='h-full flex items-center justify-center p-16 text-center bg-pattern'>
+      <div className='space-y-6 max-w-md'>
         <div>
           <RBrand className='mx-auto inline-flex' />
         </div>

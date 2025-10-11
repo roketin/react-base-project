@@ -7,6 +7,7 @@ import { useObjectState } from '@/modules/app/hooks/use-object-state';
 import { filterItem, type TFilterItem } from '@/modules/app/libs/filter-utils';
 import { safeArray } from '@/modules/app/libs/utils';
 import type { TApiDefaultQueryParams } from '@/modules/app/types/api.type';
+import { useAuth } from '@/modules/auth/hooks/use-auth';
 import { useGetSampleFormList } from '@/modules/sample-form/services/sample-form.service';
 import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -36,7 +37,13 @@ const toCurrencyRange = (values: number[]) => {
 };
 
 const SampleFormIndex = () => {
+  // Permission
+  const { isCan } = useAuth();
+
+  // Translation
   const { t } = useTranslation('sampleForm');
+
+  // Navigation
   const { navigate } = useNamedRoute();
 
   /**
@@ -133,9 +140,11 @@ const SampleFormIndex = () => {
   return (
     <div>
       <div className='mb-3'>
-        <RBtn iconStart={<Plus />} onClick={handleAdd}>
-          {t('actions.add')}
-        </RBtn>
+        {isCan('SAMPLE_FORM_CREATE') && (
+          <RBtn iconStart={<Plus />} onClick={handleAdd}>
+            {t('actions.add')}
+          </RBtn>
+        )}
       </div>
 
       <RDataTable
