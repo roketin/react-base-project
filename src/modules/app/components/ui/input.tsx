@@ -70,6 +70,7 @@ function Input({
 
       {clearable && (props.value?.toString()?.length ?? 0) > 0 && (
         <button
+          tabIndex={-1}
           type='button'
           className='hover:bg-slate-100 mr-2'
           onClick={handleClear}
