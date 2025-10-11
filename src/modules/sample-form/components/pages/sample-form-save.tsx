@@ -23,7 +23,8 @@ import { AlertTriangle, Save } from 'lucide-react';
 import RStickyWrapper from '@/modules/app/components/base/r-sticky-wrapper';
 import { cn } from '@/modules/app/libs/utils';
 import type { MaskitoOptions } from '@maskito/core';
-import { useMaskito } from '@maskito/react';
+import { RInputFormat } from '@/modules/app/components/base/r-input-format';
+import RSelect from '@/modules/app/components/base/r-select';
 
 const formSchema = Yup.object().shape({
   checkbox_single: Yup.bool().default(false).label('Checkbox Single'),
@@ -34,10 +35,17 @@ const formSchema = Yup.object().shape({
     .label('Checkbox Multiple'),
   radio: Yup.string().default('').required().label('Radio'),
   input: Yup.string().default('').required().label('Input'),
+  input_format: Yup.string().default('').required().label('Input Format'),
   input_password: Yup.string().default('').required().label('Input Password'),
   input_number: Yup.number().default(0).min(0.0001).label('Input Number'),
   select: Yup.string().default('').required().label('Select'),
   select_multiple: Yup.array()
+    .of(Yup.string())
+    .default([])
+    .min(1)
+    .label('Select Multiple'),
+  select_new: Yup.string().required().label('Select'),
+  select_new_multiple: Yup.array()
     .of(Yup.string())
     .default([])
     .min(1)
@@ -64,6 +72,7 @@ const items = [
   { value: 'B', label: 'Item B' },
   { value: 'C', label: 'Item C' },
   { value: 'D', label: 'Item D' },
+  { value: 'E', label: 'Item E' },
 ];
 
 const digitsOnlyMask: MaskitoOptions = {
@@ -105,9 +114,6 @@ const TodoSave = () => {
     console.log('values', values);
   }, []);
 
-  // Test maskito
-  const inputRef = useMaskito({ options: digitsOnlyMask });
-
   return (
     <>
       <div className='grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10'>
@@ -125,8 +131,8 @@ const TodoSave = () => {
           >
             {(isSticky) => (
               <div
-                className={cn('wrapper-fly text-sm flex gap-3', {
-                  'fly-active text-destructive': isSticky,
+                className={cn('wrapper-fly text-sm flex gap-3 mb-4', {
+                  'fly-active text-primary': isSticky,
                 })}
               >
                 <AlertTriangle
@@ -160,26 +166,68 @@ const TodoSave = () => {
             label='Checkbox Multiple'
             valuePropName='checked'
           >
-            <RCheckboxMultiple options={items} />
+            <RCheckboxMultiple options={items} className='mt-2' />
           </RFormField>
 
           {/* Radio */}
           <RFormField control={form.control} name='radio' label='Radio'>
-            <RRadio options={items} layout='horizontal' />
-          </RFormField>
-
-          {/* Combobox */}
-          <RFormField control={form.control} name='select' label='Select'>
-            <RComboBox items={items} labelKey='label' valueKey='value' />
+            <RRadio options={items} layout='horizontal' className='mt-2' />
           </RFormField>
 
           {/* Combobox */}
           <RFormField
             control={form.control}
+            name='select'
+            label='Combobox'
+            labelDescription='Legacy component, for the best experience use RSelect'
+          >
+            <RComboBox items={items} labelKey='label' valueKey='value' />
+          </RFormField>
+
+          {/* Combobox Multiple */}
+          <RFormField
+            control={form.control}
             name='select_multiple'
-            label='Select Multiple'
+            label='Combobox Multiple'
+            labelDescription='Legacy component, for the best experience use RSelect'
           >
             <RMultiComboBox items={items} labelKey='label' valueKey='value' />
+          </RFormField>
+
+          {/* New: Combobox */}
+          <RFormField
+            control={form.control}
+            name='select_new'
+            label='Select'
+            labelDescription='Updated Version'
+          >
+            <RSelect
+              allowClear
+              showSearch
+              options={items}
+              fieldNames={{
+                label: 'label',
+                value: 'value',
+              }}
+            />
+          </RFormField>
+
+          {/* New: Combobox */}
+          <RFormField
+            control={form.control}
+            name='select_new_multiple'
+            label='Select Multiple'
+            labelDescription='Updated Version'
+          >
+            <RSelect
+              allowClear
+              mode='multiple'
+              options={items}
+              fieldNames={{
+                label: 'label',
+                value: 'value',
+              }}
+            />
           </RFormField>
 
           {/* Switch */}
@@ -199,7 +247,21 @@ const TodoSave = () => {
             label='Input'
             withPlaceholder
           >
-            <Input ref={inputRef} />
+            <Input />
+          </RFormField>
+
+          {/* Input Format */}
+          <RFormField
+            control={form.control}
+            name='input_format'
+            label='Input Format'
+            description='The format does not yet contain validation. Please perform validation in yup.'
+          >
+            <RInputFormat
+              placeholder='__-___-____-____'
+              format={digitsOnlyMask}
+              clearable
+            />
           </RFormField>
 
           {/* Input Password */}
@@ -278,7 +340,8 @@ const TodoSave = () => {
           {(isSticky) => (
             <pre
               className={cn('text-sm p-4', {
-                'bg-primary/30 rounded-xl': isSticky,
+                'bg-primary/5 rounded border border-primary/20 shadow-md':
+                  isSticky,
               })}
             >
               {JSON.stringify(watchAllValues, null, 2)}

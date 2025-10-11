@@ -1,4 +1,3 @@
-import Button from '@/modules/app/components/ui/button';
 import {
   inputVariants,
   type TInputSize,
@@ -22,7 +21,7 @@ function Input({
   prepend,
   'aria-invalid': ariaInvalid,
   onChange,
-  clearable = false,
+  clearable = true,
   density,
   disabled,
   ...props
@@ -69,15 +68,14 @@ function Input({
 
       {append && <span className='flex items-center'>{append}</span>}
 
-      {clearable && (
-        <Button
+      {clearable && (props.value?.toString()?.length ?? 0) > 0 && (
+        <button
           type='button'
-          className='px-2.5'
-          variant='ghost'
+          className='hover:bg-slate-100 mr-2'
           onClick={handleClear}
         >
-          <X />
-        </Button>
+          <X size={14} />
+        </button>
       )}
     </div>
   );

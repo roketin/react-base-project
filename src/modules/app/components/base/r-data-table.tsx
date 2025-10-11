@@ -222,6 +222,7 @@ const RDataTableInner = <TData, TValue>(
    * Debounced callback for handling search input changes.
    * Delays invoking onChangeTable to reduce frequent queries.
    */
+  const [search, setSearch] = useState<string>('');
   const debouncedSearch = useDebouncedCallback((search: string) => {
     onChangeTable({ search, page: 1 });
   }, 300);
@@ -230,13 +231,17 @@ const RDataTableInner = <TData, TValue>(
     <div>
       <div className='mb-4 flex flex-wrap items-center gap-3 md:justify-between'>
         {allowSearch && (
-          <div>
+          <div className='w-full md:max-w-[250px]'>
             <Input
-              type='search'
+              clearable
               placeholder={searchPlaceholder}
-              onChange={(e) => debouncedSearch(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                debouncedSearch(val);
+                setSearch(val);
+              }}
               prepend={<Search size={16} />}
-              className='min-w-[220px]'
+              value={search}
             />
           </div>
         )}

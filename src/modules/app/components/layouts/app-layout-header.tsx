@@ -1,7 +1,6 @@
 import RLangSwitcher from '@/modules/app/components/base/r-lang-switcher';
 import { SidebarTrigger } from '@/modules/app/components/ui/sidebar';
 import { AppUserMenu } from './app-layout-user-menu';
-import { Separator } from '@/modules/app/components/ui/separator';
 import { useMatches } from 'react-router-dom';
 import { useMemo } from 'react';
 import type { TAppRouteObject } from '@/modules/app/libs/routes-utils';
@@ -30,12 +29,9 @@ const AppLayoutHeader = () => {
       <header className='flex shrink-0 items-center justify-between gap-4'>
         <div className='flex items-center gap-3'>
           <SidebarTrigger className='-ml-2 rounded-lg border border-border/60 bg-background/80 hover:bg-primary/10 hover:text-primary' />
-          <Separator
-            orientation='vertical'
-            className='h-8 border-l border-border/60'
-          />
+
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {t(title as any)}
+          <span className='text-primary font-semibold'>{t(title as any)}</span>
         </div>
 
         <div className='flex items-center gap-2'>

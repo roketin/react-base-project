@@ -5,12 +5,14 @@ import type {
   TLabelValueOption,
   TLayoutOrientation,
 } from '@/modules/app/types/component.type';
+import { cn } from '@/modules/app/libs/utils';
 
 type TCheckboxMultipleProps = TDisableable & {
   options: TLabelValueOption<string, string>[];
   checked?: string[];
   onCheckedChange?: (values: string[]) => void;
   layout?: TLayoutOrientation;
+  className?: string;
 };
 
 /**
@@ -29,6 +31,7 @@ export function RCheckboxMultiple({
   onCheckedChange,
   disabled,
   layout = 'horizontal',
+  className,
 }: TCheckboxMultipleProps) {
   /**
    * Toggles the checked state of a checkbox value.
@@ -51,20 +54,26 @@ export function RCheckboxMultiple({
   // Render the checkboxes in specified layout with appropriate props
   return (
     <div
-      className={
-        layout === 'horizontal' ? 'flex flex-row gap-4' : 'flex flex-col gap-2'
-      }
+      className={cn(
+        layout === 'horizontal' ? 'flex flex-row gap-4' : 'flex flex-col gap-2',
+        'flex-wrap',
+        className,
+      )}
     >
-      {options.map(({ label, value }) => (
-        <Checkbox
-          key={value}
-          label={label}
-          value={value}
-          checked={checked?.includes(value)}
-          onCheckedChange={() => handleToggle(value)}
-          disabled={disabled}
-        />
-      ))}
+      {options.map(({ label, value }, index) => {
+        const id = `${name ?? 'radio'}-${index}`;
+        return (
+          <Checkbox
+            id={id}
+            key={value}
+            label={label}
+            value={value}
+            checked={checked?.includes(value)}
+            onCheckedChange={() => handleToggle(value)}
+            disabled={disabled}
+          />
+        );
+      })}
     </div>
   );
 }

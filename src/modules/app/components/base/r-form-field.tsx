@@ -33,6 +33,7 @@ type TRFormFieldProps<T extends FieldValues, N extends Path<T>> = {
   control: Control<T>;
   name: N;
   label?: string | React.ReactNode;
+  labelDescription?: string | React.ReactNode;
   description?: string;
   layout?: TLayoutOrientation;
   children?: React.ReactElement<Record<string, unknown>>;
@@ -47,6 +48,7 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
   control,
   name,
   label,
+  labelDescription,
   description,
   layout,
   children,
@@ -126,7 +128,7 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
           ...resolvedControlProps,
           id: fieldId as N,
           name: fieldId as N,
-          disabled: isDisabled,
+          ...(isDisabled ? { disabled: isDisabled } : {}),
           ...(placeholder ? { placeholder } : {}),
           ref: assignRefs,
         };
@@ -162,8 +164,19 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                   {shouldShowRequired && (
                     <span className='text-lg text-destructive'>*</span>
                   )}
+
+                  {labelDescription && (
+                    <div
+                      className={cn('text-xs text-gray-400', {
+                        'pr-5': isHorizontal,
+                      })}
+                    >
+                      {labelDescription}
+                    </div>
+                  )}
                 </FormLabel>
               )}
+
               <div>
                 <FormControl>{controlContent}</FormControl>
 

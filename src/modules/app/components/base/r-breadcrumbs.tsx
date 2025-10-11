@@ -66,9 +66,9 @@ export function RBreadcrumbs() {
         <BreadcrumbItem>
           <Link
             to={linkTo('DashboardIndex')}
-            className='flex gap-2 items-center hover:underline hover:text-primary'
+            className='flex gap-2 items-center hover:underline hover:text-primary py-1'
           >
-            <Home size={14} /> {t('title')}
+            <Home size={14} />
           </Link>
         </BreadcrumbItem>
         {crumbs.length > 0 && <BreadcrumbSeparator />}

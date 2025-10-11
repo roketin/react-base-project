@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import './rc-select';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -11,8 +12,8 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: #00a7c3;
-  /* --primary: #c4275e; */
+  /* --primary: #00a7c3; */
+  --primary: #c4275e;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -25,6 +26,12 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+  --success: oklch(0.745 0.194 148.25);
+  --success-foreground: oklch(0.222 0.013 147.67);
+  --warning: oklch(0.827 0.171 74.79);
+  --warning-foreground: oklch(0.282 0.056 73.59);
+  --info: oklch(0.725 0.186 239.64);
+  --info-foreground: oklch(0.274 0.021 236.69);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -56,6 +63,12 @@
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
+  --success: oklch(0.541 0.186 147.53);
+  --success-foreground: oklch(0.979 0.027 150.74);
+  --warning: oklch(0.606 0.164 75.11);
+  --warning-foreground: oklch(0.969 0.044 90.8);
+  --info: oklch(0.577 0.177 246.51);
+  --info-foreground: oklch(0.972 0.049 250.94);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -95,6 +108,12 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -163,9 +182,9 @@ body {
     background-image:
       linear-gradient(var(--primary) 1px, transparent 1px),
       linear-gradient(to right, var(--primary) 1px, #ffffff 1px);
-    background-size: 20px 20px;
+    background-size: 30px 30px;
 
-    opacity: 0.05;
+    opacity: 0.03;
     z-index: -1;
   }
 }

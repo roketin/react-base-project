@@ -22,7 +22,7 @@ export const getFieldWrapperClassName = ({
     baseFieldWrapperClass,
     hasError
       ? 'border-destructive ring-destructive/40'
-      : 'border-slate-150 focus-within:ring-ring/50 focus-within:ring-[3px]',
+      : 'focus-within:ring-ring/50 focus-within:ring-[3px]',
     disabled ? 'pointer-events-none opacity-60' : '',
     className,
   );
