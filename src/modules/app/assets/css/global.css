@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import './rc-select';
+@import './rc-picker';
 
 @custom-variant dark (&:is(.dark *));
 

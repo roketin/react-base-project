@@ -3,16 +3,18 @@ import { Switch } from '@/modules/app/components/ui/switch';
 import { RCheckboxMultiple } from '@/modules/app/components/base/r-checkbox-multiple';
 import { RComboBox } from '@/modules/app/components/base/r-combobox';
 import { RMultiComboBox } from '@/modules/app/components/base/r-combobox-multiple';
-import { RDatePicker } from '@/modules/app/components/base/r-datepicker';
+import { RPicker } from '@/modules/app/components/base/r-picker';
+import { RRangePicker } from '@/modules/app/components/base/r-range-picker';
 import { Slider } from '@/modules/app/components/ui/slider';
 import { RRadio } from '@/modules/app/components/base/r-radio';
 import type { RComboBoxProps } from '@/modules/app/components/base/r-combobox';
 import type { RMultiComboBoxProps } from '@/modules/app/components/base/r-combobox-multiple';
-import type { RDatePickerBaseProps } from '@/modules/app/components/base/r-datepicker';
+import type { RPickerProps } from '@/modules/app/components/base/r-picker';
+import type { RRangePickerProps } from '@/modules/app/components/base/r-range-picker';
 import type { TInputProps } from '@/modules/app/components/ui/input';
 import { type ComponentProps, type ReactNode } from 'react';
-import type { DateRange } from 'react-day-picker';
 import type { RRadioOption } from '@/modules/app/components/base/r-radio';
+import dayjs from 'dayjs';
 
 type TFilterRenderer<TValue> = (args: {
   value: TValue;
@@ -295,7 +297,7 @@ export function filterSlider({
 
 type TFilterDatepickerOptions = FilterComponentOptions<
   Date | null,
-  RDatePickerBaseProps
+  RPickerProps
 >;
 
 export function filterDatepicker({
@@ -309,19 +311,32 @@ export function filterDatepicker({
     label,
     defaultValue: defaultValue ?? null,
     render: ({ value, onChange }) => (
-      <RDatePicker
+      <RPicker
         {...props}
-        mode='single'
-        value={value ?? undefined}
-        onChange={(nextValue) => onChange(nextValue ?? null)}
+        className='w-full'
+        value={value ? dayjs(value) : null}
+        onChange={(nextValue) => {
+          if (Array.isArray(nextValue)) {
+            const firstValue = nextValue[0]?.toDate() ?? null;
+            onChange(firstValue);
+            return;
+          }
+
+          onChange(nextValue ? nextValue.toDate() : null);
+        }}
       />
     ),
   };
 }
 
+type DateRange = {
+  from?: Date;
+  to?: Date;
+};
+
 type TFilterDatepickerMultipleOptions = FilterComponentOptions<
   DateRange | null,
-  RDatePickerBaseProps
+  RRangePickerProps
 >;
 
 export function filterDatepickerMultiple({
@@ -335,11 +350,40 @@ export function filterDatepickerMultiple({
     label,
     defaultValue: defaultValue ?? null,
     render: ({ value, onChange }) => (
-      <RDatePicker
+      <RRangePicker
         {...props}
-        mode='range'
-        value={value ?? undefined}
-        onChange={(nextValue) => onChange(nextValue ?? null)}
+        className='w-full'
+        value={[
+          value?.from ? dayjs(value.from) : null,
+          value?.to ? dayjs(value.to) : null,
+        ]}
+        onChange={(nextValue) => {
+          if (!nextValue) {
+            onChange(null);
+            return;
+          }
+
+          const [start, end] = nextValue;
+
+          if (!start && !end) {
+            onChange(null);
+            return;
+          }
+
+          const range: DateRange = {
+            from: undefined,
+          };
+
+          if (start) {
+            range.from = start.toDate();
+          }
+
+          if (end) {
+            range.to = end.toDate();
+          }
+
+          onChange(range);
+        }}
       />
     ),
   };

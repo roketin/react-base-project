@@ -90,16 +90,10 @@ const SampleFormIndex = () => {
         filterItem.datepicker({
           id: 'date',
           label: t('filters.date.label'),
-          disabledDate: {
-            before: new Date(),
-          },
         }),
         filterItem.datepickerRange({
           id: 'date_multiple',
           label: t('filters.dateMultiple.label'),
-          disabledDate: {
-            before: new Date(),
-          },
         }),
         filterItem.switch({
           id: 'is_active',
