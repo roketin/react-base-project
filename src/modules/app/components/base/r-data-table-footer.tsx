@@ -1,5 +1,5 @@
 import RBtn from '@/modules/app/components/base/r-btn';
-import { RComboBox } from '@/modules/app/components/base/r-combobox';
+import RSelect from '@/modules/app/components/base/r-select';
 import {
   Pagination,
   PaginationContent,
@@ -9,12 +9,7 @@ import {
 import { cn } from '@/modules/app/libs/utils';
 import type { TApiResponsePaginateMeta } from '@/modules/app/types/api.type';
 import type { TDisableable } from '@/modules/app/types/component.type';
-import {
-  ChevronFirst,
-  ChevronLast,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 
 export type TRDataTableFooterProps = TDisableable & {
@@ -23,7 +18,12 @@ export type TRDataTableFooterProps = TDisableable & {
   onChange?: (data: Record<string, number | string>) => void;
 };
 
-const LIMIT_OPTIONS = [10, 20, 50, 100];
+const LIMIT_OPTIONS = [
+  { label: '10', value: 10 },
+  { label: '20', value: 20 },
+  { label: '50', value: 50 },
+  { label: '100', value: 100 },
+];
 
 /**
  * RDataTableFooter component - renders pagination controls and entry limit selector
@@ -148,7 +148,7 @@ const RDataTableFooter = ({
         'flex flex-col md:flex-row md:items-center md:justify-between mt-5',
       )}
     >
-      <div className='text-sm mb-4 text-center md:mb-0 flex items-center gap-3'>
+      <div className='text-sm mb-4 md:mb-0 flex items-center gap-3'>
         <div>
           {total
             ? `Showing ${showingFrom} to ${showingTo} of ${total} entries`
@@ -156,10 +156,8 @@ const RDataTableFooter = ({
         </div>
 
         <div className='w-[70px]'>
-          <RComboBox
-            items={LIMIT_OPTIONS}
-            clearable={false}
-            allowSearch={false}
+          <RSelect
+            options={LIMIT_OPTIONS}
             value={String(perPage)}
             onChange={(val) =>
               onChange?.({ page: 1, per_page: Number(val ?? perPage) })
@@ -170,7 +168,7 @@ const RDataTableFooter = ({
 
       <Pagination className='ml-auto w-auto'>
         <PaginationContent>
-          <RBtn
+          {/* <RBtn
             title='Go to First'
             size='icon'
             variant='ghost'
@@ -178,16 +176,16 @@ const RDataTableFooter = ({
             onClick={() => handleChangePage(1)}
           >
             <ChevronFirst size={20} />
-          </RBtn>
+          </RBtn> */}
 
           <RBtn
             title='Go to Previous'
-            size='icon'
-            variant='ghost'
+            variant='outline'
             disabled={!canGoPrev || disabled}
             onClick={() => handleChangePage(currentPage - 1)}
+            iconStart={<ChevronLeft size={20} />}
           >
-            <ChevronLeft size={20} />
+            Prev
           </RBtn>
 
           {showFirstPage && (
@@ -212,7 +210,7 @@ const RDataTableFooter = ({
             <PaginationItem key={page}>
               <RBtn
                 size='sm'
-                variant={page === currentPage ? 'default' : 'ghost'}
+                variant={page === currentPage ? 'default' : 'outline'}
                 className={cn('cursor-pointer', {
                   'pointer-events-none': currentPage === page,
                 })}
@@ -243,15 +241,15 @@ const RDataTableFooter = ({
 
           <RBtn
             title='Go to Next'
-            size='icon'
-            variant='ghost'
+            variant='outline'
             disabled={!canGoNext || disabled}
             onClick={() => handleChangePage(currentPage + 1)}
+            iconEnd={<ChevronRight size={20} />}
           >
-            <ChevronRight size={20} />
+            Next
           </RBtn>
 
-          <RBtn
+          {/* <RBtn
             title='Go to Last'
             size='icon'
             variant='ghost'
@@ -259,7 +257,7 @@ const RDataTableFooter = ({
             onClick={() => handleChangePage(pageCount)}
           >
             <ChevronLast size={20} />
-          </RBtn>
+          </RBtn> */}
         </PaginationContent>
       </Pagination>
     </div>

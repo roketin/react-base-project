@@ -1,17 +1,16 @@
 import { Input } from '@/modules/app/components/ui/input';
 import { Switch } from '@/modules/app/components/ui/switch';
 import { RCheckboxMultiple } from '@/modules/app/components/base/r-checkbox-multiple';
-import { RComboBox } from '@/modules/app/components/base/r-combobox';
-import { RMultiComboBox } from '@/modules/app/components/base/r-combobox-multiple';
+import RSelect from '@/modules/app/components/base/r-select';
+import type { DefaultOptionType } from 'rc-select/lib/Select';
 import { RPicker } from '@/modules/app/components/base/r-picker';
 import { RRangePicker } from '@/modules/app/components/base/r-range-picker';
 import { Slider } from '@/modules/app/components/ui/slider';
 import { RRadio } from '@/modules/app/components/base/r-radio';
-import type { RComboBoxProps } from '@/modules/app/components/base/r-combobox';
-import type { RMultiComboBoxProps } from '@/modules/app/components/base/r-combobox-multiple';
 import type { RPickerProps } from '@/modules/app/components/base/r-picker';
 import type { RRangePickerProps } from '@/modules/app/components/base/r-range-picker';
 import type { TInputProps } from '@/modules/app/components/ui/input';
+import type { TInputSize } from '@/modules/app/components/ui/variants/input-variants';
 import { type ComponentProps, type ReactNode } from 'react';
 import type { RRadioOption } from '@/modules/app/components/base/r-radio';
 import dayjs from 'dayjs';
@@ -75,7 +74,35 @@ export function filterInput({
   };
 }
 
-type TFilterComboBoxOptions<
+type SelectMode = 'single' | 'multiple';
+
+type FilterSelectValue<TMode extends SelectMode> = TMode extends 'multiple'
+  ? string[] | null
+  : string | null;
+
+type FilterSelectComponentProps<
+  TItem extends object | PrimitiveOption,
+  TLabel,
+  TValue,
+  TMode extends SelectMode,
+> = {
+  items?: TItem[];
+  labelKey?: TLabel;
+  valueKey?: TValue;
+  placeholder?: string;
+  clearable?: boolean;
+  allowSearch?: boolean;
+  searchValue?: string;
+  onSearch?: (query: string) => void;
+  loading?: boolean;
+  disabled?: boolean;
+  className?: string;
+  dropdownClassName?: string;
+  mode?: TMode;
+  density?: TInputSize;
+};
+
+type TFilterSelectOptions<
   TItem extends object | PrimitiveOption,
   TLabel extends TItem extends object
     ? keyof TItem
@@ -83,13 +110,14 @@ type TFilterComboBoxOptions<
   TValue extends TItem extends object
     ? keyof TItem
     : never = TItem extends object ? keyof TItem : never,
+  TMode extends SelectMode = 'single',
 > = FilterComponentOptions<
-  string | null,
-  RComboBoxProps<TItem, TLabel, TValue>,
-  'value' | 'onChange'
+  FilterSelectValue<TMode>,
+  FilterSelectComponentProps<TItem, TLabel, TValue, TMode>,
+  never
 >;
 
-export function filterComboBox<
+export function filterSelect<
   TItem extends object | PrimitiveOption,
   TLabel extends TItem extends object
     ? keyof TItem
@@ -97,57 +125,136 @@ export function filterComboBox<
   TValue extends TItem extends object
     ? keyof TItem
     : never = TItem extends object ? keyof TItem : never,
+  TMode extends SelectMode = 'single',
 >({
   id,
   label,
   defaultValue,
   ...props
-}: TFilterComboBoxOptions<TItem, TLabel, TValue>): TFilterItem<string | null> {
+}: TFilterSelectOptions<TItem, TLabel, TValue, TMode>): TFilterItem<
+  FilterSelectValue<TMode>
+> {
+  const {
+    items = [],
+    labelKey,
+    valueKey,
+    placeholder,
+    clearable = true,
+    allowSearch = true,
+    searchValue,
+    onSearch,
+    loading,
+    disabled,
+    dropdownClassName,
+    className,
+    mode,
+    ...restProps
+  } = props;
+
+  const selectMode = mode ?? 'single';
+  const isMultiple = selectMode === 'multiple';
+
+  const itemsAreObjects =
+    items.length > 0 &&
+    typeof items[0] === 'object' &&
+    items[0] !== null &&
+    !Array.isArray(items[0]);
+
+  const fieldNames = itemsAreObjects
+    ? {
+        label: String(labelKey ?? ('label' as TLabel)),
+        value: String(valueKey ?? ('value' as TValue)),
+      }
+    : undefined;
+
+  const selectOptions: DefaultOptionType[] = itemsAreObjects
+    ? (items as unknown as DefaultOptionType[])
+    : (items as PrimitiveOption[]).map((item) => {
+        const stringValue = String(item);
+        return {
+          label: stringValue,
+          value: stringValue,
+        } satisfies DefaultOptionType;
+      });
+
+  const optionFilterProp = fieldNames?.label ?? 'label';
+
   return {
     id,
     label,
     defaultValue: defaultValue ?? null,
     render: ({ value, onChange }) => (
-      <RComboBox
-        {...props}
-        value={value ?? null}
-        onChange={(nextValue) => onChange(nextValue)}
-      />
-    ),
-  };
-}
-
-type TFilterComboBoxMultipleOptions<
-  T extends object,
-  K extends keyof T,
-  V extends keyof T,
-> = FilterComponentOptions<
-  string[] | null,
-  RMultiComboBoxProps<T, K, V>,
-  'values' | 'onChange'
->;
-
-export function filterComboBoxMultiple<
-  T extends object,
-  K extends keyof T,
-  V extends keyof T,
->({
-  id,
-  label,
-  defaultValue,
-  ...props
-}: TFilterComboBoxMultipleOptions<T, K, V>): TFilterItem<string[] | null> {
-  return {
-    id,
-    label,
-    defaultValue: defaultValue ?? null,
-    render: ({ value, onChange }) => (
-      <RMultiComboBox
-        {...props}
-        values={value ?? []}
-        onChange={(nextValues) =>
-          onChange(nextValues.length > 0 ? nextValues : null)
+      <RSelect
+        {...restProps}
+        mode={isMultiple ? 'multiple' : undefined}
+        className={className}
+        dropdownClassName={dropdownClassName}
+        loading={loading}
+        disabled={disabled}
+        placeholder={placeholder}
+        allowClear={clearable}
+        showSearch={allowSearch}
+        searchValue={searchValue}
+        onSearch={onSearch}
+        options={selectOptions}
+        fieldNames={fieldNames}
+        optionFilterProp={optionFilterProp}
+        value={
+          isMultiple
+            ? ((value ?? []) as string[])
+            : ((value ?? undefined) as string | undefined)
         }
+        onChange={(nextValue) => {
+          if (isMultiple) {
+            const rawValues = Array.isArray(nextValue)
+              ? nextValue
+              : nextValue == null
+                ? []
+                : [nextValue];
+            const normalizedValues = rawValues
+              .filter((item) => item !== undefined && item !== null)
+              .map((item) => {
+                if (
+                  typeof item === 'object' &&
+                  item !== null &&
+                  'value' in item
+                ) {
+                  return String(
+                    (item as { value: string | number | undefined }).value ??
+                      '',
+                  );
+                }
+                return String(item);
+              })
+              .filter((val) => val !== '');
+
+            onChange(
+              (normalizedValues.length > 0
+                ? normalizedValues
+                : null) as FilterSelectValue<TMode>,
+            );
+            return;
+          }
+
+          if (nextValue === undefined || nextValue === null) {
+            onChange(null as FilterSelectValue<TMode>);
+            return;
+          }
+
+          const normalizedValue =
+            typeof nextValue === 'object' && 'value' in nextValue && nextValue
+              ? String(
+                  (nextValue as { value: string | number | undefined }).value ??
+                    '',
+                )
+              : String(nextValue);
+
+          onChange(
+            (normalizedValue === ''
+              ? null
+              : normalizedValue) as FilterSelectValue<TMode>,
+          );
+        }}
       />
     ),
   };
@@ -408,8 +515,7 @@ export function filterCustom<TValue>(
 
 export const filterItem = {
   input: filterInput,
-  combobox: filterComboBox,
-  comboboxMultiple: filterComboBoxMultiple,
+  select: filterSelect,
   switch: filterSwitch,
   radio: filterRadio,
   checkboxMultiple: filterCheckboxMultiple,
@@ -421,8 +527,7 @@ export const filterItem = {
 
 export type {
   TFilterInputOptions,
-  TFilterComboBoxOptions,
-  TFilterComboBoxMultipleOptions,
+  TFilterSelectOptions,
   TFilterSwitchOptions,
   TFilterRadioOptions,
   TFilterCheckboxMultipleOptions,
@@ -430,4 +535,5 @@ export type {
   TFilterDatepickerOptions,
   TFilterDatepickerMultipleOptions,
   CustomFilterOptions,
+  SelectMode,
 };

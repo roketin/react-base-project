@@ -45,6 +45,7 @@ export const RRangePicker = React.forwardRef<RangePickerRef, RRangePickerProps>(
         locale={pickerLocale}
         separator={<Minus size={14} />}
         format={format}
+        transitionName='slide-up'
         {...restProps}
       />
     );

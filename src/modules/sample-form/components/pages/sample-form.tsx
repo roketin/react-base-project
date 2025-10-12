@@ -71,7 +71,7 @@ const SampleFormIndex = () => {
           label: t('filters.keyword.label'),
           placeholder: t('filters.keyword.placeholder'),
         }),
-        filterItem.combobox({
+        filterItem.select({
           id: 'country',
           label: t('filters.country.label'),
           items: countries,
@@ -79,21 +79,24 @@ const SampleFormIndex = () => {
           valueKey: 'id',
           placeholder: t('filters.country.placeholder'),
         }),
-        filterItem.comboboxMultiple({
+        filterItem.select({
           id: 'countries',
           label: t('filters.countries.label'),
           items: countries,
           labelKey: 'name',
           valueKey: 'id',
+          mode: 'multiple',
           placeholder: t('filters.countries.placeholder'),
         }),
         filterItem.datepicker({
           id: 'date',
           label: t('filters.date.label'),
+          placeholder: t('filters.date.label'),
         }),
         filterItem.datepickerRange({
           id: 'date_multiple',
           label: t('filters.dateMultiple.label'),
+          placeholder: t('filters.dateMultiple.label'),
         }),
         filterItem.switch({
           id: 'is_active',

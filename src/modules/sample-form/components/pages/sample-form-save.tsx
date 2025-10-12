@@ -1,6 +1,4 @@
 import { RCheckboxMultiple } from '@/modules/app/components/base/r-checkbox-multiple';
-import { RComboBox } from '@/modules/app/components/base/r-combobox';
-import { RMultiComboBox } from '@/modules/app/components/base/r-combobox-multiple';
 import RFileUploader from '@/modules/app/components/base/r-file-uploader';
 import RForm from '@/modules/app/components/base/r-form';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
@@ -39,12 +37,6 @@ const formSchema = Yup.object().shape({
   input_format: Yup.string().default('').required().label('Input Format'),
   input_password: Yup.string().default('').required().label('Input Password'),
   input_number: Yup.number().default(0).min(0.0001).label('Input Number'),
-  select: Yup.string().default('').required().label('Select'),
-  select_multiple: Yup.array()
-    .of(Yup.string())
-    .default([])
-    .min(1)
-    .label('Select Multiple'),
   select_new: Yup.string().required().label('Select'),
   select_new_multiple: Yup.array()
     .of(Yup.string())
@@ -165,26 +157,6 @@ const TodoSave = () => {
           <RRadio options={items} layout='horizontal' className='mt-2' />
         </RFormField>
 
-        {/* Combobox */}
-        <RFormField
-          control={form.control}
-          name='select'
-          label='Combobox'
-          labelDescription='Legacy component, for the best experience use RSelect'
-        >
-          <RComboBox items={items} labelKey='label' valueKey='value' />
-        </RFormField>
-
-        {/* Combobox Multiple */}
-        <RFormField
-          control={form.control}
-          name='select_multiple'
-          label='Combobox Multiple'
-          labelDescription='Legacy component, for the best experience use RSelect'
-        >
-          <RMultiComboBox items={items} labelKey='label' valueKey='value' />
-        </RFormField>
-
         {/* New: Combobox */}
         <RFormField
           control={form.control}
@@ -192,15 +164,7 @@ const TodoSave = () => {
           label='Select'
           labelDescription='Updated Version'
         >
-          <RSelect
-            allowClear
-            showSearch
-            options={items}
-            fieldNames={{
-              label: 'label',
-              value: 'value',
-            }}
-          />
+          <RSelect allowClear showSearch options={items} />
         </RFormField>
 
         {/* New: Combobox */}
@@ -210,15 +174,7 @@ const TodoSave = () => {
           label='Select Multiple'
           labelDescription='Updated Version'
         >
-          <RSelect
-            allowClear
-            mode='multiple'
-            options={items}
-            fieldNames={{
-              label: 'label',
-              value: 'value',
-            }}
-          />
+          <RSelect allowClear mode='multiple' options={items} />
         </RFormField>
 
         {/* Switch */}
@@ -329,7 +285,7 @@ const TodoSave = () => {
       <RStickyWrapper position='top' offset={10} offsetElements='#app-header'>
         {(isSticky) => (
           <pre
-            className={cn('text-sm p-4', {
+            className={cn('text-sm p-4 overflow-auto', {
               'bg-primary/5 rounded border border-primary/20 shadow-md':
                 isSticky,
             })}

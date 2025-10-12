@@ -42,6 +42,7 @@ export const RPicker = React.forwardRef<PickerRef, RPickerProps>(
         generateConfig={generateConfig}
         locale={pickerLocale}
         format={format}
+        transitionName='slide-up'
         {...restProps}
       />
     );
