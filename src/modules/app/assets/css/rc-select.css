@@ -21,6 +21,12 @@
     @apply pointer-events-none opacity-60;
   }
 
+  &.rc-invalid {
+    .rc-select-selector {
+      @apply border-destructive ring-destructive/40;
+    }
+  }
+
   /* Selector Container (Input/Selected Items Wrapper) */
   .rc-select-selector {
     @apply relative flex w-full min-h-[2.3rem] border rounded shadow-md shadow-slate-100;

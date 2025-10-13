@@ -11,6 +11,12 @@
 /* Core Picker Container */
 .rc-picker {
   @apply inline-flex;
+
+  &.rc-invalid {
+    .rc-picker-input {
+      @apply border-destructive ring-destructive/40;
+    }
+  }
 }
 
 /* Right-to-Left (RTL) Support */

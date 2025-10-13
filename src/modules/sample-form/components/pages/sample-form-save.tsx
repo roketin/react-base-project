@@ -24,6 +24,7 @@ import { RInputFormat } from '@/modules/app/components/base/r-input-format';
 import RSelect from '@/modules/app/components/base/r-select';
 import { RFormDatePicker } from '@/modules/app/components/base/r-picker';
 import { RFormRangePicker } from '@/modules/app/components/base/r-range-picker';
+import { yupDateRangeRequired } from '@/modules/app/validators/date.validator';
 
 const formSchema = Yup.object().shape({
   checkbox_single: Yup.bool().default(false).label('Checkbox Single'),
@@ -48,12 +49,7 @@ const formSchema = Yup.object().shape({
   image: fileOrStringRule('Image').required().default(undefined),
   slider: Yup.array().of(Yup.number()).default([0]).label('Slider'),
   date_picker: Yup.date().required().label('Date Picker'),
-  date_picker_range: Yup.object({
-    from: Yup.date().required().label('From Date'),
-    to: Yup.date().required().label('To Date'),
-  })
-    .required()
-    .label('Date Picker Range'),
+  date_picker_range: yupDateRangeRequired('Date Picker Range'),
 });
 
 type TFormSchema = Yup.InferType<typeof formSchema>;

@@ -6,6 +6,7 @@ import locale from 'rc-picker/lib/locale/en_US';
 import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
 import type { RangePickerRef } from 'rc-picker/lib/interface';
 import { Minus } from 'lucide-react';
+import { cn } from '@/modules/app/libs/utils';
 
 dayjs.extend(weekOfYear);
 
@@ -33,6 +34,8 @@ export const RRangePicker = React.forwardRef<RangePickerRef, RRangePickerProps>(
       generateConfig = dayjsGenerateConfig,
       locale: pickerLocale = locale,
       format = 'DD-MM-YYYY',
+      className,
+      'aria-invalid': ariaInvalid,
       ...restProps
     } = props;
 
@@ -46,6 +49,7 @@ export const RRangePicker = React.forwardRef<RangePickerRef, RRangePickerProps>(
         separator={<Minus size={14} />}
         format={format}
         transitionName='slide-up'
+        className={cn({ 'rc-invalid': ariaInvalid }, className)}
         {...restProps}
       />
     );

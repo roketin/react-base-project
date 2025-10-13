@@ -4,6 +4,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import locale from 'rc-picker/lib/locale/en_US';
 import dayjsGenerateConfig from 'rc-picker/lib/generate/dayjs';
+import { cn } from '@/modules/app/libs/utils';
 
 dayjs.extend(weekOfYear);
 
@@ -31,6 +32,8 @@ export const RPicker = React.forwardRef<PickerRef, RPickerProps>(
       generateConfig = dayjsGenerateConfig,
       locale: pickerLocale = locale,
       format = 'DD-MM-YYYY',
+      className,
+      'aria-invalid': ariaInvalid,
       ...restProps
     } = props;
 
@@ -42,6 +45,7 @@ export const RPicker = React.forwardRef<PickerRef, RPickerProps>(
         generateConfig={generateConfig}
         locale={pickerLocale}
         format={format}
+        className={cn({ 'rc-invalid': ariaInvalid }, className)}
         transitionName='slide-up'
         {...restProps}
       />
@@ -83,9 +87,9 @@ export const RFormDatePicker: React.FC<RFormDatePickerProps> = ({
 
   return (
     <RPicker
-      {...rest}
       value={value ? dayjs(value) : null}
       onChange={handleChange}
+      {...rest}
     />
   );
 };

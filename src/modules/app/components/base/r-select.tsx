@@ -7,6 +7,7 @@ import type {
 import type { BaseSelectRef } from 'rc-select';
 import { forwardRef, type ReactElement, type Ref } from 'react';
 import { Check, ChevronsUpDown, LoaderCircle } from 'lucide-react';
+import { cn } from '@/modules/app/libs/utils';
 
 type OptionKey<Option extends BaseOptionType> = Extract<keyof Option, string>;
 
@@ -42,6 +43,8 @@ function RSelectBase<
     placeholder,
     menuItemSelectedIcon,
     suffixIcon,
+    'aria-invalid': ariaInvalid,
+    className,
     ...restProps
   } = props;
 
@@ -54,6 +57,7 @@ function RSelectBase<
   return (
     <Select<ValueType, OptionType>
       ref={ref}
+      className={cn({ 'rc-invalid': ariaInvalid }, className)}
       placeholder={placeholder ?? 'Choose..'}
       fieldNames={normalizedFieldNames}
       {...restProps}
