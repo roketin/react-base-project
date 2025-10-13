@@ -105,6 +105,7 @@ const TodoSave = () => {
     <>
       <div className='grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10'>
         <RForm
+          id='myFormId'
           form={form}
           onSubmit={handleSubmit}
           className='gap-4'
@@ -297,7 +298,7 @@ const TodoSave = () => {
       <RStickyWrapper position='bottom' offset={10}>
         {(isSticky) => (
           <div className={cn('wrapper-fly', { 'fly-active': isSticky })}>
-            <RBtn type='submit' iconStart={<Save />}>
+            <RBtn iconStart={<Save />} form='myFormId' type='submit'>
               Submit
             </RBtn>
           </div>

@@ -11,6 +11,7 @@ import type { UseFormReturn, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 export type TRFormProps<TFormValues extends FieldValues> = TDisableable & {
+  id?: string;
   form: UseFormReturn<TFormValues>;
   onSubmit: (values: TFormValues) => void | Promise<void>;
   layout?: TLayoutOrientation;
@@ -23,6 +24,7 @@ export type TRFormProps<TFormValues extends FieldValues> = TDisableable & {
 };
 
 const RForm = <TFormValues extends FieldValues>({
+  id,
   form,
   onSubmit,
   showErrorPopup,
@@ -74,7 +76,8 @@ const RForm = <TFormValues extends FieldValues>({
     <Form {...form}>
       <FormConfigContext.Provider value={providerValue}>
         <form
-          data-testid='form'
+          id={id}
+          data-testid={id}
           className={cn(
             'grid',
             spacing ? `gap-[${spacing}]` : 'gap-4',
