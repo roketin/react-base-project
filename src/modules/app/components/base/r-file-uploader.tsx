@@ -101,6 +101,8 @@ export type TRFileUploaderProps = {
   icon?: 'image' | 'music' | 'excel';
   compress?: boolean;
   onBlur?: () => void;
+  maxSizeMB?: number;
+  adaptiveThumbnail?: boolean;
 };
 
 type TRFileUploaderThumbsProps = {
@@ -119,6 +121,7 @@ type TRFileUploaderThumbsProps = {
   onPreview?: (file: File | string) => void;
   handleFileChange: (file: File | null) => void;
   handleFileRemove: () => void;
+  adaptiveThumbnail?: boolean;
 };
 
 /**
@@ -143,6 +146,7 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
       handleFileChange,
       handleFileRemove,
       icon,
+      adaptiveThumbnail,
     } = props;
 
     const fileRef = useRef<HTMLInputElement>(null);
@@ -236,6 +240,19 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
     const thumbnailContent = useMemo(() => {
       if (previewSrc) {
         if (isImagePreview) {
+          if (adaptiveThumbnail) {
+            return (
+              <img
+                src={previewSrc}
+                alt={fileName ?? 'preview'}
+                className={cn('max-h-[400px] w-auto mx-auto', {
+                  'object-cover': thumbnailSize === 'cover',
+                  'object-contain': thumbnailSize === 'contain',
+                })}
+              />
+            );
+          }
+
           return (
             <img
               src={previewSrc}
@@ -262,7 +279,11 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
       return (
         <div className='flex h-full items-center justify-center gap-2'>
           {ICON_MAP[icon]}
-          {!disabledUpload && <div className='text-sm'>Choose File...</div>}
+          {!disabledUpload && (
+            <div className='text-sm text-gray-600'>
+              Drag &amp; drop file here or click to upload
+            </div>
+          )}
         </div>
       );
     }, [
@@ -274,12 +295,19 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
       height,
       thumbnailSize,
       width,
+      adaptiveThumbnail,
     ]);
 
     return (
       <div style={{ width }}>
         <div
-          style={{ width, height }}
+          style={
+            adaptiveThumbnail
+              ? previewSrc
+                ? { width }
+                : { width, height }
+              : { width, height }
+          }
           role='presentation'
           onClick={handleFileClick}
           onDragOver={handleDragOver}
@@ -335,8 +363,6 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
   },
 );
 
-RFileThumbnail.displayName = 'RFileThumbnail';
-
 /**
  * RFileUploader component manages the file upload state,
  * including compression, validation, and rendering the thumbnail component.
@@ -348,7 +374,7 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
       accept = DEFAULT_EXT.IMAGES,
       value = null,
       width = '100%',
-      height = '150px',
+      height = '100px',
       disabledUpload = false,
       disabledDelete = false,
       onRemove,
@@ -358,6 +384,8 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
       icon = 'image',
       compress = true,
       onBlur,
+      maxSizeMB = 1,
+      adaptiveThumbnail = true,
     } = props;
 
     const [file, setFile] = useState<File | null>(null);
@@ -461,12 +489,14 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
           onPreview={onPreview}
           handleFileChange={handleFileChange}
           handleFileRemove={handleFileRemove}
+          adaptiveThumbnail={adaptiveThumbnail}
         />
+        <div className='mt-2 text-xs text-gray-500'>
+          Allowed extensions: {accept.join(', ')} | Max size: {maxSizeMB}MB
+        </div>
       </div>
     );
   },
 );
-
-RFileUploader.displayName = 'RFileUploader';
 
 export default RFileUploader;
