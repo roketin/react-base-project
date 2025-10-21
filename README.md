@@ -152,8 +152,9 @@ pnpm roketin module-child reporting/summary
    - `Standard`: Generates pages, routes, locale stub, types, and services (the default set).
    - `All folders`: Scaffolds every supported artifact (hooks, contexts, stores, etc.).
    - `Custom`: Lets you pick specific file types via a checkbox prompt.
-4. **Child Routes:** For nested paths, the CLI asks if the final segment should be treated as a child route. Child routes produce `.routes.child.tsx` files and include comments reminding you to mount them manually.
-5. **Idempotent Files:** Existing files are never overwritten—skipped items are logged for visibility.
+4. **Child Routes & Auto-Linking:** For nested paths, the CLI asks if the final segment should be treated as a child route. Child routes produce `.routes.child.tsx` files **and the generator automatically imports/spreads them inside the parent route file** (including grandparents, recursively). If you already customized the parent route structure, skim the resulting diff to confirm the insertion landed where you expect.
+5. **Auto-Scaffold Parents:** When a parent route file is missing (e.g., you run `pnpm roketin module-child master-data/sales` before `master-data` exists), the CLI now creates a lightweight parent route scaffold so children can safely attach. Only the route container is generated—no placeholder page component—leaving you in control of actual page content.
+6. **Idempotent Files:** Existing files are never overwritten unless you opted in at the overwrite prompt. Skipped items are logged for visibility.
 
 ### Generated Artifacts
 
@@ -166,7 +167,7 @@ Depending on your selections, the generator can produce:
 - `types/<feature>.type.ts` – Type definitions scaffold.
 - Optional extras: hooks, contexts, stores, libs, constants, etc.
 
-> Tip: When you scaffold a child route, remember to import and nest it inside the parent route’s `children` list.
+All generated route containers ship with a `handle.breadcrumbOptions.disabled` flag. This keeps parent breadcrumbs (e.g., “Master Data”) displayed but non-clickable until you intentionally enable navigation for them.
 
 ---
 

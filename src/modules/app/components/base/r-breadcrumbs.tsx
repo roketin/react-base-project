@@ -40,11 +40,12 @@ export function RBreadcrumbs() {
 
     const isLast = i === filteredMatches.length - 1;
     const isOnly = filteredMatches.length === 1;
+    const isDisabled = Boolean(match.handle?.breadcrumbOptions?.disabled);
 
     return (
       <Fragment key={i}>
         <BreadcrumbItem>
-          {!isLast && !isOnly ? (
+          {!isLast && !isOnly && !isDisabled ? (
             <Link
               to={match.pathname}
               className='hover:underline hover:text-primary'
@@ -52,7 +53,15 @@ export function RBreadcrumbs() {
               {label}
             </Link>
           ) : (
-            <span className='text-primary'>{label}</span>
+            <span
+              className={
+                isLast || isOnly
+                  ? 'text-primary'
+                  : 'text-muted-foreground cursor-default'
+              }
+            >
+              {label}
+            </span>
           )}
         </BreadcrumbItem>
         {!isLast && <BreadcrumbSeparator className='hidden md:block' />}

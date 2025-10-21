@@ -27,6 +27,9 @@ export type TAppRouteObject = Omit<RouteObject, 'children' | 'handle'> & {
   name?: string;
   handle?: {
     breadcrumb?: TBreadcrumbHandle;
+    breadcrumbOptions?: {
+      disabled?: boolean;
+    };
     isRequiredAuth?: boolean;
     permissions?: TPermission[];
     title?: TLocale;

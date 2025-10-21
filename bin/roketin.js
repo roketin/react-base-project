@@ -30,13 +30,28 @@ export default ${capitalize(moduleName)}Index
     folder: 'routes',
     getFileName: ({ moduleName, isChild }) =>
       `${kebabCase(moduleName)}.routes${isChild ? '.child' : ''}.tsx`,
-    getContent: ({ moduleName, moduleParts, isChild, filePath, overwrite }) => {
+    getContent: ({
+      moduleName,
+      moduleParts,
+      isChild,
+      filePath,
+      overwrite,
+      autoScaffold,
+    }) => {
       const parentRoutePathEstimate = path.join(
         moduleParts.length > 1 ? '../..' : '.',
         kebabCase(moduleParts[0]),
         'routes',
         `${kebabCase(moduleParts[0])}.routes.tsx`,
       );
+
+      if (autoScaffold) {
+        return createScaffoldRouteContent({
+          moduleName,
+          moduleParts,
+          isChild,
+        });
+      }
 
       const routeConfig = createRouteConfig(moduleName, isChild, moduleParts);
 
@@ -418,6 +433,21 @@ function generateArtifacts({
     console.log(`${existed ? '🟣 Overwritten' : '🟢 Created'}: ${filePath}`);
 
     if (type === 'route' && isChild) {
+      const ancestorScaffolds = ensureAncestorRouteScaffolds({
+        moduleParts,
+        overwrite,
+      });
+
+      ancestorScaffolds
+        .filter((scaffold) => scaffold.isChild)
+        .forEach((scaffold) => {
+          injectChildRoutesIntoParent({
+            moduleName: scaffold.moduleName,
+            moduleParts: scaffold.moduleParts,
+            childRouteFilePath: scaffold.routeFilePath,
+          });
+        });
+
       injectChildRoutesIntoParent({
         moduleName,
         moduleParts,
@@ -441,6 +471,80 @@ function writeFile(filePath, content, overwrite) {
 
   fs.writeFileSync(filePath, content);
   return true;
+}
+
+/**
+ * Ensures that all ancestor modules in the provided path have a route scaffold.
+ * Creates missing parent route files (and their index pages) so child routes can attach safely.
+ * @param {{ moduleParts: string[], overwrite: boolean }} params - Parameters containing module hierarchy.
+ */
+function ensureAncestorRouteScaffolds({ moduleParts, overwrite }) {
+  const scaffolds = [];
+  for (let depth = 1; depth < moduleParts.length; depth += 1) {
+    const ancestorParts = moduleParts.slice(0, depth);
+    const scaffold = ensureRouteScaffold({
+      moduleParts: ancestorParts,
+      overwrite,
+    });
+    if (scaffold) {
+      scaffolds.push(scaffold);
+    }
+  }
+  return scaffolds;
+}
+
+/**
+ * Creates a lightweight route scaffold for the specified module parts when missing.
+ * Respects existing files and never overwrites unless explicitly allowed.
+ * @param {{ moduleParts: string[], overwrite: boolean }} params - Scaffold parameters.
+ */
+function ensureRouteScaffold({ moduleParts, overwrite }) {
+  const moduleName = moduleParts.at(-1);
+  if (!moduleName) {
+    return null;
+  }
+
+  const isChild = moduleParts.length > 1;
+  const basePath = buildModuleBasePath(moduleParts);
+  ensureDirExists(basePath);
+
+  const routeConfig = TYPE_CONFIGS.route;
+  const routeContext = {
+    moduleName,
+    moduleParts,
+    isChild,
+    basePath,
+    overwrite,
+  };
+
+  const routesDir = path.join(basePath, routeConfig.folder);
+  ensureDirExists(routesDir);
+
+  const routeFileName = routeConfig.getFileName(routeContext);
+  const routeFilePath = path.join(routesDir, routeFileName);
+
+  let routeCreated = false;
+
+  if (!fs.existsSync(routeFilePath)) {
+    const content = routeConfig.getContent({
+      ...routeContext,
+      filePath: routeFilePath,
+      autoScaffold: true,
+    });
+    if (typeof content === 'string') {
+      fs.writeFileSync(routeFilePath, content);
+      console.log(`🟢 Created parent route scaffold: ${routeFilePath}`);
+      routeCreated = true;
+    }
+  }
+
+  return {
+    moduleParts,
+    moduleName,
+    isChild,
+    routeFilePath,
+    routeCreated,
+  };
 }
 
 /**
@@ -538,6 +642,55 @@ function injectChildRoutesIntoParent({
  * @param {string[]} moduleParts - Array of module path segments.
  * @returns {string} Route configuration code as a string.
  */
+function createRouteTemplateParts(finalModuleName, isChild, moduleParts) {
+  const routePath = getRoutePath(finalModuleName, isChild, moduleParts);
+  const pathComment = isChild
+    ? '// Child route path uses only the segment name, as it is nested within a parent route.'
+    : `// Standalone route path uses the full segment path for flat registration: "${routePath}".`;
+
+  return { routePath, pathComment };
+}
+
+function getRoutePath(finalModuleName, isChild, moduleParts) {
+  return isChild
+    ? kebabCase(finalModuleName)
+    : moduleParts.map((part) => kebabCase(part)).join('/');
+}
+
+function createScaffoldRouteContent({ moduleName, moduleParts, isChild }) {
+  const { routePath, pathComment } = createRouteTemplateParts(
+    moduleName,
+    isChild,
+    moduleParts,
+  );
+  const exportName = isChild
+    ? `${camelCase(moduleName)}ChildRoutes`
+    : `${camelCase(moduleName)}Routes`;
+  const childNotice = isChild
+    ? `// This is a CHILD ROUTE.\n// The generator tries to link it into the parent route automatically.\n// Please double-check the parent route file if the structure is customized.\n\n`
+    : '';
+
+  return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
+import { Outlet } from "react-router-dom";
+
+${childNotice}export const ${exportName} = createAppRoutes([
+  {
+    path: "${routePath}", ${pathComment}
+    element: <Outlet />,
+    handle: {
+      breadcrumb: "${capitalize(moduleName)}",
+      breadcrumbOptions: {
+        disabled: true,
+      },
+    },
+    children: [
+      // Add other child routes here if needed
+    ],
+  },
+]);
+`;
+}
+
 function createRouteConfig(finalModuleName, isChild, moduleParts) {
   const componentImport = `${capitalize(finalModuleName)}Index`;
 
@@ -564,6 +717,9 @@ function createRouteConfig(finalModuleName, isChild, moduleParts) {
     element: <Outlet />,
     handle: {
       breadcrumb: "${capitalize(finalModuleName)}",
+      breadcrumbOptions: {
+        disabled: true,
+      },
     },
     children: [${indexRoute}
     ],

@@ -26,7 +26,6 @@ export const APP_SIDEBAR_MENUS: TSidebarMenu[] = [
   {
     title: 'sampleForm:title',
     icon: ListCheck,
-    name: '',
     permission: 'SAMPLE_FORM_VIEW',
     children: [
       {

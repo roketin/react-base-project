@@ -105,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       for (const menu of menus) {
         const key = menu.name ?? menu.title;
         if ((menu.children && menu.children.length > 0) || !key) {
-          if (isMenuActive(menu)) {
+          if (isMenuActive(menu) && key) {
             activeKeys.add(key);
           }
           if (menu.children) {
@@ -117,17 +117,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     collectActive(accessibleMenus);
 
     setOpenMap((prev) => {
-      const next = { ...prev };
-      let changed = false;
+      const next: Record<string, boolean> = {};
       activeKeys.forEach((key) => {
-        if (next[key] === undefined) {
-          next[key] = true;
-          changed = true;
-        }
+        next[key] = true;
       });
-      return changed ? next : prev;
+
+      const prevKeys = Object.keys(prev);
+      const nextKeys = Object.keys(next);
+
+      if (
+        prevKeys.length === nextKeys.length &&
+        prevKeys.every((key) => next[key] === prev[key])
+      ) {
+        return prev;
+      }
+
+      return next;
     });
-  }, [accessibleMenus, isMenuActive]);
+  }, [accessibleMenus, isMenuActive, location.pathname]);
 
   const toggleMenu = (key: string) => {
     setOpenMap((prev) => ({ ...prev, [key]: !prev[key] }));
