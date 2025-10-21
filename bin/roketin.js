@@ -46,8 +46,8 @@ import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(modu
 import { Outlet } from "react-router-dom";
 
 // This is a CHILD ROUTE.
-// It will not be automatically registered. You must import and nest it within a Parent Route
-// (e.g., in ${parentRoutePathEstimate}) manually.
+// The generator tries to link it into the parent route automatically.
+// Please double-check ${parentRoutePathEstimate} if the parent structure is customized.
 
 export const ${camelCase(moduleName)}ChildRoutes = createAppRoutes(${routeConfig});
 `;
@@ -62,9 +62,8 @@ import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(modu
 import { Outlet } from "react-router-dom";
 // import { ${camelCase(moduleName)}ChildRoutes } from "./${kebabCase(moduleName)}.routes.child"; // Example Child Route
 
-// To register child routes, add the child route elements to the 'children' array below.
-// Example: { path: "settings", children: ${camelCase(moduleName)}ChildRoutes }
-// Note: If this is a nested route, ensure you have correctly embedded it in the root router.
+// Child routes generated with \`pnpm roketin module-child\` are auto-linked into this file when possible.
+// Verify the registration below if you heavily customized the route structure.
 
 export const ${camelCase(moduleName)}Routes = createAppRoutes(${routeConfig});
 `;
@@ -419,11 +418,11 @@ function generateArtifacts({
     console.log(`${existed ? '🟣 Overwritten' : '🟢 Created'}: ${filePath}`);
 
     if (type === 'route' && isChild) {
-      console.log(
-        `🔵 Reminder: register ${camelCase(
-          moduleName,
-        )}ChildRoutes inside the parent route's children array.`,
-      );
+      injectChildRoutesIntoParent({
+        moduleName,
+        moduleParts,
+        childRouteFilePath: filePath,
+      });
     }
   });
 }
@@ -442,6 +441,93 @@ function writeFile(filePath, content, overwrite) {
 
   fs.writeFileSync(filePath, content);
   return true;
+}
+
+/**
+ * Automatically links a generated child route file into its parent route module.
+ * Adds the import statement and spreads the child routes inside the parent's children array.
+ * Falls back gracefully if the parent route file cannot be found or already contains the link.
+ * @param {object} params - Injection parameters.
+ * @param {string} params.moduleName - The current (child) module name.
+ * @param {string[]} params.moduleParts - The full path parts for the child module.
+ * @param {string} params.childRouteFilePath - Absolute path to the generated child route file.
+ */
+function injectChildRoutesIntoParent({
+  moduleName,
+  moduleParts,
+  childRouteFilePath,
+}) {
+  if (moduleParts.length < 2) {
+    console.log(
+      '🔵 Skipped auto-link: no parent module detected for child route.',
+    );
+    return;
+  }
+
+  const parentParts = moduleParts.slice(0, -1);
+  const parentBasePath = buildModuleBasePath(parentParts);
+  const parentRouteDir = path.join(parentBasePath, 'routes');
+  const parentRouteFileBase = kebabCase(parentParts.at(-1));
+  const candidateFiles = [
+    path.join(parentRouteDir, `${parentRouteFileBase}.routes.tsx`),
+    path.join(parentRouteDir, `${parentRouteFileBase}.routes.child.tsx`),
+  ];
+  const parentRouteFilePath = candidateFiles.find((candidate) =>
+    fs.existsSync(candidate),
+  );
+
+  if (!parentRouteFilePath) {
+    console.log(
+      `🔶 Skipped auto-link: parent route file not found. Looked in ${candidateFiles.join(
+        ', ',
+      )}`,
+    );
+    return;
+  }
+
+  const routeDir = path.dirname(parentRouteFilePath);
+  const relativePathToChild = path.relative(routeDir, childRouteFilePath);
+  const normalizedRelativePath = normalizeImportPath(relativePathToChild);
+
+  const childRoutesIdentifier = `${camelCase(moduleName)}ChildRoutes`;
+  const importStatement = `import { ${childRoutesIdentifier} } from "${normalizedRelativePath}";`;
+
+  let parentContent = fs.readFileSync(parentRouteFilePath, 'utf8');
+  let updated = false;
+
+  if (
+    !includesImport(
+      parentContent,
+      childRoutesIdentifier,
+      normalizedRelativePath,
+    )
+  ) {
+    parentContent = insertImportStatement(parentContent, importStatement);
+    updated = true;
+  }
+
+  if (!parentContent.includes(`...${childRoutesIdentifier}`)) {
+    const injectedContent = insertChildSpreadIntoParent({
+      source: parentContent,
+      childIdentifier: childRoutesIdentifier,
+      parentParts,
+    });
+
+    if (injectedContent !== parentContent) {
+      parentContent = injectedContent;
+      updated = true;
+    }
+  }
+
+  if (!updated) {
+    console.log(
+      `🔵 Skipped auto-link: ${childRoutesIdentifier} already registered in ${parentRouteFilePath}`,
+    );
+    return;
+  }
+
+  fs.writeFileSync(parentRouteFilePath, parentContent);
+  console.log(`🟢 Linked child routes in ${parentRouteFilePath}`);
 }
 
 /**
@@ -483,6 +569,187 @@ function createRouteConfig(finalModuleName, isChild, moduleParts) {
     ],
   },
 ]`;
+}
+
+/**
+ * Normalizes a relative path for import usage inside TypeScript files.
+ * Ensures POSIX separators and removes file extensions.
+ * @param {string} relativePath - Raw relative path from parent to child file.
+ * @returns {string} Normalized path suitable for import statements.
+ */
+function normalizeImportPath(relativePath) {
+  let formatted = relativePath.replace(/\.[tj]sx?$/, '');
+  formatted = formatted.split(path.sep).join('/');
+  if (!formatted.startsWith('.')) {
+    formatted = `./${formatted}`;
+  }
+  return formatted;
+}
+
+/**
+ * Checks whether a specific import statement already exists for a child route.
+ * @param {string} source - File content to inspect.
+ * @param {string} identifier - Imported identifier name.
+ * @param {string} importPath - Import path string.
+ * @returns {boolean} True if an equivalent import already exists.
+ */
+function includesImport(source, identifier, importPath) {
+  const importRegex = new RegExp(
+    `import\\s*\\{[^}]*\\b${identifier}\\b[^}]*\\}\\s*from\\s*["']${importPath}["'];?`,
+  );
+  return importRegex.test(source);
+}
+
+/**
+ * Inserts an import statement after the last existing import block.
+ * @param {string} source - Original file content.
+ * @param {string} importStatement - Import statement to inject.
+ * @returns {string} Updated file content.
+ */
+function insertImportStatement(source, importStatement) {
+  const lines = source.split('\n');
+  let lastImportIndex = -1;
+
+  for (let i = 0; i < lines.length; i += 1) {
+    if (/^\s*import\b/.test(lines[i])) {
+      lastImportIndex = i;
+    }
+  }
+
+  if (lastImportIndex === -1) {
+    return `${importStatement}\n${source}`;
+  }
+
+  lines.splice(lastImportIndex + 1, 0, importStatement);
+  return lines.join('\n');
+}
+
+/**
+ * Inserts the spread of child routes into the correct children array of the parent route.
+ * Prefers the placeholder comment inserted by the generator; falls back to structural parsing.
+ * @param {object} params - Parameters for insertion.
+ * @param {string} params.source - Current parent route file content.
+ * @param {string} params.childIdentifier - Identifier of the child routes array.
+ * @param {string[]} params.parentParts - Module parts representing the parent path.
+ * @returns {string} Updated file content with spread inserted when possible.
+ */
+function insertChildSpreadIntoParent({ source, childIdentifier, parentParts }) {
+  const commentMarker = '// Add other child routes here if needed';
+  if (source.includes(commentMarker)) {
+    const commentIndex = source.indexOf(commentMarker);
+    const lineStart = source.lastIndexOf('\n', commentIndex) + 1;
+    const indentation = source.slice(lineStart, commentIndex).match(/^\s*/) ?? [
+      '    ',
+    ];
+
+    const insertion = `${indentation[0]}...${childIdentifier},\n`;
+    return (
+      source.slice(0, commentIndex) + insertion + source.slice(commentIndex)
+    );
+  }
+
+  const possiblePaths = new Set();
+  const joinedParentPath = parentParts.map((part) => kebabCase(part)).join('/');
+
+  if (joinedParentPath) {
+    possiblePaths.add(joinedParentPath);
+  }
+
+  const lastParentSegment = parentParts.at(-1);
+  if (lastParentSegment) {
+    possiblePaths.add(kebabCase(lastParentSegment));
+  }
+
+  const targetLocation = findChildrenInsertionPoint(source, possiblePaths);
+  if (!targetLocation) {
+    console.log(
+      '🔶 Skipped auto-link: unable to locate a children array in parent route file.',
+    );
+    return source;
+  }
+
+  const { insertionIndex, itemIndent, closingIndent } = targetLocation;
+  const spreadLine = `\n${itemIndent}...${childIdentifier},\n${closingIndent}`;
+
+  return (
+    source.slice(0, insertionIndex) + spreadLine + source.slice(insertionIndex)
+  );
+}
+
+/**
+ * Finds the insertion point before the closing bracket of the relevant children array.
+ * Attempts to scope the search to route objects matching the provided path hints.
+ * @param {string} source - Parent route file content.
+ * @param {Set<string>} paths - Possible path string literals identifying the parent route object.
+ * @returns {{ insertionIndex: number, itemIndent: string, closingIndent: string } | null}
+ *          Object containing the position and indentation details, or null if not found.
+ */
+function findChildrenInsertionPoint(source, paths) {
+  let searchIndex = -1;
+
+  for (const routePath of paths) {
+    const candidateIndex = source.indexOf(`path: "${routePath}"`);
+    if (candidateIndex !== -1) {
+      searchIndex = candidateIndex;
+      break;
+    }
+  }
+
+  if (searchIndex === -1) {
+    searchIndex = source.indexOf('children');
+    if (searchIndex === -1) {
+      return null;
+    }
+  }
+
+  const childrenIndex = source.indexOf('children', searchIndex);
+  if (childrenIndex === -1) {
+    return null;
+  }
+
+  const bracketStart = source.indexOf('[', childrenIndex);
+  if (bracketStart === -1) {
+    return null;
+  }
+
+  let depth = 1;
+  let cursor = bracketStart + 1;
+  while (cursor < source.length && depth > 0) {
+    const char = source[cursor];
+    if (char === '[') {
+      depth += 1;
+    } else if (char === ']') {
+      depth -= 1;
+    }
+    cursor += 1;
+  }
+
+  if (depth !== 0) {
+    return null;
+  }
+
+  const insertionIndex = cursor - 1;
+
+  const childrenLineStart = source.lastIndexOf('\n', childrenIndex) + 1;
+  const childrenLineEnd = source.indexOf('\n', childrenIndex);
+  const childrenLine =
+    childrenLineEnd === -1
+      ? source.slice(childrenLineStart)
+      : source.slice(childrenLineStart, childrenLineEnd);
+  const baseIndentMatch = childrenLine.match(/^\s*/);
+  const baseIndent = baseIndentMatch ? baseIndentMatch[0] : '    ';
+
+  const arrayBody = source.slice(bracketStart + 1, insertionIndex);
+  const itemIndentMatch = arrayBody.match(/\n(\s*)\S/);
+  const itemIndent = itemIndentMatch ? itemIndentMatch[1] : `${baseIndent}  `;
+
+  const closingLineStart = source.lastIndexOf('\n', insertionIndex - 1) + 1;
+  const closingIndentMatch = source
+    .slice(closingLineStart, insertionIndex)
+    .match(/^\s*/) ?? [baseIndent];
+  const closingIndent = closingIndentMatch[0];
+
+  return { insertionIndex, itemIndent, closingIndent };
 }
 
 /**
