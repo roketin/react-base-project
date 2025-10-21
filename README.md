@@ -140,8 +140,11 @@ pnpm roketin module reporting
 # Create a nested module (prompts whether it should be treated as a child route)
 pnpm roketin module reporting/summary
 
-# Force explicit child route generation
+# Force explicit child route generation via the legacy alias
 pnpm roketin module-child reporting/summary
+
+# Inspect registered generators, presets, and restricted modules
+pnpm roketin info
 ```
 
 ### Workflow
@@ -168,6 +171,51 @@ Depending on your selections, the generator can produce:
 - Optional extras: hooks, contexts, stores, libs, constants, etc.
 
 All generated route containers ship with a `handle.breadcrumbOptions.disabled` flag. This keeps parent breadcrumbs (e.g., “Master Data”) displayed but non-clickable until you intentionally enable navigation for them.
+
+---
+
+## 🍞 Breadcrumbs
+
+Routes can drive breadcrumbs through the `handle` property, and components can register dynamic labels with a lightweight hook.
+
+### Route configuration
+
+```tsx
+export const productsRoutes = createAppRoutes([
+  {
+    path: 'products/:sku',
+    element: <ProductDetail />,
+    handle: {
+      breadcrumb: (match) => ({
+        type: 'product',
+        id: match.params.sku ?? '',
+      }),
+      breadcrumbOptions: {
+        disabled: false,
+        hide: false,
+      },
+    },
+  },
+]);
+```
+
+- `breadcrumb` accepts either a translation key/string or a function returning `{ type, id }` for resolver-based labels.
+- `breadcrumbOptions.disabled` keeps the crumb visible but non-clickable.
+- `breadcrumbOptions.hide` removes the crumb entirely.
+
+### Component resolver hook
+
+```tsx
+import { useBreadcrumbLabel } from '@/modules/app/hooks/use-breadcrumb-resolver';
+
+export default function ProductDetail({ sku }: { sku: string }) {
+  useBreadcrumbLabel('product', (id) => productCache[id]?.name ?? id);
+
+  return <ProductDetailView sku={sku} />;
+}
+```
+
+`useBreadcrumbLabel(type, resolver)` registers the resolver while the component is mounted and cleans it up automatically. Call `useResetBreadcrumbResolvers()` when leaving a flow that should clear every resolver.
 
 ---
 

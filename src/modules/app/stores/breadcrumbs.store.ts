@@ -3,7 +3,7 @@ import { create } from 'zustand';
 
 export type ResolverFn = (id: string) => string | undefined;
 
-export type BreadcrumbType = 'user' | 'account' | 'product' | 'order';
+export type BreadcrumbType = string;
 
 export type TBreadcrumbs = {
   resolvers: Partial<Record<BreadcrumbType, ResolverFn>>;

@@ -11,6 +11,7 @@ import type { RouteObject } from 'react-router-dom';
  */
 export type TBreadcrumbHandle =
   | TLocale
+  | string
   | ((match: {
       params: Record<string, string | undefined>;
       data?: unknown;
@@ -29,6 +30,7 @@ export type TAppRouteObject = Omit<RouteObject, 'children' | 'handle'> & {
     breadcrumb?: TBreadcrumbHandle;
     breadcrumbOptions?: {
       disabled?: boolean;
+      hide?: boolean;
     };
     isRequiredAuth?: boolean;
     permissions?: TPermission[];

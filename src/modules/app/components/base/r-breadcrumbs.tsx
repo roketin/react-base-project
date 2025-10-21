@@ -20,7 +20,9 @@ export function RBreadcrumbs() {
   const resolvers = useBreadcrumbStore((s) => s.resolvers);
   const { t } = useTranslation('dashboard');
 
-  const filteredMatches = matches.filter((m) => m.handle?.breadcrumb);
+  const filteredMatches = matches.filter(
+    (m) => m.handle?.breadcrumb && !m.handle?.breadcrumbOptions?.hide,
+  );
 
   const crumbs = filteredMatches.map((match, i) => {
     const bc = match.handle!.breadcrumb!;
