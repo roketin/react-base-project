@@ -22,10 +22,6 @@ export type TRoketinSidebarSettings = {
 
 export type TRoketinThemeConfig = {
   appearance?: 'light' | 'dark' | 'system';
-  sidebar?: {
-    variant?: 'sidebar' | 'floating' | 'inset';
-    width?: number;
-  };
   [key: string]: unknown;
 };
 

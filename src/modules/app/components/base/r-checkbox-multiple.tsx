@@ -15,16 +15,6 @@ type TCheckboxMultipleProps = TDisableable & {
   className?: string;
 };
 
-/**
- * RCheckboxMultiple component renders a group of checkboxes allowing multiple selections.
- *
- * @param {Object} props - Component properties
- * @param {Array} props.options - Array of checkbox options with label and value
- * @param {Array} [props.checked] - Array of currently checked values
- * @param {Function} [props.onCheckedChange] - Callback invoked when checked values change
- * @param {boolean} [props.disabled] - Disable all checkboxes if true
- * @param {'horizontal'|'vertical'} [props.layout='horizontal'] - Layout direction of checkboxes
- */
 export function RCheckboxMultiple({
   options,
   checked,

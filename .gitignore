@@ -25,3 +25,4 @@ dist-ssr
 
 coverage
 src/@types/i18next.d.ts
+storybook-static/

@@ -16,7 +16,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import RBtn from '@/modules/app/components/base/r-btn';
-import { AlertTriangle, Save } from 'lucide-react';
+import { Save } from 'lucide-react';
 import RStickyWrapper from '@/modules/app/components/base/r-sticky-wrapper';
 import { cn } from '@/modules/app/libs/utils';
 import type { MaskitoOptions } from '@maskito/core';
@@ -25,6 +25,7 @@ import RSelect from '@/modules/app/components/base/r-select';
 import { RFormDatePicker } from '@/modules/app/components/base/r-picker';
 import { RFormRangePicker } from '@/modules/app/components/base/r-range-picker';
 import { yupDateRangeRequired } from '@/modules/app/validators/date.validator';
+import SampleStepper from '@/modules/sample-form/components/elements/sample-stepper';
 
 const formSchema = Yup.object().shape({
   checkbox_single: Yup.bool().default(false).label('Checkbox Single'),
@@ -103,6 +104,8 @@ const TodoSave = () => {
 
   return (
     <>
+      <SampleStepper />
+
       <div className='grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10'>
         <RForm
           id='myFormId'
@@ -112,31 +115,6 @@ const TodoSave = () => {
           labelWidth='200px'
           showErrorPopup
         >
-          <RStickyWrapper
-            position='top'
-            offset={10}
-            offsetElements='#app-header'
-          >
-            {(isSticky) => (
-              <div
-                className={cn('wrapper-fly text-sm flex gap-3 mb-4', {
-                  'fly-active text-primary': isSticky,
-                })}
-              >
-                <AlertTriangle
-                  className='flex-none relative top-0.5'
-                  size={20}
-                />
-                <div className='flex-1'>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Veritatis illo voluptatem hic nam facilis voluptatum possimus
-                  illum ipsum eligendi at, facere accusamus minus explicabo iure
-                  aspernatur praesentium consectetur atque quas?
-                </div>
-              </div>
-            )}
-          </RStickyWrapper>
-
           {/* Checkbox Single */}
           <RFormField
             control={form.control}
@@ -281,23 +259,18 @@ const TodoSave = () => {
           </RFormField>
         </RForm>
 
-        <RStickyWrapper position='top' offset={10} offsetElements='#app-header'>
-          {(isSticky) => (
-            <pre
-              className={cn('text-sm p-4 overflow-auto', {
-                'bg-primary/5 rounded border border-primary/20 shadow-md':
-                  isSticky,
-              })}
-            >
-              {JSON.stringify(watchAllValues, null, 2)}
-            </pre>
+        <pre
+          className={cn(
+            'text-sm p-4 overflow-auto bg-primary/5 rounded border border-primary/20 shadow-md',
           )}
-        </RStickyWrapper>
+        >
+          {JSON.stringify(watchAllValues, null, 2)}
+        </pre>
       </div>
 
       <RStickyWrapper position='bottom' offset={10}>
         {(isSticky) => (
-          <div className={cn('wrapper-fly', { 'fly-active': isSticky })}>
+          <div className={cn('wrapper-fly mt-6', { 'fly-active': isSticky })}>
             <RBtn iconStart={<Save />} form='myFormId' type='submit'>
               Submit
             </RBtn>

@@ -136,14 +136,6 @@ type TRFileUploaderThumbsProps = {
   ariaInvalid?: boolean;
 };
 
-/**
- * RFileThumbnail component renders the file thumbnail preview,
- * handles file selection, drag-and-drop, and file removal.
- *
- * @param props - Properties controlling the thumbnail's behavior and appearance.
- * @param ref - Forwarded ref to expose imperative methods like focus and removeFile.
- * @returns JSX element representing the file thumbnail with interactive controls.
- */
 const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
   (props, ref) => {
     const {
@@ -317,7 +309,9 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
           <div className='flex h-full flex-col items-center justify-center px-2 text-center'>
             <FileArchive size={50} />
             {fileName && (
-              <div className='mt-3 w-full break-words text-xs'>{fileName}</div>
+              <div className='mt-3 w-full wrap-break-word text-xs'>
+                {fileName}
+              </div>
             )}
           </div>
         );
@@ -411,14 +405,6 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
   },
 );
 
-/**
- * RFileUploader component manages the file upload state,
- * including compression, validation, and rendering the thumbnail component.
- *
- * @param props - Properties controlling uploader behavior such as accepted file types, size limits, and callbacks.
- * @param ref - Forwarded ref to expose imperative methods for the thumbnail component.
- * @returns JSX element representing the file uploader with thumbnail preview and controls.
- */
 const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
   (props, ref) => {
     const {

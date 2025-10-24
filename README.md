@@ -65,17 +65,19 @@ Environment variables live in `.env` (example values are committed). Update API 
 
 ## 📜 Available Scripts
 
-| Command              | Description                                              |
-| -------------------- | -------------------------------------------------------- |
-| `pnpm dev`           | Launches Vite dev server on port **5177**.               |
-| `pnpm build`         | Type-checks and bundles the app for production.          |
-| `pnpm preview`       | Serves the production build locally.                     |
-| `pnpm lint`          | Runs ESLint against the entire project.                  |
-| `pnpm test`          | Executes unit/integration tests with Vitest.             |
-| `pnpm test:coverage` | Generates coverage reports under `coverage/`.            |
-| `pnpm test:ui`       | Starts the Vitest UI runner.                             |
-| `pnpm commit`        | Interactive commit message helper (Commitlint prompt).   |
-| `pnpm roketin`       | Custom CLI for scaffolding modules and associated files. |
+| Command                | Description                                                    |
+| ---------------------- | -------------------------------------------------------------- |
+| `pnpm dev`             | Launches Vite dev server on port **5177**.                     |
+| `pnpm build`           | Type-checks and bundles the app for production.                |
+| `pnpm preview`         | Serves the production build locally.                           |
+| `pnpm lint`            | Runs ESLint against the entire project.                        |
+| `pnpm test`            | Executes unit/integration tests with Vitest.                   |
+| `pnpm test:coverage`   | Generates coverage reports under `coverage/`.                  |
+| `pnpm test:ui`         | Starts the Vitest UI runner.                                   |
+| `pnpm commit`          | Interactive commit message helper (Commitlint prompt).         |
+| `pnpm roketin`         | Custom CLI for scaffolding modules and associated files.       |
+| `pnpm storybook`       | Runs Storybook on http://localhost:6006 for base components.   |
+| `pnpm storybook:build` | Produces the static Storybook build under `storybook-static/`. |
 
 ---
 
@@ -83,19 +85,17 @@ Environment variables live in `.env` (example values are committed). Update API 
 
 Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file lets you rebrand, resize the sidebar, change filter persistence, switch admin prefixes, and more without touching component code.
 
-| Section               | Keys                                                                                             | Purpose                                                                                                         |
-| --------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `app`                 | `name`, `shortName`, `tagline`, `description`, `logoUrl`                                         | Populates global branding components (e.g., `RBrand`) and meta descriptions.                                    |
-| `theme`               | `appearance`, `sidebar.variant`, `sidebar.width`                                                 | Controls default color scheme and top-level layout sizing.                                                      |
-| `sidebar.settings`    | `stateStorage.type`, `stateStorage.key`, `width`, `widthMobile`, `widthIcon`, `keyboardShortcut` | Persists sidebar state (local/session storage) and defines responsive widths plus the keyboard toggle shortcut. |
-| `filters.persistence` | `enabled`, `strategy`, `keyPrefix`, `debounceMs`                                                 | Configures how `RFilter` saves user selections (`local-storage`, `session-storage`, or `query-params`).         |
-| `routes.admin`        | `basePath`                                                                                       | Mount point for authenticated feature routes (defaults to `/admin`).                                            |
-| `languages`           | `enabled`, ``, `supported[]` (`code`, `label`, `isDefault`)                                      | Drives the language dropdown shown on the login screen and inside the authenticated header.                     |
+| Section               | Keys                                                                                             | Purpose                                                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `app`                 | `name`, `shortName`, `tagline`                                                                   | Populates branding components such as `RBrand` and copy used around the shell.                                       |
+| `sidebar.settings`    | `stateStorage.type`, `stateStorage.key`, `width`, `widthMobile`, `widthIcon`, `keyboardShortcut` | Persists sidebar open/close state, controls widths for desktop/mobile/icon modes, and binds the keyboard toggle key. |
+| `filters.persistence` | `enabled`, `strategy`, `keyPrefix`, `debounceMs`                                                 | Configures how `RFilter` remembers selections (e.g., `local-storage`, custom key prefixes, debounce window).         |
+| `routes.admin`        | `basePath`                                                                                       | Base path prepended to every authenticated route (default `/r-admin`).                                               |
+| `languages`           | `enabled`, `debug`, `supported[]` (`code`, `label`, `isDefault`)                                 | Toggles multi-language support, i18n debug logging, and declares the supported locale list.                          |
 
 ### Config Breakdown
 
-- **`app`**: Supplies primary/alternate names and tagline; ideal for white-label deployments. `logoUrl` overrides the brand icon globally.
-- **`theme`**: `appearance` sets the initial color mode (`light`, `dark`, or `system`). `sidebar.variant` can be `sidebar`, `floating`, or `inset`, and `sidebar.width` accepts a pixel value.
+- **`app`**: Supplies the product name, short label, and tagline shown in default headers/footers. Perfect for rebranding a white-label deployment.
 - **`sidebar.settings`**:
   - `stateStorage.type`: Where to persist open/closed state (`local-storage` by default).
   - `stateStorage.key`: Storage namespace so multiple apps can coexist on one domain.
@@ -105,7 +105,7 @@ Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file l
 - **`routes.admin`**: Change the admin prefix (e.g., `/app`) to relocate every nested feature route.
 - **`languages`**:
   - `enabled`: Hides the language dropdown when set to `false`.
-  - `debug`: Debug i18n on console `false`.
+  - `debug`: Mirrors `i18next` debug mode; handy during localisation tweaks.
   - `supported`: Each locale entry must define a `code` (used by i18next), `label` (UI display), and optional `isDefault`.
 
 ---

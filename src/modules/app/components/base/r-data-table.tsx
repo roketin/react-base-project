@@ -59,17 +59,6 @@ export type TRDataTableSelected = {
   [key: string]: boolean;
 };
 
-/**
- * RDataTableInner is the main internal component that integrates TanStack Table with
- * pagination, sorting, selection, and search functionalities.
- * It manages the table state and communicates changes back to the parent component.
- *
- * @template TData - The type of data displayed in the table rows.
- * @template TValue - The type of values in the table columns.
- * @param {TRDataTableProps<TData, TValue>} props - The properties for configuring the data table.
- * @param {React.Ref<TRDataTableRef<TData>>} ref - The forwarded ref to expose table methods externally.
- * @returns {JSX.Element} The rendered data table component.
- */
 const RDataTableInner = <TData, TValue>(
   {
     columns = [],
@@ -209,7 +198,7 @@ const RDataTableInner = <TData, TValue>(
           <TableRow key={idx}>
             {headers.map((header) => (
               <TableCell key={header.id}>
-                <Skeleton className='h-[20px] w-full rounded-md' />
+                <Skeleton className='h-5 w-full rounded-md' />
               </TableCell>
             ))}
           </TableRow>
