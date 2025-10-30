@@ -24,7 +24,7 @@ import {
   type Table,
   type Header,
 } from '@tanstack/react-table';
-import { ArrowDown, ArrowUp, Search } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronsUpDown, Search } from 'lucide-react';
 import {
   forwardRef,
   useCallback,
@@ -34,8 +34,19 @@ import {
 } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
+export type StickyPosition = 'left' | 'right' | 'none';
+
+type Alignment = 'left' | 'center' | 'right';
+
+export type TRDataTableColumnDef<TData, TValue> = ColumnDef<TData, TValue> & {
+  sticky?: StickyPosition;
+  stickyOffset?: number;
+  headerAlign?: Alignment;
+  cellAlign?: Alignment;
+};
+
 export type TRDataTableProps<TData, TValue> = TLoadable & {
-  columns?: ColumnDef<TData, TValue>[];
+  columns?: TRDataTableColumnDef<TData, TValue>[];
   data?: TData[];
   fixed?: boolean;
   pagination?: boolean;
@@ -49,6 +60,8 @@ export type TRDataTableProps<TData, TValue> = TLoadable & {
   allowSearch?: boolean;
   initialSelected?: TRDataTableSelected;
   searchPlaceholder?: string;
+  striped?: boolean;
+  hoverable?: boolean;
 };
 
 export type TRDataTableRef<TData = unknown> = {
@@ -57,6 +70,18 @@ export type TRDataTableRef<TData = unknown> = {
 
 export type TRDataTableSelected = {
   [key: string]: boolean;
+};
+
+const ALIGN_CLASS_MAP: Record<Alignment, string> = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+};
+
+const JUSTIFY_CLASS_MAP: Record<Alignment, string> = {
+  left: 'justify-start',
+  center: 'justify-center',
+  right: 'justify-end',
 };
 
 const RDataTableInner = <TData, TValue>(
@@ -76,6 +101,8 @@ const RDataTableInner = <TData, TValue>(
     footer,
     initialSelected = {},
     searchPlaceholder = 'Search...',
+    striped = true,
+    hoverable = true,
   }: TRDataTableProps<TData, TValue>,
   ref: React.Ref<TRDataTableRef<TData>>,
 ) => {
@@ -197,7 +224,7 @@ const RDataTableInner = <TData, TValue>(
         {Array.from({ length: 8 }).map((_, idx) => (
           <TableRow key={idx}>
             {headers.map((header) => (
-              <TableCell key={header.id}>
+              <TableCell key={header.id} className='bg-inherit'>
                 <Skeleton className='h-5 w-full rounded-md' />
               </TableCell>
             ))}
@@ -215,6 +242,13 @@ const RDataTableInner = <TData, TValue>(
   const debouncedSearch = useDebouncedCallback((search: string) => {
     onChangeTable({ search, page: 1 });
   }, 300);
+
+  const tableClassName = cn(
+    'rt-table',
+    { 'table-fixed': fixed },
+    { 'rt-table--striped': striped },
+    hoverable ? 'rt-table--hoverable' : 'rt-table--no-hover',
+  );
 
   return (
     <div>
@@ -237,36 +271,66 @@ const RDataTableInner = <TData, TValue>(
         {header}
       </div>
 
-      <div className='rounded-md border'>
-        <TableCom className={cn({ 'table-fixed': fixed })}>
+      <div className='rounded-md border overflow-x-auto w-full min-w-0'>
+        <TableCom className={tableClassName}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  const columnDef = header.column
+                    .columnDef as TRDataTableColumnDef<TData, TValue>;
+                  const sticky = columnDef.sticky ?? 'none';
+                  const offset = columnDef.stickyOffset ?? 0;
+                  const headerAlign = (columnDef.headerAlign ??
+                    'left') as Alignment;
+                  const headerAlignClass =
+                    headerAlign === 'left'
+                      ? ALIGN_CLASS_MAP.left
+                      : `!${ALIGN_CLASS_MAP[headerAlign]}`;
+                  const headerJustifyClass = JUSTIFY_CLASS_MAP[headerAlign];
+                  const headerDirectionClass =
+                    headerAlign === 'right' ? 'flex-row-reverse' : 'flex-row';
                   return (
                     <TableHead
                       key={header.id}
-                      style={{ width: header.getSize() }}
+                      style={{
+                        width: header.getSize(),
+                        position: sticky === 'none' ? undefined : 'sticky',
+                        left: sticky === 'left' ? offset : undefined,
+                        right: sticky === 'right' ? offset : undefined,
+                        zIndex: sticky === 'none' ? undefined : 10,
+                      }}
+                      className={cn('bg-slate-50', headerAlignClass)}
                     >
                       {header.isPlaceholder ? null : (
                         <div
                           role='presentation'
                           className={cn(
+                            'select-none flex items-center gap-1',
+                            headerJustifyClass,
+                            headerDirectionClass,
                             header.column.getCanSort()
-                              ? 'select-none cursor-pointer flex items-center gap-1 hover:text-black'
-                              : 'select-none cursor-default',
+                              ? 'cursor-pointer hover:text-black'
+                              : 'cursor-default',
                           )}
                           onClick={() => handleSort(header)}
                         >
-                          {
-                            {
-                              asc: <ArrowUp size={14} />,
-                              desc: <ArrowDown size={14} />,
-                            }[header.column.getIsSorted() as string]
-                          }
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext(),
+                          )}
+                          {header.column.getCanSort() && (
+                            <div className='ml-auto'>
+                              {{
+                                asc: <ArrowUp size={12} />,
+                                desc: <ArrowDown size={12} />,
+                              }[header.column.getIsSorted() as string] ?? (
+                                <ChevronsUpDown
+                                  size={12}
+                                  className='opacity-20'
+                                />
+                              )}
+                            </div>
                           )}
                         </div>
                       )}
@@ -287,19 +351,43 @@ const RDataTableInner = <TData, TValue>(
                       key={row.id}
                       data-state={row.getIsSelected() && 'selected'}
                     >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </TableCell>
-                      ))}
+                      {row.getVisibleCells().map((cell) => {
+                        const columnDef = cell.column
+                          .columnDef as TRDataTableColumnDef<TData, TValue>;
+                        const sticky = columnDef.sticky ?? 'none';
+                        const offset = columnDef.stickyOffset ?? 0;
+                        const cellAlign = (columnDef.cellAlign ??
+                          columnDef.headerAlign ??
+                          'left') as Alignment;
+                        const cellAlignClass = ALIGN_CLASS_MAP[cellAlign];
+                        return (
+                          <TableCell
+                            key={cell.id}
+                            style={{
+                              position:
+                                sticky === 'none' ? undefined : 'sticky',
+                              left: sticky === 'left' ? offset : undefined,
+                              right: sticky === 'right' ? offset : undefined,
+                              zIndex: sticky === 'none' ? undefined : 5,
+                              backgroundColor: 'inherit',
+                            }}
+                            className={cn('bg-inherit', cellAlignClass)}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </TableCell>
+                        );
+                      })}
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns?.length ?? 1}>
+                    <TableCell
+                      colSpan={columns?.length ?? 1}
+                      className='bg-inherit'
+                    >
                       <div className='flex h-24 w-full items-center justify-center text-sm text-muted-foreground'>
                         No results.
                       </div>
@@ -311,6 +399,7 @@ const RDataTableInner = <TData, TValue>(
           </TableBody>
         </TableCom>
       </div>
+
       {pagination && (
         <RDataTableFooter
           meta={meta}

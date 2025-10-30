@@ -32,7 +32,7 @@ export default function AppLayout() {
      */
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className='bg-pattern'>
+      <SidebarInset className='bg-pattern min-w-0'>
         <AppLayoutHeader />
         <div id='app-container' className='p-3'>
           <div className='p-5 bg-white rounded-lg shadow-xl shadow-gray-100'>

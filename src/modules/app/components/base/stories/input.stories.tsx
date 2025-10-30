@@ -4,7 +4,7 @@ import { Mail, Search, ArrowRight, User } from 'lucide-react';
 import { useState } from 'react';
 
 const meta: Meta<typeof Input> = {
-  title: 'Base/Form/UI/Input',
+  title: 'Base/Form/Input',
   component: Input,
   tags: ['autodocs'],
   parameters: {

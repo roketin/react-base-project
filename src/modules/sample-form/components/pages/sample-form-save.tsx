@@ -26,6 +26,7 @@ import { RFormDatePicker } from '@/modules/app/components/base/r-picker';
 import { RFormRangePicker } from '@/modules/app/components/base/r-range-picker';
 import { yupDateRangeRequired } from '@/modules/app/validators/date.validator';
 import SampleStepper from '@/modules/sample-form/components/elements/sample-stepper';
+import { useLeavePageGuard } from '@/modules/app/hooks/use-leave-page-guard';
 
 const formSchema = Yup.object().shape({
   checkbox_single: Yup.bool().default(false).label('Checkbox Single'),
@@ -91,7 +92,11 @@ const TodoSave = () => {
     defaultValues: formSchema.getDefault(),
   });
 
-  // Watch all values
+  useLeavePageGuard({
+    enabled: form.formState.isDirty,
+  });
+
+  // Watch all values for preview panel
   const watchAllValues = form.watch();
 
   /**

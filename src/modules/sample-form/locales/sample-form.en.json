@@ -5,12 +5,15 @@
     "createNew": "Create New"
   },
   "actions": {
-    "add": "Create New"
+    "add": "Create New",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "columns": {
     "name": "Name",
-    "code": "Code",
-    "createdAt": "Created Date"
+    "code": "Code {{i}}",
+    "createdAt": "Created Date",
+    "actions": "Actions"
   },
   "filters": {
     "keyword": {

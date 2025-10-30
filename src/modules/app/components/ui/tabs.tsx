@@ -6,12 +6,19 @@ import { cn } from '@/modules/app/libs/utils';
 
 function Tabs({
   className,
+  orientation = 'horizontal',
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Root>) {
+  const isVertical = orientation === 'vertical';
   return (
     <TabsPrimitive.Root
       data-slot='tabs'
-      className={cn('flex flex-col gap-2', className)}
+      orientation={orientation}
+      className={cn(
+        'flex gap-2',
+        isVertical ? 'flex-col lg:flex-row lg:items-start' : 'flex-col',
+        className,
+      )}
       {...props}
     />
   );

@@ -1,5 +1,8 @@
 import RBtn from '@/modules/app/components/base/r-btn';
-import { RDataTable } from '@/modules/app/components/base/r-data-table';
+import {
+  RDataTable,
+  type TRDataTableColumnDef,
+} from '@/modules/app/components/base/r-data-table';
 import { RFilter } from '@/modules/app/components/base/r-filter';
 import { DEFAULT_QUERY_PARAMS } from '@/modules/app/constants/app.constant';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
@@ -10,7 +13,8 @@ import type { TApiDefaultQueryParams } from '@/modules/app/types/api.type';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import { useGetSampleFormList } from '@/modules/sample-form/services/sample-form.service';
 import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
-import type { ColumnDef } from '@tanstack/react-table';
+import { RTooltip } from '@/modules/app/components/base/r-tooltip';
+import { Pencil, Trash } from 'lucide-react';
 import { Plus } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -54,13 +58,57 @@ const SampleFormIndex = () => {
   }, [navigate]);
 
   // Filters
-  const columns = useMemo<ColumnDef<TSampleItem>[]>(
+  const columns = useMemo<TRDataTableColumnDef<TSampleItem, unknown>[]>(
     () => [
-      { header: t('columns.name'), accessorKey: 'name', size: 230 },
-      { header: t('columns.code'), accessorKey: 'code', size: 230 },
+      {
+        id: 'actions',
+        header: t('columns.actions'),
+        sticky: 'left',
+        enableSorting: false,
+        size: 90,
+        cell: ({ row }) => (
+          <div className='flex items-center  gap-2'>
+            <RTooltip content={t('actions.edit')}>
+              <RBtn
+                size='icon'
+                variant='outline'
+                onClick={() =>
+                  navigate('SampleFormEdit', { id: row.original.id })
+                }
+              >
+                <Pencil className='size-4' />
+              </RBtn>
+            </RTooltip>
+            <RTooltip content={t('actions.delete')}>
+              <RBtn
+                size='sm'
+                variant='destructive'
+                onClick={() => {
+                  window.alert(`Delete ${row.original.name}`);
+                }}
+              >
+                <Trash className='size-4' />
+              </RBtn>
+            </RTooltip>
+          </div>
+        ),
+      },
+      {
+        header: t('columns.name'),
+        accessorKey: 'name',
+        size: 230,
+      },
+      { header: t('columns.code', { i: 1 }), accessorKey: 'code', size: 100 },
+      { header: t('columns.code', { i: 2 }), accessorKey: 'code', size: 100 },
+      { header: t('columns.code', { i: 3 }), accessorKey: 'code', size: 100 },
+      { header: t('columns.code', { i: 4 }), accessorKey: 'code', size: 100 },
+      { header: t('columns.code', { i: 5 }), accessorKey: 'code', size: 100 },
+      { header: t('columns.code', { i: 6 }), accessorKey: 'code', size: 100 },
+      { header: t('columns.code', { i: 7 }), accessorKey: 'code', size: 100 },
+      { header: t('columns.code', { i: 8 }), accessorKey: 'code', size: 100 },
       { header: t('columns.createdAt'), accessorKey: 'created_at', size: 250 },
     ],
-    [t],
+    [navigate, t],
   );
 
   const filters = useMemo<TFilterItem[]>(

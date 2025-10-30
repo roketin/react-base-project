@@ -3,7 +3,7 @@ import RAlertDialog from '@/modules/app/components/base/r-alert-dialog';
 import { useCallback, useMemo, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 
-type TAlertConfirmationConfig = Omit<
+export type TAlertConfirmationConfig = Omit<
   TRAlertDialogProps,
   'open' | 'onOpenChange' | 'onOk' | 'onCancel'
 > & {
