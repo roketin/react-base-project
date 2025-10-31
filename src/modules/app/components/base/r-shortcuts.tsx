@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Command } from 'lucide-react';
 import { cn } from '@/modules/app/libs/utils';
 
-export type RShortcutItem = {
+export type TRShortcutItem = {
   id: string;
   keys: string[];
   description: ReactNode;
@@ -10,8 +10,8 @@ export type RShortcutItem = {
   meta?: ReactNode;
 };
 
-export type RShortcutsProps = {
-  items: RShortcutItem[];
+export type TRShortcutsProps = {
+  items: TRShortcutItem[];
   className?: string;
   showHeaderIcon?: boolean;
   title?: ReactNode;
@@ -63,13 +63,16 @@ export function RShortcuts({
   title = 'Keyboard shortcuts',
   description = 'Speed up everyday tasks by learning these key combinations.',
   columns = 2,
-}: RShortcutsProps) {
-  const grouped = items.reduce<Record<string, RShortcutItem[]>>((acc, item) => {
-    const groupKey = item.group ?? 'General';
-    acc[groupKey] = acc[groupKey] ?? [];
-    acc[groupKey].push(item);
-    return acc;
-  }, {});
+}: TRShortcutsProps) {
+  const grouped = items.reduce<Record<string, TRShortcutItem[]>>(
+    (acc, item) => {
+      const groupKey = item.group ?? 'General';
+      acc[groupKey] = acc[groupKey] ?? [];
+      acc[groupKey].push(item);
+      return acc;
+    },
+    {},
+  );
 
   const columnClass =
     columns === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1';

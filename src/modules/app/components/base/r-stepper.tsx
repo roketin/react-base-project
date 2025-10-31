@@ -4,7 +4,7 @@ import { Check, Loader2 } from 'lucide-react';
 import { cn } from '@/modules/app/libs/utils';
 
 export { RPanelHeader } from './r-panel-header';
-export type { RPanelHeaderProps } from './r-panel-header';
+export type { TRPanelHeaderProps } from './r-panel-header';
 
 export interface Step<StepId extends string = string, StepData = unknown> {
   id: StepId;
@@ -23,7 +23,7 @@ export type StepperVariant =
   | 'line';
 
 /** Stepper Component */
-export interface RStepperProps<
+export interface TRStepperProps<
   StepId extends string = string,
   StepData = unknown,
 > {
@@ -39,7 +39,7 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
   currentIndex,
   variant = 'horizontal',
   className,
-}: RStepperProps<StepId, StepData>) {
+}: TRStepperProps<StepId, StepData>) {
   const percent = useMemo(() => {
     if (steps.length === 0) return 0;
     const clampedIndex = Math.min(Math.max(currentIndex, 0), steps.length - 1);

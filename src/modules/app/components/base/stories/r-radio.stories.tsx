@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { RRadio, type RRadioOption } from '../r-radio';
+import { RRadio, type TRRadioOption } from '../r-radio';
 
-const options: RRadioOption[] = [
+const options: TRRadioOption[] = [
   {
     label: 'Monthly Plan',
     description: 'Best for trying things out.',

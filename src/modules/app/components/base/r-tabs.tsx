@@ -25,14 +25,14 @@ type InternalComponent = {
   rtabsType?: symbol;
 };
 
-export type RTabItemProps = {
+export type TRTabItemProps = {
   tabKey: string;
   label: ReactNode;
   disabled?: boolean;
   forceRender?: boolean;
 };
 
-export type RTabContentProps = PropsWithChildren<{
+export type TRTabContentProps = PropsWithChildren<{
   tabKey: string;
 }>;
 
@@ -41,7 +41,7 @@ type ExtractedContent = {
   node: ReactNode;
 };
 
-export type RTabsProps = PropsWithChildren<{
+export type TRTabsProps = PropsWithChildren<{
   activeKey?: string;
   defaultActiveKey?: string;
   onChange?: (key: string) => void;
@@ -77,18 +77,18 @@ const variantClassMap = {
   { list: string; trigger: string }
 >;
 
-type RTabItemComponent = (props: RTabItemProps) => null;
-type RTabContentComponent = (props: RTabContentProps) => null;
+type TRTabItemComponent = (props: TRTabItemProps) => null;
+type TRTabContentComponent = (props: TRTabContentProps) => null;
 
-const RTabItem: RTabItemComponent = () => null;
-const RTabContent: RTabContentComponent = () => null;
+const RTabItem: TRTabItemComponent = () => null;
+const RTabContent: TRTabContentComponent = () => null;
 
 (RTabItem as InternalComponent).rtabsType = COMPONENT_MARKERS.item;
 (RTabItem as { displayName?: string }).displayName = 'RTabItem';
 (RTabContent as InternalComponent).rtabsType = COMPONENT_MARKERS.content;
 (RTabContent as { displayName?: string }).displayName = 'RTabContent';
 
-function RTabs(props: RTabsProps) {
+function RTabs(props: TRTabsProps) {
   const {
     activeKey,
     defaultActiveKey,
@@ -105,7 +105,7 @@ function RTabs(props: RTabsProps) {
   } = props;
 
   const { items, contentByKey, orderedKeys, forceRenderKeys } = useMemo(() => {
-    const extractedItems: RTabItemProps[] = [];
+    const extractedItems: TRTabItemProps[] = [];
     const extractedContents: ExtractedContent[] = [];
     const extractedContentByKey = new Map<string, ExtractedContent>();
 
@@ -119,7 +119,7 @@ function RTabs(props: RTabsProps) {
 
       if (componentType === COMPONENT_MARKERS.item) {
         const { tabKey, label, disabled, forceRender } =
-          child.props as RTabItemProps;
+          child.props as TRTabItemProps;
 
         if (!tabKey) {
           return;
@@ -136,7 +136,7 @@ function RTabs(props: RTabsProps) {
 
       if (componentType === COMPONENT_MARKERS.content) {
         const { tabKey, children: contentChildren } =
-          child.props as RTabContentProps;
+          child.props as TRTabContentProps;
 
         if (!tabKey) {
           return;

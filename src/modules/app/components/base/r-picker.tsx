@@ -12,7 +12,7 @@ dayjs.extend(weekOfYear);
 /*                                   BASE                                     */
 /* -------------------------------------------------------------------------- */
 
-export interface RPickerProps
+export interface TRPickerProps
   extends Omit<
     PickerProps<Dayjs>,
     'picker' | 'showNow' | 'generateConfig' | 'locale'
@@ -24,7 +24,7 @@ export interface RPickerProps
 }
 
 /** 🧩 Base Single Date Picker */
-export const RPicker = React.forwardRef<PickerRef, RPickerProps>(
+export const RPicker = React.forwardRef<PickerRef, TRPickerProps>(
   (props, ref) => {
     const {
       picker = 'date',
@@ -59,15 +59,15 @@ RPicker.displayName = 'RPicker';
 /*                            FORM FIELD INTEGRATION                          */
 /* -------------------------------------------------------------------------- */
 
-export interface RFormDatePickerProps
-  extends Omit<RPickerProps, 'value' | 'onChange'> {
+export interface TRFormDatePickerProps
+  extends Omit<TRPickerProps, 'value' | 'onChange'> {
   /** Value in Date (for Yup compatibility) */
   value?: Date | null;
   onChange?: (value: Date | null) => void;
 }
 
 /** 🗓️ RFormDatePicker — Single Date version for react-hook-form */
-export const RFormDatePicker: React.FC<RFormDatePickerProps> = ({
+export const RFormDatePicker: React.FC<TRFormDatePickerProps> = ({
   value,
   onChange,
   ...rest

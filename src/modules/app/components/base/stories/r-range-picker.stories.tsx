@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import type { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 
-import { RRangePicker, type RRangePickerProps } from '../r-range-picker';
+import { RRangePicker, type TRRangePickerProps } from '../r-range-picker';
 
 dayjs.extend(isoWeek);
 
@@ -48,7 +48,7 @@ const Template: Story = {
 
     return (
       <RRangePicker
-        {...(args as RRangePickerProps)}
+        {...(args as TRRangePickerProps)}
         value={value}
         onChange={(next) => {
           setValue(next ?? null);

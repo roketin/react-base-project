@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { RBrand } from '@/modules/app/components/base/r-brand';
 import {
   RResult,
-  type RResultStatus,
+  type TRResultStatus,
 } from '@/modules/app/components/base/r-result';
 import { cn } from '@/modules/app/libs/utils';
 
@@ -12,7 +12,7 @@ type StatusPageProps = {
   title: string;
   description: string;
   action?: ReactNode;
-  status?: RResultStatus;
+  status?: TRResultStatus;
   brand?: ReactNode;
   className?: string;
 };

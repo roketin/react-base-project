@@ -11,11 +11,11 @@ import type {
 import { cn } from '@/modules/app/libs/utils';
 import { useMemo, useState } from 'react';
 
-export type RRadioOption = TDescriptiveOption<string>;
+export type TRRadioOption = TDescriptiveOption<string>;
 
-export type RRadioProps = TDisableable &
+export type TRRadioProps = TDisableable &
   TAriaInvalidProp & {
-    options: RRadioOption[];
+    options: TRRadioOption[];
     value?: string | null;
     defaultValue?: string | null;
     onChange?: (value: string | null) => void;
@@ -33,7 +33,7 @@ export function RRadio({
   layout = 'vertical',
   name,
   className,
-}: RRadioProps) {
+}: TRRadioProps) {
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState<string | null>(
     isControlled ? (value ?? null) : defaultValue,

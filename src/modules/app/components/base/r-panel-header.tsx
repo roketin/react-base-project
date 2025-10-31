@@ -25,7 +25,7 @@ type OkButtonConfig<TPayload = unknown> = ActionButtonConfig<TPayload> & {
   loadingIcon?: ReactNode;
 };
 
-export type RPanelHeaderProps<TPayload = unknown> = {
+export type TRPanelHeaderProps<TPayload = unknown> = {
   title: string;
   onClose?: () => void;
   onCancel?: () => void;
@@ -51,7 +51,7 @@ export function RPanelHeader<TPayload = unknown>({
   closeButton,
   cancelButton,
   okButton,
-}: RPanelHeaderProps<TPayload>) {
+}: TRPanelHeaderProps<TPayload>) {
   const shouldShowClose = showClose;
   const showCancel = !hideCancel;
   const showOk = !hideOk;

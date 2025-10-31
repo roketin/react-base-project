@@ -6,7 +6,7 @@ import {
 } from '@/modules/app/components/ui/textarea';
 import { cn } from '@/modules/app/libs/utils';
 
-export type RTextareaProps = TextareaProps & {
+export type TRTextareaProps = TextareaProps & {
   label?: ReactNode;
   description?: ReactNode;
   error?: ReactNode;
@@ -14,7 +14,7 @@ export type RTextareaProps = TextareaProps & {
   wrapperClassName?: string;
 };
 
-export const RTextarea = forwardRef<HTMLTextAreaElement, RTextareaProps>(
+export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
   function RTextarea(
     {
       label,

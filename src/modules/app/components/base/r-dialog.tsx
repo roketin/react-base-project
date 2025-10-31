@@ -23,7 +23,7 @@ const SIZE_MAP: Record<Size, string> = {
   full: 'sm:max-w-none sm:w-full sm:mx-6 md:mx-0 md:w-[960px]',
 };
 
-export type RDialogProps = Omit<DialogProps, 'children'> & {
+export type TRDialogProps = Omit<DialogProps, 'children'> & {
   trigger?: ReactNode;
   title?: ReactNode;
   description?: ReactNode;
@@ -58,7 +58,7 @@ export function RDialog({
   hideFooter = false,
   showCloseButton = true,
   ...dialogProps
-}: RDialogProps) {
+}: TRDialogProps) {
   const titleId = useId();
   const descriptionId = useId();
 

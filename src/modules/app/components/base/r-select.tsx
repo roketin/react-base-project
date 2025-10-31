@@ -11,25 +11,25 @@ import { cn } from '@/modules/app/libs/utils';
 
 type OptionKey<Option extends BaseOptionType> = Extract<keyof Option, string>;
 
-type RSelectFieldNames<Option extends BaseOptionType> = {
+type TRSelectFieldNames<Option extends BaseOptionType> = {
   label?: OptionKey<Option>;
   value?: OptionKey<Option>;
   options?: OptionKey<Option>;
   groupLabel?: OptionKey<Option>;
 };
 
-export type RSelectProps<
+export type TRSelectProps<
   ValueType = unknown,
   OptionType extends BaseOptionType = DefaultOptionType,
 > = Omit<SelectProps<ValueType, OptionType>, 'fieldNames'> & {
-  fieldNames?: RSelectFieldNames<OptionType>;
+  fieldNames?: TRSelectFieldNames<OptionType>;
 };
 
-type RSelectComponent = <
+type TRSelectComponent = <
   ValueType = unknown,
   OptionType extends BaseOptionType = DefaultOptionType,
 >(
-  props: RSelectProps<ValueType, OptionType> & {
+  props: TRSelectProps<ValueType, OptionType> & {
     ref?: Ref<BaseSelectRef>;
   },
 ) => ReactElement | null;
@@ -37,7 +37,7 @@ type RSelectComponent = <
 function RSelectBase<
   ValueType,
   OptionType extends BaseOptionType = DefaultOptionType,
->(props: RSelectProps<ValueType, OptionType>, ref: Ref<BaseSelectRef>) {
+>(props: TRSelectProps<ValueType, OptionType>, ref: Ref<BaseSelectRef>) {
   const {
     fieldNames,
     placeholder,
@@ -80,6 +80,6 @@ function RSelectBase<
   );
 }
 
-const RSelect = forwardRef(RSelectBase) as RSelectComponent;
+const RSelect = forwardRef(RSelectBase) as TRSelectComponent;
 
 export default RSelect;

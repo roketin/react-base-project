@@ -6,7 +6,7 @@ import type { VariantProps } from 'class-variance-authority';
 import type { buttonVariants } from '@/modules/app/components/ui/variants/button-variants';
 
 // ✅ Define props
-type RBtnProps = React.ComponentProps<typeof Button> & {
+export type TRBtnProps = React.ComponentProps<typeof Button> & {
   debounceMs?: number;
   loading?: boolean;
   loadingLabel?: ReactNode;
@@ -26,7 +26,7 @@ const RBtn = React.forwardRef(function RBtn(
     iconStart,
     iconEnd,
     ...rest
-  }: RBtnProps,
+  }: TRBtnProps,
   ref: React.ForwardedRef<HTMLButtonElement>, // 👈 direct ref type
 ) {
   // Use useDebouncedCallback to debounce click handler
@@ -71,7 +71,7 @@ const RBtn = React.forwardRef(function RBtn(
   );
 });
 
-export type TRBtnProps = React.ComponentProps<typeof RBtn> &
+export type TRBtnVariantProps = React.ComponentProps<typeof RBtn> &
   VariantProps<typeof buttonVariants>;
 
 export default RBtn;

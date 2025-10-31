@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CheckCircle2, Clock, PackagePlus } from 'lucide-react';
-import { RTimeline, type RTimelineItem } from '../r-timeline';
+import { RTimeline, type TRTimelineItem } from '../r-timeline';
 import RBtn from '@/modules/app/components/base/r-btn';
 
-const items: RTimelineItem[] = [
+const items: TRTimelineItem[] = [
   {
     id: '1',
     title: 'Order received',
@@ -51,7 +51,7 @@ const items: RTimelineItem[] = [
 ];
 
 const meta: Meta<typeof RTimeline> = {
-  title: 'Base/RTimeline',
+  title: 'Base/Data Display/RTimeline',
   component: RTimeline,
   tags: ['autodocs'],
   args: {

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge } from '@/modules/app/components/ui/badge';
-import { RList, type RListProps } from '../r-list';
+import { RList, type TRListProps } from '../r-list';
 import RBtn from '@/modules/app/components/base/r-btn';
 
 type ListItem = {
@@ -31,14 +31,14 @@ const ITEMS: ListItem[] = [
   },
 ];
 
-type ListStoryProps = RListProps<ListItem>;
+type ListStoryProps = TRListProps<ListItem>;
 
 const ListStoryComponent = (props: ListStoryProps) => (
   <RList<ListItem> {...props} />
 );
 
 const meta: Meta<typeof ListStoryComponent> = {
-  title: 'Base/RList',
+  title: 'Base/Data Display/RList',
   component: ListStoryComponent,
   tags: ['autodocs'],
   args: {

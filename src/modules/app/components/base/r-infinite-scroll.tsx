@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { cn } from '@/modules/app/libs/utils';
 
-export type RInfiniteScrollProps<Item> = {
+export type TRInfiniteScrollProps<Item> = {
   items: readonly Item[];
   renderItem: (item: Item, index: number) => ReactNode;
   loadMore: () => Promise<void> | void;
@@ -32,7 +32,7 @@ export function RInfiniteScroll<Item>({
   rootMargin = '0px',
   manual = false,
   initialLoad = false,
-}: RInfiniteScrollProps<Item>) {
+}: TRInfiniteScrollProps<Item>) {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(initialLoad);
 

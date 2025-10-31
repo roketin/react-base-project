@@ -3,7 +3,7 @@ import { cn } from '@/modules/app/libs/utils';
 
 type TimelineStatus = 'completed' | 'current' | 'upcoming' | 'error';
 
-export type RTimelineItem = {
+export type TRTimelineItem = {
   id: string;
   title: ReactNode;
   description?: ReactNode;
@@ -17,8 +17,8 @@ export type RTimelineItem = {
   dotClassName?: string;
 };
 
-export type RTimelineProps = {
-  items: RTimelineItem[];
+export type TRTimelineProps = {
+  items: TRTimelineItem[];
   className?: string;
   variant?: 'solid' | 'ghost';
   align?: 'left' | 'alternate';
@@ -33,7 +33,7 @@ const STATUS_COLORS: Record<TimelineStatus, string> = {
   error: 'bg-destructive border-destructive',
 };
 
-function renderIcon(item: RTimelineItem, status: TimelineStatus) {
+function renderIcon(item: TRTimelineItem, status: TimelineStatus) {
   if (item.icon) {
     return (
       <span
@@ -90,7 +90,7 @@ export function RTimeline({
   align = 'left',
   showLine = true,
   compact = false,
-}: RTimelineProps) {
+}: TRTimelineProps) {
   return (
     <div
       className={cn(

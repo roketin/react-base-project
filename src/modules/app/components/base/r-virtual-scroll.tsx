@@ -16,12 +16,12 @@ import type {
 } from 'react';
 import { cn } from '@/modules/app/libs/utils';
 
-export type RVirtualScrollHandle = {
+export type TRVirtualScrollHandle = {
   scrollToIndex: (index: number) => void;
   scrollToTop: () => void;
 };
 
-export type RVirtualScrollProps<Item> = {
+export type TRVirtualScrollProps<Item> = {
   items: readonly Item[];
   itemHeight: number;
   height?: number;
@@ -166,8 +166,8 @@ function RVirtualScrollInner<Item>(
     loader,
     emptyElement,
     lazy = false,
-  }: RVirtualScrollProps<Item>,
-  ref: ForwardedRef<RVirtualScrollHandle>,
+  }: TRVirtualScrollProps<Item>,
+  ref: ForwardedRef<TRVirtualScrollHandle>,
 ) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
@@ -384,19 +384,19 @@ function RVirtualScrollInner<Item>(
 }
 
 // Generic helper to preserve type inference
-type RVirtualScrollComponent = {
+type TRVirtualScrollComponent = {
   <Item>(
-    props: RVirtualScrollProps<Item> & { ref?: Ref<RVirtualScrollHandle> },
+    props: TRVirtualScrollProps<Item> & { ref?: Ref<TRVirtualScrollHandle> },
   ): ReturnType<typeof RVirtualScrollInner>;
 };
 
 const RVirtualScrollBase = forwardRef<
-  RVirtualScrollHandle,
-  RVirtualScrollProps<unknown>
+  TRVirtualScrollHandle,
+  TRVirtualScrollProps<unknown>
 >(RVirtualScrollInner);
 
 export const RVirtualScroll =
-  RVirtualScrollBase as unknown as RVirtualScrollComponent;
+  RVirtualScrollBase as unknown as TRVirtualScrollComponent;
 
 export default RVirtualScroll;
 

@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import weekday from 'dayjs/plugin/weekday';
 import isoWeek from 'dayjs/plugin/isoWeek';
 
-import { RPicker, type RPickerProps } from '../r-picker';
+import { RPicker, type TRPickerProps } from '../r-picker';
 
 dayjs.extend(weekday);
 dayjs.extend(isoWeek);
@@ -44,7 +44,7 @@ const Template: Story = {
 
     return (
       <RPicker
-        {...(args as RPickerProps)}
+        {...(args as TRPickerProps)}
         value={value}
         onChange={(next) => {
           setValue(next ?? null);

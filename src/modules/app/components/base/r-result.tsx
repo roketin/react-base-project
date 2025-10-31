@@ -86,7 +86,7 @@ const SIZE_MAP: Record<
   },
 };
 
-type RResultProps = {
+type TRResultProps = {
   status?: ResultStatus;
   size?: ResultSize;
   align?: ResultAlign;
@@ -129,9 +129,9 @@ function renderCustomIcon(icon: ReactNode, className: string): ReactNode {
   return <span className={cn('shrink-0', className)}>{icon}</span>;
 }
 
-export type RResultStatus = ResultStatus;
-export type RResultSize = ResultSize;
-export type RResultAlign = ResultAlign;
+export type TRResultStatus = ResultStatus;
+export type TRResultSize = ResultSize;
+export type TRResultAlign = ResultAlign;
 
 export function RResult({
   status = 'empty',
@@ -150,7 +150,7 @@ export function RResult({
   fullHeight = false,
   subdued = false,
   children,
-}: RResultProps) {
+}: TRResultProps) {
   const statusConfig = STATUS_ICON_MAP[status];
   const sizeConfig = SIZE_MAP[size];
 

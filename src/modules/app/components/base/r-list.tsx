@@ -3,8 +3,8 @@ import type { ForwardedRef, ReactNode, Ref } from 'react';
 import { cn } from '@/modules/app/libs/utils';
 import {
   RVirtualScroll,
-  type RVirtualScrollProps,
-  type RVirtualScrollHandle,
+  type TRVirtualScrollProps,
+  type TRVirtualScrollHandle,
 } from '@/modules/app/components/base/r-virtual-scroll';
 
 type RenderItemOptions = {
@@ -14,14 +14,14 @@ type RenderItemOptions = {
   isLast: boolean;
 };
 
-export type RListVirtualProps<Item> = Pick<
-  RVirtualScrollProps<Item>,
+export type TRListVirtualProps<Item> = Pick<
+  TRVirtualScrollProps<Item>,
   'height' | 'itemHeight' | 'overscan'
 > & {
   enabled?: boolean;
 };
 
-export type RListProps<Item extends Record<string, unknown>> = {
+export type TRListProps<Item extends Record<string, unknown>> = {
   items: readonly Item[];
   renderItem: (item: Item, options: RenderItemOptions) => ReactNode;
   getKey?: (item: Item, index: number) => React.Key;
@@ -30,12 +30,12 @@ export type RListProps<Item extends Record<string, unknown>> = {
   emptyContent?: ReactNode | ((info: { count: number }) => ReactNode);
   role?: string;
   as?: keyof JSX.IntrinsicElements;
-  virtual?: RListVirtualProps<Item>;
+  virtual?: TRListVirtualProps<Item>;
   itemClassName?: string | ((item: Item, index: number) => string | undefined);
 };
 
 function resolveEmptyContent<Item extends Record<string, unknown>>(
-  emptyContent: RListProps<Item>['emptyContent'],
+  emptyContent: TRListProps<Item>['emptyContent'],
   count: number,
 ) {
   if (typeof emptyContent === 'function') {
@@ -62,8 +62,8 @@ function RListInnerComponent<Item extends Record<string, unknown>>(
     as: As = 'div',
     virtual,
     itemClassName,
-  }: RListProps<Item>,
-  ref: ForwardedRef<RVirtualScrollHandle>,
+  }: TRListProps<Item>,
+  ref: ForwardedRef<TRVirtualScrollHandle>,
 ) {
   if (!items || items.length === 0) {
     return (
@@ -159,8 +159,8 @@ function RListInnerComponent<Item extends Record<string, unknown>>(
 export const RList = forwardRef(RListInnerComponent) as <
   Item extends Record<string, unknown>,
 >(
-  props: RListProps<Item> & { ref?: Ref<RVirtualScrollHandle> },
+  props: TRListProps<Item> & { ref?: Ref<TRVirtualScrollHandle> },
 ) => ReturnType<typeof RListInnerComponent>;
 
 export default RList;
-export type { RListProps, RListVirtualProps };
+export type { TRListProps, TRListVirtualProps };

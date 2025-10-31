@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import roketinConfig from '@config';
 
-type RBrandProps = {
+type TRBrandProps = {
   className?: string;
   iconClassName?: string;
   titleClassName?: string;
@@ -29,7 +29,7 @@ export function RBrand({
   title,
   subtitle,
   icon,
-}: RBrandProps) {
+}: TRBrandProps) {
   const { t } = useTranslation('app');
   const { app: appConfig } = roketinConfig;
 

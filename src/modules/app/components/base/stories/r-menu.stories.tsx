@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ClipboardCheck, Settings, Trash2, UserPlus } from 'lucide-react';
-import RMenu, { type RMenuItem } from '../r-menu';
+import RMenu, { type TRMenuItem } from '../r-menu';
 import RBtn from '@/modules/app/components/base/r-btn';
 
-const baseItems: RMenuItem[] = [
+const baseItems: TRMenuItem[] = [
   {
     id: 'new',
     label: 'New project…',
@@ -43,7 +43,7 @@ const baseItems: RMenuItem[] = [
 ];
 
 const meta: Meta<typeof RMenu> = {
-  title: 'Base/RMenu',
+  title: 'Base/Navigation/RMenu',
   component: RMenu,
   tags: ['autodocs'],
   args: {

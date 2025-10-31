@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useMemo, useState } from 'react';
 import {
   RVirtualScroll,
-  type RVirtualScrollProps,
+  type TRVirtualScrollProps,
   buildPaginationParams,
 } from '../r-virtual-scroll';
 import RBtn from '@/modules/app/components/base/r-btn';
@@ -14,7 +14,7 @@ type Activity = {
 };
 
 const meta: Meta<typeof RVirtualScroll<Activity>> = {
-  title: 'Base/RVirtualScroll',
+  title: 'Base/Data Display/RVirtualScroll',
   component: RVirtualScroll,
   tags: ['autodocs'],
   parameters: {
@@ -83,7 +83,7 @@ export const Playground: Story = {
       [range, pageSize],
     );
 
-    const renderItem: RVirtualScrollProps<Activity>['renderItem'] = ({
+    const renderItem: TRVirtualScrollProps<Activity>['renderItem'] = ({
       item,
       index,
     }) => (

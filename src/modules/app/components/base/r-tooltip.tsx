@@ -8,12 +8,12 @@ import {
 } from '@/modules/app/components/ui/tooltip';
 import { cn } from '@/modules/app/libs/utils';
 
-type RTooltipRenderArgs = {
+type TRTooltipRenderArgs = {
   open: boolean;
 };
 
-type RTooltipProps = {
-  content: ReactNode | ((args: RTooltipRenderArgs) => ReactNode);
+type TRTooltipProps = {
+  content: ReactNode | ((args: TRTooltipRenderArgs) => ReactNode);
   children: ReactNode;
   delayDuration?: number;
   side?: 'top' | 'right' | 'bottom' | 'left';
@@ -46,7 +46,7 @@ function RTooltip({
   defaultOpen,
   onOpenChange,
   disabled = false,
-}: RTooltipProps) {
+}: TRTooltipProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen ?? false);
   const actualOpen = open ?? internalOpen;
 
@@ -73,7 +73,7 @@ function RTooltip({
 
   const renderContent =
     typeof content === 'function'
-      ? (state: RTooltipRenderArgs) => content(state)
+      ? (state: TRTooltipRenderArgs) => content(state)
       : () => content;
 
   return (
@@ -102,5 +102,5 @@ function RTooltip({
   );
 }
 
-export type { RTooltipProps };
+export type { TRTooltipProps };
 export { RTooltip };

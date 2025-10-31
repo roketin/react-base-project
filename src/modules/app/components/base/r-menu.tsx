@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/modules/app/components/ui/dropdown-menu';
 
-export type RMenuItem = {
+export type TRMenuItem = {
   id: string;
   label: ReactNode;
   icon?: ReactNode;
@@ -23,14 +23,14 @@ export type RMenuItem = {
   danger?: boolean;
   onSelect?: (event: MouseEvent<HTMLDivElement>) => void;
   href?: string;
-  items?: RMenuItem[];
+  items?: TRMenuItem[];
   dividerAbove?: boolean;
   hidden?: boolean;
 };
 
-export type RMenuProps = {
+export type TRMenuProps = {
   trigger: ReactNode;
-  items: RMenuItem[];
+  items: TRMenuItem[];
   className?: string;
   contentClassName?: string;
   side?: 'top' | 'right' | 'bottom' | 'left';
@@ -41,7 +41,7 @@ export type RMenuProps = {
   description?: ReactNode;
   footer?: ReactNode;
   dense?: boolean;
-  onItemSelect?: (item: RMenuItem, event: Event) => void;
+  onItemSelect?: (item: TRMenuItem, event: Event) => void;
 };
 
 const HOTKEY_DISPLAY: Record<string, string> = {
@@ -68,7 +68,7 @@ function formatHotkey(hotkey?: string) {
     .join(' + ');
 }
 
-function hasSubItems(item: RMenuItem) {
+function hasSubItems(item: TRMenuItem) {
   return Array.isArray(item.items) && item.items.length > 0;
 }
 
@@ -86,7 +86,7 @@ export function RMenu({
   footer,
   dense = false,
   onItemSelect,
-}: RMenuProps) {
+}: TRMenuProps) {
   const contentClasses = useMemo(
     () =>
       cn(
@@ -97,7 +97,7 @@ export function RMenu({
     [contentClassName],
   );
 
-  const renderItems = (menuItems: RMenuItem[]) => (
+  const renderItems = (menuItems: TRMenuItem[]) => (
     <Fragment>
       {menuItems.map((item) => {
         if (item.hidden) {

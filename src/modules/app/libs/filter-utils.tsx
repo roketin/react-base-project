@@ -7,12 +7,12 @@ import { RPicker } from '@/modules/app/components/base/r-picker';
 import { RRangePicker } from '@/modules/app/components/base/r-range-picker';
 import { Slider } from '@/modules/app/components/ui/slider';
 import { RRadio } from '@/modules/app/components/base/r-radio';
-import type { RPickerProps } from '@/modules/app/components/base/r-picker';
-import type { RRangePickerProps } from '@/modules/app/components/base/r-range-picker';
+import type { TRPickerProps } from '@/modules/app/components/base/r-picker';
+import type { TRRangePickerProps } from '@/modules/app/components/base/r-range-picker';
 import type { TInputProps } from '@/modules/app/components/ui/input';
 import type { TInputSize } from '@/modules/app/components/ui/variants/input-variants';
 import { type ComponentProps, type ReactNode } from 'react';
-import type { RRadioOption } from '@/modules/app/components/base/r-radio';
+import type { TRRadioOption } from '@/modules/app/components/base/r-radio';
 import dayjs from 'dayjs';
 
 type TFilterRenderer<TValue> = (args: {
@@ -302,7 +302,7 @@ type TFilterRadioOptions = FilterComponentOptions<
   string | null,
   ComponentProps<typeof RRadio>,
   'value' | 'defaultValue' | 'onChange' | 'options',
-  { options: RRadioOption[] }
+  { options: TRRadioOption[] }
 >;
 
 export function filterRadio({
@@ -404,7 +404,7 @@ export function filterSlider({
 
 type TFilterDatepickerOptions = FilterComponentOptions<
   Date | null,
-  RPickerProps
+  TRPickerProps
 >;
 
 export function filterDatepicker({
@@ -443,7 +443,7 @@ type DateRange = {
 
 type TFilterDatepickerMultipleOptions = FilterComponentOptions<
   DateRange | null,
-  RRangePickerProps
+  TRRangePickerProps
 >;
 
 export function filterDatepickerMultiple({

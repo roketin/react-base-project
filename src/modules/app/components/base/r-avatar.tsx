@@ -13,7 +13,7 @@ const SIZE_MAP: Record<AvatarSize, string> = {
   xl: 'size-20 text-xl',
 };
 
-type RAvatarProps = {
+type TRAvatarProps = {
   src?: string;
   alt?: string;
   name?: string;
@@ -27,7 +27,10 @@ type RAvatarProps = {
   gradient?: boolean;
 };
 
-const PRESENCE_COLORS: Record<NonNullable<RAvatarProps['presence']>, string> = {
+const PRESENCE_COLORS: Record<
+  NonNullable<TRAvatarProps['presence']>,
+  string
+> = {
   online: 'bg-emerald-500',
   offline: 'bg-muted-foreground/40',
   busy: 'bg-destructive',
@@ -56,7 +59,7 @@ function getGradientFromName(name?: string) {
   return `from-[hsl(${hue},85%,65%)] via-[hsl(${(hue + 40) % 360},80%,60%)] to-[hsl(${(hue + 80) % 360},75%,55%)]`;
 }
 
-export const RAvatar = forwardRef<HTMLDivElement, RAvatarProps>(
+export const RAvatar = forwardRef<HTMLDivElement, TRAvatarProps>(
   function RAvatar(
     {
       src,

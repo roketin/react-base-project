@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Loader2 } from 'lucide-react';
 import clsx from 'clsx';
 
-type RLoadingProps = {
+type TRLoadingProps = {
   label?: ReactNode;
   fullScreen?: boolean;
   className?: string;
@@ -18,7 +18,7 @@ export function RLoading({
   iconClassName,
   hideLabel = false,
   labelClassName,
-}: RLoadingProps) {
+}: TRLoadingProps) {
   return (
     <div
       className={clsx(

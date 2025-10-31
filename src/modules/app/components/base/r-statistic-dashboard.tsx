@@ -4,7 +4,7 @@ import { cn } from '@/modules/app/libs/utils';
 
 type TrendDirection = 'up' | 'down' | 'neutral';
 
-export type RStatisticMetric = {
+export type TRStatisticMetric = {
   id: string;
   label: ReactNode;
   value: ReactNode;
@@ -21,8 +21,8 @@ export type RStatisticMetric = {
   chart?: ReactNode;
 };
 
-export type RStatisticDashboardProps = {
-  metrics: RStatisticMetric[];
+export type TRStatisticDashboardProps = {
+  metrics: TRStatisticMetric[];
   columns?: 1 | 2 | 3 | 4;
   className?: string;
   cardClassName?: string;
@@ -58,7 +58,7 @@ export function RStatisticDashboard({
   className,
   cardClassName,
   minimal = false,
-}: RStatisticDashboardProps) {
+}: TRStatisticDashboardProps) {
   const gridClass =
     columns === 1
       ? 'grid-cols-1'
