@@ -123,3 +123,60 @@ export const Disabled: Story = {
     placeholder: 'Disabled select',
   },
 };
+
+const longOptions: Option[] = Array.from({ length: 60 }).map((_, index) => ({
+  label: `Module ${index + 1}`,
+  value: `module-${index + 1}`,
+  description: `Module description ${index + 1}`,
+}));
+
+export const InfiniteLoading: Story = {
+  render: (args) => {
+    const pageSize = 10;
+    const [optionsList, setOptionsList] = useState<Option[]>(() =>
+      longOptions.slice(0, pageSize),
+    );
+    const [isFetching, setIsFetching] = useState(false);
+    const [hasMore, setHasMore] = useState(longOptions.length > pageSize);
+
+    const handleLoadMore = () => {
+      if (isFetching || !hasMore) {
+        return;
+      }
+
+      setIsFetching(true);
+
+      setTimeout(() => {
+        setOptionsList((prev) => {
+          const nextCount = Math.min(
+            prev.length + pageSize,
+            longOptions.length,
+          );
+          const nextOptions = longOptions.slice(0, nextCount);
+          setHasMore(nextCount < longOptions.length);
+          setIsFetching(false);
+          return nextOptions;
+        });
+      }, 750);
+    };
+
+    return (
+      <RSelect
+        {...args}
+        className='w-72'
+        options={optionsList}
+        loading={isFetching}
+        infiniteScroll={{
+          onLoadMore: handleLoadMore,
+          isLoading: isFetching,
+          hasMore,
+        }}
+      />
+    );
+  },
+  args: {
+    placeholder: 'Scroll to load more modules',
+    allowClear: true,
+    showSearch: true,
+  },
+};

@@ -5,7 +5,17 @@ import type {
   SelectProps,
 } from 'rc-select/lib/Select';
 import type { BaseSelectRef } from 'rc-select';
-import { forwardRef, type ReactElement, type Ref } from 'react';
+import {
+  forwardRef,
+  type ReactElement,
+  type ReactNode,
+  type Ref,
+  type UIEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { Check, ChevronsUpDown, LoaderCircle } from 'lucide-react';
 import { cn } from '@/modules/app/libs/utils';
 
@@ -23,6 +33,14 @@ export type TRSelectProps<
   OptionType extends BaseOptionType = DefaultOptionType,
 > = Omit<SelectProps<ValueType, OptionType>, 'fieldNames'> & {
   fieldNames?: TRSelectFieldNames<OptionType>;
+  infiniteScroll?: {
+    onLoadMore: () => void;
+    threshold?: number;
+    hasMore?: boolean;
+    isLoading?: boolean;
+    loadingContent?: ReactNode;
+    finishedContent?: ReactNode;
+  };
 };
 
 type TRSelectComponent = <
@@ -45,6 +63,9 @@ function RSelectBase<
     suffixIcon,
     'aria-invalid': ariaInvalid,
     className,
+    infiniteScroll,
+    dropdownRender,
+    onPopupScroll,
     ...restProps
   } = props;
 
@@ -54,6 +75,119 @@ function RSelectBase<
 
   const isMultiple = restProps.mode === 'multiple';
 
+  const loadMoreTriggeredRef = useRef(false);
+  const infiniteOnLoadMore = infiniteScroll?.onLoadMore;
+  const infiniteThreshold = infiniteScroll?.threshold ?? 32;
+  const infiniteHasMore = infiniteScroll?.hasMore ?? true;
+  const infiniteIsLoading = infiniteScroll?.isLoading ?? false;
+  const infiniteLoadingContent = infiniteScroll?.loadingContent;
+  const infiniteFinishedContent = infiniteScroll?.finishedContent;
+
+  useEffect(() => {
+    if (!infiniteIsLoading || !infiniteHasMore) {
+      loadMoreTriggeredRef.current = false;
+    }
+  }, [infiniteHasMore, infiniteIsLoading]);
+
+  const handlePopupScroll = useCallback(
+    (event: UIEvent<HTMLDivElement>) => {
+      onPopupScroll?.(event);
+
+      if (!infiniteOnLoadMore || infiniteIsLoading || !infiniteHasMore) {
+        return;
+      }
+
+      const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
+      const distanceToBottom = scrollHeight - scrollTop - clientHeight;
+
+      if (
+        distanceToBottom <= infiniteThreshold &&
+        !loadMoreTriggeredRef.current
+      ) {
+        loadMoreTriggeredRef.current = true;
+        infiniteOnLoadMore();
+      }
+    },
+    [
+      infiniteHasMore,
+      infiniteIsLoading,
+      infiniteOnLoadMore,
+      infiniteThreshold,
+      onPopupScroll,
+    ],
+  );
+
+  const mergedOnPopupScroll =
+    infiniteOnLoadMore || onPopupScroll ? handlePopupScroll : undefined;
+
+  const defaultLoadingFooter = useMemo(
+    () => (
+      <div className='flex items-center justify-center gap-2 px-3 py-2 text-sm text-muted-foreground'>
+        <LoaderCircle className='h-4 w-4 animate-spin' />
+        Loading more…
+      </div>
+    ),
+    [],
+  );
+
+  const defaultFinishedFooter = useMemo(
+    () => (
+      <div className='px-3 py-2 text-center text-xs text-muted-foreground'>
+        All options loaded
+      </div>
+    ),
+    [],
+  );
+
+  const infiniteFooter = useMemo(() => {
+    if (!infiniteOnLoadMore) {
+      return null;
+    }
+
+    if (infiniteIsLoading) {
+      return infiniteLoadingContent !== undefined
+        ? infiniteLoadingContent
+        : defaultLoadingFooter;
+    }
+
+    if (!infiniteHasMore) {
+      return infiniteFinishedContent !== undefined
+        ? infiniteFinishedContent
+        : defaultFinishedFooter;
+    }
+
+    return null;
+  }, [
+    defaultFinishedFooter,
+    defaultLoadingFooter,
+    infiniteFinishedContent,
+    infiniteHasMore,
+    infiniteIsLoading,
+    infiniteLoadingContent,
+    infiniteOnLoadMore,
+  ]);
+
+  const mergedDropdownRender = useCallback(
+    (menu: React.ReactElement) => {
+      const baseMenu = dropdownRender ? dropdownRender(menu) : menu;
+
+      if (!infiniteFooter) {
+        return baseMenu;
+      }
+
+      return (
+        <>
+          {baseMenu}
+          {infiniteFooter}
+        </>
+      );
+    },
+    [dropdownRender, infiniteFooter],
+  );
+
+  const finalDropdownRender =
+    infiniteOnLoadMore || dropdownRender ? mergedDropdownRender : undefined;
+
   return (
     <Select<ValueType, OptionType>
       ref={ref}
@@ -62,6 +196,8 @@ function RSelectBase<
       fieldNames={normalizedFieldNames}
       {...restProps}
       animation='slide-up'
+      dropdownRender={finalDropdownRender}
+      onPopupScroll={mergedOnPopupScroll}
       menuItemSelectedIcon={
         menuItemSelectedIcon ?? (isMultiple ? <Check size={14} /> : null)
       }

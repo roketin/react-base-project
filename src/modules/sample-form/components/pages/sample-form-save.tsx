@@ -27,6 +27,13 @@ import { RFormRangePicker } from '@/modules/app/components/base/r-range-picker';
 import { yupDateRangeRequired } from '@/modules/app/validators/date.validator';
 import SampleStepper from '@/modules/sample-form/components/elements/sample-stepper';
 import { useLeavePageGuard } from '@/modules/app/hooks/use-leave-page-guard';
+import { useGetSampleFormInfiniteList } from '@/modules/sample-form/services/sample-form.service';
+import { useInfiniteSelectOptions } from '@/modules/app/hooks/use-infinite-select';
+import type {
+  TApiDefaultQueryParams,
+  TApiResponsePaginate,
+} from '@/modules/app/types/api.type';
+import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
 
 const formSchema = Yup.object().shape({
   checkbox_single: Yup.bool().default(false).label('Checkbox Single'),
@@ -46,6 +53,7 @@ const formSchema = Yup.object().shape({
     .default([])
     .min(1)
     .label('Select Multiple'),
+  select_infinite: Yup.string().required().label('Select Infinite'),
   text_area: Yup.string().default('').required().label('Textarea'),
   switch: Yup.bool().default(false).label('Switch'),
   image: fileOrStringRule('Image').required().default(undefined),
@@ -85,6 +93,10 @@ const digitsOnlyMask: MaskitoOptions = {
   ],
 };
 
+const SAMPLE_SELECT_BASE_PARAMS: TApiDefaultQueryParams = {
+  per_page: 10,
+};
+
 const TodoSave = () => {
   const form = useForm<TFormSchema>({
     mode: 'onTouched',
@@ -106,6 +118,24 @@ const TodoSave = () => {
   const handleSubmit = useCallback((values: TFormSchema) => {
     console.log('values', values);
   }, []);
+
+  const selectPageItems = useCallback(
+    (page: TApiResponsePaginate<TSampleItem>) => page.data,
+    [],
+  );
+
+  const {
+    options: sampleSelectOptions,
+    infiniteScroll: sampleSelectInfiniteScroll,
+    isInitialLoading: isInitialSampleSelectLoading,
+    searchValue: selectSearch,
+    setSearchValue: setSelectSearch,
+  } = useInfiniteSelectOptions({
+    baseParams: SAMPLE_SELECT_BASE_PARAMS,
+    query: useGetSampleFormInfiniteList,
+    getPageItems: selectPageItems,
+    searchParamKey: 'search',
+  });
 
   return (
     <>
@@ -164,6 +194,36 @@ const TodoSave = () => {
           >
             <RSelect allowClear mode='multiple' options={items} />
           </RFormField>
+
+          {/* Select with Infinite Loading */}
+          <RFormField
+            control={form.control}
+            name='select_infinite'
+            label='Select Infinite'
+            labelDescription='Load more results while scrolling'
+            render={({ field }) => (
+              <RSelect
+                {...field}
+                allowClear
+                showSearch
+                placeholder='Search module'
+                options={sampleSelectOptions}
+                onSearch={setSelectSearch}
+                searchValue={selectSearch}
+                loading={isInitialSampleSelectLoading}
+                onChange={(value) => {
+                  field.onChange(value);
+                  setSelectSearch('');
+                }}
+                infiniteScroll={sampleSelectInfiniteScroll}
+                fieldNames={{
+                  label: 'name',
+                  value: 'id',
+                }}
+                optionFilterProp='name'
+              />
+            )}
+          />
 
           {/* Switch */}
           <RFormField

@@ -1,4 +1,6 @@
-export type TSampleItem = {
+import type { BaseOptionType } from 'rc-select/lib/Select';
+
+export type TSampleItem = BaseOptionType & {
   id: string;
   name: string;
   code: string;

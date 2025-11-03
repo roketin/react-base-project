@@ -1,7 +1,13 @@
 import {
   useQuery,
+  useInfiniteQuery,
   type UseQueryOptions,
   type UseQueryResult,
+  type UseInfiniteQueryOptions,
+  type UseInfiniteQueryResult,
+  type InfiniteData,
+  type QueryKey,
+  type QueryClient,
 } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 
@@ -22,4 +28,26 @@ export function useAxiosQuery<TData>(
   options: UseQueryOptions<TData, AxiosError>,
 ): UseQueryResult<TData, AxiosError> {
   return useQuery<TData, AxiosError>(options);
+}
+
+export function useAxiosInfiniteQuery<
+  TQueryFnData,
+  TError = AxiosError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: UseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> {
+  return useInfiniteQuery<TQueryFnData, TError, TData, TQueryKey, TPageParam>(
+    options,
+    queryClient,
+  );
 }
