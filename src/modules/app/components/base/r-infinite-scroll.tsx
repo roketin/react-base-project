@@ -1,21 +1,30 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { cn } from '@/modules/app/libs/utils';
+import {
+  RVirtualScroll,
+  type TRVirtualScrollProps,
+} from '@/modules/app/components/base/r-virtual-scroll';
 
 export type TRInfiniteScrollProps<Item> = {
   items: readonly Item[];
   renderItem: (item: Item, index: number) => ReactNode;
-  loadMore: () => Promise<void> | void;
+  loadMore?: () => Promise<void> | void;
   hasMore?: boolean;
   isLoading?: boolean;
   loader?: ReactNode;
   endMessage?: ReactNode;
+  emptyElement?: ReactNode;
   className?: string;
   listClassName?: string;
-  threshold?: number;
-  rootMargin?: string;
+  itemClassName?: string;
   manual?: boolean;
   initialLoad?: boolean;
+  height?: number;
+  itemHeight?: number;
+  overscan?: number;
+  onScrollPositionChange?: TRVirtualScrollProps<Item>['onScrollPositionChange'];
+  endReachedThreshold?: number;
 };
 
 export function RInfiniteScroll<Item>({
@@ -26,15 +35,20 @@ export function RInfiniteScroll<Item>({
   isLoading = false,
   loader,
   endMessage,
+  emptyElement,
   className,
   listClassName,
-  threshold = 0.1,
-  rootMargin = '0px',
+  itemClassName,
   manual = false,
   initialLoad = false,
+  height,
+  itemHeight = 72,
+  overscan,
+  onScrollPositionChange,
+  endReachedThreshold,
 }: TRInfiniteScrollProps<Item>) {
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-  const [isInitialLoad, setIsInitialLoad] = useState(initialLoad);
+  const [shouldTriggerInitialLoad, setShouldTriggerInitialLoad] =
+    useState(initialLoad);
 
   const loaderNode = useMemo(
     () =>
@@ -56,61 +70,39 @@ export function RInfiniteScroll<Item>({
     [endMessage],
   );
 
-  const handleIntersect = useCallback(
-    (entries: IntersectionObserverEntry[]) => {
-      const [entry] = entries;
-      if (!entry?.isIntersecting) return;
-      if (!hasMore || isLoading || manual) return;
-      loadMore();
-    },
-    [hasMore, isLoading, manual, loadMore],
-  );
-
   useEffect(() => {
-    if (manual) return;
-    const node = sentinelRef.current;
-    if (!node) return;
+    if (!shouldTriggerInitialLoad) return;
+    if (!initialLoad) return;
+    if (!loadMore) return;
 
-    const observer = new IntersectionObserver(handleIntersect, {
-      root: null,
-      rootMargin,
-      threshold,
-    });
+    setShouldTriggerInitialLoad(false);
+    void loadMore();
+  }, [initialLoad, loadMore, shouldTriggerInitialLoad]);
 
-    observer.observe(node);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [handleIntersect, manual, rootMargin, threshold]);
-
-  useEffect(() => {
-    if (!initialLoad || manual) return;
-    if (isInitialLoad) {
-      loadMore();
-      setIsInitialLoad(false);
-    }
-  }, [initialLoad, isInitialLoad, loadMore, manual]);
-
-  const renderList = useMemo(
-    () =>
-      items.map((item, index) => (
-        <div key={index} className='w-full'>
-          {renderItem(item, index)}
-        </div>
-      )),
-    [items, renderItem],
-  );
+  const handleLoadMore = manual ? undefined : loadMore;
 
   return (
     <div className={cn('flex w-full flex-col', className)}>
-      <div className={cn('flex flex-col gap-3', listClassName)}>
-        {renderList}
-      </div>
-
-      <div ref={sentinelRef} className='h-px w-full' aria-hidden='true' />
-
-      {isLoading ? loaderNode : !hasMore ? endNode : null}
+      <RVirtualScroll<Item>
+        className={cn('w-full', listClassName)}
+        items={items}
+        itemHeight={itemHeight}
+        height={height}
+        overscan={overscan}
+        loadMore={handleLoadMore}
+        hasMore={hasMore}
+        isLoading={isLoading}
+        loader={loaderNode}
+        emptyElement={emptyElement}
+        onScrollPositionChange={onScrollPositionChange}
+        endReachedThreshold={endReachedThreshold}
+        renderItem={({ item, index, style }) => (
+          <div style={style} className={cn('w-full', itemClassName)}>
+            {renderItem(item, index)}
+          </div>
+        )}
+      />
+      {!hasMore && !isLoading ? endNode : null}
     </div>
   );
 }

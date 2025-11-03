@@ -43,7 +43,7 @@ const baseItems: TRMenuItem[] = [
 ];
 
 const meta: Meta<typeof RMenu> = {
-  title: 'Base/Navigation/RMenu',
+  title: 'Base/RMenu',
   component: RMenu,
   tags: ['autodocs'],
   args: {

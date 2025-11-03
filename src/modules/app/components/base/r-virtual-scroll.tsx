@@ -10,16 +10,21 @@ import {
 import type {
   CSSProperties,
   ForwardedRef,
+  Key,
   ReactNode,
   Ref,
   UIEvent,
 } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { cn } from '@/modules/app/libs/utils';
+import type { PaginationRange } from '@/modules/app/libs/paginate-utils';
 
 export type TRVirtualScrollHandle = {
   scrollToIndex: (index: number) => void;
   scrollToTop: () => void;
 };
+
+export type TRVirtualRange = PaginationRange;
 
 export type TRVirtualScrollProps<Item> = {
   items: readonly Item[];
@@ -34,8 +39,8 @@ export type TRVirtualScrollProps<Item> = {
     style: CSSProperties;
     isVisible: boolean;
   }) => ReactNode;
-  getKey?: (item: Item, index: number) => React.Key;
-  onRangeChange?: (range: { start: number; end: number }) => void;
+  getKey?: (item: Item, index: number) => Key;
+  onRangeChange?: (range: TRVirtualRange) => void;
   autoFocusIndex?: number;
   observeResize?: boolean;
   onResize?: (height: number) => void;
@@ -54,94 +59,6 @@ export type TRVirtualScrollProps<Item> = {
 };
 
 const DEFAULT_OVERSCAN = 4;
-
-function getRange({
-  scrollTop,
-  height,
-  itemHeight,
-  count,
-  overscan,
-}: {
-  scrollTop: number;
-  height: number;
-  itemHeight: number;
-  count: number;
-  overscan: number;
-}) {
-  const startIndex = Math.max(Math.floor(scrollTop / itemHeight) - overscan, 0);
-  const endIndex = Math.min(
-    count - 1,
-    Math.ceil((scrollTop + height) / itemHeight) + overscan,
-  );
-
-  return { startIndex, endIndex };
-}
-
-function useVirtualRange<Item>({
-  items,
-  height,
-  itemHeight,
-  overscan,
-  onRangeChange,
-}: {
-  items: readonly Item[];
-  height: number;
-  itemHeight: number;
-  overscan: number;
-  onRangeChange?: (range: { start: number; end: number }) => void;
-}) {
-  const [{ startIndex, endIndex }, setRange] = useState(() =>
-    getRange({
-      scrollTop: 0,
-      height,
-      itemHeight,
-      count: items.length,
-      overscan,
-    }),
-  );
-
-  const updateRange = useCallback(
-    (scrollTop: number) => {
-      setRange((prev) => {
-        const next = getRange({
-          scrollTop,
-          height,
-          itemHeight,
-          count: items.length,
-          overscan,
-        });
-
-        if (
-          prev.startIndex === next.startIndex &&
-          prev.endIndex === next.endIndex
-        ) {
-          return prev;
-        }
-
-        return next;
-      });
-    },
-    [height, itemHeight, items.length, overscan],
-  );
-
-  useEffect(() => {
-    onRangeChange?.({ start: startIndex, end: endIndex });
-  }, [startIndex, endIndex, onRangeChange]);
-
-  useEffect(() => {
-    setRange(
-      getRange({
-        scrollTop: 0,
-        height,
-        itemHeight,
-        count: items.length,
-        overscan,
-      }),
-    );
-  }, [height, itemHeight, items.length, overscan]);
-
-  return { startIndex, endIndex, updateRange };
-}
 
 function RVirtualScrollInner<Item>(
   {
@@ -183,32 +100,41 @@ function RVirtualScrollInner<Item>(
     return 320;
   }, [dynamicHeight, height]);
 
-  const { startIndex, endIndex, updateRange } = useVirtualRange<Item>({
-    items,
-    height: resolvedHeight,
-    itemHeight,
+  const estimateSize = useCallback(() => itemHeight, [itemHeight]);
+
+  const virtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => containerRef.current,
+    estimateSize,
     overscan,
-    onRangeChange,
   });
+
+  const virtualItems = virtualizer.getVirtualItems();
+  const totalHeight = virtualizer.getTotalSize();
+
+  const rangeStart = virtualItems[0]?.index ?? 0;
+  const rangeEnd = virtualItems[virtualItems.length - 1]?.index ?? -1;
 
   useImperativeHandle(
     ref,
     () => ({
       scrollToIndex: (index: number) => {
-        const node = containerRef.current;
-        if (!node) return;
+        if (!items.length) return;
         const clamped = Math.max(0, Math.min(items.length - 1, index));
-        node.scrollTo({
-          top: clamped * itemHeight,
+        virtualizer.scrollToIndex(clamped, {
+          align: 'start',
           behavior: 'smooth',
         });
       },
       scrollToTop: () => {
-        const node = containerRef.current;
-        node?.scrollTo({ top: 0, behavior: 'smooth' });
+        if (!items.length) {
+          containerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        virtualizer.scrollToIndex(0, { align: 'start', behavior: 'smooth' });
       },
     }),
-    [itemHeight, items.length],
+    [items.length, virtualizer],
   );
 
   useEffect(() => {
@@ -220,32 +146,24 @@ function RVirtualScrollInner<Item>(
       return;
     }
 
-    const node = containerRef.current;
-    if (node) {
-      node.scrollTo({ top: autoFocusIndex * itemHeight });
-    }
-  }, [autoFocusIndex, itemHeight, items.length]);
+    virtualizer.scrollToIndex(autoFocusIndex, { align: 'start' });
+  }, [autoFocusIndex, items.length, virtualizer]);
 
-  const totalHeight = items.length * itemHeight;
+  useEffect(() => {
+    if (!onRangeChange) return;
 
-  const visibleItems = useMemo(() => {
-    const slice: Array<{ item: Item | undefined; index: number; top: number }> =
-      [];
-    for (let index = startIndex; index <= endIndex; index += 1) {
-      const item = items[index];
-      if (item === undefined) continue;
-      const top = index * itemHeight;
-      slice.push({
-        item,
-        index,
-        top,
+    if (virtualItems.length === 0) {
+      onRangeChange({
+        startIndex: 0,
+        endIndex: items.length ? items.length - 1 : -1,
       });
+      return;
     }
-    return slice;
-  }, [endIndex, itemHeight, items, startIndex]);
+
+    onRangeChange({ startIndex: rangeStart, endIndex: rangeEnd });
+  }, [items.length, onRangeChange, rangeEnd, rangeStart, virtualItems.length]);
 
   const handleScroll = (event: UIEvent<HTMLElement>) => {
-    updateRange(event.currentTarget.scrollTop);
     onScrollPositionChange?.({
       scrollTop: event.currentTarget.scrollTop,
       height: resolvedHeight,
@@ -269,6 +187,7 @@ function RVirtualScrollInner<Item>(
       const nextHeight = entry.contentRect.height;
       setDynamicHeight(nextHeight);
       onResize?.(nextHeight);
+      virtualizer.measure();
     });
 
     observer.observe(node);
@@ -278,7 +197,7 @@ function RVirtualScrollInner<Item>(
       observer.disconnect();
       resizeObserverRef.current = null;
     };
-  }, [height, observeResize, onResize]);
+  }, [height, observeResize, onResize, virtualizer]);
 
   useEffect(() => {
     if (!lazy) return;
@@ -303,25 +222,26 @@ function RVirtualScrollInner<Item>(
   useEffect(() => {
     if (!isInView) return;
     if (!items.length) return;
+    if (virtualItems.length === 0) return;
 
-    if (endIndex >= items.length - 1 - endReachedThreshold) {
-      if (onEndReached && lastEndRef.current !== endIndex) {
-        onEndReached({ startIndex, endIndex });
+    const lastItem = virtualItems[virtualItems.length - 1];
+    if (lastItem.index >= items.length - 1 - endReachedThreshold) {
+      if (onEndReached && lastEndRef.current !== lastItem.index) {
+        onEndReached({ startIndex: rangeStart, endIndex: lastItem.index });
       }
 
       if (
         loadMore &&
         hasMore &&
         !isLoading &&
-        lastEndRef.current !== endIndex
+        lastEndRef.current !== lastItem.index
       ) {
-        loadMore();
+        void loadMore();
       }
 
-      lastEndRef.current = endIndex;
+      lastEndRef.current = lastItem.index;
     }
   }, [
-    endIndex,
     endReachedThreshold,
     hasMore,
     isInView,
@@ -329,8 +249,15 @@ function RVirtualScrollInner<Item>(
     items.length,
     loadMore,
     onEndReached,
-    startIndex,
+    rangeStart,
+    virtualItems,
   ]);
+
+  useEffect(() => {
+    if (items.length === 0) {
+      lastEndRef.current = -1;
+    }
+  }, [items.length]);
 
   const showEmpty = !isLoading && items.length === 0 && emptyElement;
 
@@ -351,24 +278,30 @@ function RVirtualScrollInner<Item>(
         className={cn('relative min-h-full w-full', innerClassName)}
         style={{ height: totalHeight }}
       >
-        {visibleItems.map(({ item, index, top }) => {
-          const key = getKey?.(item as Item, index) ?? index;
+        {virtualItems.map((virtualItem) => {
+          const item = items[virtualItem.index];
+          if (item === undefined) return null;
+          const key =
+            getKey?.(item, virtualItem.index) ??
+            virtualItem.key ??
+            virtualItem.index;
           return (
             <div
               key={key}
               style={{
                 position: 'absolute',
-                top,
-                height: itemHeight,
+                top: 0,
                 left: 0,
-                right: 0,
+                width: '100%',
+                transform: `translateY(${virtualItem.start}px)`,
+                height: virtualItem.size,
               }}
             >
               {renderItem({
-                item: item as Item,
-                index,
-                style: { height: itemHeight },
-                isVisible: index >= startIndex && index <= endIndex,
+                item,
+                index: virtualItem.index,
+                style: { height: virtualItem.size },
+                isVisible: true,
               })}
             </div>
           );
@@ -383,7 +316,6 @@ function RVirtualScrollInner<Item>(
   );
 }
 
-// Generic helper to preserve type inference
 type TRVirtualScrollComponent = {
   <Item>(
     props: TRVirtualScrollProps<Item> & { ref?: Ref<TRVirtualScrollHandle> },
@@ -399,20 +331,3 @@ export const RVirtualScroll =
   RVirtualScrollBase as unknown as TRVirtualScrollComponent;
 
 export default RVirtualScroll;
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function buildPaginationParams(
-  range: { startIndex: number; endIndex: number },
-  pageSize: number,
-) {
-  const offset = range.startIndex;
-  const limit = Math.min(pageSize, range.endIndex - range.startIndex + 1);
-  const page = Math.floor(range.startIndex / pageSize) + 1;
-
-  return {
-    page,
-    pageSize,
-    offset,
-    limit,
-  };
-}

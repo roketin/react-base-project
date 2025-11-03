@@ -38,7 +38,7 @@ const ListStoryComponent = (props: ListStoryProps) => (
 );
 
 const meta: Meta<typeof ListStoryComponent> = {
-  title: 'Base/Data Display/RList',
+  title: 'Base/RList',
   component: ListStoryComponent,
   tags: ['autodocs'],
   args: {

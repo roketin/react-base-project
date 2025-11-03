@@ -3,8 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   RVirtualScroll,
   type TRVirtualScrollProps,
-  buildPaginationParams,
+  type TRVirtualRange,
 } from '../r-virtual-scroll';
+import { buildPaginationParams } from '@/modules/app/libs/paginate-utils';
 import RBtn from '@/modules/app/components/base/r-btn';
 
 type Activity = {
@@ -14,7 +15,7 @@ type Activity = {
 };
 
 const meta: Meta<typeof RVirtualScroll<Activity>> = {
-  title: 'Base/Data Display/RVirtualScroll',
+  title: 'Base/RVirtualScroll',
   component: RVirtualScroll,
   tags: ['autodocs'],
   parameters: {
@@ -51,10 +52,7 @@ export const Playground: Story = {
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
-    const [range, setRange] = useState<{
-      startIndex: number;
-      endIndex: number;
-    }>({
+    const [range, setRange] = useState<TRVirtualRange>({
       startIndex: 0,
       endIndex: 0,
     });
@@ -131,9 +129,7 @@ export const Playground: Story = {
                 loadMore={loadMore}
                 hasMore={hasMore}
                 isLoading={isLoading}
-                onRangeChange={(range) =>
-                  setRange({ startIndex: range.start, endIndex: range.end })
-                }
+                onRangeChange={(nextRange) => setRange(nextRange)}
                 onScrollPositionChange={(info) => {
                   // eslint-disable-next-line no-console
                   console.debug('Scroll position', info);

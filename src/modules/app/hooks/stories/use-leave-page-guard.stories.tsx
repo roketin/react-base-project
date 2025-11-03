@@ -1,8 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Input } from '@/modules/app/components/ui/input';
-import { useLeavePageGuard } from '../use-leave-page-guard';
-import { useDirtyTracker } from '../use-leave-page-guard';
+import {
+  RouterProvider,
+  createMemoryRouter,
+  useNavigate,
+} from 'react-router-dom';
+import { useDirtyTracker, useLeavePageGuard } from '../use-leave-page-guard';
 import RBtn from '@/modules/app/components/base/r-btn';
 
 const meta: Meta = {
@@ -26,19 +30,17 @@ const DemoForm = () => {
       cancelText: 'Continue editing',
     },
   });
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.history.pushState({ guardDemo: true }, '', window.location.href);
-    }
-  }, []);
-
-  const withGuard = async (action: () => void) => {
-    const approve = await guard.confirmNavigation();
-    if (approve) {
-      action();
-    }
-  };
+  const withGuard = useCallback(
+    async (action: () => void) => {
+      const approve = await guard.confirmNavigation();
+      if (approve) {
+        action();
+      }
+    },
+    [guard],
+  );
 
   return (
     <div className='flex w-full max-w-lg flex-col gap-4 rounded-xl border border-border/60 bg-background p-6'>
@@ -60,38 +62,11 @@ const DemoForm = () => {
           onClick={() =>
             withGuard(() => {
               dirty.resetBaseline();
-              // eslint-disable-next-line no-alert
-              window.alert('Navigation confirmed. State reset.');
+              navigate('/guard-demo/confirmation');
             })
           }
         >
-          Simulate navigation
-        </RBtn>
-        <RBtn
-          variant='outline'
-          onClick={() => withGuard(() => window.location.reload())}
-        >
-          Reload page
-        </RBtn>
-        <RBtn
-          variant='outline'
-          onClick={() =>
-            withGuard(() => {
-              window.location.href = 'https://example.com';
-            })
-          }
-        >
-          Leave site
-        </RBtn>
-        <RBtn
-          variant='outline'
-          onClick={() =>
-            withGuard(() => {
-              window.history.back();
-            })
-          }
-        >
-          Go back
+          Navigate to confirmation
         </RBtn>
         <RBtn
           variant='outline'
@@ -110,6 +85,41 @@ const DemoForm = () => {
   );
 };
 
+const ConfirmationView = () => {
+  const navigate = useNavigate();
+  return (
+    <div className='flex w-full max-w-lg flex-col gap-4 rounded-xl border border-border/60 bg-background p-6'>
+      <div className='space-y-1 text-center'>
+        <h2 className='text-lg font-semibold'>Navigation confirmed</h2>
+        <p className='text-sm text-muted-foreground'>
+          The guard allowed navigation to complete successfully.
+        </p>
+      </div>
+      <RBtn onClick={() => navigate('/guard-demo')}>
+        Return to guarded form
+      </RBtn>
+    </div>
+  );
+};
+
+const DemoRouter = () => {
+  const router = useMemo(
+    () =>
+      createMemoryRouter(
+        [
+          { path: '/guard-demo', element: <DemoForm /> },
+          {
+            path: '/guard-demo/confirmation',
+            element: <ConfirmationView />,
+          },
+        ],
+        { initialEntries: ['/guard-demo'] },
+      ),
+    [],
+  );
+  return <RouterProvider router={router} />;
+};
+
 export const Playground: Story = {
-  render: () => <DemoForm />,
+  render: () => <DemoRouter />,
 };

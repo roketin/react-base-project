@@ -55,7 +55,7 @@ export const Playground: Story = {
     }, []);
 
     return (
-      <div className='mx-auto flex h-[480px] w-full max-w-3xl flex-col rounded-2xl border border-border/60 bg-background p-6'>
+      <div className='mx-auto flex  w-full max-w-3xl flex-col rounded-2xl border border-border/60 bg-background p-6'>
         <h2 className='text-lg font-semibold'>Recent activity</h2>
         <p className='text-sm text-muted-foreground'>
           Scroll to load more entries. Data is simulated locally.
@@ -67,9 +67,12 @@ export const Playground: Story = {
             loadMore={loadMore}
             hasMore={hasMore}
             isLoading={isLoading}
+            height={360}
+            itemHeight={96}
+            itemClassName='px-1 py-1'
             renderItem={(item) => (
-              <div className='space-y-1 rounded-lg border border-transparent px-3 py-2 transition hover:border-border/60 hover:bg-muted/30'>
-                <p className='font-medium'>{item.title}</p>
+              <div className='flex h-full w-full flex-col justify-center space-y-1 rounded-lg border border-transparent px-3 py-3 transition hover:border-border/60 hover:bg-muted/30'>
+                <p className='font-medium leading-tight'>{item.title}</p>
                 <p className='text-sm text-muted-foreground'>{item.body}</p>
               </div>
             )}
@@ -121,9 +124,12 @@ export const ManualTrigger: Story = {
           hasMore={hasMore}
           isLoading={isLoading}
           manual
+          height={320}
+          itemHeight={88}
+          itemClassName='px-1 py-1'
           renderItem={(item) => (
-            <div className='rounded-lg border border-border/60 bg-background/80 px-4 py-3'>
-              <p className='font-medium'>{item.title}</p>
+            <div className='flex h-full w-full flex-col justify-center rounded-lg border border-border/60 bg-background/80 px-4 py-3'>
+              <p className='font-medium leading-tight'>{item.title}</p>
               <p className='text-xs text-muted-foreground'>{item.body}</p>
             </div>
           )}
