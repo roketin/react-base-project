@@ -1,5 +1,6 @@
 import moduleFeature from './module/index.js';
 import infoFeature from './info/index.js';
+import viewRoutesFeature from './view-router/index.js';
 
 const featureDefinitions = [
   {
@@ -12,6 +13,11 @@ const featureDefinitions = [
     name: 'info',
     description: 'Show registered generators and presets',
     handler: infoFeature,
+  },
+  {
+    name: 'view-router',
+    description: 'Visualize the aggregated application routing tree',
+    handler: viewRoutesFeature,
   },
 ];
 

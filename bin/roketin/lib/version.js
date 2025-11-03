@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const pkgPath = path.resolve(__dirname, '../../../package.json');
 
-let cliVersion = '0.0.0';
+let cliVersion = '1.1.0';
 
 try {
   const raw = fs.readFileSync(pkgPath, 'utf8');
