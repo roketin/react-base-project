@@ -9,7 +9,7 @@ import type {
   TLayoutOrientation,
 } from '@/modules/app/types/component.type';
 import { cn } from '@/modules/app/libs/utils';
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 
 export type TRRadioOption = TDescriptiveOption<string>;
 
@@ -34,6 +34,8 @@ export function RRadio({
   name,
   className,
 }: TRRadioProps) {
+  const baseId = useId();
+  const groupName = name ?? `${baseId}-group`;
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState<string | null>(
     isControlled ? (value ?? null) : defaultValue,
@@ -57,14 +59,14 @@ export function RRadio({
 
   return (
     <RadioGroup
-      name={name}
+      name={groupName}
       value={currentValue ?? undefined}
       onValueChange={handleChange}
       disabled={disabled}
       className={groupClassName}
     >
       {options.map((option, index) => {
-        const id = `${name ?? 'radio'}-${index}`;
+        const id = `${baseId}-option-${index}`;
         const labelNode = option.description ? (
           <div className='flex flex-col'>
             <span>{option.label}</span>

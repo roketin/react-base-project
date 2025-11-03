@@ -275,7 +275,7 @@ export const MenuPlayground: Story = {
               <p className='text-xs font-semibold text-foreground'>
                 Query string
               </p>
-              <code className='block min-h-[32px] break-all rounded bg-background/80 px-2 py-1 text-[11px] text-muted-foreground'>
+              <code className='block min-h-8 break-all rounded bg-background/80 px-2 py-1 text-[11px] text-muted-foreground'>
                 {queryString || '(empty)'}
               </code>
             </div>

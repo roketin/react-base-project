@@ -32,6 +32,8 @@ export type TRDialogProps = Omit<DialogProps, 'children'> & {
   headerClassName?: string;
   bodyClassName?: string;
   footerClassName?: string;
+  overlayClassName?: string;
+  closeClassName?: string;
   size?: Size;
   blurOverlay?: boolean;
   alignFooter?: 'start' | 'center' | 'end' | 'apart';
@@ -39,6 +41,7 @@ export type TRDialogProps = Omit<DialogProps, 'children'> & {
   hideHeader?: boolean;
   hideFooter?: boolean;
   showCloseButton?: boolean;
+  fullscreen?: boolean;
 };
 
 export function RDialog({
@@ -50,6 +53,8 @@ export function RDialog({
   headerClassName,
   bodyClassName,
   footerClassName,
+  overlayClassName,
+  closeClassName,
   size = 'md',
   blurOverlay = false,
   alignFooter = 'end',
@@ -57,6 +62,7 @@ export function RDialog({
   hideHeader = false,
   hideFooter = false,
   showCloseButton = true,
+  fullscreen = false,
   ...dialogProps
 }: TRDialogProps) {
   const titleId = useId();
@@ -75,13 +81,15 @@ export function RDialog({
       <DialogContent
         aria-describedby={description ? descriptionId : undefined}
         aria-labelledby={title ? titleId : undefined}
+        showCloseButton={showCloseButton}
+        fullscreen={fullscreen}
+        overlayClassName={cn(blurOverlay && 'backdrop-blur', overlayClassName)}
+        closeClassName={closeClassName}
         className={cn(
           'gap-5',
-          SIZE_MAP[size],
-          blurOverlay && 'backdrop-blur',
+          fullscreen ? '' : SIZE_MAP[size],
           contentClassName,
         )}
-        showCloseButton={showCloseButton}
       >
         {!hideHeader && (title || description) ? (
           <DialogHeader className={cn('space-y-2', headerClassName)}>
@@ -98,11 +106,9 @@ export function RDialog({
           </DialogHeader>
         ) : null}
 
-        {children ? (
-          <div className={cn('max-h-[70vh] overflow-y-auto', bodyClassName)}>
-            {children}
-          </div>
-        ) : null}
+        {children && (
+          <div className={cn('overflow-y-auto', bodyClassName)}>{children}</div>
+        )}
 
         {!hideFooter && footer ? (
           <DialogFooter

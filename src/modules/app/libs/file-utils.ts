@@ -30,18 +30,46 @@ export type TGroupFileType = 'image' | 'pdf' | 'doc' | 'audio' | 'custom';
  * @param {string} ext - The file extension to classify.
  * @returns {TGroupFileType} The corresponding file group type.
  */
-export const getFileGroupType = (ext: string): TGroupFileType => {
-  if (DEFAULT_EXT.IMAGES.includes(ext)) {
+export const getFileGroupType = (
+  ext: string,
+  mimeType?: string,
+): TGroupFileType => {
+  const normalizedExt = ext?.toLowerCase?.() ?? '';
+  const normalizedMime = mimeType?.toLowerCase?.() ?? '';
+
+  if (normalizedExt && DEFAULT_EXT.IMAGES.includes(normalizedExt)) {
     return 'image';
   }
-  if (DEFAULT_EXT.PDF.includes(ext)) {
+  if (normalizedExt && DEFAULT_EXT.PDF.includes(normalizedExt)) {
     return 'pdf';
   }
-  if (DEFAULT_EXT.OFFICE.includes(ext)) {
+  if (normalizedExt && DEFAULT_EXT.OFFICE.includes(normalizedExt)) {
     return 'doc';
   }
-  if (DEFAULT_EXT.AUDIO.includes(ext)) {
+  if (normalizedExt && DEFAULT_EXT.AUDIO.includes(normalizedExt)) {
     return 'audio';
+  }
+
+  if (normalizedMime) {
+    if (normalizedMime.startsWith('image/')) return 'image';
+    if (normalizedMime === 'application/pdf') return 'pdf';
+    if (
+      normalizedMime.startsWith('audio/') ||
+      normalizedMime === 'application/ogg'
+    ) {
+      return 'audio';
+    }
+    if (
+      normalizedMime.includes('spreadsheetml') ||
+      normalizedMime.includes('wordprocessingml') ||
+      normalizedMime.includes('presentationml') ||
+      normalizedMime.includes('msword') ||
+      normalizedMime.includes('msexcel') ||
+      normalizedMime.includes('powerpoint') ||
+      normalizedMime === 'application/vnd.ms-powerpoint'
+    ) {
+      return 'doc';
+    }
   }
   return 'custom';
 };
