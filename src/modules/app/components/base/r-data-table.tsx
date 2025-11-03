@@ -55,13 +55,14 @@ export type TRDataTableProps<TData, TValue> = TLoadable & {
   meta?: TApiResponsePaginateMeta | null;
   transformSort?: (key: string) => string;
   rowId?: string | null;
-  header?: React.ReactNode;
   footer?: React.ReactNode;
   allowSearch?: boolean;
   initialSelected?: TRDataTableSelected;
   searchPlaceholder?: string;
   striped?: boolean;
   hoverable?: boolean;
+  toolbarStart?: React.ReactNode;
+  toolbarEnd?: React.ReactNode;
 };
 
 export type TRDataTableRef<TData = unknown> = {
@@ -97,12 +98,13 @@ const RDataTableInner = <TData, TValue>(
     transformSort,
     rowId = 'id',
     allowSearch = true,
-    header,
     footer,
     initialSelected = {},
     searchPlaceholder = 'Search...',
     striped = true,
     hoverable = true,
+    toolbarStart,
+    toolbarEnd,
   }: TRDataTableProps<TData, TValue>,
   ref: React.Ref<TRDataTableRef<TData>>,
 ) => {
@@ -253,22 +255,25 @@ const RDataTableInner = <TData, TValue>(
   return (
     <div>
       <div className='mb-4 flex flex-wrap items-center gap-3 md:justify-between'>
-        {allowSearch && (
-          <div className='w-full md:max-w-[250px]'>
-            <Input
-              clearable
-              placeholder={searchPlaceholder}
-              onChange={(e) => {
-                const val = e.target.value;
-                debouncedSearch(val);
-                setSearch(val);
-              }}
-              prepend={<Search size={16} />}
-              value={search}
-            />
-          </div>
-        )}
-        {header}
+        <div className='flex items-center gap-3'>
+          {allowSearch && (
+            <div className='w-full md:max-w-[250px]'>
+              <Input
+                clearable
+                placeholder={searchPlaceholder}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  debouncedSearch(val);
+                  setSearch(val);
+                }}
+                prepend={<Search size={16} />}
+                value={search}
+              />
+            </div>
+          )}
+          {toolbarStart}
+        </div>
+        {toolbarEnd}
       </div>
 
       <div className='rounded-md border overflow-x-auto w-full min-w-0'>

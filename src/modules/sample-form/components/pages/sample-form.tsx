@@ -3,7 +3,7 @@ import {
   RDataTable,
   type TRDataTableColumnDef,
 } from '@/modules/app/components/base/r-data-table';
-import { RFilter } from '@/modules/app/components/base/r-filter';
+import { RFilterMenu } from '@/modules/app/components/base/r-filter';
 import { DEFAULT_QUERY_PARAMS } from '@/modules/app/constants/app.constant';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import { useObjectState } from '@/modules/app/hooks/use-object-state';
@@ -194,12 +194,12 @@ const SampleFormIndex = () => {
 
       <RDataTable
         fixed
-        header={
-          <RFilter
-            items={filters}
-            onApply={setQryParams}
+        toolbarEnd={
+          <RFilterMenu
+            schema={filters}
+            onSubmit={setQryParams}
             onReset={setQryParams}
-            mapKey={{
+            keyMap={{
               'date_multiple[from]': 'date_start',
               'date_multiple[to]': 'date_end',
             }}
