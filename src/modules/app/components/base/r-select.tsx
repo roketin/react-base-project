@@ -69,7 +69,7 @@ function RSelectBase<
         suffixIcon ?? (
           <div role='img'>
             {props.loading ? (
-              <LoaderCircle className='animate-spin' size={20} />
+              <LoaderCircle className='animate-spin' size={14} />
             ) : (
               <ChevronsUpDown size={14} />
             )}
