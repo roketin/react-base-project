@@ -1,107 +1,192 @@
-# 🚀 Git Workflow — Rebase Strategy (Dev → Demo → Live)
+# 🚀 Git Rebase Workflow
 
-## 📌 **Main Branches**
+This document explains our full development-to-production workflow using:
 
-| Branch | Role                        |
-| ------ | --------------------------- |
-| `dev`  | Active development branch   |
-| `demo` | Staging / UAT / Client demo |
-| `live` | Production                  |
+- **Rebase strategy**
+- **Semantic Versioning**
+- **Conventional Commits**
+- **Automated Changelog**
+- **Release pipeline (`develop → demo → live`)**
+- **MR only required for feat → develop**
 
-### 📎 **Flow**
+---
+
+## 🧠 Branch Philosophy
+
+| Branch     | Purpose                   | MR Required        |
+| ---------- | ------------------------- | ------------------ |
+| `develop`  | Main development branch   | ✅ Yes (from feat) |
+| `demo`     | Staging / UAT environment | ❌ No              |
+| `live`     | Production                | ❌ No              |
+| `feat/*`   | Feature work              | ✅ Yes → develop   |
+| `hotfix/*` | Prod emergency fix        | ✅ Yes → live      |
+
+Flow:
 
 ```
-feat/* → dev → demo → live
+[feat/fix]/* (source branch from develop)  →  develop  →  demo  →  live
+```
+
+> ⚠️ **No MR is needed for develop → demo → live**
+> Deployment duties handled by maintainer/release engineer.
+
+---
+
+## ✅ Commit Format: Conventional Commits
+
+Examples:
+
+```
+feat: add treaty auto layer calculation
+fix: correct capacity sort bug
+refactor: optimize claim recalculation function
+chore: update dependencies
+docs: add git workflow docs
 ```
 
 ---
 
-## ✅ **Branch Naming Convention**
+## 🔢 Versioning (SemVer)
+
+Format:
 
 ```
-feat/login-page
-fix/payment-timezone
-hotfix/live-signin-bug
-chore/update-dependencies
+MAJOR.MINOR.PATCH
+```
+
+Rules:
+
+| Situation                       | Bump  |
+| ------------------------------- | ----- |
+| New feat                        | MINOR |
+| Internal fixes                  | PATCH |
+| Breaking changes / big refactor | MAJOR |
+
+Example flow:
+
+| Branch  | Version  |
+| ------- | -------- |
+| develop | (no tag) |
+| demo    | `v1.4.0` |
+| live    | `v1.4.0` |
+
+---
+
+## 📜 Automated Changelog
+
+Generated from commit messages.
+
+Example entry:
+
+```
+## [1.4.0] - 2025-11-05
+
+### Added
+- Auto treaty layering with WPC and OR handling
+
+### Fixed
+-  Capacity not correct
 ```
 
 ---
 
-## 🧠 **Rules**
+## 🛠 Tooling
 
-- All work starts from `dev`
-- All features go via MR (rebase merge)
-- **No direct commits** to `dev`, `demo`, `live`
-- Keep commit history linear (no unnecessary merge commits)
+We use:
 
----
+- `standard-version`
+- `husky + commitlint`
+- `conventional-changelog`
 
-## 🛠️ **Feature Development Flow**
-
-### 1. Create branch
+Install example:
 
 ```bash
-git checkout dev
-git pull
-git checkout -b feat/xyz
+pnpm add -D standard-version @commitlint/{config-conventional,cli} husky
 ```
 
-### 2. Commit while coding
+---
+
+## ✅ Full Workflow Steps
+
+### 1️⃣ Create Feature Branch
+
+```bash
+git checkout develop
+git pull
+git checkout -b feat/treaty-auto-layering
+```
+
+Develop, then commit using conventional commits:
 
 ```bash
 git add .
-git commit -m "feat: add xyz"
+git commit -m "feat: add treaty auto layer calculation"
 ```
 
-### 3. Sync with dev (routinely)
+Rebase to sync with latest develop:
 
 ```bash
 git fetch
-git rebase origin/dev
+git rebase origin/develop
 ```
 
-### 4. Push & create MR
+Push branch & create MR:
 
 ```bash
-git push -u origin feat/xyz
+git push -u origin feat/treaty-auto-layering
+```
+
+✅ **MR required only here**
+
+---
+
+### 2️⃣ After MR Approved → Merge to develop
+
+- Use **Rebase & Merge**
+- No merge commits allowed
+
+Update local:
+
+```bash
+git checkout develop
+git pull
 ```
 
 ---
 
-## ✳️ **If MR Already Created and You Need to Update**
+### 3️⃣ Prepare Release Version
 
-### ➕ Add small fix commits
-
-> **Do NOT create new MR**
+On `develop`
 
 ```bash
-git add .
-git commit -m "fix: review changes"
-git push
+pnpm release:minor
+git push --follow-tags
 ```
 
-### 🔁 If you've rebased before
+This will:
 
-```bash
-git push --force-with-lease
-```
-
-> ⚠️ Always use `--force-with-lease`, never `--force`
+✔ Bump version in package.json (if FE) or tag repo (if BE)
+✔ Generate changelog
+✔ Create git tag
 
 ---
 
-## 🚀 **Promote Dev → Demo**
+### 4️⃣ Promote to DEMO
 
 ```bash
 git checkout demo
 git pull
-git rebase origin/dev
+git rebase origin/develop
 git push origin demo
 ```
 
+Demo/UAT testing happens here ✅
+
 ---
 
-## 🚀 **Promote Demo → Live**
+### 5️⃣ Promote to LIVE (Production)
+
+After approval:
 
 ```bash
 git checkout live
@@ -110,85 +195,56 @@ git rebase origin/demo
 git push origin live
 ```
 
+🎉 Production deployed
+
 ---
 
-## 🩹 **Hotfix Flow (Production)**
-
-### Fix from live
+## 🧯 Hotfix Flow (Production Issue)
 
 ```bash
 git checkout live
 git pull
-git checkout -b hotfix/urgent-issue
+git checkout -b hotfix/fix-login-token
 ```
 
-Fix → commit → push → MR → merge to live
-
-### Sync back
+Fix → commit → MR → merge to live → rebase down:
 
 ```bash
-git checkout demo
-git pull
-git rebase origin/live
-git push
-
-git checkout dev
-git pull
-git rebase origin/demo
-git push
+git checkout demo && git pull && git rebase origin/live && git push
+git checkout develop && git pull && git rebase origin/demo && git push
 ```
 
 ---
 
-## ⚠️ **Anti‑Patterns**
-
-| Avoid                                   | Reason                     |
-| --------------------------------------- | -------------------------- |
-| Direct commit to dev/demo/live          | Breaks review process      |
-| MR per revision                         | Clutters workflow          |
-| Using `--force`                         | Can delete others' commits |
-| Merging dev into feat with merge commit | Messy history              |
-
----
-
-## 🎯 **Best Practice Cheatsheet**
-
-| Action             | Command                       |
-| ------------------ | ----------------------------- |
-| Sync dev           | `git pull --rebase`           |
-| Add revision to MR | `git push`                    |
-| Rebase with dev    | `git rebase origin/dev`       |
-| Push after rebase  | `git push --force-with-lease` |
-| Squash commits     | `git rebase -i origin/dev`    |
-
----
-
-## 📊 **Workflow Diagram**
+## 📊 Illustration Diagram
 
 ```
 (feat A) ----\
 (feat B) -----\         /--> demo --> live
-                  ---> dev
-(feat C) ----/        \
-                          hotfix --> live -> demo -> dev
+                  ---> develop
+(feat C) ----/
+
+hotfix --> live -> demo -> develop
 ```
 
 ---
 
-## 💡 **Commit Message Style**
+## 🎁 Best Practices
 
-```
-feat: add login form
-fix: correct timezone handling
-refactor: optimize reducer
-chore: update dependencies
-docs: update rebase workflow
-```
+- Always rebase before push
+- Never merge develop → feat using merge commits
+- Only release engineer promotes to demo/live
 
 ---
 
-## 🏁 Notes
+## 🏁 Final Notes
 
-- Always rebase, never merge (unless emergency)
-- MR is the only entry to main branches
-- Hotfix must propagate back down (`live → demo → dev`)
+This workflow ensures:
+
+- Clean git history
+- Automated release notes
+- Fast deployment flow
+- Minimal MR noise
+- Enterprise-grade control
+
+---
