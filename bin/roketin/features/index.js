@@ -1,6 +1,7 @@
 import moduleFeature from './module/index.js';
 import infoFeature from './info/index.js';
 import viewRoutesFeature from './view-router/index.js';
+import releaseFeature from './release/index.js';
 
 const featureDefinitions = [
   {
@@ -18,6 +19,11 @@ const featureDefinitions = [
     name: 'view-router',
     description: 'Visualize the aggregated application routing tree',
     handler: viewRoutesFeature,
+  },
+  {
+    name: 'release',
+    description: 'Release Manager',
+    handler: releaseFeature,
   },
 ];
 

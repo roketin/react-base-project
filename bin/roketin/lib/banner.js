@@ -1,7 +1,7 @@
 import cfonts from 'cfonts';
 
 export function renderBanner() {
-  cfonts.say('Roketin', {
+  cfonts.say('Roketin CLI', {
     font: '3d',
     align: 'left',
     colors: ['system'],
@@ -15,16 +15,5 @@ export function renderBanner() {
     transitionGradient: true,
     rawMode: false,
     env: 'node',
-  });
-
-  cfonts.say('Module Generator', {
-    font: 'chrome',
-    align: 'left',
-    colors: ['yellow', 'green'],
-    background: 'transparent',
-    letterSpacing: 1,
-    lineHeight: 1,
-    space: true,
-    maxLength: '0',
   });
 }

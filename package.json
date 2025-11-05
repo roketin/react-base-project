@@ -15,7 +15,8 @@
     "commit": "npx @commitlint/prompt-cli",
     "roketin": "node ./bin/roketin.js",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build"
+    "storybook:build": "storybook build",
+    "release": "pnpm roketin release"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,html,css,scss,json}": [
@@ -99,6 +100,7 @@
     "eslint-plugin-react-refresh": "^0.4.24",
     "eslint-plugin-storybook": "10.0.2",
     "fast-glob": "^3.3.3",
+    "git-cliff": "^2.10.1",
     "globals": "^16.5.0",
     "husky": "^9.1.7",
     "jsdom": "^27.1.0",
