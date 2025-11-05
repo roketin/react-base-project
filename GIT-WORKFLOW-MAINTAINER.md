@@ -90,22 +90,6 @@ Example entry:
 
 ---
 
-## 🛠 Tooling
-
-We use:
-
-- `standard-version`
-- `husky + commitlint`
-- `conventional-changelog`
-
-Install example:
-
-```bash
-pnpm add -D standard-version @commitlint/{config-conventional,cli} husky
-```
-
----
-
 ## ✅ Full Workflow Steps
 
 ### 1️⃣ Create Feature Branch
@@ -154,20 +138,30 @@ git pull
 
 ---
 
-### 3️⃣ Prepare Release Version
+### 3️⃣ Prepare & Generate Release Version
 
-On `develop`
+On `develop`, generate a new version and update changelog using our automated release tool:
 
 ```bash
-pnpm release:minor
-git push --follow-tags
+pnpm roketin release
+```
+
+or
+
+```bash
+pnpm release
 ```
 
 This will:
 
-✔ Bump version in package.json (if FE) or tag repo (if BE)
-✔ Generate changelog
-✔ Create git tag
+✔ Prompt version type (patch / minor / major)
+✔ Update `src/version.ts`
+✔ Append release notes using git-cliff
+✔ Reset `[unreleased]` section in CHANGELOG.md
+✔ Prepare clean release metadata
+
+> 🚫 **Note:** We no longer use Git tags in this workflow to keep the flow simple.
+> Release state is fully tracked in `version.ts` + `CHANGELOG.md`.
 
 ---
 
@@ -220,8 +214,8 @@ git checkout develop && git pull && git rebase origin/demo && git push
 
 ```
 (feat A) ----\
-(feat B) -----\         /--> demo --> live
-                  ---> develop
+(feat B) -----\
+                ---> develop --> demo --> live
 (feat C) ----/
 
 hotfix --> live -> demo -> develop
