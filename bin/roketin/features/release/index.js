@@ -20,17 +20,18 @@ export default async function versionFeature({ args }) {
     console.log('✅ version.ts created with default version 0.0.1');
   }
 
-  // Validate and repair version.ts format if needed
+  // Validate APP_VERSION format (support " and ')
   let raw = fs.readFileSync(file, 'utf8');
-  if (!raw.match(/APP_VERSION\s*=\s*".+?"/)) {
-    console.log('⚠️ APP_VERSION not found or malformed — fixing...');
+  const versionRegex = /APP_VERSION\s*=\s*["'](.+?)["']/;
+  if (!versionRegex.test(raw)) {
+    console.log('⚠️ APP_VERSION not found — creating default version.ts');
     raw = `export const APP_VERSION = "0.0.1";`;
     fs.writeFileSync(file, raw);
-    console.log('✅ version.ts reset to default');
+    console.log('✅ version.ts created with default 0.0.1');
   }
 
   let text = fs.readFileSync(file, 'utf8');
-  const current = text.match(/APP_VERSION = "(.+?)"/)[1];
+  const current = text.match(/APP_VERSION\s*=\s*["'](.+?)["']/)[1];
 
   console.clear();
   console.log(` 🚀 Roketin Release System | Current App Version: ${current}`);

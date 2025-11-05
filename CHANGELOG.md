@@ -1,3 +1,8 @@
+## [1.0.1] - 2025-11-05
+
+### 🐛 Bug Fixes
+
+- *(ddd)* Test & improve fallback on release script
 ## [1.0.0] - 2025-11-05
 
 ### 🚀 Features
