@@ -13,6 +13,22 @@ function bump(ver, type) {
 }
 
 export default async function versionFeature({ args }) {
+  // 🛠 Ensure version.ts exists and contains APP_VERSION
+  if (!fs.existsSync(file)) {
+    console.log('ℹ️ version.ts not found — creating...');
+    fs.writeFileSync(file, `export const APP_VERSION = "0.0.1";`);
+    console.log('✅ version.ts created with default version 0.0.1');
+  }
+
+  // Validate and repair version.ts format if needed
+  let raw = fs.readFileSync(file, 'utf8');
+  if (!raw.match(/APP_VERSION\s*=\s*".+?"/)) {
+    console.log('⚠️ APP_VERSION not found or malformed — fixing...');
+    raw = `export const APP_VERSION = "0.0.1";`;
+    fs.writeFileSync(file, raw);
+    console.log('✅ version.ts reset to default');
+  }
+
   let text = fs.readFileSync(file, 'utf8');
   const current = text.match(/APP_VERSION = "(.+?)"/)[1];
 
@@ -117,6 +133,19 @@ export default async function versionFeature({ args }) {
   🕓 ${dayjs().format('YYYY-MM-DD HH:mm')}
   🎉 Everything shipped successfully!
   `);
+
+  // Create git tag for release
+  try {
+    execSync(`git tag v${next}`);
+    console.log(`🏷️  Created tag v${next}`);
+
+    execSync(`git push --tags`);
+    console.log('📤 Tags pushed to remote');
+  } catch (err) {
+    console.log(
+      '⚠️ Failed to create or push git tag. You may need to do it manually.',
+    );
+  }
 
   console.log('\x07'); // play terminal bell sound
 }
