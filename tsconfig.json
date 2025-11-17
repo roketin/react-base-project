@@ -9,7 +9,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@tests/*": ["./tests/*"],
-      "@config": ["./roketin.config"]
+      "@config": ["./roketin.config"],
+      "@feature-flags": ["./feature-flags.config"]
     }
   }
 }

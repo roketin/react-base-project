@@ -27,7 +27,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@tests/*": ["./tests/*"],
-      "@config": ["./roketin.config"]
+      "@config": ["./roketin.config"],
+      "@feature-flags": ["./feature-flags.config"]
     }
   },
   "include": ["src", "tests", "tests/.tsx"]

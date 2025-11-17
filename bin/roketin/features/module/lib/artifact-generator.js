@@ -10,6 +10,9 @@ import {
 } from './routing.js';
 import { logCreated, logSkipped, logger } from '../../../lib/logger.js';
 import { getGeneratorTypes } from '../config/index.js';
+import { buildFeatureFlagKey, buildModuleId } from './module-meta.js';
+import { registerFeatureFlag } from './feature-flag-registry.js';
+import { ensureAncestorConfigs } from './config-scaffolder.js';
 
 export function getTypeConfigs() {
   return getGeneratorTypes();
@@ -24,6 +27,8 @@ export function generateArtifacts({
   overwrite,
 }) {
   const typeConfigs = getGeneratorTypes();
+  const moduleId = buildModuleId(moduleParts);
+  const featureFlagKey = buildFeatureFlagKey(moduleParts);
 
   types.forEach((type) => {
     const config = typeConfigs[type];
@@ -44,6 +49,8 @@ export function generateArtifacts({
       isChild,
       basePath,
       overwrite,
+      moduleId,
+      featureFlagKey,
     };
 
     const fileName = config.getFileName(context);
@@ -85,6 +92,14 @@ export function generateArtifacts({
         moduleName,
         moduleParts,
         childRouteFilePath: filePath,
+      });
+    }
+
+    if (type === 'config') {
+      ensureAncestorConfigs({ moduleParts, overwrite });
+      registerFeatureFlag({
+        featureFlagKey,
+        moduleParts,
       });
     }
   });

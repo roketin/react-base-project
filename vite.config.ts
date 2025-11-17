@@ -14,6 +14,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
       '@tests': path.resolve(__dirname, 'tests'),
       '@config': path.resolve(__dirname, 'roketin.config.ts'),
+      '@feature-flags': path.resolve(__dirname, 'feature-flags.config.ts'),
     },
   },
   test: {

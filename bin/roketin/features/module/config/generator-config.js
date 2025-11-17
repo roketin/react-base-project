@@ -9,16 +9,17 @@ import { typeTemplate } from '../templates/type.js';
 import { libTemplate } from '../templates/lib.js';
 import { contextTemplate } from '../templates/context.js';
 import { localeTemplate } from '../templates/locale.js';
+import { moduleConfigTemplate } from '../templates/config.js';
 
 export const generatorConfig = {
   restrictedModules: ['auth', 'app', 'dashboard'],
   presets: {
-    view: ['page', 'route', 'locale', 'type', 'service'],
+    view: ['config', 'page', 'route', 'locale', 'type', 'service'],
   },
   prompts: {
     generationChoices: [
       {
-        name: 'Standard (components/pages, route, locale, type, service)',
+        name: 'Standard (config, components/pages, route, locale, type, service)',
         value: 'view',
       },
       { name: 'All folders', value: 'all' },
@@ -26,6 +27,12 @@ export const generatorConfig = {
     ],
   },
   generators: {
+    config: {
+      label: 'Module Config',
+      getFileName: ({ moduleParts }) =>
+        `${moduleParts[moduleParts.length - 1]}.config.ts`,
+      getContent: moduleConfigTemplate,
+    },
     page: {
       label: 'Page',
       folder: 'components/pages',
