@@ -1,9 +1,7 @@
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import AppSidebarHeader from '@/modules/app/components/layouts/app-sidebar-header';
-import {
-  APP_SIDEBAR_MENUS,
-  type TSidebarMenu,
-} from '@/modules/app/constants/sidebar-menu.constant';
+import { APP_SIDEBAR_MENUS } from '@/modules/app/libs/sidebar-menu.lib';
+import type { TSidebarMenu } from '@/modules/app/types/sidebar-menu.type';
 import {
   Sidebar,
   SidebarContent,
@@ -20,10 +18,11 @@ import {
 } from '@/modules/app/components/ui/sidebar';
 import { nameToPath } from '@/modules/app/hooks/use-named-route';
 import { cn } from '@/modules/app/libs/utils';
-import { ChevronDown, Dot } from 'lucide-react';
+import { ChevronDown, Dot, Search } from 'lucide-react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import RInput from '@/modules/app/components/base/r-input';
 
 type SidebarMenuItemWithChildren = TSidebarMenu & {
   children?: SidebarMenuItemWithChildren[];
@@ -33,6 +32,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { isCan } = useAuth();
   const location = useLocation();
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
+  const [searchQuery, setSearchQuery] = useState('');
   const { t } = useTranslation('app');
 
   const getMenuTitle = useCallback(
@@ -55,6 +55,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         if (!hasPermission) return acc;
 
         const children = item.children ? filter(item.children) : undefined;
+        const hasSelfLink = Boolean(item.name);
+        const hasVisibleChildren = Boolean(children && children.length > 0);
+        if (!hasSelfLink && !hasVisibleChildren) {
+          return acc;
+        }
 
         acc.push({ ...item, children });
         return acc;
@@ -63,6 +68,40 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     return filter(APP_SIDEBAR_MENUS);
   }, [isCan]);
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const forceSearchExpand = Boolean(normalizedQuery);
+
+  const visibleMenus = useMemo(() => {
+    if (!normalizedQuery) {
+      return accessibleMenus;
+    }
+
+    const filterByQuery = (
+      menus: SidebarMenuItemWithChildren[],
+    ): SidebarMenuItemWithChildren[] => {
+      return menus.reduce<SidebarMenuItemWithChildren[]>((acc, item) => {
+        const title = getMenuTitle(item)?.toLowerCase() ?? '';
+        const children = item.children
+          ? filterByQuery(item.children)
+          : undefined;
+        const isMatch = title.includes(normalizedQuery);
+        const hasChildren = Boolean(children && children.length > 0);
+
+        if (!isMatch && !hasChildren) {
+          return acc;
+        }
+
+        acc.push({
+          ...item,
+          children: isMatch ? item.children : children,
+        });
+        return acc;
+      }, []);
+    };
+
+    return filterByQuery(accessibleMenus);
+  }, [accessibleMenus, getMenuTitle, normalizedQuery]);
 
   const getMenuPath = (menu: TSidebarMenu) => {
     if (!menu.name) return undefined;
@@ -151,7 +190,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         child.children && child.children.length > 0,
       );
       const childActive = isMenuActive(child);
-      const expanded = openMap[childKey] ?? childActive;
+      const expanded = forceSearchExpand
+        ? true
+        : (openMap[childKey] ?? childActive);
 
       if (hasGrandChildren) {
         return (
@@ -220,6 +261,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       ? childActive || isRouteActive(menu)
       : isRouteActive(menu, true);
     const canNavigate = menu.permission ? isCan(menu.permission) : true;
+    const expanded = hasChildren
+      ? forceSearchExpand || openMap[key] || childActive
+      : false;
 
     return (
       <SidebarMenuItem key={key}>
@@ -251,16 +295,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuAction
               aria-label='Toggle submenu'
               onClick={() => toggleMenu(key)}
-              className={cn(
-                'transition-transform',
-                (openMap[key] ?? childActive) && 'rotate-180',
-              )}
+              className={cn('transition-transform', expanded && 'rotate-180')}
             >
               <ChevronDown className='size-4' />
             </SidebarMenuAction>
-            <SidebarMenuSub
-              className={cn(!(openMap[key] ?? childActive) && 'hidden')}
-            >
+            <SidebarMenuSub className={cn(!expanded && 'hidden')}>
               {renderSubMenu(menu.children!)}
             </SidebarMenuSub>
           </>
@@ -274,8 +313,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <AppSidebarHeader />
       <SidebarContent>
         <SidebarGroup>
+          <div className='mb-4'>
+            <RInput
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder='Search menu'
+              className='h-8 border-sidebar-border bg-sidebar text-xs'
+              prepend={<Search size={13} />}
+            />
+          </div>
           <SidebarGroupContent>
-            <SidebarMenu>{accessibleMenus.map(renderMenu)}</SidebarMenu>
+            <SidebarMenu>{visibleMenus.map(renderMenu)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

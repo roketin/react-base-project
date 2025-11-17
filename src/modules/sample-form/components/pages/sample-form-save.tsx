@@ -34,6 +34,7 @@ import type {
   TApiResponsePaginate,
 } from '@/modules/app/types/api.type';
 import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
+import { useOverridePageConfig } from '@/modules/app/hooks/use-page-config';
 
 const formSchema = Yup.object().shape({
   checkbox_single: Yup.bool().default(false).label('Checkbox Single'),
@@ -98,6 +99,20 @@ const SAMPLE_SELECT_BASE_PARAMS: TApiDefaultQueryParams = {
 };
 
 const TodoSave = () => {
+  useOverridePageConfig(({ params }) => ({
+    title: params?.id ? 'sampleForm:actions.edit' : 'sampleForm:menu.createNew',
+    breadcrumbs: [
+      { label: 'sampleForm:title', href: '/admin/sample-form' },
+      {
+        label: params?.id
+          ? 'sampleForm:actions.edit'
+          : 'sampleForm:menu.createNew',
+      },
+    ],
+    permissions: ['SAMPLE_FORM_CREATE'],
+    featureFlag: 'SAMPLE_FORM',
+  }));
+
   const form = useForm<TFormSchema>({
     mode: 'onTouched',
     resolver: yupResolver(formSchema),

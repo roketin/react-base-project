@@ -3,20 +3,25 @@ import { SidebarTrigger } from '@/modules/app/components/ui/sidebar';
 import { AppUserMenu } from './app-layout-user-menu';
 import { useMatches } from 'react-router-dom';
 import { useMemo } from 'react';
-import type { TAppRouteObject } from '@/modules/app/libs/routes-utils';
 import { useTranslation } from 'react-i18next';
 import { RBreadcrumbs } from '@/modules/app/components/base/r-breadcrumbs';
+import type { TAppRouteObject } from '@/modules/app/libs/routes-utils';
+import { useOverridePageConfigStore } from '@/modules/app/stores/page-config.store';
 
 const AppLayoutHeader = () => {
   const matches = useMatches() as (ReturnType<typeof useMatches>[number] & {
     handle?: TAppRouteObject['handle'];
   })[];
+  const overrideTitle = useOverridePageConfigStore(
+    (state) => state.current?.title,
+  );
 
   // Get title from route
-  const title = useMemo<string>(
+  const routeTitle = useMemo<string>(
     () => matches[matches.length - 1].handle?.title || '',
     [matches],
   );
+  const resolvedTitle = overrideTitle ?? routeTitle ?? '';
 
   // Translation
   const { t } = useTranslation();
@@ -24,14 +29,16 @@ const AppLayoutHeader = () => {
   return (
     <div
       id='app-header'
-      className='sticky top-0 z-20 border-b border-border/60 bg-background/80 py-1 px-5 backdrop-blur supports-[backdrop-filter]:backdrop-blur-sm shadow-xl shadow-slate-100'
+      className='sticky top-0 z-20 border-b border-border/60 bg-background/80 py-1 px-5 backdrop-blur supports-backdrop-filter:backdrop-blur-sm shadow-xl shadow-slate-100'
     >
       <header className='flex shrink-0 items-center justify-between gap-4'>
         <div className='flex items-center gap-3'>
           <SidebarTrigger className='-ml-2 rounded-lg border border-border/60 bg-background/80 hover:bg-primary/10 hover:text-primary' />
 
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          <span className='text-primary font-semibold'>{t(title as any)}</span>
+          <span className='text-primary font-semibold'>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {t(resolvedTitle as any, { defaultValue: resolvedTitle })}
+          </span>
         </div>
 
         <div className='flex items-center gap-2'>

@@ -1,6 +1,4 @@
 import type { ReactNode } from 'react';
-
-import { RBrand } from '@/modules/app/components/base/r-brand';
 import {
   RResult,
   type TRResultStatus,
@@ -23,7 +21,6 @@ const StatusPage = ({
   description,
   action,
   status = 'info',
-  brand,
   className,
 }: StatusPageProps) => {
   return (
@@ -35,8 +32,6 @@ const StatusPage = ({
       )}
     >
       <div className='flex w-full max-w-xl flex-col items-center gap-8 text-center'>
-        <div>{brand ?? <RBrand className='mx-auto inline-flex' />}</div>
-
         <RResult
           status={status}
           badge={

@@ -2,6 +2,8 @@ import type { TPermission } from '@/modules/app/constants/permission.constant';
 import type { BreadcrumbType } from '@/modules/app/stores/breadcrumbs.store';
 import type { TLocale } from '@/modules/app/types/locale.type';
 import type { RouteObject } from 'react-router-dom';
+import type { FeatureFlagKey } from '@/modules/app/libs/feature-flag';
+import type { ReactNode } from 'react';
 
 /**
  * Defines the type for breadcrumb handling in the application routes.
@@ -35,6 +37,8 @@ export type TAppRouteObject = Omit<RouteObject, 'children' | 'handle'> & {
     isRequiredAuth?: boolean;
     permissions?: TPermission[];
     title?: TLocale;
+    featureFlag?: FeatureFlagKey;
+    featureFlagFallback?: ReactNode;
     [key: string]: unknown;
   };
   children?: TAppRouteObject[];

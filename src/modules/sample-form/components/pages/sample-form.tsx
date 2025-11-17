@@ -18,6 +18,7 @@ import { Pencil, Trash } from 'lucide-react';
 import { Plus } from 'lucide-react';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useOverridePageConfig } from '@/modules/app/hooks/use-page-config';
 
 const countries = [
   { id: 'id', name: 'Indonesia' },
@@ -41,6 +42,14 @@ const toCurrencyRange = (values: number[]) => {
 };
 
 const SampleFormIndex = () => {
+  useOverridePageConfig({
+    breadcrumbs: [
+      { label: 'TAMPAN' },
+      { label: 'sampleForm:title', href: '/admin/sample-form' },
+      { label: 'sampleForm:menu.allEntries' },
+    ],
+  });
+
   // Permission
   const { isCan } = useAuth();
 

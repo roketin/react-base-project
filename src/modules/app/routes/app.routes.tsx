@@ -8,6 +8,7 @@ import AppEntryPoint from '@/modules/app/components/pages/app-entry-point';
 import AppNotFound from '@/modules/app/components/pages/app-not-found';
 import AppLayout from '@/modules/app/components/layouts/app-layout';
 import AuthProtectedRoute from '@/modules/auth/hoc/auth-protected-route';
+import FeatureFlagRouteGuard from '@/modules/app/hoc/feature-flag-route-guard';
 import roketinConfig from '@config';
 
 import { Outlet } from 'react-router-dom';
@@ -66,20 +67,31 @@ function applyRouteGuards(routes: TAppRouteObject[]): TAppRouteObject[] {
       : undefined;
 
     const permissions = route.handle?.permissions;
+    const featureFlag = route.handle?.featureFlag;
+    const featureFlagFallback = route.handle?.featureFlagFallback;
     // Determine if the route requires authentication either explicitly or via permissions
     const requiresAuth =
       Boolean(route.handle?.isRequiredAuth) ||
       Boolean(permissions && permissions.length > 0);
 
     let element = route.element;
+    const fallbackElement = route.children ? <Outlet /> : null;
+
+    if (featureFlag) {
+      element = (
+        <FeatureFlagRouteGuard
+          element={element ?? fallbackElement}
+          featureFlag={featureFlag}
+          fallback={featureFlagFallback}
+        />
+      );
+    }
 
     if (requiresAuth) {
-      // If route has children, fallback to Outlet; otherwise fallback is null
-      const fallback = route.children ? <Outlet /> : null;
       // Wrap the element with AuthProtectedRoute to enforce authentication and permissions
       element = (
         <AuthProtectedRoute
-          element={element ?? fallback}
+          element={element ?? fallbackElement}
           permissions={permissions}
         />
       );
