@@ -1,3 +1,18 @@
+## [1.1.0] - 2025-11-17
+
+### 🚀 Features
+
+- *(ddd)* Update deps version
+- *(ddd)* Feature flag & modular menu
+- *(ddd)* Cli support for modular & feature flag
+
+### 🐛 Bug Fixes
+
+- *(ddd)* Mismatch version when release
+
+### 📚 Documentation
+
+- Update readme about feature flag & modular system
 ## [1.0.1] - 2025-11-05
 
 ### 🐛 Bug Fixes

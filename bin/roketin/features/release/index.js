@@ -52,17 +52,17 @@ export default async function versionFeature({ args }) {
     return;
   }
 
-  // Check git status — block release if no changes
-  try {
-    const status = execSync('git status --porcelain').toString().trim();
-    if (!status) {
-      console.log('⚠️ No changes detected in Git. Nothing to release.');
-      return;
-    }
-  } catch {
-    console.log('⚠️ Unable to verify git status. Aborting for safety.');
-    return;
-  }
+  // // Check git status — block release if no changes
+  // try {
+  //   const status = execSync('git status --porcelain').toString().trim();
+  //   if (!status) {
+  //     console.log('⚠️ No changes detected in Git. Nothing to release.');
+  //     return;
+  //   }
+  // } catch {
+  //   console.log('⚠️ Unable to verify git status. Aborting for safety.');
+  //   return;
+  // }
 
   const type = await select({
     message: 'Select release type:',
