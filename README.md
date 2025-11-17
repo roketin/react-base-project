@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD014 MD026 MD033 MD041 -->
 
-<h1 align="center">🚀 ReactJS Base Project</h1>
+<h1 align="center">🚀 React Base Project</h1>
 
 <p align="center">
   <img src="https://cms.roketin.com/uploads/Elemen_Brand_Roketin_03_ee99155544.jpg" alt="Roketin Banner" width="512px" />
@@ -17,9 +17,10 @@
 4. [Available Scripts](#-available-scripts)
 5. [Configuration](#-configuration)
 6. [Localization & Sidebar Menus](#-localization--sidebar-menus)
-7. [Module Generator](#-module-generator)
-8. [Project Structure](#-project-structure)
-9. [Conventions & Tooling](#-conventions--tooling)
+7. [Feature Flags & Module Configs](#-feature-flags--module-configs)
+8. [Module Generator](#-module-generator)
+9. [Project Structure](#-project-structure)
+10. [Conventions & Tooling](#-conventions--tooling)
 
 ---
 
@@ -59,7 +60,7 @@ pnpm build
 pnpm test
 ```
 
-Environment variables live in `.env` (example values are committed). Update API endpoints or feature flags there as needed.
+Environment variables live in `.env` (example values are committed). Define new feature switches in `feature-flags.config.ts` and flip them per environment with `VITE_FEATURE_<FLAG>` in your `.env`.
 
 ---
 
@@ -113,7 +114,7 @@ Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file l
 ## 🌐 Localization & Sidebar Menus
 
 - Update `src/modules/app/locales/app.<lang>.json` when adding languages to `roketin.config.ts`.
-- Sidebar menu definitions in `src/modules/app/constants/sidebar-menu.constant.ts` include a `translationKey`. `AppSidebar` maps it through `t(translationKey)` at runtime, so every language must provide the corresponding `menu.*` translation.
+- Each feature module owns its sidebar structure through `<feature>.config.ts`. The config exposes `menu` entries pointing to translation keys (e.g., `sampleForm:title`). `AppSidebar` aggregates every module config automatically, so translations just need to exist in the feature’s locale file. When a config sets `parentModuleId`, its menu is appended under the parent's menu tree (with strict inheritance—no parent, no child).
 - Example locale snippet:
 
 ```json
@@ -126,6 +127,76 @@ Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file l
 ```
 
 ---
+
+## 🧱 Feature Flags & Module Configs
+
+- **Single source of truth:** All flag definitions live in [`feature-flags.config.ts`](feature-flags.config.ts). Use `defineFeatureFlags({
+  MY_FEATURE: { env: 'VITE_FEATURE_MY_FEATURE', defaultEnabled: true },
+})` to register a key, optional description, and default behaviour.
+- **Environment toggles:** Set `VITE_FEATURE_<FLAG>` in `.env`, `.env.local`, or deployment secrets. Truthy values (`true`, `1`, `on`) enable the feature; falsy values disable it. Missing entries fall back to `defaultEnabled`.
+- **Runtime helpers:** Import from `@/modules/app/libs/feature-flag`:
+  - `isFeatureEnabled('SOME_FLAG')` for synchronous checks (menu generation, guards, data fetching).
+  - `useFeatureFlag('SOME_FLAG')` hook for component rendering without duplicating logic.
+- **Route guards:** Add `handle.featureFlag = 'SOME_FLAG'` (optionally `handle.featureFlagFallback`) in any route object to automatically short-circuit to `AppNotFound` when the flag is disabled—this happens before auth/permission guards run.
+- **Module configs:** Every module exports `<module>.config.ts` with `defineModuleConfig({ moduleId, parentModuleId?, featureFlag, menu? })`. The loader `src/modules/app/libs/module-config.lib.ts` globs `@/modules/**/*.config.ts`, so **nested modules are supported out of the box** (`src/modules/billing/modules/invoice/invoice.config.ts`, etc.).
+- **Sidebar menus:** `menu` entries live next to the module and can describe tree menus, icons, and permissions. Parent modules typically define the container menu (omit `name` to keep it non-clickable). Children inherit the parent automatically by declaring `parentModuleId`. You can omit the `menu` field or set it to `false` for child modules that shouldn't appear directly in the sidebar. Use `order` (lower first) to customize the ordering of menus at any level. `AppSidebar` consumes `APP_MODULE_CONFIGS`, nests children beneath their parent, and skips children whenever the parent is disabled.
+- **CLI automation:** `pnpm roketin module ...` (standard preset) now scaffolds `<feature>.config.ts` and automatically appends the corresponding `VITE_FEATURE_<FLAG>` entry to `feature-flags.config.ts`. Review the stub (icon, permissions, translation namespace) and adjust to your needs before shipping.
+
+Example config:
+
+````ts
+// src/modules/sample-form/sample-form.config.ts
+import { defineModuleConfig } from '@/modules/app/types/module-config.type';
+
+export const sampleFormModuleConfig = defineModuleConfig({
+  moduleId: 'sample-form',
+  // parentModuleId: 'billing', // Optional: attach under another module’s menu.
+  featureFlag: 'SAMPLE_FORM',
+  // menu: false, // Uncomment to skip sidebar entries (useful for child modules).
+  menu: {
+    title: 'sampleForm:title',
+    name: 'SampleFormIndex',
+    order: 10,
+    // icon: SomeIcon,
+    // permission: 'SAMPLE_FORM_VIEW',
+  },
+});
+
+### Sidebar hierarchy example
+
+```ts
+// Parent module acts as a collapsible header (no `name` → non-clickable).
+export const userModuleConfig = defineModuleConfig({
+  moduleId: 'user',
+  featureFlag: 'USER',
+  menu: {
+    title: 'user:title',
+    icon: Users,
+    order: 1,
+  },
+});
+
+// Child module is rendered under the parent (strict: hidden when parent is disabled).
+export const userGuardModuleConfig = defineModuleConfig({
+  moduleId: 'user-guard',
+  parentModuleId: 'user',
+  featureFlag: 'USER_GUARD',
+  menu: {
+    title: 'user:menu.guard',
+    name: 'UserGuardIndex',
+  },
+});
+````
+
+Notes:
+
+- Children attach to the first menu entry defined by the parent config. Remove `name` on the parent menu to render it as a toggle-only container, or set `name` if the parent should be clickable too.
+- When a parent’s feature flag is `false`, all children referencing that `parentModuleId` are hidden automatically (strict inheritance).
+- Parents that act purely as containers (no `name`) disappear automatically when every child is filtered out (no orphan headers are shown).
+- Use the optional `order` field to enforce deterministic ordering (lower values first, ties fall back to declaration order).
+- CLI scaffolding: `pnpm roketin module user/guard` auto-populates `parentModuleId` and a child `menu` entry; tweak the title, icon, permissions, or order as needed.
+
+````
 
 ## 🧩 Module Generator
 
@@ -145,19 +216,20 @@ pnpm roketin module-child reporting/summary
 
 # Inspect registered generators, presets, and restricted modules
 pnpm roketin info
-```
+````
 
 ### Workflow
 
 1. **Greeting:** The CLI renders a Roketin banner with CFonts.
 2. **Path Parsing:** It splits the provided path (e.g., `reporting/summary`) and builds the target directory. Nested segments are placed under a cascading `modules` folder (`src/modules/reporting/modules/summary/…`) so each feature can contain its own sub-modules.
 3. **Generation Mode:** You choose between:
-   - `Standard`: Generates pages, routes, locale stub, types, and services (the default set).
+   - `Standard`: Generates module config + feature flag entry, pages, routes, locale stub, types, and services (the default set).
    - `All folders`: Scaffolds every supported artifact (hooks, contexts, stores, etc.).
    - `Custom`: Lets you pick specific file types via a checkbox prompt.
 4. **Child Routes & Auto-Linking:** For nested paths, the CLI asks if the final segment should be treated as a child route. Child routes produce `.routes.child.tsx` files **and the generator automatically imports/spreads them inside the parent route file** (including grandparents, recursively). If you already customized the parent route structure, skim the resulting diff to confirm the insertion landed where you expect.
-5. **Auto-Scaffold Parents:** When a parent route file is missing (e.g., you run `pnpm roketin module-child master-data/sales` before `master-data` exists), the CLI now creates a lightweight parent route scaffold so children can safely attach. Only the route container is generated—no placeholder page component—leaving you in control of actual page content.
+5. **Auto-Scaffold Parents:** When a parent route/config is missing (e.g., you run `pnpm roketin module master-data/sales` before `master-data` exists), the CLI now creates both the lightweight parent route scaffold and the parent module config (complete with its own feature flag). Only minimal shells are generated—no placeholder page component—so you retain full control over the actual content and menu labels.
 6. **Idempotent Files:** Existing files are never overwritten unless you opted in at the overwrite prompt. Skipped items are logged for visibility.
+7. **Feature flags on autopilot:** Whenever the `config` generator runs, the CLI adds (or reuses) a `VITE_FEATURE_<FLAG>` entry in `feature-flags.config.ts` so toggling a module is as simple as flipping the env value.
 
 ### Generated Artifacts
 
@@ -216,6 +288,109 @@ export default function ProductDetail({ sku }: { sku: string }) {
 ```
 
 `useBreadcrumbLabel(type, resolver)` registers the resolver while the component is mounted and cleans it up automatically. Call `useResetBreadcrumbResolvers()` when leaving a flow that should clear every resolver.
+
+### Optional per-page overrides
+
+Routes remain the primary source of truth, but sometimes a page needs extra context (dynamic breadcrumbs, title overrides, or even feature guards). The optional `useOverridePageConfig` hook lets you inject those hints straight from the page component:
+
+```tsx
+import { useOverridePageConfig } from '@/modules/app/hooks/use-page-config';
+
+export default function SampleFormPage() {
+  useOverridePageConfig(({ params }) => ({
+    title: params?.id ? 'sampleForm:actions.edit' : 'sampleForm:menu.createNew',
+    breadcrumbs: [
+      { label: 'sampleForm:title', href: '/admin/sample-form' },
+      {
+        label: params?.id
+          ? 'sampleForm:actions.edit'
+          : 'sampleForm:menu.createNew',
+      },
+    ],
+    permissions: ['SAMPLE_FORM_VIEW'],
+    featureFlag: 'SAMPLE_FORM',
+  }));
+
+  return <div>...</div>;
+}
+```
+
+- The hook is **optional**: if you skip it, the layout falls back to the route handles defined in `*.routes.tsx`.
+- Returning `permissions` or `featureFlag` automatically renders `AppForbidden` / `AppNotFound` when access is denied, so sensitive pages stay guarded even without duplicating route metadata.
+- Breadcrumbs accept arrays or `(ctx) => []`, and they’re merged into the global breadcrumb component for a consistent UX.
+
+---
+
+## 📁 Foldering Approaches
+
+Two structures are supported; pick the one that fits your team’s workflow.
+
+### 1. Hierarchical modules (recommended)
+
+```
+src/modules/
+└── config/
+    ├── config.config.ts
+    ├── routes/config.routes.tsx
+    └── modules/
+        └── user/
+            ├── user.config.ts
+            ├── routes/user.routes.child.tsx
+            └── components/pages/user.tsx
+```
+
+- Every level mirrors the eventual route segment (`config → user → detail`), so React Router automatically nests segments and `RBreadcrumbs` can infer a fallback trail directly from the URL when neither the route handle nor `useOverridePageConfig` overrides exist.
+- `moduleId`/`parentModuleId` match the folder hierarchy, so sidebar ordering is deterministic and global feature-flag inheritance (parent off → children hidden) works without extra bookkeeping.
+- New pages only need to live inside the relevant module folder: the glob loader picks up `*.routes.tsx`, and breadcrumbs/title fallbacks already align with the directory structure.
+
+### 2. Flat modules with manual overrides
+
+```
+src/modules/
+├── config/
+├── user/
+└── role/
+```
+
+- Keep modules top-level but express nesting through `defineModuleConfig`:
+
+```ts
+// src/modules/user/user.config.ts
+export default defineModuleConfig({
+  moduleId: 'config-user',
+  parentModuleId: 'config',
+  menu: {
+    title: 'user:title',
+    name: 'UserIndex',
+    order: 20,
+  },
+});
+```
+
+- Because the file system no longer mirrors URL depth, add explicit breadcrumbs either via the route `handle` or, for richer/dynamic needs, `useOverridePageConfig`. This ensures `RBreadcrumbs` renders the intended hierarchy even though the folders are flat.
+
+```tsx
+// src/modules/user/components/pages/user-detail.tsx
+import { useOverridePageConfig } from '@/modules/app/hooks/use-page-config';
+
+export default function UserDetailPage() {
+  useOverridePageConfig(({ params }) => ({
+    breadcrumbs: [
+      { label: 'Config', href: '/admin/config' },
+      { label: 'user:title', href: '/admin/config/user' },
+      { label: params?.id ?? 'Detail' },
+    ],
+  }));
+
+  return <div>...</div>;
+}
+```
+
+Module configs still drive the menus (parent/child relationships + `order` control). Breadcrumbs are stitched together via the snippets above so even though folders are flat, the UI shows the desired nesting.
+
+- Menus are still ordered via the `order` field inside each config, so you can rearrange siblings without touching the folder tree.
+
+Both approaches can coexist: legacy modules can stay flat while newer ones adopt the hierarchical layout for auto-generated breadcrumbs.
 
 ---
 
@@ -278,7 +453,7 @@ reactjs-base-project/
 - **Formatting:** Prettier runs automatically via Husky and lint-staged on staged files.
 - **Commits:** Commitlint enforces Conventional Commit messages; use `pnpm commit` for an interactive flow.
 - **Testing:** Vitest mimics Jest APIs, with MSW mocking network calls. Tests bootstrap via `tests/setup.ts`.
-- **Module Generation:** `pnpm roketin module <feature>/[sub-feature]` scaffolds new modules following project conventions.
+- **Module Generation:** `pnpm roketin module <feature>/[sub-feature]` scaffolds new modules following project conventions (config, feature flags, hierarchy-aware menus).
 
 Have fun building! Contributions and issues are welcome. 🎉
 ```
