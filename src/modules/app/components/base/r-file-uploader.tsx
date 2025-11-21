@@ -15,6 +15,7 @@ import {
   FileSpreadsheet,
   Search,
   Trash,
+  Upload,
 } from 'lucide-react';
 import { cn } from '@/modules/app/libs/utils';
 import Button from '@/modules/app/components/ui/button';
@@ -114,6 +115,11 @@ export type TRFileUploaderProps = {
   maxSizeMB?: number;
   adaptiveThumbnail?: boolean;
   'aria-invalid'?: boolean;
+  variant?: 'default' | 'compact';
+  label?: string;
+  uploadProgress?: number; // 0-100 for progress bar
+  isUploading?: boolean; // true when actively uploading
+  showDescription?: boolean; // show/hide file info description
 };
 
 type TRFileUploaderThumbsProps = {
@@ -318,11 +324,18 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
       }
 
       return (
-        <div className='flex h-full items-center justify-center gap-2'>
-          {ICON_MAP[icon]}
+        <div className='flex h-full flex-col items-center justify-center gap-3 p-6 text-center'>
+          <div className='flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary'>
+            {ICON_MAP[icon]}
+          </div>
           {!disabledUpload && (
-            <div className='text-sm text-gray-600'>
-              Drag &amp; drop file here or click to upload
+            <div className='space-y-1'>
+              <div className='text-sm font-medium text-foreground'>
+                Drag & drop file here
+              </div>
+              <div className='text-xs text-muted-foreground'>
+                or click to browse
+              </div>
             </div>
           )}
         </div>
@@ -355,10 +368,16 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            'overflow-hidden rounded-md bg-white relative border border-gray-200 shadow-lg shadow-gray-50 transition-all ease-in-out',
-            !disabledUpload ? 'cursor-pointer hover:bg-gray-50' : '',
-            isDragOver ? 'border-blue-500' : '',
-            { 'border-destructive ring-destructive/40': ariaInvalid },
+            'overflow-hidden rounded-lg relative transition-all ease-in-out',
+            previewSrc
+              ? 'border-2 border-solid border-border bg-background shadow-sm'
+              : 'border-2 border-dashed border-muted-foreground/25 bg-muted/5',
+            !disabledUpload && !previewSrc
+              ? 'cursor-pointer hover:border-primary/50 hover:bg-primary/5'
+              : '',
+            !disabledUpload && previewSrc ? 'cursor-pointer' : '',
+            isDragOver ? 'border-primary bg-primary/10 scale-[0.98]' : '',
+            { 'border-destructive ring-2 ring-destructive/20': ariaInvalid },
           )}
         >
           {isAllowDelete && (
@@ -425,11 +444,17 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
       maxSizeMB = 1,
       adaptiveThumbnail = true,
       'aria-invalid': ariaInvalid,
+      variant = 'default',
+      label = 'Upload Image',
+      showDescription = true,
+      uploadProgress = 0,
+      isUploading = false,
     } = props;
 
     const [file, setFile] = useState<File | null>(null);
     const [remotePreview, setRemotePreview] = useState<string | null>(null);
     const [objectUrl, setObjectUrl] = useState<string | null>(null);
+    const fileRef = useRef<HTMLInputElement>(null);
 
     /**
      * Synchronizes internal file and remote preview state based on the controlled value prop.
@@ -540,6 +565,122 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
       onBlur?.();
     }, [onBlur, onChange, onRemove]);
 
+    /**
+     * Handles the change event on the hidden file input for compact variant.
+     */
+    const handleFileChangeInternal = useCallback(
+      (e: ChangeEvent<HTMLInputElement>) => {
+        handleFileChange(e.target.files?.[0] ?? null);
+      },
+      [handleFileChange],
+    );
+
+    /**
+     * Handles the click event to trigger file input for compact variant.
+     */
+    const handleUploadClick = useCallback(
+      (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!disabledUpload) fileRef.current?.click();
+      },
+      [disabledUpload],
+    );
+
+    // Format file size
+    const formatFileSize = useCallback((bytes: number) => {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    }, []);
+
+    const defaultDesc = `Allowed extensions: ${accept.join(', ')} | Max size: ${maxSizeMB}MB`;
+
+    // Compact variant render
+    if (variant === 'compact') {
+      const hasImagePreview = previewSrc && isImagePreview;
+      return (
+        <div className='space-y-2'>
+          <div className='flex items-center justify-between gap-4 rounded-lg border border-border bg-background p-4'>
+            <div className='flex items-center gap-3 flex-1 min-w-0'>
+              {/* Icon or Image Preview */}
+              {hasImagePreview ? (
+                <div className='relative group shrink-0'>
+                  <img
+                    src={previewSrc}
+                    alt={file?.name || 'preview'}
+                    className='size-10 rounded-lg object-cover'
+                  />
+                  {!disabledDelete && !isUploading && (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleFileRemove();
+                      }}
+                      className='absolute inset-0 flex items-center justify-center bg-black/60 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity'
+                      title='Remove image'
+                    >
+                      <Trash size={16} className='text-white' />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className='flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0'>
+                  {ICON_MAP[icon]}
+                </div>
+              )}
+
+              {/* File Info */}
+              <div className='flex-1 min-w-0'>
+                <p className='text-sm font-medium text-foreground truncate'>
+                  {file?.name || label}
+                </p>
+                <p className='text-xs text-muted-foreground truncate'>
+                  {isUploading
+                    ? `Uploading... ${uploadProgress}%`
+                    : file
+                      ? formatFileSize(file.size)
+                      : defaultDesc}
+                </p>
+              </div>
+            </div>
+
+            {/* Upload Button */}
+            <Button
+              variant='outline'
+              onClick={handleUploadClick}
+              disabled={disabledUpload || isUploading}
+              className='gap-2 shrink-0'
+            >
+              <Upload size={16} />
+              {isUploading ? 'Uploading...' : 'Upload'}
+            </Button>
+
+            {/* Hidden File Input */}
+            <input
+              type='file'
+              className='hidden'
+              accept={acceptAttr}
+              ref={fileRef}
+              onChange={handleFileChangeInternal}
+            />
+          </div>
+
+          {/* Progress Bar */}
+          {isUploading && (
+            <div className='w-full h-1.5 bg-muted rounded-full overflow-hidden'>
+              <div
+                className='h-full bg-primary transition-all duration-300 ease-out'
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Default variant render
     return (
       <div className='flex flex-col'>
         <RFileThumbnail
@@ -562,9 +703,11 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
           adaptiveThumbnail={adaptiveThumbnail}
           ariaInvalid={ariaInvalid}
         />
-        <div className='mt-2 text-xs text-gray-500'>
-          Allowed extensions: {accept.join(', ')} | Max size: {maxSizeMB}MB
-        </div>
+        {showDescription && (
+          <div className='text-sm text-muted-foreground mt-2'>
+            {defaultDesc}
+          </div>
+        )}
       </div>
     );
   },

@@ -101,7 +101,11 @@ const TodoSave = () => {
   const form = useForm<TFormSchema>({
     mode: 'onTouched',
     resolver: yupResolver(formSchema),
-    defaultValues: formSchema.getDefault(),
+    defaultValues: {
+      ...formSchema.getDefault(),
+      // Simulate edit mode with existing image
+      image: 'https://placehold.co/800x600/2563eb/ffffff.jpg?text=Sample+Image',
+    },
   });
 
   useLeavePageGuard({
@@ -308,13 +312,14 @@ const TodoSave = () => {
             />
           </RFormField>
 
-          {/* File Uploader */}
+          {/* File Uploader - Compact Variant */}
           <RFormField
             control={form.control}
             name='image'
-            label='Image Uploader'
+            label='Image Uploader (Compact)'
+            description='Current value shown in JSON preview on right'
           >
-            <RFileUploader />
+            <RFileUploader variant='compact' />
           </RFormField>
 
           {/* Slider */}

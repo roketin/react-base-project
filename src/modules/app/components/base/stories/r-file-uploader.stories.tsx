@@ -28,6 +28,7 @@ const meta: Meta<typeof RFileUploader> = {
     showPreview: { control: 'boolean' },
     compress: { control: 'boolean' },
     adaptiveThumbnail: { control: 'boolean' },
+    showDescription: { control: 'boolean' },
     maxSizeMB: { control: 'number' },
     'aria-invalid': { control: 'boolean' },
 
@@ -36,6 +37,8 @@ const meta: Meta<typeof RFileUploader> = {
     height: { control: 'text' },
     thumbnailSize: { control: 'radio', options: ['cover', 'contain'] },
     icon: { control: 'radio', options: ['image', 'music', 'excel'] },
+    variant: { control: 'radio', options: ['default', 'compact'] },
+    label: { control: 'text' },
 
     // --- Actions ---
     onChange: { action: 'onChange' },
@@ -53,6 +56,7 @@ const meta: Meta<typeof RFileUploader> = {
     maxSizeMB: 2,
     adaptiveThumbnail: false,
     showPreview: true,
+    showDescription: true,
   },
 };
 
@@ -204,5 +208,154 @@ export const WithImperativeRef: Story = {
         </button>
       </div>
     );
+  },
+};
+
+/**
+ * Demonstrates the compact variant with horizontal layout and upload button.
+ * This matches the iOS-style design with icon, label, description, and button.
+ */
+export const CompactVariant: Story = {
+  args: {
+    variant: 'compact',
+    label: 'Upload Image',
+
+    icon: 'image',
+    width: '100%',
+  },
+};
+
+/**
+ * Interactive compact variant with state management to show file upload.
+ */
+export const CompactVariantInteractive: Story = {
+  render: (args) => {
+    const [file, setFile] = useState<File | string | null>(null);
+
+    return (
+      <div className='flex flex-col gap-4 w-full max-w-2xl'>
+        <RFileUploader
+          {...args}
+          variant='compact'
+          label='Upload Image'
+          value={file}
+          onChange={(newFile) => {
+            args?.onChange?.(newFile);
+            setFile(newFile);
+          }}
+          onRemove={() => {
+            args?.onRemove?.();
+            setFile(null);
+          }}
+        />
+        <div className='text-sm text-muted-foreground'>
+          <strong>Current State:</strong>{' '}
+          {file ? (file instanceof File ? file.name : file) : 'null'}
+        </div>
+      </div>
+    );
+  },
+};
+
+/**
+ * Compact variant for non-image files like Excel documents.
+ */
+export const CompactVariantExcel: Story = {
+  args: {
+    variant: 'compact',
+    label: 'Upload Excel File',
+
+    icon: 'excel',
+    accept: DEFAULT_EXT.EXCEL,
+    maxSizeMB: 10,
+    width: '100%',
+  },
+};
+
+/**
+ * Demonstrates upload progress with simulated upload.
+ * Shows progress bar and upload status indicators.
+ */
+export const CompactVariantWithProgress: Story = {
+  render: (args) => {
+    const [file, setFile] = useState<File | string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [progress, setProgress] = useState(0);
+
+    const handleFileChange = (newFile: File | null) => {
+      if (!newFile) {
+        setFile(null);
+        return;
+      }
+
+      // Set file immediately
+      setFile(newFile);
+
+      // Simulate upload
+      setIsUploading(true);
+      setProgress(0);
+
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setIsUploading(false);
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 300);
+    };
+
+    return (
+      <div className='flex flex-col gap-4 w-full max-w-2xl'>
+        <RFileUploader
+          {...args}
+          variant='compact'
+          label='Upload Image'
+          value={file}
+          onChange={handleFileChange}
+          onRemove={() => setFile(null)}
+          uploadProgress={progress}
+          isUploading={isUploading}
+        />
+        <div className='text-sm text-muted-foreground space-y-1'>
+          <div>
+            <strong>Status:</strong> {isUploading ? 'Uploading...' : 'Idle'}
+          </div>
+          <div>
+            <strong>Progress:</strong> {progress}%
+          </div>
+          <div>
+            <strong>File:</strong>{' '}
+            {file ? (file instanceof File ? file.name : file) : 'null'}
+          </div>
+        </div>
+      </div>
+    );
+  },
+};
+
+/**
+ * Demonstrates hiding the file description text with showDescription={false}.
+ * Useful when you want a cleaner look or provide custom description elsewhere.
+ */
+export const WithoutDescription: Story = {
+  args: {
+    value: null,
+    showDescription: false,
+  },
+};
+
+/**
+ * Compact variant without description text.
+ * Shows a cleaner interface without the file info text.
+ */
+export const CompactVariantWithoutDescription: Story = {
+  args: {
+    variant: 'compact',
+    label: 'Upload Image',
+    showDescription: false,
+    width: '100%',
   },
 };
