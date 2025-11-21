@@ -1,3 +1,17 @@
+## [1.3.0] - 2025-11-21
+
+### 🚀 Features
+
+- *(ddd)* Add dialog profile
+
+### 🐛 Bug Fixes
+
+- *(ddd)* Update deps
+- *(ddd)* Increase size icon on alert dialog
+
+### ⚙️ Miscellaneous Tasks
+
+- V1.2.0
 ## [1.2.0] - 2025-11-21
 
 ### 🚀 Features
