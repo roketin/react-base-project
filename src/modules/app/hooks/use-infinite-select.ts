@@ -32,6 +32,10 @@ type UseInfiniteSelectOptionsParams<
   getPageItems: (page: TPage) => TOption[];
   searchParamKey?: string;
   initialSearchValue?: string;
+  /**
+   * Extra options to append (e.g. from detail API in edit mode).
+   */
+  appendOptions?: TOption[];
 };
 
 type UseInfiniteSelectOptionsResult<
@@ -61,6 +65,7 @@ export function useInfiniteSelectOptions<
   getPageItems,
   searchParamKey,
   initialSearchValue,
+  appendOptions = [],
 }: UseInfiniteSelectOptionsParams<
   TPage,
   TOption,
@@ -72,7 +77,7 @@ export function useInfiniteSelectOptions<
   const searchKey = searchParamKey ?? 'search';
 
   const queryParams = useMemo(() => {
-    const params = { ...baseParams } as TParams & Record<string, unknown>;
+    const params = { ...baseParams } as Record<string, unknown>;
 
     if (searchValue.trim() !== '') {
       params[searchKey] = searchValue;
@@ -89,12 +94,12 @@ export function useInfiniteSelectOptions<
     queryResult;
 
   const options = useMemo(() => {
-    if (!data) {
-      return [] as TOption[];
-    }
+    const collected = data
+      ? data.pages.flatMap((page) => getPageItems(page))
+      : [];
 
-    return data.pages.flatMap((page) => getPageItems(page));
-  }, [data, getPageItems]);
+    return [...appendOptions, ...collected] as TOption[];
+  }, [appendOptions, data, getPageItems]);
 
   const handleLoadMore = useCallback(() => {
     if (!hasNextPage || isFetchingNextPage) {
