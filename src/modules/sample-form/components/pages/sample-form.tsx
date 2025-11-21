@@ -1,24 +1,33 @@
 import RBtn from '@/modules/app/components/base/r-btn';
+import showAlert from '@/modules/app/components/base/show-alert';
 import {
   RDataTable,
   type TRDataTableColumnDef,
 } from '@/modules/app/components/base/r-data-table';
 import { RFilterMenu } from '@/modules/app/components/base/r-filter';
-import { DEFAULT_QUERY_PARAMS } from '@/modules/app/constants/app.constant';
+import {
+  DATE_FORMAT,
+  DEFAULT_QUERY_PARAMS,
+} from '@/modules/app/constants/app.constant';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import { useObjectState } from '@/modules/app/hooks/use-object-state';
+import { RTooltip } from '@/modules/app/components/base/r-tooltip';
 import { filterItem, type TFilterItem } from '@/modules/app/libs/filter-utils';
+import {
+  tableCellLink,
+  tableCurrency,
+  tableDate,
+} from '@/modules/app/libs/table-utils';
 import { safeArray } from '@/modules/app/libs/utils';
 import type { TApiDefaultQueryParams } from '@/modules/app/types/api.type';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import { useGetSampleFormList } from '@/modules/sample-form/services/sample-form.service';
+import SampleFormDialog from '@/modules/sample-form/components/elements/sample-form-dialog';
+import type { TTestDialogSchema } from '@/modules/sample-form/components/elements/sample-form-dialog';
 import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
-import { RTooltip } from '@/modules/app/components/base/r-tooltip';
-import { Pencil, Trash } from 'lucide-react';
-import { Plus } from 'lucide-react';
-import { useCallback, useMemo } from 'react';
+import { InspectIcon, Pencil, Plus, Trash } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useOverridePageConfig } from '@/modules/app/hooks/use-page-config';
 
 const countries = [
   { id: 'id', name: 'Indonesia' },
@@ -42,14 +51,6 @@ const toCurrencyRange = (values: number[]) => {
 };
 
 const SampleFormIndex = () => {
-  useOverridePageConfig({
-    breadcrumbs: [
-      { label: 'TAMPAN' },
-      { label: 'sampleForm:title', href: '/admin/sample-form' },
-      { label: 'sampleForm:menu.allEntries' },
-    ],
-  });
-
   // Permission
   const { isCan } = useAuth();
 
@@ -74,29 +75,47 @@ const SampleFormIndex = () => {
         header: t('columns.actions'),
         sticky: 'left',
         enableSorting: false,
-        size: 90,
+        size: 100,
         cell: ({ row }) => (
           <div className='flex items-center  gap-2'>
             <RTooltip content={t('actions.edit')}>
               <RBtn
-                size='icon'
+                size='iconSm'
                 variant='outline'
                 onClick={() =>
                   navigate('SampleFormEdit', { id: row.original.id })
                 }
               >
-                <Pencil className='size-4' />
+                <Pencil size={20} />
               </RBtn>
             </RTooltip>
             <RTooltip content={t('actions.delete')}>
               <RBtn
-                size='sm'
-                variant='destructive'
+                size='iconSm'
+                variant='outline'
                 onClick={() => {
-                  window.alert(`Delete ${row.original.name}`);
+                  showAlert(
+                    {
+                      type: 'confirm',
+                      title: 'Delete this entry?',
+                      description: `Are you sure you want to delete "${row.original.name}"? This action cannot be undone.`,
+                      variant: 'confirm',
+                    },
+                    ({ ok }) => {
+                      if (ok) {
+                        showAlert({
+                          variant: 'success',
+                          type: 'alert',
+                          title: 'Success',
+                          description: 'Successfully deleted entry',
+                          okVariant: 'success',
+                        });
+                      }
+                    },
+                  );
                 }}
               >
-                <Trash className='size-4' />
+                <Trash size={20} className='text-destructive' />
               </RBtn>
             </RTooltip>
           </div>
@@ -105,17 +124,73 @@ const SampleFormIndex = () => {
       {
         header: t('columns.name'),
         accessorKey: 'name',
+        cell: ({ row, getValue }) =>
+          tableCellLink(getValue<string>(), {
+            routeName: 'SampleFormEdit',
+            routeParams: { id: String(row.original.id) },
+          }),
         size: 230,
       },
-      { header: t('columns.code', { i: 1 }), accessorKey: 'code', size: 100 },
-      { header: t('columns.code', { i: 2 }), accessorKey: 'code', size: 100 },
-      { header: t('columns.code', { i: 3 }), accessorKey: 'code', size: 100 },
-      { header: t('columns.code', { i: 4 }), accessorKey: 'code', size: 100 },
-      { header: t('columns.code', { i: 5 }), accessorKey: 'code', size: 100 },
-      { header: t('columns.code', { i: 6 }), accessorKey: 'code', size: 100 },
-      { header: t('columns.code', { i: 7 }), accessorKey: 'code', size: 100 },
-      { header: t('columns.code', { i: 8 }), accessorKey: 'code', size: 100 },
-      { header: t('columns.createdAt'), accessorKey: 'created_at', size: 250 },
+      {
+        id: 'code1',
+        header: t('columns.code', { i: 1 }),
+        accessorKey: 'code',
+        size: 100,
+      },
+      {
+        id: 'code2',
+        header: t('columns.code', { i: 2 }),
+        accessorKey: 'code',
+        size: 100,
+      },
+      {
+        id: 'code3',
+        header: t('columns.code', { i: 3 }),
+        accessorKey: 'code',
+        size: 100,
+      },
+      {
+        id: 'code4',
+        header: t('columns.code', { i: 4 }),
+        accessorKey: 'code',
+        size: 100,
+      },
+      {
+        id: 'code5',
+        header: t('columns.code', { i: 5 }),
+        accessorKey: 'code',
+        size: 100,
+      },
+      {
+        id: 'code6',
+        header: t('columns.code', { i: 6 }),
+        accessorKey: 'code',
+        size: 100,
+      },
+      {
+        id: 'code7',
+        header: t('columns.code', { i: 7 }),
+        accessorKey: 'code',
+        size: 100,
+      },
+      {
+        id: 'code8',
+        header: t('columns.code', { i: 8 }),
+        accessorKey: 'code',
+        size: 100,
+      },
+      {
+        header: 'Budget',
+        accessorKey: 'budget',
+        size: 150,
+        cell: () => tableCurrency(100000000),
+      },
+      {
+        header: t('columns.createdAt'),
+        accessorKey: 'created_at',
+        size: 190,
+        cell: ({ getValue }) => tableDate(getValue<string>(), DATE_FORMAT.long),
+      },
     ],
     [navigate, t],
   );
@@ -191,15 +266,37 @@ const SampleFormIndex = () => {
   // Get data
   const { data, isFetching: isLoading } = useGetSampleFormList(qryParams);
 
+  // Test Dialog State
+  const [isTestDialogOpen, setIsTestDialogOpen] = useState(false);
+
+  const handleTestSubmit = useCallback((values: TTestDialogSchema) => {
+    console.log('Test Submit', values);
+    setIsTestDialogOpen(false);
+  }, []);
+
   return (
     <div>
-      <div className='mb-3'>
+      <div className='mb-3 flex gap-2'>
         {isCan('SAMPLE_FORM_CREATE') && (
           <RBtn iconStart={<Plus />} onClick={handleAdd}>
             {t('actions.add')}
           </RBtn>
         )}
+        <RBtn
+          iconStart={<InspectIcon />}
+          variant='outline'
+          onClick={() => setIsTestDialogOpen(true)}
+        >
+          Test Dialog
+        </RBtn>
       </div>
+
+      <SampleFormDialog
+        open={isTestDialogOpen}
+        onOpenChange={setIsTestDialogOpen}
+        countries={countries}
+        onSubmit={handleTestSubmit}
+      />
 
       <RDataTable
         fixed

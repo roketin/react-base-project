@@ -9,7 +9,7 @@ type ModuleMenuEntry = {
 };
 
 function toArray(menu?: TSidebarMenu | TSidebarMenu[] | false): TSidebarMenu[] {
-  if (!menu || menu === false) return [];
+  if (!menu) return [];
   return Array.isArray(menu) ? menu : [menu];
 }
 
