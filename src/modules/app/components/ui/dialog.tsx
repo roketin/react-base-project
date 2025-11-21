@@ -28,7 +28,7 @@ const DialogOverlay = forwardRef<
       ref={ref}
       className={cn(
         { 'overflow-y-auto py-16 grid place-items-center': !fullscreen },
-        'fixed inset-0 z-50 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+        'fixed inset-0 z-9998 bg-black/40 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         className,
       )}
       {...props}
@@ -65,7 +65,7 @@ const DialogContent = forwardRef<
           className={cn(
             { 'w-full max-w-lg sm:rounded-lg md:w-full relative': !fullscreen },
             { 'h-full': fullscreen },
-            'z-50 grid gap-4 bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+            'z-9998 grid gap-4 bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
             className,
           )}
           {...props}

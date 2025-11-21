@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 import { cn } from '@/modules/app/libs/utils';
+import { RCard } from '@/modules/app/components/base/r-card';
 
 type TrendDirection = 'up' | 'down' | 'neutral';
 
@@ -79,10 +80,10 @@ export function RStatisticDashboard({
             : metric.trend?.value;
 
         return (
-          <div
+          <RCard
             key={metric.id}
-            className={cn(
-              'group relative overflow-hidden rounded-xl border border-border/60 bg-linear-to-br from-background via-background to-muted/50 p-5 shadow-sm transition hover:shadow-md',
+            wrapperClassName={cn(
+              'group relative overflow-hidden bg-linear-to-br from-background via-background to-muted/50',
               minimal && 'border-transparent bg-background/80 shadow-none',
               cardClassName,
             )}
@@ -146,7 +147,7 @@ export function RStatisticDashboard({
                 {metric.footer}
               </div>
             ) : null}
-          </div>
+          </RCard>
         );
       })}
     </div>

@@ -101,7 +101,7 @@ const RDataTableInner = <TData, TValue>(
     footer,
     initialSelected = {},
     searchPlaceholder = 'Search...',
-    striped = true,
+    striped = false,
     hoverable = true,
     toolbarStart,
     toolbarEnd,
@@ -227,7 +227,7 @@ const RDataTableInner = <TData, TValue>(
           <TableRow key={idx}>
             {headers.map((header) => (
               <TableCell key={header.id} className='bg-inherit'>
-                <Skeleton className='h-5 w-full rounded-md' />
+                <Skeleton className='h-9 w-full rounded-md' />
               </TableCell>
             ))}
           </TableRow>
@@ -255,9 +255,9 @@ const RDataTableInner = <TData, TValue>(
   return (
     <div>
       <div className='mb-4 flex flex-wrap items-center gap-3 md:justify-between'>
-        <div className='flex items-center gap-3'>
+        <div className='flex items-center gap-3 flex-1'>
           {allowSearch && (
-            <div className='w-full md:max-w-[250px]'>
+            <div className='flex-1'>
               <Input
                 clearable
                 placeholder={searchPlaceholder}
@@ -305,7 +305,7 @@ const RDataTableInner = <TData, TValue>(
                         right: sticky === 'right' ? offset : undefined,
                         zIndex: sticky === 'none' ? undefined : 10,
                       }}
-                      className={cn('bg-slate-50', headerAlignClass)}
+                      className={cn('bg-[#F7F7F7]', headerAlignClass)}
                     >
                       {header.isPlaceholder ? null : (
                         <div
@@ -327,11 +327,11 @@ const RDataTableInner = <TData, TValue>(
                           {header.column.getCanSort() && (
                             <div className='ml-auto'>
                               {{
-                                asc: <ArrowUp size={12} />,
-                                desc: <ArrowDown size={12} />,
+                                asc: <ArrowUp size={16} />,
+                                desc: <ArrowDown size={16} />,
                               }[header.column.getIsSorted() as string] ?? (
                                 <ChevronsUpDown
-                                  size={12}
+                                  size={16}
                                   className='opacity-20'
                                 />
                               )}

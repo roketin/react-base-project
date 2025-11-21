@@ -318,7 +318,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder='Search menu'
-              className='h-8 border-sidebar-border bg-sidebar text-xs'
+              density='sm'
               prepend={<Search size={13} />}
             />
           </div>

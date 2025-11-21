@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority';
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius)] text-[length:var(--form-font-size)] font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--form-focus-ring)] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-[var(--form-disabled-opacity)] shadow-[var(--form-shadow)] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer',
   {
     variants: {
       variant: {
@@ -9,18 +9,26 @@ export const buttonVariants = cva(
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:
-          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+          'border border-[var(--form-border-color)] bg-background hover:bg-accent hover:text-accent-foreground',
         secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
+        info: 'bg-blue-500 text-white hover:bg-blue-600',
+        success: 'bg-emerald-500 text-white hover:bg-emerald-600',
+        warning: 'bg-amber-500 text-white hover:bg-amber-600',
+        error: 'bg-red-500 text-white hover:bg-red-600',
+        confirm:
+          'bg-purple-500 text-white hover:bg-purple-600 disabled:bg-purple-400',
       },
       size: {
-        default: 'h-10 px-4 py-2',
-        sm: 'h-9 px-3',
+        default: 'h-[var(--form-height)] px-[var(--form-padding-x)] py-2',
+        sm: 'h-[var(--form-height-sm)] px-[var(--form-padding-x-sm)]',
         xs: 'h-8 px-2 text-xs',
-        lg: 'h-11 px-8',
+        lg: 'h-[var(--form-height-lg)] px-[var(--form-padding-x-lg)]',
         icon: 'h-10 w-10',
+        iconSm: 'h-9 w-9 text-sm',
+        iconLg: 'h-12 w-12 text-base',
       },
     },
     defaultVariants: {

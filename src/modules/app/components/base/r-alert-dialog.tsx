@@ -11,7 +11,16 @@ import {
 import { buttonVariants } from '@/modules/app/components/ui/variants/button-variants';
 import type { TLoadable } from '@/modules/app/types/component.type';
 import type { VariantProps } from 'class-variance-authority';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Info,
+  OctagonAlert,
+  ShieldQuestion,
+} from 'lucide-react';
 import RBtn from '@/modules/app/components/base/r-btn';
+
+type TRAlertVariant = 'info' | 'success' | 'warning' | 'error' | 'confirm';
 
 export type TRAlertDialogProps = TLoadable & {
   open: boolean;
@@ -26,6 +35,8 @@ export type TRAlertDialogProps = TLoadable & {
   extraButtons?: React.ReactNode;
   icon?: React.ReactNode;
   hideCancel?: boolean;
+  width?: number | string;
+  variant?: TRAlertVariant;
 };
 
 const RAlertDialog = ({
@@ -42,21 +53,42 @@ const RAlertDialog = ({
   loading,
   icon,
   hideCancel = false,
+  width = 320,
+  variant = 'info',
 }: TRAlertDialogProps) => {
+  const defaultIconByVariant: Record<TRAlertVariant, React.ReactNode> = {
+    info: <Info className='h-10 w-10 text-blue-500' />,
+    success: <CheckCircle2 className='h-10 w-10 text-emerald-500' />,
+    warning: <AlertTriangle className='h-10 w-10 text-amber-500' />,
+    error: <OctagonAlert className='h-10 w-10 text-red-500' />,
+    confirm: <ShieldQuestion className='h-10 w-10 text-amber-500' />,
+  };
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          {icon && <div>{icon}</div>}
-          <AlertDialogTitle>{title}</AlertDialogTitle>
+      <AlertDialogContent
+        style={{ width, maxWidth: width, boxSizing: 'border-box' }}
+        className='p-8'
+      >
+        <AlertDialogHeader className='text-center items-center'>
+          {(icon ?? defaultIconByVariant[variant]) && (
+            <div className='mb-2'>{icon ?? defaultIconByVariant[variant]}</div>
+          )}
+          <AlertDialogTitle className='text-center'>{title}</AlertDialogTitle>
           <AlertDialogDescription asChild>
-            <div className='text-sm'>{description}</div>
+            <div className='text-sm text-center leading-relaxed'>
+              {description}
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
+        <AlertDialogFooter className='sm:flex-row flex-row gap-3 mt-2'>
           {extraButtons}
           {!hideCancel && (
-            <AlertDialogCancel onClick={onCancel} disabled={loading}>
+            <AlertDialogCancel
+              onClick={onCancel}
+              disabled={loading}
+              className='flex-1 m-0'
+            >
               {cancelText}
             </AlertDialogCancel>
           )}
@@ -64,6 +96,7 @@ const RAlertDialog = ({
             onClick={onOk}
             loading={loading}
             variant={okVariant ?? 'default'}
+            className='flex-1'
           >
             {okText}
           </RBtn>

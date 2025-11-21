@@ -1,6 +1,6 @@
 import showAlert from '@/modules/app/components/base/show-alert';
 import { collectErrorMessages } from '@/modules/app/libs/error-utils';
-import { FileWarning, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import type { FieldErrors } from 'react-hook-form';
 
 export function showAlertValidation(errors: FieldErrors) {
@@ -11,8 +11,9 @@ export function showAlertValidation(errors: FieldErrors) {
   showAlert({
     type: 'alert',
     title: 'Sorry, there are some errors',
-    icon: <FileWarning />,
     okText: 'Close',
+    variant: 'error',
+    width: 320,
     description: (
       <ul className='list-none pl-0 text-sm'>
         {messages.map((msg) => (

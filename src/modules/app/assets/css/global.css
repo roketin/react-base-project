@@ -14,7 +14,8 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   /* --primary: #00a7c3; */
-  --primary: #c4275e;
+  /* --primary: #c4275e; */
+  --primary: #f97316;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -46,6 +47,33 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Form Configuration */
+  --form-radius: var(--radius);
+  --form-border-color: var(--input);
+  --form-bg: var(--background);
+  --form-placeholder: oklch(0.556 0 0); /* muted-foreground */
+  --form-text: var(--foreground);
+  --form-focus-ring: var(--ring);
+  --form-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --form-disabled-bg: oklch(0.97 0 0); /* muted/gray-50 */
+  --form-disabled-text: oklch(0.556 0 0); /* muted-foreground */
+  --form-disabled-border: oklch(0.922 0 0); /* border/input */
+  --form-disabled-opacity: 0.5;
+  --button-radius: var(--radius);
+  --form-height: 2.5rem; /* 40px (h-10) */
+  --form-padding-x: 0.75rem; /* 12px (px-3) */
+  --form-font-size: 0.875rem; /* 14px (text-sm) */
+
+  /* Form Sizing - Small */
+  --form-height-sm: 28px; /* 36px (h-9) */
+  --form-padding-x-sm: 0.75rem; /* 12px (px-3) */
+  --form-font-size-sm: 0.75rem; /* 12px (text-xs) */
+
+  /* Form Sizing - Large */
+  --form-height-lg: 2.75rem; /* 44px (h-11) */
+  --form-padding-x-lg: 2rem; /* 32px (px-8) - Button default, adjusted for inputs usually */
+  --form-font-size-lg: 1rem; /* 16px (text-base) */
 }
 
 .dark {
@@ -86,6 +114,12 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Form Configuration Dark Mode */
+  --form-border-color: var(--input);
+  --form-bg: var(--background);
+  --form-placeholder: oklch(0.708 0 0); /* muted-foreground */
+  --form-text: var(--foreground);
 }
 
 @theme inline {
@@ -177,7 +211,7 @@ body {
   }
 
   .rt-table--hoverable tbody tr:not([data-state='selected']):hover {
-    @apply bg-gray-100!;
+    @apply bg-[#F7F7F7]!;
   }
 
   .rt-table--no-hover tbody tr:not([data-state='selected']):hover {

@@ -84,7 +84,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           data-slot='textarea'
           className={cn(
-            'border-input placeholder:placeholder-gray-400 placeholder-gray-400 focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+            'border-[var(--form-border-color)] placeholder:text-[var(--form-placeholder)] focus-visible:border-[var(--form-focus-ring)] focus-visible:ring-[var(--form-focus-ring)]/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-[var(--form-radius)] border bg-transparent px-3 py-2 text-[length:var(--form-font-size)] shadow-[var(--form-shadow)] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-[var(--form-disabled-opacity)] disabled:bg-[var(--form-disabled-bg)] md:text-sm',
             showCount && 'pb-6',
             className,
           )}

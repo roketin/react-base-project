@@ -18,7 +18,10 @@
 
   /* Disabled State */
   &.rc-select-disabled {
-    @apply pointer-events-none opacity-60;
+    @apply cursor-not-allowed opacity-(--form-disabled-opacity) bg-(--form-disabled-bg);
+    .rc-select-selector {
+      @apply bg-transparent border-(--form-disabled-border);
+    }
   }
 
   &.rc-invalid {
@@ -29,22 +32,22 @@
 
   /* Selector Container (Input/Selected Items Wrapper) */
   .rc-select-selector {
-    @apply relative flex w-full min-h-[2.3rem] border rounded shadow-md shadow-slate-100;
+    @apply relative flex w-full min-h-(--form-height) border border-(--form-border-color) bg-(--form-bg) rounded-(--form-radius) shadow-(--form-shadow);
   }
 
   /* Placeholder Text */
   .rc-select-selection-placeholder {
-    @apply pointer-events-none text-gray-400 text-sm;
+    @apply pointer-events-none text-(--form-placeholder) text-(length:--form-font-size);
   }
 
   /* Search/Input Field within Selector */
   .rc-select-selection-search-input {
-    @apply w-full border-none outline-none bg-transparent shadow-none text-inherit;
+    @apply w-full border-none outline-none bg-transparent shadow-none text-(--form-text);
   }
 
   /* Action Buttons */
   .rc-select-arrow {
-    @apply absolute right-3 top-2.5 w-4 text-center pointer-events-none;
+    @apply absolute right-3 top-3 w-4 text-center pointer-events-none;
   }
 
   .rc-select-clear {
@@ -63,7 +66,7 @@
 
   .rc-select-selection-search-input {
     /* Input spans full width, hides below item/placeholder, keeps space for clear/arrow */
-    @apply text-sm absolute top-0 bottom-0 left-0 pl-3 right-3 pr-11 appearance-none;
+    @apply text-(length:--form-font-size) absolute top-0 bottom-0 left-0 pl-(--form-padding-x) right-3 pr-11 appearance-none;
   }
 
   .rc-select-selection-item,
@@ -92,7 +95,7 @@
   }
 
   .rc-select-selection-item-remove {
-    @apply cursor-pointer relative top-[-1px];
+    @apply cursor-pointer relative -top-px;
   }
 
   /* Placeholder */
@@ -102,7 +105,7 @@
 
   /* Overflow (Wrapper for tags and search input) */
   .rc-select-selection-overflow {
-    @apply flex flex-wrap gap-1 pt-[4px] pb-1 pl-3 pr-9;
+    @apply flex flex-wrap gap-1 pt-1.5 pb-1 pl-3 pr-9;
   }
 
   .rc-select-selection-overflow-item {
@@ -111,7 +114,7 @@
 
   /* Search Input Wrapper */
   .rc-select-selection-search {
-    @apply relative top-[-1px];
+    @apply relative -top-px;
   }
 
   .rc-select-selection-search-mirror {
@@ -129,7 +132,7 @@
  * ======================================================================== */
 
 .rc-select-dropdown {
-  @apply absolute min-h-[20px] p-1 z-50 shadow-md rounded-md;
+  @apply absolute min-h-5 p-1 z-9999 shadow-md rounded-md;
   background: var(--popover);
   color: var(--popover-foreground);
 }
@@ -149,7 +152,7 @@
 
   /* Active/Selected States */
   &.rc-select-item-option-selected {
-    @apply !bg-primary/20;
+    @apply bg-primary/20!;
   }
 
   &.rc-select-item-option-active {

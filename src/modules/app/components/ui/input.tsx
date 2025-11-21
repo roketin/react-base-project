@@ -128,7 +128,7 @@ const Input = forwardRef<HTMLInputElement, TInputProps>(function Input(
           data-slot='input'
           className={cn(
             inputVariants({ size: density }),
-            'placeholder-gray-400 pr-3 pl-3',
+            'placeholder:text-[var(--form-placeholder)] pr-3 pl-3',
             append && 'pr-2',
             prepend && 'pl-2',
             className,

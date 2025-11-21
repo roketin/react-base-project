@@ -12,6 +12,7 @@ export type TRBtnProps = React.ComponentProps<typeof Button> & {
   loadingLabel?: ReactNode;
   iconStart?: ReactNode;
   iconEnd?: ReactNode;
+  asChild?: boolean;
 };
 
 // ✅ Use new React 19 forwardRef style (no more ElementRef)
@@ -25,6 +26,7 @@ const RBtn = React.forwardRef(function RBtn(
     children,
     iconStart,
     iconEnd,
+    asChild,
     ...rest
   }: TRBtnProps,
   ref: React.ForwardedRef<HTMLButtonElement>, // 👈 direct ref type
@@ -41,6 +43,22 @@ const RBtn = React.forwardRef(function RBtn(
     debounceMs,
     { leading: true, trailing: false },
   );
+
+  if (asChild) {
+    return (
+      <Button
+        ref={ref}
+        disabled={disabled || loading}
+        aria-busy={loading}
+        data-loading={loading ? '' : undefined}
+        onClick={debouncedOnClick}
+        asChild
+        {...rest}
+      >
+        {children}
+      </Button>
+    );
+  }
 
   return (
     <Button

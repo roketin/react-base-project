@@ -39,40 +39,50 @@ const showAlert = (
    */
   const Component = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [open, setOpen] = useState<boolean>(true);
+    const width = config.width ?? 280;
+
+    const handleClose = useCallback(() => {
+      setOpen(false);
+      setTimeout(() => {
+        cleanup();
+      }, 300);
+    }, []);
 
     const handleOk = useCallback(() => {
       if (!isLoading) {
         callback?.({
           ok: true,
           setLoading: setIsLoading,
-          close: cleanup,
+          close: handleClose,
         });
 
         if (!config?.manualClose) {
-          cleanup();
+          handleClose();
         }
       }
-    }, [isLoading]);
+    }, [isLoading, handleClose]);
 
     const handleCancel = useCallback(() => {
       if (!isLoading) {
         callback?.({
           ok: false,
           setLoading: setIsLoading,
-          close: cleanup,
+          close: handleClose,
         });
 
         if (!config?.manualClose) {
-          cleanup();
+          handleClose();
         }
       }
-    }, [isLoading]);
+    }, [isLoading, handleClose]);
 
     const defaultConfigByType = useMemo<Partial<TRAlertDialogProps>>(() => {
       if (config.type === 'alert') {
         return {
           hideCancel: true,
           okText: 'Ok',
+          variant: 'info',
         };
       }
 
@@ -81,6 +91,7 @@ const showAlert = (
           handleCancel: false,
           okText: 'Yes',
           cancelText: 'No',
+          variant: 'confirm',
         };
       }
 
@@ -91,9 +102,14 @@ const showAlert = (
       <RAlertDialog
         {...defaultConfigByType}
         {...config}
-        open={true}
+        open={open}
         loading={isLoading}
-        onOpenChange={() => {}}
+        width={width}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            handleClose();
+          }
+        }}
         onOk={handleOk}
         onCancel={handleCancel}
       />

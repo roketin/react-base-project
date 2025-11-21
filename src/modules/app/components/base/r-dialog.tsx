@@ -106,9 +106,7 @@ export function RDialog({
           </DialogHeader>
         ) : null}
 
-        {children && (
-          <div className={cn('overflow-y-auto', bodyClassName)}>{children}</div>
-        )}
+        {children && <div className={cn('p-0', bodyClassName)}>{children}</div>}
 
         {!hideFooter && footer ? (
           <DialogFooter

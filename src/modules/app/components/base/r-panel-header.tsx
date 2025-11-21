@@ -66,14 +66,14 @@ export function RPanelHeader<TPayload = unknown>({
   const cancelLabel = cancelButton?.label ?? 'Cancel';
   const cancelIcon = cancelButton?.icon ?? <ChevronLeft className='size-4' />;
   const cancelVariant = cancelButton?.variant ?? 'outline';
-  const cancelSize = cancelButton?.size ?? 'sm';
+  const cancelSize = cancelButton?.size ?? 'default';
   const cancelIconPlacement = cancelButton?.iconPlacement ?? 'start';
   const cancelDisabled = cancelButton?.disabled ?? false;
 
   const okLabel = okButton?.label ?? 'Ok';
   const okIcon = okButton?.icon ?? <ChevronRight className='size-4' />;
   const okVariant = okButton?.variant ?? 'default';
-  const okSize = okButton?.size ?? 'sm';
+  const okSize = okButton?.size ?? 'default';
   const okIconPlacement = okButton?.iconPlacement ?? 'end';
 
   const okDisabled = okButton?.disabled ?? false;
@@ -93,7 +93,7 @@ export function RPanelHeader<TPayload = unknown>({
   const closeButtonContent = closeSize === 'icon' ? closeIconNode : closeLabel;
 
   return (
-    <div className='flex items-center justify-between gap-3 border-b border-slate-100 py-4'>
+    <div className='flex items-center justify-between gap-3 border-b border-slate-100 py-4 mb-4'>
       <div className='flex items-center gap-3'>
         {shouldShowClose && (
           <RBtn

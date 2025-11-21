@@ -23,7 +23,21 @@ const meta: Meta<typeof RAlertDialog> = {
     cancelText: { control: 'text' },
     okVariant: {
       control: 'select',
-      options: ['default', 'destructive', 'outline', 'ghost'],
+      options: [
+        'default',
+        'destructive',
+        'outline',
+        'ghost',
+        'info',
+        'success',
+        'warning',
+        'error',
+        'confirm',
+      ],
+    },
+    variant: {
+      control: 'select',
+      options: ['info', 'success', 'warning', 'error', 'confirm'],
     },
     loading: { control: 'boolean' },
     hideCancel: { control: 'boolean' },
@@ -54,6 +68,7 @@ export const DefaultConfirmation: Story = {
     okVariant: 'default',
     loading: false,
     hideCancel: false,
+    variant: 'info',
   },
 };
 
@@ -75,6 +90,7 @@ export const DestructiveAction: Story = {
     ),
     okText: 'Delete',
     okVariant: 'destructive',
+    variant: 'error',
     icon: <Trash2 className='h-6 w-6 text-red-600 mx-auto' />, // Icon above the title
   },
 };
@@ -92,6 +108,7 @@ export const ForcedAcknowledgement: Story = {
     okText: 'Understood',
     okVariant: 'default',
     hideCancel: true, // Hides the cancel button
+    variant: 'warning',
     icon: <AlertCircle className='h-6 w-6 text-yellow-500 mx-auto' />,
   },
 };
@@ -109,6 +126,7 @@ export const LoadingState: Story = {
     okVariant: 'default',
     loading: true, // Sets the loading state
     cancelText: 'Cancel Operation', // The cancel button will be disabled
+    variant: 'info',
     extraButtons: (
       // Demonstrating the extraButtons slot
       <RBtn variant='outline' className='mr-3'>

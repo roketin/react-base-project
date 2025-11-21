@@ -66,6 +66,7 @@ function RSelectBase<
     infiniteScroll,
     dropdownRender,
     onPopupScroll,
+    getPopupContainer,
     ...restProps
   } = props;
 
@@ -188,6 +189,22 @@ function RSelectBase<
   const finalDropdownRender =
     infiniteOnLoadMore || dropdownRender ? mergedDropdownRender : undefined;
 
+  const resolvedGetPopupContainer = useCallback(
+    (node: HTMLElement) => {
+      const customContainer = getPopupContainer?.(node);
+      if (customContainer) {
+        return customContainer;
+      }
+
+      const dialogContainer =
+        (node.closest('[data-radix-dialog-content]') as HTMLElement | null) ??
+        (node.closest('[role="dialog"]') as HTMLElement | null);
+
+      return dialogContainer ?? node.parentElement ?? document.body;
+    },
+    [getPopupContainer],
+  );
+
   return (
     <Select<ValueType, OptionType>
       ref={ref}
@@ -198,6 +215,7 @@ function RSelectBase<
       animation='slide-up'
       dropdownRender={finalDropdownRender}
       onPopupScroll={mergedOnPopupScroll}
+      getPopupContainer={resolvedGetPopupContainer}
       menuItemSelectedIcon={
         menuItemSelectedIcon ?? (isMultiple ? <Check size={14} /> : null)
       }

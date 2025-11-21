@@ -29,7 +29,7 @@ const AppLayoutHeader = () => {
   return (
     <div
       id='app-header'
-      className='sticky top-0 z-20 border-b border-border/60 bg-background/80 py-1 px-5 backdrop-blur supports-backdrop-filter:backdrop-blur-sm shadow-xl shadow-slate-100'
+      className='sticky top-0 z-20 border-b border-border/60 bg-background/80 py-1 px-5 backdrop-blur supports-backdrop-filter:backdrop-blur-sm'
     >
       <header className='flex shrink-0 items-center justify-between gap-4'>
         <div className='flex items-center gap-3'>

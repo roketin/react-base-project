@@ -4,7 +4,6 @@ import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
 } from '@/modules/app/components/ui/pagination';
 import { cn } from '@/modules/app/libs/utils';
 import type { TApiResponsePaginateMeta } from '@/modules/app/types/api.type';
@@ -168,16 +167,6 @@ const RDataTableFooter = ({
 
       <Pagination className='ml-auto w-auto'>
         <PaginationContent>
-          {/* <RBtn
-            title='Go to First'
-            size='icon'
-            variant='ghost'
-            disabled={!canGoPrev || disabled}
-            onClick={() => handleChangePage(1)}
-          >
-            <ChevronFirst size={20} />
-          </RBtn> */}
-
           <RBtn
             title='Go to Previous'
             variant='outline'
@@ -189,16 +178,15 @@ const RDataTableFooter = ({
           </RBtn>
 
           {showFirstPage && (
-            <PaginationItem>
-              <PaginationLink
-                size='sm'
-                isActive={currentPage === 1}
-                className='cursor-pointer'
-                onClick={() => handleChangePage(1)}
-              >
-                1
-              </PaginationLink>
-            </PaginationItem>
+            <RBtn
+              variant={currentPage === 1 ? 'default' : 'outline'}
+              className={cn('cursor-pointer', {
+                'pointer-events-none': currentPage === 1,
+              })}
+              onClick={() => handleChangePage(1)}
+            >
+              1
+            </RBtn>
           )}
           {showLeadingEllipsis && (
             <PaginationItem>
@@ -207,18 +195,16 @@ const RDataTableFooter = ({
           )}
 
           {pageNumbers.map((page) => (
-            <PaginationItem key={page}>
-              <RBtn
-                size='sm'
-                variant={page === currentPage ? 'default' : 'outline'}
-                className={cn('cursor-pointer', {
-                  'pointer-events-none': currentPage === page,
-                })}
-                onClick={() => handleChangePage(page)}
-              >
-                {page}
-              </RBtn>
-            </PaginationItem>
+            <RBtn
+              key={page}
+              variant={page === currentPage ? 'default' : 'outline'}
+              className={cn('cursor-pointer min-w-9 w-full', {
+                'pointer-events-none': currentPage === page,
+              })}
+              onClick={() => handleChangePage(page)}
+            >
+              {page}
+            </RBtn>
           ))}
 
           {showTrailingEllipsis && (
@@ -227,16 +213,13 @@ const RDataTableFooter = ({
             </PaginationItem>
           )}
           {showLastPage && (
-            <PaginationItem>
-              <RBtn
-                size='sm'
-                variant={pageCount === currentPage ? 'default' : 'ghost'}
-                className='cursor-pointer'
-                onClick={() => handleChangePage(pageCount)}
-              >
-                {pageCount}
-              </RBtn>
-            </PaginationItem>
+            <RBtn
+              variant={pageCount === currentPage ? 'default' : 'ghost'}
+              className='cursor-pointer'
+              onClick={() => handleChangePage(pageCount)}
+            >
+              {pageCount}
+            </RBtn>
           )}
 
           <RBtn
@@ -248,16 +231,6 @@ const RDataTableFooter = ({
           >
             Next
           </RBtn>
-
-          {/* <RBtn
-            title='Go to Last'
-            size='icon'
-            variant='ghost'
-            disabled={!canGoNext || disabled}
-            onClick={() => handleChangePage(pageCount)}
-          >
-            <ChevronLast size={20} />
-          </RBtn> */}
         </PaginationContent>
       </Pagination>
     </div>

@@ -30,7 +30,7 @@
 
 /* Input Field Styling */
 .rc-picker-input {
-  @apply relative p-2 text-sm bg-white w-full flex border rounded shadow-md shadow-slate-100 outline-none;
+  @apply relative p-2 text-[length:var(--form-font-size)] bg-[var(--form-bg)] w-full flex border border-[var(--form-border-color)] rounded-[var(--form-radius)] shadow-[var(--form-shadow)] outline-none;
 
   input {
     @apply outline-none w-full;
@@ -42,14 +42,14 @@
 
 /* Placeholder Styling */
 .rc-picker-input > input::placeholder {
-  color: #bfbfbf;
+  color: var(--form-placeholder);
   opacity: 1; /* Reset Firefox default opacity */
 }
 .rc-picker-input > input:placeholder-shown {
   text-overflow: ellipsis;
 }
 .rc-picker-input-placeholder > input {
-  color: #bfbfbf;
+  color: var(--form-placeholder);
 }
 .rc-picker-selection-placeholder {
   pointer-events: none;
@@ -110,7 +110,8 @@
 
 /* Dropdown Container */
 .rc-picker-dropdown {
-  @apply absolute pointer-events-none z-50;
+  /* Keep dropdown above dialog overlay */
+  @apply absolute pointer-events-none z-9999;
 }
 .rc-picker-dropdown-hidden {
   @apply hidden;
