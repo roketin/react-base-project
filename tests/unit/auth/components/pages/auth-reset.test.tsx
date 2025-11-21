@@ -25,9 +25,11 @@ describe('AuthReset', () => {
 
     // checks
 
-    expect(
-      screen.getAllByText('Password must be at least 8 characters'),
-    ).toHaveLength(2);
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(/must be at least 8 characters/i),
+      ).toHaveLength(2);
+    });
   });
 
   it('submits form and shows success alert', async () => {

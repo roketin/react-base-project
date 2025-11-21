@@ -1,24 +1,19 @@
 import Dashboard from '@/modules/dashboard/components/pages/dashboard';
-import { act, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 
 describe('Dashboard', () => {
-  it('renders initial count', () => {
+  it('renders dashboard content correctly', () => {
     render(<Dashboard />);
-    expect(screen.getByText(/Count is 0/)).toBeInTheDocument();
-  });
 
-  it('increments count when button is clicked', async () => {
-    render(<Dashboard />);
-    const button = screen.getByRole('button', { name: /increment/i });
+    // Check for main sections
+    expect(screen.getByText('Revenue Overview')).toBeInTheDocument();
+    expect(screen.getByText('Recent Activity')).toBeInTheDocument();
+    expect(screen.getByText('Active Users')).toBeInTheDocument();
 
-    await act(async () => {
-      await userEvent.click(button);
-      expect(screen.getByText(/Count is 1/)).toBeInTheDocument();
-
-      await userEvent.click(button);
-      expect(screen.getByText(/Count is 2/)).toBeInTheDocument();
-    });
+    // Check for specific data points
+    expect(screen.getByText('IDR 150.000.000')).toBeInTheDocument();
+    expect(screen.getByText('1,234')).toBeInTheDocument();
+    expect(screen.getByText('Imam Stevano')).toBeInTheDocument();
   });
 });

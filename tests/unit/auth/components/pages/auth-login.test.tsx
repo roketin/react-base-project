@@ -1,12 +1,16 @@
-import { act, screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import AuthLogin from '@/modules/auth/components/pages/auth-login';
 import useAuthStore from '@/modules/auth/stores/auth.store';
 import { renderWithConfig } from '@tests/test-utils';
 
 describe('AuthLogin', () => {
+  beforeEach(() => {
+    useAuthStore.getState().clearCredential();
+  });
+
   it('submits form and saves token to store', async () => {
     renderWithConfig(
       <MemoryRouter>
@@ -21,9 +25,8 @@ describe('AuthLogin', () => {
     // submit
     await userEvent.click(screen.getByRole('button', { name: /login/i }));
 
-    await act(async () => {
-      const token = await useAuthStore.getState().token;
-      expect(token).toBe('dummy-token');
+    await waitFor(() => {
+      expect(useAuthStore.getState().token).toBe('dummy-token');
     });
   });
 });

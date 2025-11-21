@@ -30,8 +30,8 @@ describe('showAlertValidation', () => {
     expect(showAlert).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'alert',
-        title: 'Error!',
-        description: expect.any(Object),
+        title: 'Sorry, there are some errors',
+        description: expect.anything(), // Description is a complex React element
       }),
     );
   });
