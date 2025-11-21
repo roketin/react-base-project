@@ -1,3 +1,20 @@
+## [1.2.0] - 2025-11-21
+
+### 🚀 Features
+
+- *(ddd)* Centralize style form/input/button into global.css
+- *(ddd)* Add format date and format currency util
+- *(ddd)* Add append props for infinite scroll
+
+### 🐛 Bug Fixes
+
+- *(ddd)* Cli remove validation git status
+- *(ddd)* Improve dashboard ui with statistic and table
+- *(ddd)* Update sample components based on improved base
+
+### 🧪 Testing
+
+- *(ddd)* Fix unit-test based on update components
 ## [1.1.0] - 2025-11-17
 
 ### 🚀 Features
