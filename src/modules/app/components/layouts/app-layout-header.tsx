@@ -1,55 +1,24 @@
-import RLangSwitcher from '@/modules/app/components/base/r-lang-switcher';
 import { SidebarTrigger } from '@/modules/app/components/ui/sidebar';
-import { AppUserMenu } from './app-layout-user-menu';
-import { useMatches } from 'react-router-dom';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import RLangSwitcher from '@/modules/app/components/base/r-lang-switcher';
 import { RBreadcrumbs } from '@/modules/app/components/base/r-breadcrumbs';
-import type { TAppRouteObject } from '@/modules/app/libs/routes-utils';
-import { useOverridePageConfigStore } from '@/modules/app/stores/page-config.store';
+import { APP_EL } from '../../constants/app.constant';
 
 const AppLayoutHeader = () => {
-  const matches = useMatches() as (ReturnType<typeof useMatches>[number] & {
-    handle?: TAppRouteObject['handle'];
-  })[];
-  const overrideTitle = useOverridePageConfigStore(
-    (state) => state.current?.title,
-  );
-
-  // Get title from route
-  const routeTitle = useMemo<string>(
-    () => matches[matches.length - 1].handle?.title || '',
-    [matches],
-  );
-  const resolvedTitle = overrideTitle ?? routeTitle ?? '';
-
-  // Translation
-  const { t } = useTranslation();
-
   return (
     <div
-      id='app-header'
-      className='sticky top-0 z-20 border-b border-border/60 bg-background/80 py-1 px-5 backdrop-blur supports-backdrop-filter:backdrop-blur-sm'
+      id={APP_EL.HEADER}
+      className='border-b border-border/40 bg-background/80 py-3 px-6 flex-none'
     >
       <header className='flex shrink-0 items-center justify-between gap-4'>
         <div className='flex items-center gap-3'>
-          <SidebarTrigger className='-ml-2 rounded-lg border border-border/60 bg-background/80 hover:bg-primary/10 hover:text-primary' />
-
-          <span className='text-primary font-semibold'>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {t(resolvedTitle as any, { defaultValue: resolvedTitle })}
-          </span>
+          <SidebarTrigger className='md:hidden' />
+          <RBreadcrumbs />
         </div>
 
         <div className='flex items-center gap-2'>
           <RLangSwitcher />
-          <AppUserMenu />
         </div>
       </header>
-
-      <div className='pb-2 pt-1'>
-        <RBreadcrumbs />
-      </div>
     </div>
   );
 };

@@ -39,13 +39,13 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar: transparent;
+  --sidebar-foreground: oklch(0.25 0.02 280);
   --sidebar-primary: oklch(0.205 0 0);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent: oklch(0.95 0.015 280);
   --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-border: oklch(0.92 0.01 280);
   --sidebar-ring: oklch(0.708 0 0);
 
   /* Form Configuration */
@@ -106,13 +106,13 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar: oklch(0.22 0.015 280);
+  --sidebar-foreground: oklch(0.92 0.01 280);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-accent: oklch(0.28 0.02 280);
+  --sidebar-accent-foreground: oklch(0.95 0.01 280);
+  --sidebar-border: oklch(0.35 0.02 280);
   --sidebar-ring: oklch(0.556 0 0);
 
   /* Form Configuration Dark Mode */
@@ -179,7 +179,7 @@
 
 html,
 body {
-  @apply h-full text-[14px];
+  @apply h-full text-[14px] bg-slate-100;
 }
 
 #root {
@@ -194,6 +194,63 @@ body {
     &.fly-active {
       @apply p-3 bg-background/80 backdrop-blur supports-backdrop-filter:backdrop-blur-sm rounded-md shadow-2xl border-t;
     }
+  }
+
+  /* Custom scrollbar styling */
+  .custom-scrollbar {
+    --scrollbar-size: 8px;
+    --scrollbar-size-hover: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--primary) 40%, transparent)
+      color-mix(in srgb, var(--primary) 5%, transparent);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+    height: var(--scrollbar-size);
+    transition:
+      width 0.2s ease,
+      height 0.2s ease;
+  }
+
+  /* Explicitly equalize vertical vs horizontal thickness */
+  .custom-scrollbar::-webkit-scrollbar:vertical {
+    width: var(--scrollbar-size);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar:horizontal {
+    height: var(--scrollbar-size);
+  }
+
+  /* Apply hover styles on the scrollbar pseudo-element instead of the parent */
+  .custom-scrollbar::-webkit-scrollbar:hover {
+    width: var(--scrollbar-size-hover);
+    height: var(--scrollbar-size-hover);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(244, 115, 22, 0.05);
+    border-radius: 10px;
+    margin: 2px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(244, 115, 22, 0.4);
+    border-radius: 10px;
+    transition: background 0.2s ease;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(244, 115, 22, 0.6);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:active {
+    background: rgba(244, 115, 22, 0.8);
+  }
+
+  /* Equal corner spacing for both scrollbars */
+  .custom-scrollbar::-webkit-scrollbar-corner {
+    background: rgba(244, 115, 22, 0.05);
   }
 }
 

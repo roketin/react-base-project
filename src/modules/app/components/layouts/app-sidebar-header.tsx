@@ -1,30 +1,29 @@
-import {
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/modules/app/components/ui/sidebar';
+import { SidebarHeader } from '@/modules/app/components/ui/sidebar';
 import { RBrand } from '@/modules/app/components/base/r-brand';
+import { useSidebar } from '../../contexts/sidebar-context';
+import { Link } from 'react-router-dom';
+import { useNamedRoute } from '../../hooks/use-named-route';
+import { cn } from '../../libs/utils';
 
 const AppSidebarHeader = () => {
+  const { isCollapsed } = useSidebar();
+  const { linkTo } = useNamedRoute();
+
+  if (isCollapsed) {
+    return null;
+  }
+
   return (
-    <SidebarHeader className='border-sidebar-border bg-linear-to-br from-primary/10 via-transparent to-transparent p-3'>
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            asChild
-            className='data-[slot=sidebar-menu-button]:p-2! data-[slot=sidebar-menu-button]:h-auto!'
-          >
-            <a href='#' className='flex items-center gap-3 no-underline'>
-              <RBrand
-                subtitleClassName='text-xs text-sidebar-foreground/70'
-                titleClassName='text-base font-semibold leading-tight text-sidebar-foreground flowing-gradient-text'
-                iconClassName='size-10'
-              />
-            </a>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
+    <SidebarHeader
+      className={cn('transition-all duration-300 backface-visible pb-1 mt-2')}
+    >
+      <Link to={linkTo('DashboardIndex')}>
+        <RBrand
+          subtitleClassName='text-xs text-sidebar-foreground/60 whitespace-nowrap'
+          titleClassName='text-base font-semibold leading-tight text-sidebar-foreground whitespace-nowrap'
+          iconClassName='size-10'
+        />
+      </Link>
     </SidebarHeader>
   );
 };

@@ -7,7 +7,13 @@ import {
 import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAuthBootstrap } from '@/modules/auth/hooks/use-auth-bootstrap';
+import {
+  RGlobalSearch,
+  RGlobalSearchTrigger,
+} from '@/modules/app/components/global-search';
 import { AppLayoutHeader } from './app-layout-header';
+import { AppPageTitle } from './app-page-title';
+import { APP_EL } from '../../constants/app.constant';
 
 /**
  * Main layout component for the application.
@@ -32,10 +38,16 @@ export default function AppLayout() {
      */
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className='bg-pattern min-w-0'>
-        <AppLayoutHeader />
-        <div id='app-container' className='p-3'>
-          <div className='p-5 bg-white rounded-lg shadow-xl shadow-gray-100'>
+      <SidebarInset>
+        <div className='mt-3 flex items-center justify-center'>
+          <RGlobalSearchTrigger />
+        </div>
+        <div className='flex-1 flex flex-col bg-white box-border md:m-3 md:ml-0 rounded-xl shadow-sm min-w-0 pb-0.5 overflow-hidden'>
+          <AppLayoutHeader />
+          <div
+            id={APP_EL.CONTAINER}
+            className='p-6 min-w-0 box-border flex-1 overflow-auto custom-scrollbar relative'
+          >
             <Suspense
               fallback={
                 <div className='min-h-[200px] bg-background/80 p-10'>
@@ -57,11 +69,13 @@ export default function AppLayout() {
                 </div>
               }
             >
+              <AppPageTitle className='mb-4' />
               <Outlet />
             </Suspense>
           </div>
         </div>
       </SidebarInset>
+      <RGlobalSearch />
     </SidebarProvider>
   );
 }

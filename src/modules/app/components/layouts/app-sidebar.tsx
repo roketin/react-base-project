@@ -1,47 +1,250 @@
 import { useAuth } from '@/modules/auth/hooks/use-auth';
-import AppSidebarHeader from '@/modules/app/components/layouts/app-sidebar-header';
 import { APP_SIDEBAR_MENUS } from '@/modules/app/libs/sidebar-menu.lib';
 import type { TSidebarMenu } from '@/modules/app/types/sidebar-menu.type';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarRail,
 } from '@/modules/app/components/ui/sidebar';
+import { useSidebar } from '@/modules/app/contexts/sidebar-context';
 import { nameToPath } from '@/modules/app/hooks/use-named-route';
 import { cn } from '@/modules/app/libs/utils';
-import { ChevronDown, Dot, Search } from 'lucide-react';
+import { ChevronDown, PanelLeft } from 'lucide-react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import RInput from '@/modules/app/components/base/r-input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/modules/app/components/ui/popover';
+import { AppUserMenu } from './app-layout-user-menu';
+import AppSidebarHeader from './app-sidebar-header';
 
 type SidebarMenuItemWithChildren = TSidebarMenu & {
   children?: SidebarMenuItemWithChildren[];
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+// Constants
+const MENU_BUTTON_SIZE = 'md' as const;
+const CHEVRON_SIZE = 4;
+const POPOVER_WIDTH = 'w-64';
+
+// Helper component for menu icon
+const MenuIcon = ({
+  icon: Icon,
+}: {
+  icon?: React.ComponentType<{
+    className?: string;
+    style?: React.CSSProperties;
+  }>;
+}) => {
+  return Icon ? <Icon className='size-5' /> : null;
+};
+
+// ============================================================================
+// SIDEBAR MENU CONTEXT
+// ============================================================================
+
+type SidebarMenuContextValue = {
+  openMap: Record<string, boolean>;
+  toggleMenu: (key: string) => void;
+  isMenuActive: (menu: SidebarMenuItemWithChildren) => boolean;
+  getMenuTitle: (menu: SidebarMenuItemWithChildren) => string;
+  getMenuPath: (menu: TSidebarMenu) => string | undefined;
+  popoverOpenMap: Record<string, boolean>;
+  setPopoverOpenMap: React.Dispatch<
+    React.SetStateAction<Record<string, boolean>>
+  >;
+};
+
+const SidebarMenuContext = createContext<SidebarMenuContextValue | null>(null);
+
+const useSidebarMenu = () => {
+  const context = useContext(SidebarMenuContext);
+  if (!context) {
+    throw new Error('useSidebarMenu must be used within a SidebarMenuProvider');
+  }
+  return context;
+};
+
+// ============================================================================
+// SIDEBAR ITEM COMPONENT (RECURSIVE)
+// ============================================================================
+
+const SidebarItem = ({
+  item,
+  depth = 0,
+  subMenu = false,
+}: {
+  item: SidebarMenuItemWithChildren;
+  depth?: number;
+  subMenu?: boolean;
+}) => {
+  const { isCollapsed } = useSidebar();
+  const {
+    openMap,
+    toggleMenu,
+    isMenuActive,
+    getMenuTitle,
+    getMenuPath,
+    popoverOpenMap,
+    setPopoverOpenMap,
+  } = useSidebarMenu();
+
+  const key = item.name ?? item.title;
+  const path = getMenuPath(item);
+  const hasChildren = Boolean(item.children && item.children.length > 0);
+  const isActive = isMenuActive(item);
+  const expanded = hasChildren && (openMap[key] || isActive);
+  const isPopoverOpen = popoverOpenMap[key] || false;
+  const ItemWrapper = depth > 0 ? SidebarMenuSubItem : SidebarMenuItem;
+
+  // 1. Collapsed Mode with Popover (Only for top-level items with children)
+  if (isCollapsed && hasChildren && depth === 0) {
+    return (
+      <Popover
+        open={isPopoverOpen}
+        onOpenChange={(open) => {
+          setPopoverOpenMap((prev) => ({ ...prev, [key]: open }));
+        }}
+      >
+        <PopoverTrigger asChild>
+          <ItemWrapper>
+            <SidebarMenuButton isActive={isActive} tooltip={getMenuTitle(item)}>
+              <MenuIcon icon={item.icon} />
+              <span>{getMenuTitle(item)}</span>
+            </SidebarMenuButton>
+          </ItemWrapper>
+        </PopoverTrigger>
+        <PopoverContent
+          side='right'
+          align='start'
+          className={`${POPOVER_WIDTH} p-2`}
+        >
+          <SidebarMenu className='space-y-1'>
+            <li className='px-2 py-1.5 text-sm font-semibold list-none'>
+              {getMenuTitle(item)}
+            </li>
+            {item.children!.map((child) => (
+              <SidebarItem
+                key={child.name ?? child.title}
+                item={child}
+                depth={depth + 1}
+                subMenu
+              />
+            ))}
+          </SidebarMenu>
+        </PopoverContent>
+      </Popover>
+    );
+  }
+
+  // 2. Leaf Node (Link)
+  if (!hasChildren) {
+    if (!path) return null;
+
+    // Use SidebarMenuButton for both top-level and sub-items
+    // For sub-items (depth > 0), use 'sub' size or adjust styling
+    const isSubItem = depth > 0;
+
+    return (
+      <ItemWrapper>
+        <SidebarMenuButton
+          asChild
+          isActive={isActive}
+          size={isSubItem ? 'sub' : MENU_BUTTON_SIZE}
+          tooltip={depth === 0 ? getMenuTitle(item) : undefined}
+          className={cn(subMenu && 'justify-start', isSubItem && 'h-8 px-2')} // Ensure height matches sub variant
+        >
+          <Link
+            to={path}
+            onClick={() => {
+              // Close popover if inside one
+              if (depth > 0) {
+                // We don't have direct access to parent key here easily without passing it down
+                // But we can just close all popovers or rely on Popover's auto-close behavior
+                // For now, let's just let the link navigation handle it
+                setPopoverOpenMap({});
+              }
+            }}
+          >
+            <MenuIcon icon={item.icon} />
+            <span className={cn({ 'sub-menu': subMenu }, 'whitespace-nowrap')}>
+              {getMenuTitle(item)}
+            </span>
+          </Link>
+        </SidebarMenuButton>
+      </ItemWrapper>
+    );
+  }
+
+  // 3. Parent Node (Accordion/Collapsible)
+  return (
+    <ItemWrapper>
+      <SidebarMenuButton
+        onClick={() => toggleMenu(key)}
+        isActive={isActive}
+        className='justify-between'
+        tooltip={depth === 0 ? getMenuTitle(item) : undefined}
+      >
+        <span className='flex items-center gap-2'>
+          <MenuIcon icon={item.icon} />
+          <span className='whitespace-nowrap'>{getMenuTitle(item)}</span>
+        </span>
+        <ChevronDown
+          className={cn(
+            `size-${CHEVRON_SIZE} transition-transform`,
+            expanded && 'rotate-180',
+          )}
+        />
+      </SidebarMenuButton>
+      {/* Submenu */}
+      <SidebarMenuSub className={cn(!expanded && 'hidden')}>
+        {item.children!.map((child) => (
+          <SidebarItem
+            key={child.name ?? child.title}
+            item={child}
+            depth={depth + 1}
+          />
+        ))}
+      </SidebarMenuSub>
+    </ItemWrapper>
+  );
+};
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
+export function AppSidebar() {
   const { isCan } = useAuth();
+  const { isCollapsed, toggleSidebar } = useSidebar();
   const location = useLocation();
   const [openMap, setOpenMap] = useState<Record<string, boolean>>({});
-  const [searchQuery, setSearchQuery] = useState('');
-  const { t } = useTranslation('app');
+  const [popoverOpenMap, setPopoverOpenMap] = useState<Record<string, boolean>>(
+    {},
+  );
+  const { t } = useTranslation();
 
   const getMenuTitle = useCallback(
-    (menu: TSidebarMenu | SidebarMenuItemWithChildren) => {
-      if (menu.title) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return t(menu.title as any);
-      }
-      return menu.title;
+    (menu: TSidebarMenu | SidebarMenuItemWithChildren): string => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return menu.title ? t(menu.title as any) : '';
     },
     [t],
   );
@@ -57,9 +260,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         const children = item.children ? filter(item.children) : undefined;
         const hasSelfLink = Boolean(item.name);
         const hasVisibleChildren = Boolean(children && children.length > 0);
-        if (!hasSelfLink && !hasVisibleChildren) {
-          return acc;
-        }
+
+        if (!hasSelfLink && !hasVisibleChildren) return acc;
 
         acc.push({ ...item, children });
         return acc;
@@ -69,61 +271,29 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return filter(APP_SIDEBAR_MENUS);
   }, [isCan]);
 
-  const normalizedQuery = searchQuery.trim().toLowerCase();
-  const forceSearchExpand = Boolean(normalizedQuery);
-
-  const visibleMenus = useMemo(() => {
-    if (!normalizedQuery) {
-      return accessibleMenus;
-    }
-
-    const filterByQuery = (
-      menus: SidebarMenuItemWithChildren[],
-    ): SidebarMenuItemWithChildren[] => {
-      return menus.reduce<SidebarMenuItemWithChildren[]>((acc, item) => {
-        const title = getMenuTitle(item)?.toLowerCase() ?? '';
-        const children = item.children
-          ? filterByQuery(item.children)
-          : undefined;
-        const isMatch = title.includes(normalizedQuery);
-        const hasChildren = Boolean(children && children.length > 0);
-
-        if (!isMatch && !hasChildren) {
-          return acc;
-        }
-
-        acc.push({
-          ...item,
-          children: isMatch ? item.children : children,
-        });
-        return acc;
-      }, []);
-    };
-
-    return filterByQuery(accessibleMenus);
-  }, [accessibleMenus, getMenuTitle, normalizedQuery]);
-
-  const getMenuPath = (menu: TSidebarMenu) => {
+  const getMenuPath = useCallback((menu: TSidebarMenu) => {
     if (!menu.name) return undefined;
     try {
       return nameToPath(menu.name);
     } catch {
       return undefined;
     }
-  };
+  }, []);
 
   const isRouteActive = useCallback(
     (menu: TSidebarMenu, end = false) => {
       const pattern = getMenuPath(menu);
       if (!pattern) return false;
+
       const exactMatch = matchPath({ path: pattern, end }, location.pathname);
       if (exactMatch) return true;
       if (end) return false;
+
       return Boolean(
         matchPath({ path: `${pattern}/*`, end: false }, location.pathname),
       );
     },
-    [location.pathname],
+    [location.pathname, getMenuPath],
   );
 
   const isMenuActive = useCallback(
@@ -140,6 +310,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   useEffect(() => {
     const activeKeys = new Set<string>();
+
     const collectActive = (menus: SidebarMenuItemWithChildren[]) => {
       for (const menu of menus) {
         const key = menu.name ?? menu.title;
@@ -153,6 +324,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         }
       }
     };
+
     collectActive(accessibleMenus);
 
     setOpenMap((prev) => {
@@ -179,155 +351,62 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     setOpenMap((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const renderSubMenu = (
-    items: SidebarMenuItemWithChildren[],
-    depth = 0,
-  ): React.ReactNode => {
-    return items.map((child) => {
-      const childKey = child.name ?? `${child.title}-${depth}`;
-      const childPath = getMenuPath(child);
-      const hasGrandChildren = Boolean(
-        child.children && child.children.length > 0,
-      );
-      const childActive = isMenuActive(child);
-      const expanded = forceSearchExpand
-        ? true
-        : (openMap[childKey] ?? childActive);
-
-      if (hasGrandChildren) {
-        return (
-          <SidebarMenuSubItem key={childKey}>
-            <button
-              type='button'
-              onClick={() => toggleMenu(childKey)}
-              className={cn(
-                'flex w-full items-center justify-between rounded-md px-2 py-1.5 text-sm transition hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-                childActive &&
-                  'bg-sidebar-accent text-sidebar-accent-foreground',
-              )}
-            >
-              <span className='flex items-center gap-2'>
-                {child.icon ? (
-                  <child.icon className='size-4' />
-                ) : (
-                  <Dot className='size-4' />
-                )}
-                {getMenuTitle(child)}
-              </span>
-              <ChevronDown
-                className={cn(
-                  'size-3.5 transition-transform',
-                  expanded && 'rotate-180',
-                )}
-              />
-            </button>
-            <SidebarMenuSub
-              className={cn(
-                'ml-2 border-l border-border/40 pl-2',
-                !expanded && 'hidden',
-              )}
-            >
-              {renderSubMenu(child.children!, depth + 1)}
-            </SidebarMenuSub>
-          </SidebarMenuSubItem>
-        );
-      }
-
-      if (!childPath) return null;
-
-      return (
-        <SidebarMenuSubItem key={childKey}>
-          <SidebarMenuSubButton asChild isActive={childActive}>
-            <Link to={childPath}>
-              {child.icon ? (
-                <child.icon className='size-4' />
-              ) : (
-                <Dot className='size-4' />
-              )}
-              <span>{getMenuTitle(child)}</span>
-            </Link>
-          </SidebarMenuSubButton>
-        </SidebarMenuSubItem>
-      );
-    });
-  };
-
-  const renderMenu = (menu: SidebarMenuItemWithChildren) => {
-    const key = menu.name ?? menu.title;
-    const path = getMenuPath(menu);
-    const hasChildren = Boolean(menu.children && menu.children.length > 0);
-    const childActive = hasChildren ? menu.children!.some(isMenuActive) : false;
-    const isActive = hasChildren
-      ? childActive || isRouteActive(menu)
-      : isRouteActive(menu, true);
-    const canNavigate = menu.permission ? isCan(menu.permission) : true;
-    const expanded = hasChildren
-      ? forceSearchExpand || openMap[key] || childActive
-      : false;
-
-    return (
-      <SidebarMenuItem key={key}>
-        {path && canNavigate ? (
-          <SidebarMenuButton
-            asChild
-            isActive={isActive}
-            tooltip={getMenuTitle(menu)}
-          >
-            <Link to={path}>
-              {menu.icon && <menu.icon />}
-              <span>{getMenuTitle(menu)}</span>
-            </Link>
-          </SidebarMenuButton>
-        ) : (
-          <SidebarMenuButton
-            isActive={isActive}
-            tooltip={getMenuTitle(menu)}
-            aria-disabled={!canNavigate}
-            onClick={hasChildren ? () => toggleMenu(key) : undefined}
-          >
-            {menu.icon && <menu.icon />}
-            <span>{getMenuTitle(menu)}</span>
-          </SidebarMenuButton>
-        )}
-
-        {hasChildren && (
-          <>
-            <SidebarMenuAction
-              aria-label='Toggle submenu'
-              onClick={() => toggleMenu(key)}
-              className={cn('transition-transform', expanded && 'rotate-180')}
-            >
-              <ChevronDown className='size-4' />
-            </SidebarMenuAction>
-            <SidebarMenuSub className={cn(!expanded && 'hidden')}>
-              {renderSubMenu(menu.children!)}
-            </SidebarMenuSub>
-          </>
-        )}
-      </SidebarMenuItem>
-    );
-  };
+  const contextValue = useMemo(
+    () => ({
+      openMap,
+      toggleMenu,
+      isMenuActive,
+      getMenuTitle,
+      getMenuPath,
+      popoverOpenMap,
+      setPopoverOpenMap,
+    }),
+    [
+      openMap,
+      isMenuActive,
+      getMenuTitle,
+      getMenuPath,
+      popoverOpenMap,
+      setPopoverOpenMap,
+    ],
+  );
 
   return (
-    <Sidebar {...props}>
+    <Sidebar>
       <AppSidebarHeader />
       <SidebarContent>
         <SidebarGroup>
-          <div className='mb-4'>
-            <RInput
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder='Search menu'
-              density='sm'
-              prepend={<Search size={13} />}
-            />
-          </div>
           <SidebarGroupContent>
-            <SidebarMenu>{visibleMenus.map(renderMenu)}</SidebarMenu>
+            <SidebarMenu>
+              <SidebarMenuContext.Provider value={contextValue}>
+                {accessibleMenus.map((menu) => (
+                  <SidebarItem
+                    key={menu.name ?? menu.title}
+                    item={menu}
+                    depth={0}
+                  />
+                ))}
+              </SidebarMenuContext.Provider>
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarRail />
+      <SidebarFooter className='pb-4'>
+        <SidebarMenu className='mb-3'>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={() => toggleSidebar()}
+              tooltip={isCollapsed ? 'Expand Menu' : 'Collapse Menu'}
+            >
+              <PanelLeft />
+              <span className='whitespace-nowrap'>
+                {isCollapsed ? 'Expand Menu' : 'Collapse Menu'}
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+        <AppUserMenu />
+      </SidebarFooter>
     </Sidebar>
   );
 }
