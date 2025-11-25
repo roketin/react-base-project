@@ -39,7 +39,7 @@ export default function AppLayout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <div className='mt-3 flex items-center justify-center'>
+        <div className='hidden mt-3 md:flex items-center justify-center'>
           <RGlobalSearchTrigger />
         </div>
         <div className='flex-1 flex flex-col bg-white box-border md:m-3 md:ml-0 rounded-xl shadow-sm min-w-0 pb-0.5 overflow-hidden'>

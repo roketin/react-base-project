@@ -37,7 +37,7 @@ export const RoleModuleConfig = defineModuleConfig({
       keywords: [...KEYWORDS_SEARCH, 'role'],
       onExecute: () => {
         const query = useGlobalSearchStore.getState().currentQuery;
-        navigateToRoute('RoleIndex', { keyword: query });
+        navigateToRoute('RoleIndex', { search: query });
       },
     },
   ],

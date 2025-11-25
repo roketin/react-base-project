@@ -52,6 +52,7 @@ export type SearchTrackingData = {
   recent: string[];
   accessCount: Record<string, number>;
   lastUpdated: number;
+  searchKeywords?: Record<string, string>; // itemId -> keyword mapping
 };
 
 export type ModuleOption = {

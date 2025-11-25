@@ -243,17 +243,21 @@ const RDataTableInner = <TData, TValue>(
    * Delays invoking onChangeTable to reduce frequent queries.
    */
   const [search, setSearch] = useState<string>(initialSearch);
+  const [hasInitialized, setHasInitialized] = useState(false);
+
   const debouncedSearch = useDebouncedCallback((search: string) => {
     onChangeTable({ search, page: 1 });
   }, 300);
 
   // Update search when initialSearch changes
   useEffect(() => {
-    if (initialSearch && initialSearch !== search) {
+    if (initialSearch && !hasInitialized) {
+      console.log('🔄 RDataTable: Setting initial search:', initialSearch);
       setSearch(initialSearch);
       onChangeTable({ search: initialSearch, page: 1 });
+      setHasInitialized(true);
     }
-  }, [initialSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [initialSearch, hasInitialized]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tableClassName = cn(
     'rt-table',
