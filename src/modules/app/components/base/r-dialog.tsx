@@ -91,20 +91,31 @@ export function RDialog({
           contentClassName,
         )}
       >
-        {!hideHeader && (title || description) ? (
+        {/* DialogTitle is required for accessibility - always render it */}
+        {!hideHeader && title ? (
           <DialogHeader className={cn('space-y-2', headerClassName)}>
-            {title ? (
-              <DialogTitle id={titleId} className='text-xl font-semibold'>
-                {title}
-              </DialogTitle>
-            ) : null}
+            <DialogTitle id={titleId} className='text-xl font-semibold'>
+              {title}
+            </DialogTitle>
             {description ? (
               <DialogDescription id={descriptionId}>
                 {description}
               </DialogDescription>
             ) : null}
           </DialogHeader>
-        ) : null}
+        ) : (
+          /* Hidden title for accessibility when header is hidden or no title provided */
+          <DialogTitle id={titleId} className='sr-only'>
+            {title || 'Dialog'}
+          </DialogTitle>
+        )}
+
+        {/* Show description separately if header is hidden but description exists */}
+        {hideHeader && description && (
+          <DialogDescription id={descriptionId} className='sr-only'>
+            {description}
+          </DialogDescription>
+        )}
 
         {children && <div className={cn('p-0', bodyClassName)}>{children}</div>}
 
