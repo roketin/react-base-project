@@ -74,6 +74,23 @@
   --form-height-lg: 2.75rem; /* 44px (h-11) */
   --form-padding-x-lg: 2rem; /* 32px (px-8) - Button default, adjusted for inputs usually */
   --form-font-size-lg: 1rem; /* 16px (text-base) */
+
+  /* Form Label Configuration */
+  --form-label-font-size: 0.875rem; /* 14px (text-sm) */
+  --form-label-font-weight: 500; /* font-medium */
+  --form-label-color: var(--foreground);
+  --form-label-margin-bottom: 0.5rem; /* 8px (mb-2) */
+
+  /* Checkbox & Radio Configuration */
+  --form-checkbox-size: 1.125rem; /* 18px (h-4.5 w-4.5) */
+  --form-checkbox-icon-size: 1rem; /* 16px (size-4) */
+  --form-radio-size: 1.125rem; /* 18px (h-4.5 w-4.5) */
+  --form-radio-indicator-size: 0.625rem; /* 10px (size-2.5) */
+
+  /* Sidebar Menu Configuration */
+  --sidebar-menu-font-size: 13.5px; /* 13px */
+  --sidebar-menu-font-size-sm: 0.75rem; /* 12px (text-xs) */
+  --sidebar-menu-icon-size: 1.25rem; /* 20px (size-5) */
 }
 
 .dark {

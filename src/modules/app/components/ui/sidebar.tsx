@@ -282,11 +282,11 @@ export function SidebarMenuButton({
   const Comp = asChild ? Slot : 'button';
 
   const sizeClasses = {
-    default: 'h-9 text-sm',
-    sm: 'h-7 text-xs',
-    md: 'h-10 text-sm',
-    lg: 'h-12 text-sm',
-    sub: 'h-8 text-sm',
+    default: 'h-9 text-[length:var(--sidebar-menu-font-size)]',
+    sm: 'h-7 text-[length:var(--sidebar-menu-font-size-sm)]',
+    md: 'h-10 text-[length:var(--sidebar-menu-font-size)]',
+    lg: 'h-12 text-[length:var(--sidebar-menu-font-size)]',
+    sub: 'h-8 text-[length:var(--sidebar-menu-font-size)]',
   };
 
   const handleClick = (e: React.MouseEvent) => {

@@ -95,34 +95,45 @@ const AuthForgot = () => {
 
   return (
     <div>
-      <h1 className='text-2xl font-semibold mb-1'>{t('forgot.title')}</h1>
-      <p className='mb-3 text-sm text-gray-400'>{t('forgot.subTitle')}</p>
+      {/* Header */}
+      <div className='mb-8'>
+        <h1 className='text-3xl font-bold text-foreground mb-2'>
+          {t('forgot.title')}
+        </h1>
+        <p className='text-muted-foreground'>{t('forgot.subTitle')}</p>
+      </div>
+
+      {/* Form */}
       <RForm
         form={form}
         onSubmit={handleSubmit}
         showErrorPopup
         layout='vertical'
       >
-        {/* Email */}
-        <RFormField
-          control={form.control}
-          name='username'
-          label={t('form.email')}
-          withPlaceholder
-        >
-          <Input autoComplete='username' />
-        </RFormField>
+        <div className='space-y-4'>
+          {/* Email */}
+          <RFormField
+            control={form.control}
+            name='username'
+            label={t('form.email')}
+            withPlaceholder
+          >
+            <Input autoComplete='username' className='h-11' />
+          </RFormField>
 
-        <Button type='submit' className='w-full mt-3'>
-          {tApp('send')}
-        </Button>
+          {/* Submit button */}
+          <Button type='submit' className='w-full h-11 text-base font-medium'>
+            {tApp('send')}
+          </Button>
 
-        <Link
-          to={linkTo('AuthLogin')}
-          className='text-sm text-primary hover:underline flex items-center'
-        >
-          <ChevronLeft /> {tApp('back')}
-        </Link>
+          {/* Back to login */}
+          <Link
+            to={linkTo('AuthLogin')}
+            className='text-sm text-primary hover:underline flex items-center justify-center gap-1 mt-4'
+          >
+            <ChevronLeft size={16} /> {tApp('back')}
+          </Link>
+        </div>
       </RForm>
     </div>
   );

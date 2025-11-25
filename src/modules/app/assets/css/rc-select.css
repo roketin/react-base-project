@@ -37,12 +37,14 @@
 
   /* Placeholder Text */
   .rc-select-selection-placeholder {
-    @apply pointer-events-none text-(--form-placeholder) text-(length:--form-font-size);
+    @apply pointer-events-none text-(--form-placeholder);
+    font-size: var(--form-font-size);
   }
 
   /* Search/Input Field within Selector */
   .rc-select-selection-search-input {
     @apply w-full border-none outline-none bg-transparent shadow-none text-(--form-text);
+    font-size: var(--form-font-size);
   }
 
   /* Action Buttons */
@@ -66,13 +68,15 @@
 
   .rc-select-selection-search-input {
     /* Input spans full width, hides below item/placeholder, keeps space for clear/arrow */
-    @apply text-(length:--form-font-size) absolute top-0 bottom-0 left-0 pl-(--form-padding-x) right-3 pr-11 appearance-none;
+    @apply absolute top-0 bottom-0 left-0 pl-(--form-padding-x) right-3 pr-11 appearance-none;
+    font-size: var(--form-font-size);
   }
 
   .rc-select-selection-item,
   .rc-select-selection-placeholder {
     /* Aligns item and placeholder in the center */
-    @apply absolute left-3 right-3 top-1/2 -translate-y-1/2 overflow-hidden whitespace-nowrap text-ellipsis leading-relaxed text-sm;
+    @apply absolute left-3 right-3 top-1/2 -translate-y-1/2 overflow-hidden whitespace-nowrap text-ellipsis leading-relaxed;
+    font-size: var(--form-font-size);
   }
 }
 
@@ -87,7 +91,8 @@
 
   /* Selected Tag Items */
   .rc-select-selection-item {
-    @apply flex gap-2 items-center bg-primary text-primary-foreground text-sm rounded-full px-2.5 py-0.5;
+    @apply flex gap-2 items-center bg-primary text-primary-foreground rounded-full px-2.5 py-0.5;
+    font-size: var(--form-font-size);
   }
 
   .rc-select-selection-item-disabled {
@@ -100,7 +105,8 @@
 
   /* Placeholder */
   .rc-select-selection-placeholder {
-    @apply absolute left-3 right-3 top-1/2 -translate-y-1/2 overflow-hidden whitespace-nowrap text-ellipsis leading-relaxed text-sm;
+    @apply absolute left-3 right-3 top-1/2 -translate-y-1/2 overflow-hidden whitespace-nowrap text-ellipsis leading-relaxed;
+    font-size: var(--form-font-size);
   }
 
   /* Overflow (Wrapper for tags and search input) */
@@ -123,7 +129,8 @@
   }
 
   .rc-select-selection-search-input {
-    @apply min-w-[200px] box-border text-sm;
+    @apply min-w-[200px] box-border;
+    font-size: var(--form-font-size);
   }
 }
 
@@ -143,7 +150,8 @@
 
 /* Dropdown Option Items */
 .rc-select-item-option {
-  @apply text-sm py-1.5 px-2 relative rounded-sm mb-0.5 last-of-type:mb-0 flex justify-between;
+  @apply py-1.5 px-2 relative rounded-sm mb-0.5 last-of-type:mb-0 flex justify-between;
+  font-size: var(--form-font-size);
 
   /* Hover State */
   &:hover {

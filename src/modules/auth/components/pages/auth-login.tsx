@@ -59,8 +59,15 @@ const AuthLogin = () => {
 
   return (
     <div>
-      <h1 className='text-2xl font-semibold mb-1'>{t('login.title')}</h1>
-      <p className='mb-3 text-sm text-gray-400'>{t('login.subTitle')}</p>
+      {/* Header */}
+      <div className='mb-8'>
+        <h1 className='text-3xl font-bold text-foreground mb-2'>
+          {t('login.title')}
+        </h1>
+        <p className='text-muted-foreground'>{t('login.subTitle')}</p>
+      </div>
+
+      {/* Form */}
       <RForm
         form={form}
         onSubmit={handleSubmit}
@@ -68,43 +75,54 @@ const AuthLogin = () => {
         layout='vertical'
         disabled={loading}
       >
-        {/* Username */}
-        <RFormField
-          control={form.control}
-          name='username'
-          label={t('form.email')}
-          withPlaceholder
-          description={t('form.emailDesc')}
-        >
-          <Input autoComplete='username' prepend={<AtSign size={16} />} />
-        </RFormField>
-
-        {/* Type 1: Simple input */}
-        <RFormField
-          control={form.control}
-          name='password'
-          label={t('form.password')}
-          withPlaceholder
-        >
-          <RInputPassword prepend={<FileLock2 size={16} />} />
-        </RFormField>
-
-        <RBtn
-          type='submit'
-          className='w-full mt-3'
-          loading={loading}
-          iconEnd={<ArrowRightIcon />}
-        >
-          {t('form.submit')}
-        </RBtn>
-
-        <div className='text-center'>
-          <Link
-            to={linkTo('AuthForgot')}
-            className='text-sm text-primary hover:underline inline-block'
+        <div className='space-y-4'>
+          {/* Email */}
+          <RFormField
+            control={form.control}
+            name='username'
+            label={t('form.email')}
+            withPlaceholder
+            description={t('form.emailDesc')}
           >
-            {t('form.forgotPassword')}
-          </Link>
+            <Input
+              autoComplete='username'
+              prepend={<AtSign size={18} />}
+              className='h-11'
+            />
+          </RFormField>
+
+          {/* Password */}
+          <RFormField
+            control={form.control}
+            name='password'
+            label={t('form.password')}
+            withPlaceholder
+          >
+            <RInputPassword
+              prepend={<FileLock2 size={18} />}
+              className='h-11'
+            />
+          </RFormField>
+
+          {/* Forgot password link */}
+          <div className='flex justify-end'>
+            <Link
+              to={linkTo('AuthForgot')}
+              className='text-sm text-primary hover:underline'
+            >
+              {t('form.forgotPassword')}
+            </Link>
+          </div>
+
+          {/* Submit button */}
+          <RBtn
+            type='submit'
+            className='w-full h-11 text-base font-medium'
+            loading={loading}
+            iconEnd={<ArrowRightIcon size={18} />}
+          >
+            {t('form.submit')}
+          </RBtn>
         </div>
       </RForm>
     </div>
