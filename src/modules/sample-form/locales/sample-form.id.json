@@ -7,6 +7,9 @@
     "allEntries": "Semua Entri",
     "createNew": "Buat Baru"
   },
+  "commands": {
+    "search": "Cari Form Contoh"
+  },
   "columns": {
     "name": "Nama",
     "code": "Kode",

@@ -11,5 +11,28 @@
   "confirm": "Confirm",
   "form": {
     "enter": "Enter"
+  },
+  "commands": {
+    "profile": "Open Profile"
+  },
+  "search": {
+    "placeholder": "Type to search...",
+    "quickCommands": "Quick commands:",
+    "noResults": "No results found.",
+    "noResultsHint": "Try adjusting your search or module filter",
+    "startSearching": "Start searching to see results",
+    "recentHint": "Your recent menus will appear here",
+    "recent": "Recent",
+    "navigate": "Navigate",
+    "select": "Select",
+    "close": "Close",
+    "willSearchFor": "Will search for:",
+    "typeSearchTerm": "(type your search term)",
+    "willOpenProfile": "Will open your profile",
+    "willOpenCreateForm": "Will open create form",
+    "command": "Command:",
+    "allModules": "All Modules",
+    "triggerLong": "Search menus, modules...",
+    "triggerShort": "Search..."
   }
 }

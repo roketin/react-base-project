@@ -19,10 +19,10 @@ export function showAlertValidation(errors: FieldErrors) {
         {messages.map((msg) => (
           <li
             key={msg}
-            className='text-destructive py-2 border-b border-b-slate-100 flex gap-3 items-center'
+            className='text-destructive py-2 border-b border-b-slate-100 flex gap-3 text-left!'
           >
             <Info size={14} className='flex-none' />
-            <div className='flex-1'>{msg}</div>
+            <div className='flex-1 -mt-1'>{msg}</div>
           </li>
         ))}
       </ul>

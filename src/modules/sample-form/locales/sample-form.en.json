@@ -4,6 +4,9 @@
     "allEntries": "All Entries",
     "createNew": "Create New"
   },
+  "commands": {
+    "search": "Search Sample Form"
+  },
   "actions": {
     "add": "Create New",
     "edit": "Edit",

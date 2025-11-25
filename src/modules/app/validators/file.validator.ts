@@ -6,6 +6,7 @@ import {
   byteToMb,
   formatBytes,
   getFileExtensionFromFile,
+  getFileExtensionFromString,
 } from '@/modules/app/libs/file-utils';
 import Yup from '@/plugins/yup';
 import type { TestConfig, TestContext } from 'yup';
@@ -37,7 +38,17 @@ export const fileExtRule = (exts: string[]): TestConfig<unknown> => {
       return `${path} that are allowed are only ${exts.join(', ')} extension`;
     },
     test: (value) => {
-      return exts.includes(getFileExtensionFromFile(value as File) ?? '');
+      if (!value) return true;
+
+      if (value instanceof File) {
+        return exts.includes(getFileExtensionFromFile(value) ?? '');
+      }
+
+      if (typeof value === 'string') {
+        return exts.includes(getFileExtensionFromString(value) ?? '');
+      }
+
+      return false;
     },
   };
 };

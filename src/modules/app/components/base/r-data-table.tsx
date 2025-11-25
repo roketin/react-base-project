@@ -58,6 +58,7 @@ export type TRDataTableProps<TData, TValue> = TLoadable & {
   footer?: React.ReactNode;
   allowSearch?: boolean;
   initialSelected?: TRDataTableSelected;
+  initialSearch?: string;
   searchPlaceholder?: string;
   striped?: boolean;
   hoverable?: boolean;
@@ -100,6 +101,7 @@ const RDataTableInner = <TData, TValue>(
     allowSearch = true,
     footer,
     initialSelected = {},
+    initialSearch = '',
     searchPlaceholder = 'Search...',
     striped = false,
     hoverable = true,
@@ -240,10 +242,18 @@ const RDataTableInner = <TData, TValue>(
    * Debounced callback for handling search input changes.
    * Delays invoking onChangeTable to reduce frequent queries.
    */
-  const [search, setSearch] = useState<string>('');
+  const [search, setSearch] = useState<string>(initialSearch);
   const debouncedSearch = useDebouncedCallback((search: string) => {
     onChangeTable({ search, page: 1 });
   }, 300);
+
+  // Update search when initialSearch changes
+  useEffect(() => {
+    if (initialSearch && initialSearch !== search) {
+      setSearch(initialSearch);
+      onChangeTable({ search: initialSearch, page: 1 });
+    }
+  }, [initialSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tableClassName = cn(
     'rt-table',

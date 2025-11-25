@@ -34,6 +34,7 @@ import type {
   TApiResponsePaginate,
 } from '@/modules/app/types/api.type';
 import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
+import { APP_EL } from '@/modules/app/constants/app.constant';
 
 const formSchema = Yup.object().shape({
   checkbox_single: Yup.bool().default(false).label('Checkbox Single'),
@@ -57,6 +58,10 @@ const formSchema = Yup.object().shape({
   text_area: Yup.string().default('').required().label('Textarea'),
   switch: Yup.bool().default(false).label('Switch'),
   image: fileOrStringRule('Image').required().default(undefined),
+  images_multiple: Yup.array()
+    .of(Yup.mixed<File | string>())
+    .label('Multiple Images')
+    .default([]),
   slider: Yup.array().of(Yup.number()).default([0]).label('Slider'),
   date_picker: Yup.date().required().label('Date Picker'),
   date_picker_range: yupDateRangeRequired('Date Picker Range'),
@@ -146,7 +151,7 @@ const TodoSave = () => {
   });
 
   return (
-    <>
+    <div className='relative'>
       <SampleStepper />
 
       <div className='grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10'>
@@ -312,7 +317,6 @@ const TodoSave = () => {
             />
           </RFormField>
 
-          {/* File Uploader - Compact Variant */}
           <RFormField
             control={form.control}
             name='image'
@@ -320,6 +324,16 @@ const TodoSave = () => {
             description='Current value shown in JSON preview on right'
           >
             <RFileUploader variant='compact' />
+          </RFormField>
+
+          {/* File Uploader - Multiple (Default Variant) */}
+          <RFormField
+            control={form.control}
+            name='images_multiple'
+            label='Multiple Images (Default)'
+            description='Upload multiple images here'
+          >
+            <RFileUploader multiple variant='default' maxFiles={3} />
           </RFormField>
 
           {/* Slider */}
@@ -342,16 +356,24 @@ const TodoSave = () => {
         </pre>
       </div>
 
-      <RStickyWrapper position='bottom' offset={10}>
+      <RStickyWrapper
+        position='bottom'
+        offset={20}
+        scrollContainer={'#' + APP_EL.CONTAINER}
+      >
         {(isSticky) => (
-          <div className={cn('wrapper-fly mt-6', { 'fly-active': isSticky })}>
+          <div
+            className={cn('wrapper-fly mt-6', {
+              'fly-active': isSticky,
+            })}
+          >
             <RBtn iconStart={<Save />} form='myFormId' type='submit'>
               Submit
             </RBtn>
           </div>
         )}
       </RStickyWrapper>
-    </>
+    </div>
   );
 };
 export default TodoSave;

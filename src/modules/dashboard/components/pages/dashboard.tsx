@@ -139,7 +139,7 @@ const Dashboard = () => {
           wrapperClassName='col-span-4'
         >
           <div className='h-[300px] w-full'>
-            <ResponsiveContainer width='100%' height='100%'>
+            <ResponsiveContainer width='100%' height='100%' debounce={300}>
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray='3 3' vertical={false} />
                 <XAxis
@@ -168,6 +168,7 @@ const Dashboard = () => {
                   dataKey='total'
                   fill='var(--primary)'
                   radius={[4, 4, 0, 0]}
+                  isAnimationActive={false}
                 />
               </BarChart>
             </ResponsiveContainer>

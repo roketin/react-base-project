@@ -1,3 +1,8 @@
+export const APP_EL: Record<string, string> = {
+  HEADER: 'app-header',
+  CONTAINER: 'app-container',
+};
+
 export const DEFAULT_EXT = {
   IMAGES: ['jpg', 'jpeg', 'png', 'webp'],
   PDF: ['pdf'],

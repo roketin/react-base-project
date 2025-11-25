@@ -17,7 +17,7 @@ const AuthLayout = () => {
 
   return (
     <div className='h-full flex items-center justify-center bg-pattern p-5'>
-      <div className='flex w-full md:w-auto flex-col md:flex-row gap-4 bg-background/30 backdrop-blur supports-[backdrop-filter]:backdrop-blur-sm p-3 rounded-lg shadow-xl shadow-gray-100 relative z-10'>
+      <div className='flex w-full md:w-auto flex-col md:flex-row gap-4 bg-background/30 backdrop-blur supports-backdrop-filter:backdrop-blur-sm p-3 rounded-lg shadow-xl shadow-gray-100 relative z-10 bg-white'>
         <div className='flex-1 order-1 md:order-0'>
           <div className='w-full md:w-[350px] p-5'>
             <Suspense

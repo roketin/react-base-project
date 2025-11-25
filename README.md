@@ -18,9 +18,10 @@
 5. [Configuration](#-configuration)
 6. [Localization & Sidebar Menus](#-localization--sidebar-menus)
 7. [Feature Flags & Module Configs](#-feature-flags--module-configs)
-8. [Module Generator](#-module-generator)
-9. [Project Structure](#-project-structure)
-10. [Conventions & Tooling](#-conventions--tooling)
+8. [Global Search](#-global-search)
+9. [Module Generator](#-module-generator)
+10. [Project Structure](#-project-structure)
+11. [Conventions & Tooling](#-conventions--tooling)
 
 ---
 
@@ -144,7 +145,7 @@ Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file l
 
 Example config:
 
-````ts
+```ts
 // src/modules/sample-form/sample-form.config.ts
 import { defineModuleConfig } from '@/modules/app/types/module-config.type';
 
@@ -161,6 +162,7 @@ export const sampleFormModuleConfig = defineModuleConfig({
     // permission: 'SAMPLE_FORM_VIEW',
   },
 });
+```
 
 ### Sidebar hierarchy example
 
@@ -186,7 +188,7 @@ export const userGuardModuleConfig = defineModuleConfig({
     name: 'UserGuardIndex',
   },
 });
-````
+```
 
 Notes:
 
@@ -196,7 +198,143 @@ Notes:
 - Use the optional `order` field to enforce deterministic ordering (lower values first, ties fall back to declaration order).
 - CLI scaffolding: `pnpm roketin module user/guard` auto-populates `parentModuleId` and a child `menu` entry; tweak the title, icon, permissions, or order as needed.
 
-````
+## 🔍 Global Search
+
+A powerful command palette for quickly finding and accessing menus and actions across your application.
+
+### Features
+
+- **Fuzzy Search**: Powered by Fuse.js for intelligent matching
+- **Recent History**: Shows your 5 most recently accessed items
+- **Module Filtering**: Filter results by module using searchable dropdown
+- **Custom Actions**: Define quick actions (Create, Edit, etc.) per module
+- **Keyboard Shortcuts**: `Ctrl+K` or `Cmd+K` to open
+- **Encrypted Storage**: Recent history stored securely in LocalStorage
+- **Permission-Based**: Automatically filters based on user permissions
+
+### Usage
+
+1. **Open Search**:
+   - Click the search button in the header
+   - Press `Ctrl+K` (Windows/Linux) or `Cmd+K` (Mac)
+
+2. **Search**:
+   - Type to search menus and actions
+   - Use arrow keys to navigate results
+   - Press `Enter` to select
+   - Press `ESC` to close
+
+3. **Filter by Module**:
+   - Click the module dropdown in the search dialog
+   - Select a specific module to narrow results
+
+### Adding Custom Actions
+
+Define actions in your module config to enable quick access to common tasks:
+
+```ts
+// src/modules/your-module/your-module.config.ts
+import { Plus, Edit } from 'lucide-react';
+import { defineModuleConfig } from '@/modules/app/types/module-config.type';
+
+export const yourModuleConfig = defineModuleConfig({
+  moduleId: 'your-module',
+  featureFlag: 'YOUR_MODULE',
+  menu: {
+    title: 'yourModule:title',
+    icon: YourIcon,
+    name: 'YourModuleIndex',
+  },
+  actions: [
+    {
+      routeName: 'YourModuleCreate',
+      titleKey: 'yourModule:actions.create',
+      badge: 'Create',
+      icon: Plus,
+      permission: 'YOUR_MODULE_CREATE',
+      keywords: ['create', 'new', 'add'],
+    },
+    {
+      routeName: 'YourModuleEdit',
+      titleKey: 'yourModule:actions.edit',
+      badge: 'Edit',
+      icon: Edit,
+      permission: 'YOUR_MODULE_UPDATE',
+      keywords: ['edit', 'update', 'modify'],
+    },
+  ],
+});
+```
+
+**Action Properties:**
+
+- `routeName`: Route name defined in your routes file
+- `titleKey`: Translation key for the action title
+- `badge`: Label shown on the action (e.g., "Create", "Edit")
+- `icon`: Lucide icon component (optional, defaults to Zap icon)
+- `permission`: Permission key for access control (optional)
+- `keywords`: Array of search keywords for better discoverability
+
+### API Integration (Future)
+
+For server-side search integration, the system can be extended to support:
+
+**Endpoint Spec:**
+
+```
+GET /api/search?q={query}&module={moduleId}&limit={limit}
+```
+
+**Request:**
+
+```json
+{
+  "query": "create user",
+  "module": "user-management",
+  "limit": 10
+}
+```
+
+**Response:**
+
+```json
+{
+  "results": [
+    {
+      "type": "menu",
+      "id": "user-list",
+      "title": "User Management",
+      "path": "/admin/users",
+      "module": "user-management",
+      "moduleTitle": "User Management",
+      "icon": "Users",
+      "keywords": ["user", "management", "list"]
+    },
+    {
+      "type": "action",
+      "id": "user-create",
+      "title": "Create User",
+      "path": "/admin/users/create",
+      "module": "user-management",
+      "moduleTitle": "User Management",
+      "icon": "UserPlus",
+      "badge": "Create",
+      "keywords": ["create", "new", "add", "user"]
+    }
+  ],
+  "total": 2
+}
+```
+
+**Implementation Notes:**
+
+- Backend should respect user permissions
+- Results should be sorted by relevance
+- Support pagination for large result sets
+- Cache frequently accessed items
+- Track search analytics for improvements
+
+---
 
 ## 🧩 Module Generator
 
@@ -216,7 +354,7 @@ pnpm roketin module-child reporting/summary
 
 # Inspect registered generators, presets, and restricted modules
 pnpm roketin info
-````
+```
 
 ### Workflow
 
@@ -392,8 +530,6 @@ Module configs still drive the menus (parent/child relationships + `order` contr
 
 Both approaches can coexist: legacy modules can stay flat while newer ones adopt the hierarchical layout for auto-generated breadcrumbs.
 
----
-
 ## 🗂 Project Structure
 
 ```
@@ -423,25 +559,25 @@ reactjs-base-project/
         ├── auth/              # Authentication routes and layouts
         ├── dashboard/         # Example dashboard module
         └── sample-form/       # Rich form examples and reusable widgets
+```
 
 > `modules/[feature]` breakdown
 
-- `assets/`         # [Only app folder] static assets scoped to the shell (e.g., global CSS).
+- `assets/` # [Only app folder] static assets scoped to the shell (e.g., global CSS).
 - `components/`
-  - `base/`         # [Only app folder] reusable atoms/molecules prefixed with `r-` (`r-form.tsx`, `r-filter.tsx`, etc.).
-  - `layouts/`      # top-level layout pieces (`app-layout.tsx`, `app-sidebar.tsx`).
-  - `pages/`        # entry-point screens for the shell (`app-entry-point.tsx`, error states).
-  - `ui/`           # [Only app folder] shadcn-based primitives shared across modules; variant tokens live under `ui/variants/`.
-- `constants/`      # shared constants and enums (permissions, menus) using kebab-case filenames.
-- `contexts/`       # React contexts; filename convention: `<feature>-context.ts`.
-- `hooks/`          # custom hooks (`use-*.ts/x`), camel-cased after `use`.
-- `libs/`           # utility functions (storage, crypto, routing) using kebab-case names.
-- `locales/`        # i18n resources (`app.<lang>.json`, validation bundles).
-- `routes/`         # shell route aggregator (`app.routes.tsx`).
-- `stores/`         # Zustand stores (`*.store.ts` suffix).
-- `types/`          # shared TypeScript definitions (`*.type.ts` suffix).
-- `validators/`     # schema or validation helpers (`*.validator.ts`).
-
+  - `base/` # [Only app folder] reusable atoms/molecules prefixed with `r-` (`r-form.tsx`, `r-filter.tsx`, etc.).
+  - `layouts/` # top-level layout pieces (`app-layout.tsx`, `app-sidebar.tsx`).
+  - `pages/` # entry-point screens for the shell (`app-entry-point.tsx`, error states).
+  - `ui/` # [Only app folder] shadcn-based primitives shared across modules; variant tokens live under `ui/variants/`.
+- `constants/` # shared constants and enums (permissions, menus) using kebab-case filenames.
+- `contexts/` # React contexts; filename convention: `<feature>-context.ts`.
+- `hooks/` # custom hooks (`use-*.ts/x`), camel-cased after `use`.
+- `libs/` # utility functions (storage, crypto, routing) using kebab-case names.
+- `locales/` # i18n resources (`app.<lang>.json`, validation bundles).
+- `routes/` # shell route aggregator (`app.routes.tsx`).
+- `stores/` # Zustand stores (`*.store.ts` suffix).
+- `types/` # shared TypeScript definitions (`*.type.ts` suffix).
+- `validators/` # schema or validation helpers (`*.validator.ts`).
 
 > Directories such as `dist/`, `coverage/`, and `node_modules/` are generated and can be cleaned safely.
 
@@ -455,5 +591,6 @@ reactjs-base-project/
 - **Testing:** Vitest mimics Jest APIs, with MSW mocking network calls. Tests bootstrap via `tests/setup.ts`.
 - **Module Generation:** `pnpm roketin module <feature>/[sub-feature]` scaffolds new modules following project conventions (config, feature flags, hierarchy-aware menus).
 
+---
+
 Have fun building! Contributions and issues are welcome. 🎉
-```

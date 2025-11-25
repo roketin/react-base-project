@@ -11,5 +11,28 @@
   "confirm": "Konfirmasi",
   "form": {
     "enter": "Masukkan"
+  },
+  "commands": {
+    "profile": "Buka Profil"
+  },
+  "search": {
+    "placeholder": "Ketik untuk mencari...",
+    "quickCommands": "Perintah cepat:",
+    "noResults": "Tidak ada hasil.",
+    "noResultsHint": "Coba sesuaikan pencarian atau filter module",
+    "startSearching": "Mulai mencari untuk melihat hasil",
+    "recentHint": "Menu terakhir Anda akan muncul di sini",
+    "recent": "Terakhir",
+    "navigate": "Navigasi",
+    "select": "Pilih",
+    "close": "Tutup",
+    "willSearchFor": "Akan mencari:",
+    "typeSearchTerm": "(ketik kata kunci)",
+    "willOpenProfile": "Akan membuka profil Anda",
+    "willOpenCreateForm": "Akan membuka form tambah data",
+    "command": "Perintah:",
+    "allModules": "Semua Module",
+    "triggerLong": "Cari menu, module...",
+    "triggerShort": "Cari..."
   }
 }
