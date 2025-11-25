@@ -1,3 +1,23 @@
+## [2.0.0] - 2025-11-25
+
+### 🚀 Features
+
+- *(ddd)* Add variant for uploader
+- *(ddd)* Added global search and improve ui system
+
+### 🐛 Bug Fixes
+
+- *(ddd)* Sticky wrapper issue with snap on element
+- *(ddd)* File upload support multiple files
+- *(ddd)* Avatar added size xxs
+- *(ddd)* Dialog handle accessability support
+- *(ddd)* Missing import global search
+- *(ddd)* Update ui for auth
+
+### 🚜 Refactor
+
+- *(ddd)* Re-create sidebar component make maintainable
+- *(ddd)* Simplify filter logic
 ## [1.3.0] - 2025-11-21
 
 ### 🚀 Features
