@@ -40,7 +40,7 @@ type SidebarMenuItemWithChildren = TSidebarMenu & {
 };
 
 // Constants
-const MENU_BUTTON_SIZE = 'md' as const;
+const MENU_BUTTON_SIZE = 'default' as const;
 const CHEVRON_SIZE = 4;
 const POPOVER_WIDTH = 'w-64';
 
