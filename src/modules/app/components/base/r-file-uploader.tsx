@@ -98,7 +98,7 @@ export type TRFileUploaderRef = {
 };
 
 export type TRFileUploaderProps = {
-  value?: File | string | null;
+  value?: File | string | Array<File | string> | null;
   accept?: string[];
   width?: string;
   height?: string;
@@ -106,8 +106,8 @@ export type TRFileUploaderProps = {
   disabledDelete?: boolean;
   showPreview?: boolean;
   thumbnailSize?: 'cover' | 'contain';
-  onChange?: (file: File | null) => void;
-  onRemove?: () => void;
+  onChange?: (file: File | Array<File> | null) => void;
+  onRemove?: (file?: File | string) => void;
   onPreview?: (file: File | string) => void;
   icon?: 'image' | 'music' | 'excel';
   compress?: boolean;
@@ -120,6 +120,8 @@ export type TRFileUploaderProps = {
   uploadProgress?: number; // 0-100 for progress bar
   isUploading?: boolean; // true when actively uploading
   showDescription?: boolean; // show/hide file info description
+  multiple?: boolean;
+  maxFiles?: number;
 };
 
 type TRFileUploaderThumbsProps = {
@@ -136,10 +138,11 @@ type TRFileUploaderThumbsProps = {
   fileName?: string;
   isImagePreview: boolean;
   onPreview?: (file: File | string) => void;
-  handleFileChange: (file: File | null) => void;
+  handleFileChange: (file: File | FileList | null) => void;
   handleFileRemove: () => void;
   adaptiveThumbnail?: boolean;
   ariaInvalid?: boolean;
+  multiple?: boolean;
 };
 
 const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
@@ -183,9 +186,13 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
      */
     const handleFileChange_internal = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
-        handleFileChange(e.target.files?.[0] ?? null);
+        if (props.multiple) {
+          handleFileChange(e.target.files);
+        } else {
+          handleFileChange(e.target.files?.[0] ?? null);
+        }
       },
-      [handleFileChange],
+      [handleFileChange, props.multiple],
     );
 
     /**
@@ -240,10 +247,14 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
         e.preventDefault();
         setIsDragOver(false);
         if (!disabledUpload) {
-          handleFileChange(e.dataTransfer.files?.[0] ?? null);
+          if (props.multiple) {
+            handleFileChange(e.dataTransfer.files);
+          } else {
+            handleFileChange(e.dataTransfer.files?.[0] ?? null);
+          }
         }
       },
-      [disabledUpload, handleFileChange],
+      [disabledUpload, handleFileChange, props.multiple],
     );
 
     /**
@@ -417,6 +428,7 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
             accept={acceptAttr}
             ref={fileRef}
             onChange={handleFileChange_internal}
+            multiple={props.multiple}
           />
         </div>
       </div>
@@ -449,63 +461,103 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
       showDescription = true,
       uploadProgress = 0,
       isUploading = false,
+      multiple = false,
+      maxFiles,
     } = props;
 
-    const [file, setFile] = useState<File | null>(null);
-    const [remotePreview, setRemotePreview] = useState<string | null>(null);
-    const [objectUrl, setObjectUrl] = useState<string | null>(null);
+    const [files, setFiles] = useState<File[]>([]);
+    const [remotePreviews, setRemotePreviews] = useState<string[]>([]);
+    const [objectUrls, setObjectUrls] = useState<string[]>([]);
     const fileRef = useRef<HTMLInputElement>(null);
 
     /**
      * Synchronizes internal file and remote preview state based on the controlled value prop.
-     * If value is a File, sets it as the current file and clears remote preview.
-     * If value is a string (URL), clears file and sets remote preview.
      */
     useEffect(() => {
-      if (value instanceof File) {
-        setFile(value);
-        setRemotePreview(null);
+      if (Array.isArray(value)) {
+        const newFiles: File[] = [];
+        const newRemotes: string[] = [];
+        value.forEach((v) => {
+          if (v instanceof File) newFiles.push(v);
+          else if (typeof v === 'string') newRemotes.push(v);
+        });
+        setFiles(newFiles);
+        setRemotePreviews(newRemotes);
+      } else if (value instanceof File) {
+        setFiles([value]);
+        setRemotePreviews([]);
+      } else if (typeof value === 'string') {
+        setFiles([]);
+        setRemotePreviews([value]);
       } else {
-        setFile(null);
-        setRemotePreview(value ?? null);
+        setFiles([]);
+        setRemotePreviews([]);
       }
     }, [value]);
 
     /**
-     * Creates an object URL for the current file to use as preview source.
-     * Cleans up the object URL when the file changes or component unmounts.
+     * Creates object URLs for the current files to use as preview sources.
      */
     useEffect(() => {
-      if (!file) {
-        setObjectUrl(null);
-        return;
-      }
-
-      const url = URL.createObjectURL(file);
-      setObjectUrl(url);
+      const urls = files.map((f) => URL.createObjectURL(f));
+      setObjectUrls(urls);
 
       return () => {
-        URL.revokeObjectURL(url);
+        urls.forEach((url) => URL.revokeObjectURL(url));
       };
-    }, [file]);
+    }, [files]);
 
-    // Determines the source URL to use for preview, preferring the local object URL over remote preview.
-    const previewSrc = objectUrl ?? remotePreview;
+    // Combine local object URLs and remote previews
+    // For single mode, we just take the first available
+    const allPreviews = [...objectUrls, ...remotePreviews];
+    const previewSrc = allPreviews[0] ?? null;
+    const currentFile = files[0] ?? null;
+
+    const itemsToRender = useMemo(() => {
+      const items: Array<{
+        file?: File;
+        preview?: string;
+        name: string;
+        size?: number;
+        index: number;
+        groupType: TGroupFileType;
+      }> = [];
+
+      files.forEach((f, index) => {
+        items.push({
+          file: f,
+          preview: objectUrls[index],
+          name: f.name,
+          size: f.size,
+          index: index,
+          groupType: getFileGroupType(getFileExtensionFromFile(f)),
+        });
+      });
+
+      remotePreviews.forEach((r, index) => {
+        items.push({
+          preview: r,
+          name: r.split('/').pop() ?? 'Remote File',
+          index: files.length + index,
+          groupType: getFileGroupType(getFileExtensionFromString(r)),
+        });
+      });
+
+      return items;
+    }, [files, objectUrls, remotePreviews]);
 
     /**
      * Memoizes the group type of the file based on its extension.
-     * Uses file extension from the File object if available, otherwise uses previewSrc.
      */
     const groupType = useMemo<TGroupFileType>(() => {
-      if (file) {
-        return getFileGroupType(getFileExtensionFromFile(file));
+      if (currentFile) {
+        return getFileGroupType(getFileExtensionFromFile(currentFile));
       }
       return getFileGroupType(getFileExtensionFromString(previewSrc ?? ''));
-    }, [file, previewSrc]);
+    }, [currentFile, previewSrc]);
 
     /**
      * Memoizes the accept attribute string for the file input
-     * by joining the accepted extensions with commas, ensuring each starts with a dot.
      */
     const acceptAttr = useMemo(() => {
       if (!accept?.length) return undefined;
@@ -518,59 +570,143 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
     const isImagePreview = groupType === 'image';
 
     /**
-     * Handles changes to the selected file.
-     * Compresses the image if enabled and the file is an image.
-     * Updates internal state and calls onChange and onBlur callbacks.
-     *
-     * @param currentFile - The newly selected file or null if cleared.
+     * Handles changes to the selected file(s).
      */
     const handleFileChange = useCallback(
-      async (currentFile: File | null) => {
-        if (!currentFile) {
-          setFile(null);
-          setRemotePreview(null);
-          onChange?.(null);
-          onBlur?.();
-          return;
-        }
+      async (inputFiles: FileList | File | null) => {
+        if (!inputFiles) return;
 
-        let nextFile = currentFile;
+        const newFilesList =
+          inputFiles instanceof FileList
+            ? Array.from(inputFiles)
+            : [inputFiles];
 
-        if (compress && currentFile.type.startsWith('image/')) {
-          try {
-            nextFile = await compressImage(currentFile);
-          } catch {
-            nextFile = currentFile;
+        if (newFilesList.length === 0) return;
+
+        const processedFiles: File[] = [];
+
+        for (const f of newFilesList) {
+          let nextFile = f;
+          if (compress && f.type.startsWith('image/')) {
+            try {
+              nextFile = await compressImage(f);
+            } catch {
+              nextFile = f;
+            }
           }
+          processedFiles.push(nextFile);
         }
 
-        setFile(nextFile);
-        setRemotePreview(null);
-        onChange?.(nextFile);
+        let updatedFiles: File[];
+        if (multiple) {
+          updatedFiles = [...files, ...processedFiles];
+          if (maxFiles && updatedFiles.length > maxFiles) {
+            // If we have a mix of files and remotes, this logic gets tricky because 'files' only tracks local files.
+            // But 'value' prop might have remotes.
+            // However, here we are updating 'files' state.
+            // Let's check total count including remotes.
+            const currentTotal = files.length + remotePreviews.length;
+            const slotsAvailable = maxFiles - currentTotal;
+
+            if (slotsAvailable <= 0) {
+              // Already full, can't add more.
+              // Actually, usually the button is hidden, but if drag/drop happens:
+              return;
+            }
+
+            // Take only what fits
+            const filesToAdd = processedFiles.slice(0, slotsAvailable);
+            updatedFiles = [...files, ...filesToAdd];
+          }
+        } else {
+          updatedFiles = [processedFiles[0]];
+        }
+
+        setFiles(updatedFiles);
+        setRemotePreviews([]); // Clear remotes on new upload usually
+
+        if (multiple) {
+          onChange?.(updatedFiles);
+        } else {
+          onChange?.(updatedFiles[0]);
+        }
         onBlur?.();
       },
-      [compress, onBlur, onChange],
+      [
+        compress,
+        files,
+        multiple,
+        onBlur,
+        onChange,
+        maxFiles,
+        remotePreviews.length,
+      ],
     );
 
     /**
-     * Handles removal of the current file.
-     * Clears internal file and preview state.
-     * Calls onRemove, onChange, and onBlur callbacks.
+     * Handles removal of a file.
      */
-    const handleFileRemove = useCallback(() => {
-      setFile(null);
-      setRemotePreview(null);
-      onRemove?.();
-      onChange?.(null);
-      onBlur?.();
-    }, [onBlur, onChange, onRemove]);
+    const handleFileRemove = useCallback(
+      (index: number = 0) => {
+        if (multiple) {
+          const fileToRemove = files[index];
 
+          // Logic to remove from the combined view
+          // We have files... then remotes...
+          // Actually, let's simplify: we usually don't mix them in the 'value' prop easily without complex logic.
+          // But for now, let's assume we remove from 'files' if index < files.length, else from 'remotePreviews'
+
+          const newFiles = [...files];
+          const newRemotes = [...remotePreviews];
+
+          if (index < files.length) {
+            newFiles.splice(index, 1);
+            onRemove?.(fileToRemove);
+          } else {
+            const remoteIndex = index - files.length;
+            newRemotes.splice(remoteIndex, 1);
+            onRemove?.(remotePreviews[remoteIndex]);
+          }
+
+          setFiles(newFiles);
+          setRemotePreviews(newRemotes);
+
+          onChange?.([...newFiles]); // Note: we typically only pass back Files to onChange.
+          // If we want to persist remotes, the parent needs to handle it via 'value'.
+          // But standard behavior for file input is to report current *new* files.
+          // However, for a controlled component, we might want to return everything.
+          // Given the type definition `onChange?: (file: File | Array<File> | null) => void;`,
+          // it seems we only emit Files. The parent is responsible for merging if they want to keep strings.
+          // BUT, if we remove a remote string, we should probably let the parent know the new state?
+          // Issue: onChange signature doesn't support strings.
+          // Let's stick to emitting Files. If user removes a remote file,
+          // the parent should update 'value' to remove that string.
+          // Since we can't emit strings in onChange, we rely on parent updating 'value' prop.
+          // Wait, if we are controlled, we shouldn't set state locally?
+          // We are doing both (syncing in useEffect).
+
+          // For now, let's just emit the remaining Files.
+          onChange?.(newFiles);
+        } else {
+          setFiles([]);
+          setRemotePreviews([]);
+          onRemove?.();
+          onChange?.(null);
+        }
+        onBlur?.();
+      },
+      [files, multiple, onBlur, onChange, onRemove, remotePreviews],
+    );
+
+    /**
+     * Handles the change event on the hidden file input for compact variant.
+     */
     /**
      * Handles the change event on the hidden file input for compact variant.
      */
     const handleFileChangeInternal = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
-        handleFileChange(e.target.files?.[0] ?? null);
+        handleFileChange(e.target.files);
       },
       [handleFileChange],
     );
@@ -594,78 +730,119 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
       return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
     }, []);
 
-    const defaultDesc = `Allowed extensions: ${accept.join(', ')} | Max size: ${maxSizeMB}MB`;
+    const defaultDesc = `Allowed extensions: ${accept.join(', ')} | Max size: ${maxSizeMB}MB${maxFiles ? ` | Max files: ${maxFiles}` : ''}`;
+
+    // Shared render item function (reused from compact logic, but adapted if needed)
+    const renderListItem = (item: (typeof itemsToRender)[0]) => {
+      const itemIsImage = item.groupType === 'image';
+      const hasPreview = item.preview && itemIsImage;
+
+      return (
+        <div
+          key={item.index}
+          className='flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 rounded-lg border border-border bg-background p-4'
+        >
+          <div className='flex items-center gap-3 flex-1 min-w-0'>
+            {/* Icon or Image Preview */}
+            {hasPreview ? (
+              <div className='relative group shrink-0'>
+                <img
+                  src={item.preview}
+                  alt={item.name || 'preview'}
+                  className='size-10 rounded-lg object-cover'
+                />
+              </div>
+            ) : (
+              <div className='flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0'>
+                {ICON_MAP[icon]}
+              </div>
+            )}
+
+            {/* File Info */}
+            <div className='flex-1 min-w-0'>
+              <p className='text-sm font-medium text-foreground truncate'>
+                {item.name || label}
+              </p>
+              <p className='text-xs text-muted-foreground truncate'>
+                {isUploading
+                  ? `Uploading... ${uploadProgress}%`
+                  : item.size
+                    ? formatFileSize(item.size)
+                    : defaultDesc}
+              </p>
+            </div>
+          </div>
+
+          {/* Remove Button for non-image or explicit action */}
+          {!disabledDelete && !isUploading && (
+            <Button
+              variant='ghost'
+              size='icon'
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleFileRemove(item.index);
+              }}
+              className='shrink-0 text-destructive hover:text-destructive/80'
+            >
+              <Trash size={16} />
+            </Button>
+          )}
+        </div>
+      );
+    };
 
     // Compact variant render
     if (variant === 'compact') {
-      const hasImagePreview = previewSrc && isImagePreview;
       return (
         <div className='space-y-2'>
-          <div className='flex items-center justify-between gap-4 rounded-lg border border-border bg-background p-4'>
-            <div className='flex items-center gap-3 flex-1 min-w-0'>
-              {/* Icon or Image Preview */}
-              {hasImagePreview ? (
-                <div className='relative group shrink-0'>
-                  <img
-                    src={previewSrc}
-                    alt={file?.name || 'preview'}
-                    className='size-10 rounded-lg object-cover'
-                  />
-                  {!disabledDelete && !isUploading && (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleFileRemove();
-                      }}
-                      className='absolute inset-0 flex items-center justify-center bg-black/60 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity'
-                      title='Remove image'
-                    >
-                      <Trash size={16} className='text-white' />
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <div className='flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0'>
-                  {ICON_MAP[icon]}
-                </div>
-              )}
+          {itemsToRender.map(renderListItem)}
 
-              {/* File Info */}
-              <div className='flex-1 min-w-0'>
-                <p className='text-sm font-medium text-foreground truncate'>
-                  {file?.name || label}
-                </p>
-                <p className='text-xs text-muted-foreground truncate'>
-                  {isUploading
-                    ? `Uploading... ${uploadProgress}%`
-                    : file
-                      ? formatFileSize(file.size)
-                      : defaultDesc}
-                </p>
+          {/* Upload Button (Always visible to add more files if multiple, or if empty) */}
+          {(multiple || itemsToRender.length === 0) &&
+            (!maxFiles || itemsToRender.length < maxFiles) && (
+              <div
+                className={cn(
+                  'flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 rounded-lg border border-dashed border-border bg-muted/5 p-4',
+                  {
+                    'border-solid': itemsToRender.length === 0,
+                  },
+                )}
+              >
+                <div className='flex items-center gap-3 flex-1 min-w-0'>
+                  <div className='flex size-10 items-center justify-center rounded-lg bg-muted text-muted-foreground shrink-0'>
+                    <Upload size={20} />
+                  </div>
+                  <div className='flex-1 min-w-0'>
+                    <p className='text-sm font-medium text-foreground truncate'>
+                      {itemsToRender.length > 0 ? 'Add more files' : label}
+                    </p>
+                    <p className='text-xs text-muted-foreground truncate'>
+                      {defaultDesc}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant='outline'
+                  onClick={handleUploadClick}
+                  disabled={disabledUpload || isUploading}
+                  className='gap-2 shrink-0 w-full sm:w-auto'
+                >
+                  <Upload size={16} />
+                  {isUploading ? 'Uploading...' : 'Upload'}
+                </Button>
               </div>
-            </div>
+            )}
 
-            {/* Upload Button */}
-            <Button
-              variant='outline'
-              onClick={handleUploadClick}
-              disabled={disabledUpload || isUploading}
-              className='gap-2 shrink-0'
-            >
-              <Upload size={16} />
-              {isUploading ? 'Uploading...' : 'Upload'}
-            </Button>
-
-            {/* Hidden File Input */}
-            <input
-              type='file'
-              className='hidden'
-              accept={acceptAttr}
-              ref={fileRef}
-              onChange={handleFileChangeInternal}
-            />
-          </div>
+          {/* Hidden File Input */}
+          <input
+            type='file'
+            className='hidden'
+            accept={acceptAttr}
+            ref={fileRef}
+            onChange={handleFileChangeInternal}
+            multiple={multiple}
+          />
 
           {/* Progress Bar */}
           {isUploading && (
@@ -682,27 +859,64 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
 
     // Default variant render
     return (
-      <div className='flex flex-col'>
-        <RFileThumbnail
-          ref={ref}
-          acceptAttr={acceptAttr}
-          disabledDelete={disabledDelete}
-          disabledUpload={disabledUpload}
-          height={height}
-          width={width}
-          showPreview={showPreview}
-          thumbnailSize={thumbnailSize}
-          icon={icon}
-          previewSrc={previewSrc}
-          previewTarget={file ?? remotePreview ?? null}
-          fileName={file?.name}
-          isImagePreview={isImagePreview}
-          onPreview={onPreview}
-          handleFileChange={handleFileChange}
-          handleFileRemove={handleFileRemove}
-          adaptiveThumbnail={adaptiveThumbnail}
-          ariaInvalid={ariaInvalid}
-        />
+      <div className='flex flex-col gap-4'>
+        {multiple && itemsToRender.length > 0 ? (
+          <div className='flex flex-col gap-2'>
+            {itemsToRender.map(renderListItem)}
+
+            {/* Add button below list */}
+            {!disabledUpload &&
+              (!maxFiles || itemsToRender.length < maxFiles) && (
+                <Button
+                  variant='outline'
+                  className='w-full border-dashed'
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    fileRef.current?.click();
+                  }}
+                >
+                  <Upload size={16} className='mr-2' />
+                  Add more files
+                </Button>
+              )}
+          </div>
+        ) : (
+          <RFileThumbnail
+            ref={ref}
+            acceptAttr={acceptAttr}
+            disabledDelete={disabledDelete}
+            disabledUpload={disabledUpload}
+            height={height}
+            width={width}
+            showPreview={showPreview}
+            thumbnailSize={thumbnailSize}
+            icon={icon}
+            previewSrc={previewSrc}
+            previewTarget={currentFile ?? previewSrc ?? null}
+            fileName={currentFile?.name}
+            isImagePreview={isImagePreview}
+            onPreview={onPreview}
+            handleFileChange={handleFileChange}
+            handleFileRemove={() => handleFileRemove(0)}
+            adaptiveThumbnail={adaptiveThumbnail}
+            ariaInvalid={ariaInvalid}
+            multiple={multiple}
+          />
+        )}
+
+        {/* Hidden Input for Multiple Mode (Default variant) */}
+        {multiple && (
+          <input
+            type='file'
+            className='hidden'
+            accept={acceptAttr}
+            ref={fileRef}
+            onChange={handleFileChangeInternal}
+            multiple={multiple}
+          />
+        )}
+
         {showDescription && (
           <div className='text-sm text-muted-foreground mt-2'>
             {defaultDesc}

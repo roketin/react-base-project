@@ -31,6 +31,7 @@ const meta: Meta<typeof RFileUploader> = {
     showDescription: { control: 'boolean' },
     maxSizeMB: { control: 'number' },
     'aria-invalid': { control: 'boolean' },
+    multiple: { control: 'boolean' },
 
     // --- Styling Props ---
     width: { control: 'text' },
@@ -57,6 +58,7 @@ const meta: Meta<typeof RFileUploader> = {
     adaptiveThumbnail: false,
     showPreview: true,
     showDescription: true,
+    multiple: false,
   },
 };
 
@@ -147,7 +149,7 @@ export const InteractiveImageUpload: Story = {
           value={file}
           onChange={(newFile) => {
             args?.onChange?.(newFile); // Trigger Storybook action
-            setFile(newFile);
+            setFile(newFile as File | null);
           }}
           onRemove={() => {
             args?.onRemove?.();
@@ -197,7 +199,7 @@ export const WithImperativeRef: Story = {
           {...args}
           ref={uploaderRef}
           value={file}
-          onChange={setFile}
+          onChange={(f) => setFile(f as File | null)}
           onRemove={() => setFile(null)}
         />
         <button
@@ -241,7 +243,7 @@ export const CompactVariantInteractive: Story = {
           value={file}
           onChange={(newFile) => {
             args?.onChange?.(newFile);
-            setFile(newFile);
+            setFile(newFile as File | null);
           }}
           onRemove={() => {
             args?.onRemove?.();
@@ -282,14 +284,14 @@ export const CompactVariantWithProgress: Story = {
     const [isUploading, setIsUploading] = useState(false);
     const [progress, setProgress] = useState(0);
 
-    const handleFileChange = (newFile: File | null) => {
+    const handleFileChange = (newFile: File | Array<File> | null) => {
       if (!newFile) {
         setFile(null);
         return;
       }
 
       // Set file immediately
-      setFile(newFile);
+      setFile(newFile as File);
 
       // Simulate upload
       setIsUploading(true);
@@ -357,5 +359,95 @@ export const CompactVariantWithoutDescription: Story = {
     label: 'Upload Image',
     showDescription: false,
     width: '100%',
+  },
+};
+
+/**
+ * Demonstrates multiple file upload support.
+ * Allows selecting multiple files and displays them in a grid.
+ */
+export const MultipleUpload: Story = {
+  render: (args) => {
+    const [files, setFiles] = useState<Array<File | string>>([]);
+
+    return (
+      <div className='flex flex-col gap-4 w-full'>
+        <RFileUploader
+          {...args}
+          multiple
+          value={files}
+          onChange={(newFiles) => {
+            args?.onChange?.(newFiles);
+            if (Array.isArray(newFiles)) {
+              setFiles(newFiles);
+            }
+          }}
+          onRemove={(removedFile) => {
+            // In a real app, you'd filter out the removed file from state
+            // But RFileUploader's onChange also emits the new array, so we rely on that mostly.
+            // However, if we need to handle removal explicitly:
+            // setFiles(prev => prev.filter(f => f !== removedFile));
+            // For this story, we'll let the onChange from the component handle the update if it emits the new list.
+            // Wait, RFileUploader emits the NEW list in onChange when multiple.
+            // So we just need to ensure onChange updates the state.
+          }}
+        />
+        <div className='text-sm text-muted-foreground'>
+          <strong>Selected Files ({files.length}):</strong>
+          <ul className='list-disc pl-5 mt-2'>
+            {files.map((f, i) => (
+              <li key={i}>
+                {f instanceof File
+                  ? f.name
+                  : typeof f === 'string'
+                    ? f
+                    : 'Unknown'}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  },
+};
+
+/**
+ * Demonstrates multiple file upload with the compact variant.
+ * Displays selected files as a list.
+ */
+export const MultipleCompact: Story = {
+  render: (args) => {
+    const [files, setFiles] = useState<Array<File | string>>([]);
+
+    return (
+      <div className='flex flex-col gap-4 w-full max-w-2xl'>
+        <RFileUploader
+          {...args}
+          variant='compact'
+          multiple
+          value={files}
+          onChange={(newFiles) => {
+            args?.onChange?.(newFiles);
+            if (Array.isArray(newFiles)) {
+              setFiles(newFiles);
+            }
+          }}
+        />
+        <div className='text-sm text-muted-foreground'>
+          <strong>Selected Files ({files.length}):</strong>
+          <ul className='list-disc pl-5 mt-2'>
+            {files.map((f, i) => (
+              <li key={i}>
+                {f instanceof File
+                  ? f.name
+                  : typeof f === 'string'
+                    ? f
+                    : 'Unknown'}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
   },
 };
