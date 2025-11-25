@@ -1,3 +1,14 @@
+## [2.0.2] - 2025-11-25
+
+### 🚀 Features
+
+- _(ddd)_ Add global config for show/hide global search
+
+### 🐛 Bug Fixes
+
+- _(ddd)_ Improve storage recent global search
+- _(ddd)_ Normalize sidebar button size
+
 ## [2.0.1] - 2025-11-25
 
 ### 🚀 Features
