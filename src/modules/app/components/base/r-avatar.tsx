@@ -2,10 +2,11 @@ import { forwardRef, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { cn } from '@/modules/app/libs/utils';
 
-type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type AvatarSize = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type AvatarShape = 'circle' | 'rounded' | 'square';
 
 const SIZE_MAP: Record<AvatarSize, string> = {
+  xxs: 'size-5 text-[8px]',
   xs: 'size-8 text-xs',
   sm: 'size-10 text-sm',
   md: 'size-12 text-base',
