@@ -26,13 +26,18 @@ const FUSE_OPTIONS: IFuseOptions<SearchableItem> = {
 export function useGlobalSearch() {
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
   const allItems = useSearchableItems();
   const { selectedModule, trackAccess, getRecentIds } = useGlobalSearchStore();
 
   // Debounce query with 300ms delay
   useEffect(() => {
+    if (query.trim()) {
+      setIsSearching(true);
+    }
     const timer = setTimeout(() => {
       setDebouncedQuery(query);
+      setIsSearching(false);
     }, 300);
 
     return () => clearTimeout(timer);
@@ -92,14 +97,19 @@ export function useGlobalSearch() {
           const relevantResults = fuse.search(parsedQuery.query);
           const relevantItems = relevantResults.map((r) => r.item);
 
-          // If found relevant results, show them first, then search actions
-          if (relevantItems.length > 0) {
-            return [...relevantItems, ...searchActions];
-          }
+          // Combine and remove duplicates by id
+          const combined = [...relevantItems, ...searchActions];
+          const uniqueItems = Array.from(
+            new Map(combined.map((item) => [item.id, item])).values(),
+          );
+
+          return uniqueItems;
         }
 
-        // No relevant results or no query, show all search actions
-        return searchActions;
+        // No query, show all search actions and remove duplicates
+        return Array.from(
+          new Map(searchActions.map((item) => [item.id, item])).values(),
+        );
       }
 
       if (identifierType === 'profile') {
@@ -127,7 +137,10 @@ export function useGlobalSearch() {
 
     // Normal fuzzy search
     const results = fuse.search(debouncedQuery);
-    return results.map((result) => result.item);
+    const items = results.map((result) => result.item);
+
+    // Remove duplicates by id
+    return Array.from(new Map(items.map((item) => [item.id, item])).values());
   }, [fuse, debouncedQuery, parsedQuery, filteredItems]);
 
   // Handle item selection
@@ -146,5 +159,6 @@ export function useGlobalSearch() {
     handleSelect,
     hasQuery: debouncedQuery.trim().length > 0,
     parsedQuery,
+    isSearching,
   };
 }

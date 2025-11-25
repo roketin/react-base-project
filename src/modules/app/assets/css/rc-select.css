@@ -139,9 +139,10 @@
  * ======================================================================== */
 
 .rc-select-dropdown {
-  @apply absolute min-h-5 p-1 z-9999 shadow-md rounded-md;
+  @apply absolute min-h-5 p-1 shadow-md rounded-md;
   background: var(--popover);
   color: var(--popover-foreground);
+  z-index: 99999;
 }
 
 .rc-select-dropdown-hidden {

@@ -1,24 +1,33 @@
-import RSelect from '@/modules/app/components/base/r-select';
 import { useModuleOptions } from '@/modules/app/hooks/use-searchable-items';
 import { useGlobalSearchStore } from '@/modules/app/stores/global-search.store';
-import { useTranslation } from 'react-i18next';
+import { cn } from '@/modules/app/libs/utils';
 
 export function RSearchModuleFilter() {
-  const { t } = useTranslation();
   const moduleOptions = useModuleOptions();
   const { selectedModule, setSelectedModule } = useGlobalSearchStore();
 
   return (
-    <RSelect
+    <select
       value={selectedModule || 'all'}
-      onChange={(value) => setSelectedModule(value === 'all' ? null : value)}
-      options={moduleOptions}
-      placeholder={t('search.allModules')}
-      showSearch
-      filterOption={(input, option) =>
-        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+      onChange={(e) =>
+        setSelectedModule(e.target.value === 'all' ? null : e.target.value)
       }
-      style={{ width: 120 }}
-    />
+      className={cn(
+        'h-[var(--form-height)] px-[var(--form-padding-x)] py-1',
+        'w-[120px] rounded-[var(--form-radius)]',
+        'border border-[var(--form-border-color)] bg-[var(--form-bg)]',
+        'text-[length:var(--form-font-size)] text-[var(--form-text)]',
+        'shadow-[var(--form-shadow)]',
+        'outline-none focus:ring-2 focus:ring-[var(--form-focus-ring)]/50 focus:border-[var(--form-focus-ring)]',
+        'disabled:cursor-not-allowed disabled:opacity-[var(--form-disabled-opacity)]',
+        'cursor-pointer',
+      )}
+    >
+      {moduleOptions.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
   );
 }

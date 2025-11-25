@@ -29,6 +29,7 @@ export function RGlobalSearch() {
     handleSelect,
     hasQuery,
     parsedQuery,
+    isSearching,
   } = useGlobalSearch();
 
   // Set global navigate for module configs
@@ -160,8 +161,18 @@ export function RGlobalSearch() {
           )}
         </div>
         <CommandList>
+          {/* Loading indicator */}
+          {isSearching && (
+            <div className='py-6 text-center text-sm'>
+              <div className='flex items-center justify-center gap-2 text-muted-foreground'>
+                <div className='h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent' />
+                <span>{t('search.searching')}</span>
+              </div>
+            </div>
+          )}
+
           {/* Search Results - When user is searching */}
-          {hasQuery && searchResults.length > 0 && (
+          {!isSearching && hasQuery && searchResults.length > 0 && (
             <CommandGroup>
               {actionResults.map((item) => (
                 <RSearchResultItem
@@ -184,7 +195,7 @@ export function RGlobalSearch() {
           )}
 
           {/* No results found - When searching but no results */}
-          {hasQuery && searchResults.length === 0 && (
+          {!isSearching && hasQuery && searchResults.length === 0 && (
             <div className='py-6 text-center text-sm'>
               <p className='text-muted-foreground'>{t('search.noResults')}</p>
               <p className='text-xs text-muted-foreground mt-1'>

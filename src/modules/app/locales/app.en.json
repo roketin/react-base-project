@@ -18,6 +18,7 @@
   "search": {
     "placeholder": "Type to search...",
     "quickCommands": "Quick commands:",
+    "searching": "Searching...",
     "noResults": "No results found.",
     "noResultsHint": "Try adjusting your search or module filter",
     "startSearching": "Start searching to see results",

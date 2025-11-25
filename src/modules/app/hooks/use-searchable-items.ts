@@ -143,9 +143,13 @@ export function useModuleOptions(): ModuleOption[] {
 
   return useMemo(() => {
     const moduleSet = new Map<string, string>();
+    const excludedModules = ['app', 'auth', 'dashboard'];
 
     for (const item of items) {
-      if (!moduleSet.has(item.module)) {
+      if (
+        !moduleSet.has(item.module) &&
+        !excludedModules.includes(item.module)
+      ) {
         moduleSet.set(item.module, item.moduleTitle);
       }
     }
