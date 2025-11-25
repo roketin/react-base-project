@@ -10,7 +10,7 @@ import { useAuthBootstrap } from '@/modules/auth/hooks/use-auth-bootstrap';
 import {
   RGlobalSearch,
   RGlobalSearchTrigger,
-} from '@/modules/app/components/global-search';
+} from '@/modules/app/components/extensions/global-search';
 import { AppLayoutHeader } from './app-layout-header';
 import { AppPageTitle } from './app-page-title';
 import { APP_EL } from '../../constants/app.constant';
