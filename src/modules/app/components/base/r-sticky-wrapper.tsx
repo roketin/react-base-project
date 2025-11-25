@@ -192,11 +192,6 @@ const RStickyWrapper: React.FC<TRRStickyWrapperProps> = memo(
       const visibleBottom = visibleTop + innerRect.height;
       const containerHeight = containerRect.bottom - containerRect.top;
 
-      // Determine horizontal scroll offset for proper left positioning
-      const scrollLeft = isWindow
-        ? (window.scrollX ?? 0)
-        : (container as HTMLElement).scrollLeft;
-
       const extraOffset = offsetElementsRef.current.reduce((total, element) => {
         const rect = element.getBoundingClientRect();
         return total + rect.height;
@@ -230,8 +225,7 @@ const RStickyWrapper: React.FC<TRRStickyWrapperProps> = memo(
       setMode((prev) => (prev !== nextMode ? nextMode : prev));
 
       // Calculate left position and width for fixed positioning
-      const left =
-        wrapperRect.left + scrollLeft - (isWindow ? 0 : containerRect.left);
+      const left = wrapperRect.left;
       const width = wrapperRect.width;
       setCoords((prev) =>
         Math.abs(prev.left - left) > 0.5 || Math.abs(prev.width - width) > 0.5
