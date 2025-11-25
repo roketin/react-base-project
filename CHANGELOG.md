@@ -1,161 +1,172 @@
+## [2.0.1] - 2025-11-25
+
+### 🚀 Features
+
+- _(ddd)_ Add sample page for showing global search mechanism
+
+### 🐛 Bug Fixes
+
+- _(ddd)_ Improve global search performance
+
 ## [2.0.0] - 2025-11-25
 
 ### 🚀 Features
 
-- *(ddd)* Add variant for uploader
-- *(ddd)* Added global search and improve ui system
+- _(ddd)_ Add variant for uploader
+- _(ddd)_ Added global search and improve ui system
 
 ### 🐛 Bug Fixes
 
-- *(ddd)* Sticky wrapper issue with snap on element
-- *(ddd)* File upload support multiple files
-- *(ddd)* Avatar added size xxs
-- *(ddd)* Dialog handle accessability support
-- *(ddd)* Missing import global search
-- *(ddd)* Update ui for auth
+- _(ddd)_ Sticky wrapper issue with snap on element
+- _(ddd)_ File upload support multiple files
+- _(ddd)_ Avatar added size xxs
+- _(ddd)_ Dialog handle accessability support
+- _(ddd)_ Missing import global search
+- _(ddd)_ Update ui for auth
 
 ### 🚜 Refactor
 
-- *(ddd)* Re-create sidebar component make maintainable
-- *(ddd)* Simplify filter logic
+- _(ddd)_ Re-create sidebar component make maintainable
+- _(ddd)_ Simplify filter logic
+
 ## [1.3.0] - 2025-11-21
 
 ### 🚀 Features
 
-- *(ddd)* Add dialog profile
+- _(ddd)_ Add dialog profile
 
 ### 🐛 Bug Fixes
 
-- *(ddd)* Update deps
-- *(ddd)* Increase size icon on alert dialog
+- _(ddd)_ Update deps
+- _(ddd)_ Increase size icon on alert dialog
 
-### ⚙️ Miscellaneous Tasks
-
-- V1.2.0
 ## [1.2.0] - 2025-11-21
 
 ### 🚀 Features
 
-- *(ddd)* Centralize style form/input/button into global.css
-- *(ddd)* Add format date and format currency util
-- *(ddd)* Add append props for infinite scroll
+- _(ddd)_ Centralize style form/input/button into global.css
+- _(ddd)_ Add format date and format currency util
+- _(ddd)_ Add append props for infinite scroll
 
 ### 🐛 Bug Fixes
 
-- *(ddd)* Cli remove validation git status
-- *(ddd)* Improve dashboard ui with statistic and table
-- *(ddd)* Update sample components based on improved base
+- _(ddd)_ Cli remove validation git status
+- _(ddd)_ Improve dashboard ui with statistic and table
+- _(ddd)_ Update sample components based on improved base
 
 ### 🧪 Testing
 
-- *(ddd)* Fix unit-test based on update components
+- _(ddd)_ Fix unit-test based on update components
+
 ## [1.1.0] - 2025-11-17
 
 ### 🚀 Features
 
-- *(ddd)* Update deps version
-- *(ddd)* Feature flag & modular menu
-- *(ddd)* Cli support for modular & feature flag
+- _(ddd)_ Update deps version
+- _(ddd)_ Feature flag & modular menu
+- _(ddd)_ Cli support for modular & feature flag
 
 ### 🐛 Bug Fixes
 
-- *(ddd)* Mismatch version when release
+- _(ddd)_ Mismatch version when release
 
 ### 📚 Documentation
 
 - Update readme about feature flag & modular system
+
 ## [1.0.1] - 2025-11-05
 
 ### 🐛 Bug Fixes
 
-- *(ddd)* Test & improve fallback on release script
+- _(ddd)_ Test & improve fallback on release script
+
 ## [1.0.0] - 2025-11-05
 
 ### 🚀 Features
 
 - Initial commit
 - Added tailwind, folder structure
-- *(ddd)* Initial commit ddd structure
-- *(ddd)* Remove forward-ref props &  add alert/show-alert
-- *(ddd)* Add core utils
-- *(ddd)* Improve form system, added global config from form or form-field
-- *(ddd)* Handling route with name and improve routes
-- *(ddd)* Rename base with "r" trademark
-- *(ddd)* Update readme.md
-- *(ddd)* Update introduction and feature in readme.md
-- *(ddd)* Add authentication service
-- *(ddd)* Improve password character validation
-- *(ddd)* Update file tree information in readme.md
-- *(ddd)* Add unit-test
-- *(ddd)* Update aknowledgement in readme.md
-- *(ddd)* Add unit test coverages
-- *(ddd)* Add several unit tests for base components
-- *(ddd)* Add unit test for auth pages
-- *(ddd)* Improve auto breadcrumbs & app layout
-- *(ddd)* Add sample form page
-- *(ddd)* Adjust app entry point route navigation
-- *(ddd)* Completed form components
-- *(ddd)* Implements auto-route and auto-locale
-- *(ddd)* Add "roketin" command line module generator
-- *(ddd)* Improve command line, support nested route configuration
-- *(ddd)* Remove unused packages
-- *(ddd)* Add label translation autocomplete for yup
-- *(ddd)* Add data-table, and add example list & fetch
-- *(ddd)* Add sample abort controller on fetch
-- *(ddd)* Add filter component and sample filter
-- *(ddd)* Remove redundancy interfaces on base components
-- *(ddd)* Add permission guard and flexible route guard
-- *(ddd)* Improve auth-system
-- *(ddd)* Brand component consistency
-- *(ddd)* Improve component documentation, add filter icon & enhancement read me
-- *(ddd)* Update deps version
-- *(ddd)* Improvement translation on auth pages
-- *(ddd)* Entry point uses bootstrap loading to create consistency in the ux loading page
-- *(ddd)* Add crypto & add query params lang on interceptor
-- *(ddd)* Improve language for sample form
-- *(ddd)* Add roketin config app, language switcher
-- *(ddd)* Improve several components and pages
-- *(ddd)* Improve auth ui
-- *(ddd)* Improve admin ui & handle ref for maskito
-- *(ddd)* Add rc-select & improve several r-components
-- *(ddd)* Improve permission system & update deps
-- *(ddd)* Add tabIndex -1 on clear input button
-- *(ddd)* Change day-picker to rc-picker, update component & filter item
-- *(ddd)* Remove combobox and move full to rc-select, add animation for select & picker
+- _(ddd)_ Initial commit ddd structure
+- _(ddd)_ Remove forward-ref props & add alert/show-alert
+- _(ddd)_ Add core utils
+- _(ddd)_ Improve form system, added global config from form or form-field
+- _(ddd)_ Handling route with name and improve routes
+- _(ddd)_ Rename base with "r" trademark
+- _(ddd)_ Update readme.md
+- _(ddd)_ Update introduction and feature in readme.md
+- _(ddd)_ Add authentication service
+- _(ddd)_ Improve password character validation
+- _(ddd)_ Update file tree information in readme.md
+- _(ddd)_ Add unit-test
+- _(ddd)_ Update aknowledgement in readme.md
+- _(ddd)_ Add unit test coverages
+- _(ddd)_ Add several unit tests for base components
+- _(ddd)_ Add unit test for auth pages
+- _(ddd)_ Improve auto breadcrumbs & app layout
+- _(ddd)_ Add sample form page
+- _(ddd)_ Adjust app entry point route navigation
+- _(ddd)_ Completed form components
+- _(ddd)_ Implements auto-route and auto-locale
+- _(ddd)_ Add "roketin" command line module generator
+- _(ddd)_ Improve command line, support nested route configuration
+- _(ddd)_ Remove unused packages
+- _(ddd)_ Add label translation autocomplete for yup
+- _(ddd)_ Add data-table, and add example list & fetch
+- _(ddd)_ Add sample abort controller on fetch
+- _(ddd)_ Add filter component and sample filter
+- _(ddd)_ Remove redundancy interfaces on base components
+- _(ddd)_ Add permission guard and flexible route guard
+- _(ddd)_ Improve auth-system
+- _(ddd)_ Brand component consistency
+- _(ddd)_ Improve component documentation, add filter icon & enhancement read me
+- _(ddd)_ Update deps version
+- _(ddd)_ Improvement translation on auth pages
+- _(ddd)_ Entry point uses bootstrap loading to create consistency in the ux loading page
+- _(ddd)_ Add crypto & add query params lang on interceptor
+- _(ddd)_ Improve language for sample form
+- _(ddd)_ Add roketin config app, language switcher
+- _(ddd)_ Improve several components and pages
+- _(ddd)_ Improve auth ui
+- _(ddd)_ Improve admin ui & handle ref for maskito
+- _(ddd)_ Add rc-select & improve several r-components
+- _(ddd)_ Improve permission system & update deps
+- _(ddd)_ Add tabIndex -1 on clear input button
+- _(ddd)_ Change day-picker to rc-picker, update component & filter item
+- _(ddd)_ Remove combobox and move full to rc-select, add animation for select & picker
 - Add several functional components and hooks
 - Add view router functional cli
-- *(ddd)* Added select infinite component & helper
-- *(ddd)* Add git-workflow notes
+- _(ddd)_ Added select infinite component & helper
+- _(ddd)_ Add git-workflow notes
 
 ### 🐛 Bug Fixes
 
 - Fixed commit-msg husky
-- *(ddd)* Improve file uploader
-- *(ddd)* Improve error handling on form, add reusable validation for range-picker
-- *(ddd)* Repositioning submit button on sample form page
-- *(ddd)* Repositioning submit button on sample form page
-- *(ddd)* Improve roketin generator module added functionality auto inject child route
-- *(ddd)* Added auto linked nested route, add breadcrumb disabled props
-- *(ddd)* Update deps version
-- *(ddd)* Refactor & create modular roketin cli, improve breadcrumbs system
-- *(ddd)* Add storybook,  add panel header & stepper component
-- *(ddd)* Add storybook ignore from eslint
-- *(ddd)* Update deps version
-- *(ddd)* Constancy naming type on base component and improve clarification story
+- _(ddd)_ Improve file uploader
+- _(ddd)_ Improve error handling on form, add reusable validation for range-picker
+- _(ddd)_ Repositioning submit button on sample form page
+- _(ddd)_ Repositioning submit button on sample form page
+- _(ddd)_ Improve roketin generator module added functionality auto inject child route
+- _(ddd)_ Added auto linked nested route, add breadcrumb disabled props
+- _(ddd)_ Update deps version
+- _(ddd)_ Refactor & create modular roketin cli, improve breadcrumbs system
+- _(ddd)_ Add storybook, add panel header & stepper component
+- _(ddd)_ Add storybook ignore from eslint
+- _(ddd)_ Update deps version
+- _(ddd)_ Constancy naming type on base component and improve clarification story
 - Change virtual scroll using tanstack virtual for better performance
 - Update filter story
-- *(ddd)* Decreases  select icon loading
-- *(ddd)* Update deps
-- *(ddd)* Improve several components
-- *(ddd)* Add simplify func for file viewer
+- _(ddd)_ Decreases select icon loading
+- _(ddd)_ Update deps
+- _(ddd)_ Improve several components
+- _(ddd)_ Add simplify func for file viewer
 
 ### 🚜 Refactor
 
-- *(textarea)* Adjust placeholder color to match other input
-- *(base-component)* Adjust r-data-table and add auto-apply filter bar
+- _(textarea)_ Adjust placeholder color to match other input
+- _(base-component)_ Adjust r-data-table and add auto-apply filter bar
 
 ### 📚 Documentation
 
 - Update readme
 - Update readme
-- *(ddd)* Update workflow git doc
+- _(ddd)_ Update workflow git doc
