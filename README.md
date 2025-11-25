@@ -94,6 +94,7 @@ Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file l
 | `filters.persistence` | `enabled`, `strategy`, `keyPrefix`, `debounceMs`                                                 | Configures how `RFilter` remembers selections (e.g., `local-storage`, custom key prefixes, debounce window).         |
 | `routes.admin`        | `basePath`                                                                                       | Base path prepended to every authenticated route (default `/r-admin`).                                               |
 | `languages`           | `enabled`, `debug`, `supported[]` (`code`, `label`, `isDefault`)                                 | Toggles multi-language support, i18n debug logging, and declares the supported locale list.                          |
+| `search`              | `enableSearchGlobal`                                                                             | Enables or disables the global search feature (command palette) across the application.                              |
 
 ### Config Breakdown
 
@@ -109,6 +110,8 @@ Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file l
   - `enabled`: Hides the language dropdown when set to `false`.
   - `debug`: Mirrors `i18next` debug mode; handy during localisation tweaks.
   - `supported`: Each locale entry must define a `code` (used by i18next), `label` (UI display), and optional `isDefault`.
+- **`search`**:
+  - `enableSearchGlobal`: When set to `true`, displays the global search trigger button and enables the command palette. Set to `false` to completely hide the global search feature from the application.
 
 ---
 
@@ -201,6 +204,21 @@ Notes:
 ## 🔍 Global Search
 
 A powerful command palette for quickly finding and accessing menus and actions across your application.
+
+### Configuration
+
+Global search can be enabled or disabled via `roketin.config.ts`:
+
+```ts
+export default defineRoketinConfig({
+  // ... other configs
+  search: {
+    enableSearchGlobal: true, // Set to false to disable global search
+  },
+});
+```
+
+When `enableSearchGlobal` is set to `false`, both the search trigger button and the search dialog will be hidden from the application.
 
 ### Features
 

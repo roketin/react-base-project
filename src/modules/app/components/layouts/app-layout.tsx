@@ -14,6 +14,7 @@ import {
 import { AppLayoutHeader } from './app-layout-header';
 import { AppPageTitle } from './app-page-title';
 import { APP_EL } from '../../constants/app.constant';
+import roketinConfig from '@config';
 
 /**
  * Main layout component for the application.
@@ -39,9 +40,11 @@ export default function AppLayout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <div className='hidden mt-3 md:flex items-center justify-center'>
-          <RGlobalSearchTrigger />
-        </div>
+        {roketinConfig.search.enableSearchGlobal && (
+          <div className='hidden mt-3 md:flex items-center justify-center'>
+            <RGlobalSearchTrigger />
+          </div>
+        )}
         <div className='flex-1 flex flex-col bg-white box-border md:m-3 md:ml-0 rounded-xl shadow-sm min-w-0 pb-0.5 overflow-hidden'>
           <AppLayoutHeader />
           <div
@@ -75,7 +78,7 @@ export default function AppLayout() {
           </div>
         </div>
       </SidebarInset>
-      <RGlobalSearch />
+      {roketinConfig.search.enableSearchGlobal && <RGlobalSearch />}
     </SidebarProvider>
   );
 }

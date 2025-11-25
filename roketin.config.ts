@@ -81,4 +81,12 @@ export default defineRoketinConfig({
       { code: 'id', label: 'Bahasa Indonesia' },
     ],
   },
+
+  /**
+   * Global search configuration.
+   * @property {boolean} enabled - Flag to enable or disable global search functionality.
+   */
+  search: {
+    enableSearchGlobal: true,
+  },
 });
