@@ -1,4 +1,10 @@
 {
   "title": "User",
-  "subtitle": "Sub User"
+  "subtitle": "Sub User",
+  "menu": {
+    "createNew": "Create New User"
+  },
+  "commands": {
+    "search": "Search User"
+  }
 }

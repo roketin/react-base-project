@@ -1,4 +1,10 @@
 {
   "title": "Role",
-  "subtitle": "Sub Role"
+  "subtitle": "Sub Role",
+  "menu": {
+    "createNew": "Create New Role"
+  },
+  "commands": {
+    "search": "Search Role"
+  }
 }

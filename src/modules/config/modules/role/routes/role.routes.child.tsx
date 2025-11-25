@@ -1,5 +1,6 @@
 import { createAppRoutes } from '@/modules/app/libs/routes-utils';
 import RoleIndex from '../components/pages/role';
+import RoleAdd from '../components/pages/role-add';
 import { Outlet } from 'react-router-dom';
 
 // This is a CHILD ROUTE.
@@ -22,7 +23,14 @@ export const roleChildRoutes = createAppRoutes([
         name: 'RoleIndex',
         element: <RoleIndex />,
       },
-      // Add other child routes here if needed
+      {
+        name: 'RoleAdd',
+        path: 'add',
+        element: <RoleAdd />,
+        handle: {
+          breadcrumb: 'Create',
+        },
+      },
     ],
   },
 ]);

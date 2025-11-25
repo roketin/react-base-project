@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { createAppRoutes } from '@/modules/app/libs/routes-utils';
 import UserIndex from '../components/pages/user';
+import UserAdd from '../components/pages/user-add';
 
 export const userChildRoutes = createAppRoutes([
   {
@@ -19,7 +20,14 @@ export const userChildRoutes = createAppRoutes([
         name: 'UserIndex',
         element: <UserIndex />,
       },
-      // Add other child routes here if needed
+      {
+        name: 'UserAdd',
+        path: 'add',
+        element: <UserAdd />,
+        handle: {
+          breadcrumb: 'Create',
+        },
+      },
     ],
   },
 ]);
