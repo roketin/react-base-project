@@ -37,7 +37,7 @@ export const sampleFormModuleConfig = defineModuleConfig({
       keywords: [...KEYWORDS_SEARCH, ...KEYWORDS_FORM, 'sample'],
       onExecute: () => {
         const query = useGlobalSearchStore.getState().currentQuery;
-        navigateToRoute('SampleFormIndex', { keyword: query });
+        navigateToRoute('SampleFormIndex', { search: query });
       },
     },
   ],

@@ -28,7 +28,7 @@ import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
 import { InspectIcon, Pencil, Plus, Trash } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParam } from '@/modules/app/hooks/use-search-param';
 
 const countries = [
   { id: 'id', name: 'Indonesia' },
@@ -261,19 +261,16 @@ const SampleFormIndex = () => {
     [t],
   );
 
-  // Get URL search params
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialKeyword = searchParams.get('keyword') || '';
+  // Get search param from URL (from global search)
+  const initialSearch = useSearchParam();
 
   const [qryParams, setQryParams] =
     useObjectState<TApiDefaultQueryParams>(DEFAULT_QUERY_PARAMS);
 
-  // Clear URL params after reading
+  // Debug: Log qryParams changes
   useEffect(() => {
-    if (initialKeyword) {
-      setSearchParams({});
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    console.log('📊 Query params changed:', qryParams);
+  }, [qryParams]);
 
   // Get data
   const { data, isFetching: isLoading } = useGetSampleFormList(qryParams);
@@ -312,7 +309,7 @@ const SampleFormIndex = () => {
 
       <RDataTable
         fixed
-        initialSearch={initialKeyword}
+        initialSearch={initialSearch}
         toolbarEnd={
           <RFilterMenu
             schema={filters}

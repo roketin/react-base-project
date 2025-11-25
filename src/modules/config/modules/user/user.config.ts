@@ -37,7 +37,7 @@ export const UserModuleConfig = defineModuleConfig({
       keywords: [...KEYWORDS_SEARCH, 'user'],
       onExecute: () => {
         const query = useGlobalSearchStore.getState().currentQuery;
-        navigateToRoute('UserIndex', { keyword: query });
+        navigateToRoute('UserIndex', { search: query });
       },
     },
   ],

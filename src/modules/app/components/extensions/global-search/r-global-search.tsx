@@ -83,6 +83,13 @@ export function RGlobalSearch() {
 
     // Handle action with onExecute (custom execution)
     if (item.type === 'action' && item.onExecute) {
+      // For search actions from recent, restore the keyword
+      const { getSearchKeyword } = useGlobalSearchStore.getState();
+      const savedKeyword = getSearchKeyword(item.id);
+      if (savedKeyword && !parsedQuery.query) {
+        setCurrentQuery(savedKeyword);
+      }
+
       item.onExecute();
       setIsOpen(false);
       setQuery('');
