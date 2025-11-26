@@ -22,13 +22,15 @@ export const buttonVariants = cva(
           'bg-purple-500 text-white hover:bg-purple-600 disabled:bg-purple-400',
       },
       size: {
-        default: 'h-[var(--form-height)] px-[var(--form-padding-x)] py-2',
-        sm: 'h-[var(--form-height-sm)] px-[var(--form-padding-x-sm)]',
+        default: 'h-[var(--form-height-outer)] px-[var(--form-padding-x)]',
+        sm: 'h-[var(--form-height-sm-outer)] px-[var(--form-padding-x-sm)]',
         xs: 'h-8 px-2 text-xs',
-        lg: 'h-[var(--form-height-lg)] px-[var(--form-padding-x-lg)]',
-        icon: 'h-10 w-10',
-        iconSm: 'h-9 w-9 text-sm',
-        iconLg: 'h-12 w-12 text-base',
+        lg: 'h-[var(--form-height-lg-outer)] px-[var(--form-padding-x-lg)]',
+        icon: 'h-[var(--form-height-outer)] w-[var(--form-height-outer)]',
+        iconSm:
+          'h-[var(--form-height-sm-outer)] w-[var(--form-height-sm-outer)] text-sm',
+        iconLg:
+          'h-[var(--form-height-lg-outer)] w-[var(--form-height-lg-outer)] text-base',
       },
     },
     defaultVariants: {

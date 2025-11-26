@@ -12,7 +12,6 @@ import {
   RGlobalSearchTrigger,
 } from '@/modules/app/components/extensions/global-search';
 import { AppLayoutHeader } from './app-layout-header';
-import { AppPageTitle } from './app-page-title';
 import { APP_EL } from '../../constants/app.constant';
 import roketinConfig from '@config';
 
@@ -72,7 +71,6 @@ export default function AppLayout() {
                 </div>
               }
             >
-              <AppPageTitle className='mb-4' />
               <Outlet />
             </Suspense>
           </div>
