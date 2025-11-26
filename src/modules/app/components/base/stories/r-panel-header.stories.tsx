@@ -1,47 +1,26 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { useState } from 'react';
-import { X, ChevronLeft, ChevronRight, Check, Loader2 } from 'lucide-react';
-import { RPanelHeader } from '@/modules/app/components/base/r-panel-header';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Save, ChevronRight, ArrowLeft, Check } from 'lucide-react';
+import { RPanelHeader } from '../r-panel-header';
 
 const meta: Meta<typeof RPanelHeader> = {
   title: 'Base/RPanelHeader',
   component: RPanelHeader,
-  tags: ['autodocs'],
   parameters: {
-    layout: 'centered',
-    docs: {
-      description: {
-        component: `
-**RPanelHeader** is a flexible header component used for panel or drawer UIs.
-It supports multiple actions (Close, Cancel, OK), optional icons, loading states, and visibility control.
-`,
-      },
-    },
+    layout: 'padded',
   },
+  tags: ['autodocs'],
   argTypes: {
-    title: {
-      control: 'text',
-      description: 'Title displayed in the panel header',
-    },
-    showClose: {
-      control: 'boolean',
-      description: 'Display the close button',
-    },
-    hideCancel: {
-      control: 'boolean',
-      description: 'Hide or show the cancel button',
-    },
-    hideOk: {
-      control: 'boolean',
-      description: 'Hide or show the ok button',
-    },
-    loading: {
-      control: 'boolean',
-      description: 'Show loading state on the Ok button',
-    },
-    onClose: { action: 'onClose' },
-    onCancel: { action: 'onCancel' },
-    onOk: { action: 'onOk' },
+    showClose: { control: 'boolean' },
+    showCancel: { control: 'boolean' },
+    showOk: { control: 'boolean' },
+    loading: { control: 'boolean' },
+  },
+  args: {
+    title: 'Panel Title',
+    showClose: false,
+    showCancel: false,
+    showOk: false,
+    loading: false,
   },
 };
 
@@ -49,168 +28,107 @@ export default meta;
 
 type Story = StoryObj<typeof RPanelHeader>;
 
-// ----------------------------------------------------------------------------
-// 🧩 Default Example
-// ----------------------------------------------------------------------------
 export const Default: Story = {
   args: {
-    title: 'Default Panel Header',
+    title: 'Default Header',
+  },
+};
+
+export const WithClose: Story = {
+  args: {
+    title: 'Header with Close Button',
+    showClose: true,
+    onClose: () => alert('Close clicked'),
+  },
+};
+
+export const WithOk: Story = {
+  args: {
+    title: 'Header with Ok Button',
+    showOk: true,
+    onOk: () => alert('Ok clicked'),
+  },
+};
+
+export const WithCancel: Story = {
+  args: {
+    title: 'Header with Cancel Button',
+    showCancel: true,
+    onCancel: () => alert('Cancel clicked'),
+  },
+};
+
+export const WithAllButtons: Story = {
+  args: {
+    title: 'Header with All Buttons',
+    showClose: true,
+    showCancel: true,
+    showOk: true,
     onClose: () => alert('Close clicked'),
     onCancel: () => alert('Cancel clicked'),
     onOk: () => alert('Ok clicked'),
-    showClose: true,
   },
 };
 
-// ----------------------------------------------------------------------------
-// 🎨 Custom Buttons Example
-// ----------------------------------------------------------------------------
-export const CustomButtons: Story = {
+export const CustomOkButton: Story = {
   args: {
-    title: 'Custom Buttons Example',
-    onClose: () => alert('Exit clicked'),
-    onCancel: () => alert('Go back'),
-    onOk: () => alert('Proceed clicked'),
+    title: 'Custom Ok Button',
+    showOk: true,
+    okButton: {
+      label: 'Save',
+      icon: <Save className='size-4' />,
+      iconPlacement: 'start',
+    },
+    onOk: () => alert('Save clicked'),
+  },
+};
+
+export const CustomCancelButton: Story = {
+  args: {
+    title: 'Custom Cancel Button',
+    showCancel: true,
+    cancelButton: {
+      label: 'Back',
+      icon: <ArrowLeft className='size-4' />,
+      iconPlacement: 'start',
+    },
+    onCancel: () => alert('Back clicked'),
+  },
+};
+
+export const CustomCloseButton: Story = {
+  args: {
+    title: 'Custom Close Button',
     showClose: true,
     closeButton: {
       label: 'Exit',
-      icon: <X className='size-4' />,
-      variant: 'destructive',
-      size: 'sm',
+      size: 'default',
     },
-    cancelButton: {
-      label: 'Back',
-      icon: <ChevronLeft className='size-4' />,
-      variant: 'outline',
-      size: 'sm',
-    },
+    onClose: () => alert('Exit clicked'),
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    title: 'Loading State',
+    showOk: true,
+    showCancel: true,
+    loading: true,
     okButton: {
-      label: 'Continue',
-      icon: <ChevronRight className='size-4' />,
-      variant: 'default',
-      size: 'sm',
+      label: 'Saving...',
     },
+    onOk: () => alert('Ok clicked'),
+    onCancel: () => alert('Cancel clicked'),
   },
 };
 
-// ----------------------------------------------------------------------------
-// 🚫 Hidden Buttons Example
-// ----------------------------------------------------------------------------
-export const HiddenButtons: Story = {
+export const WithCustomClassName: Story = {
   args: {
-    title: 'Header Without Some Buttons',
-    showClose: false,
-    hideCancel: true,
-    hideOk: false,
-    onOk: () => alert('Submit clicked'),
-  },
-};
-
-// ----------------------------------------------------------------------------
-// ⏳ Loading State Example
-// ----------------------------------------------------------------------------
-export const LoadingState: Story = {
-  render: (args) => {
-    const [loading, setLoading] = useState(false);
-
-    return (
-      <div className='w-[460px] border rounded-lg shadow-sm bg-white'>
-        <RPanelHeader
-          {...args}
-          showClose
-          loading={loading}
-          onOk={() => {
-            setLoading(true);
-            setTimeout(() => {
-              alert('Saved successfully!');
-              setLoading(false);
-            }, 1500);
-          }}
-          onCancel={() => alert('Cancelled')}
-          onClose={() => alert('Closed')}
-        />
-      </div>
-    );
-  },
-  args: {
-    title: 'Saving Changes...',
+    title: 'Custom Styled Header',
     showClose: true,
-    okButton: {
-      label: 'Save',
-      icon: <Check className='size-4' />,
-      loadingIcon: <Loader2 className='size-4 animate-spin' />,
-    },
-  },
-};
-
-// ----------------------------------------------------------------------------
-// 🚫 Disabled Buttons Example
-// ----------------------------------------------------------------------------
-export const DisabledButtons: Story = {
-  args: {
-    title: 'All Buttons Disabled',
-    onClose: () => {},
-    onCancel: () => {},
-    onOk: () => {},
-    showClose: true,
-    closeButton: { disabled: true },
-    cancelButton: { disabled: true },
-    okButton: { disabled: true },
-  },
-};
-
-// ----------------------------------------------------------------------------
-// 🔁 Dynamic Mode Switch Example
-// ----------------------------------------------------------------------------
-export const DynamicMode: Story = {
-  render: (args) => {
-    const [isEditMode, setIsEditMode] = useState(false);
-
-    const handleOk = () => {
-      if (isEditMode) {
-        alert('Data saved!');
-        setIsEditMode(false);
-      } else {
-        setIsEditMode(true);
-      }
-    };
-
-    return (
-      <div className='w-[480px] border rounded-lg shadow bg-white'>
-        <RPanelHeader
-          {...args}
-          title={isEditMode ? 'Edit Mode' : 'View Mode'}
-          onOk={handleOk}
-          onCancel={() => setIsEditMode(false)}
-          showClose
-          okButton={{
-            label: isEditMode ? 'Save' : 'Edit',
-            icon: isEditMode ? (
-              <Check className='size-4' />
-            ) : (
-              <ChevronRight className='size-4' />
-            ),
-            variant: isEditMode ? 'default' : 'outline',
-          }}
-          cancelButton={{
-            label: 'Cancel',
-            icon: <ChevronLeft className='size-4' />,
-            disabled: !isEditMode,
-          }}
-          closeButton={{
-            label: 'Close',
-            icon: <X className='size-4' />,
-          }}
-        />
-        <div className='p-4 text-sm text-gray-600'>
-          {isEditMode
-            ? 'You are now editing the data. Click Save to confirm changes.'
-            : 'This is view mode. Click Edit to make changes.'}
-        </div>
-      </div>
-    );
-  },
-  args: {
-    title: 'Dynamic State Header',
+    showOk: true,
+    className: 'mb-0 pt-0 border-blue-200',
+    onClose: () => alert('Close clicked'),
+    onOk: () => alert('Ok clicked'),
   },
 };
