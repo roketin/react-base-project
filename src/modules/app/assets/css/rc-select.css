@@ -32,7 +32,9 @@
 
   /* Selector Container (Input/Selected Items Wrapper) */
   .rc-select-selector {
-    @apply relative flex w-full min-h-(--form-height) border border-(--form-border-color) bg-(--form-bg) rounded-(--form-radius) shadow-(--form-shadow);
+    @apply relative flex items-center w-full border border-(--form-border-color) bg-(--form-bg) rounded-(--form-radius) shadow-(--form-shadow);
+    height: var(--form-height-outer);
+    box-sizing: border-box;
   }
 
   /* Placeholder Text */
@@ -75,7 +77,9 @@
   .rc-select-selection-item,
   .rc-select-selection-placeholder {
     /* Aligns item and placeholder in the center */
-    @apply absolute left-3 right-3 top-1/2 -translate-y-1/2 overflow-hidden whitespace-nowrap text-ellipsis leading-relaxed;
+    @apply absolute top-1/2 -translate-y-1/2 overflow-hidden whitespace-nowrap text-ellipsis leading-relaxed;
+    left: var(--form-padding-x);
+    right: var(--form-padding-x);
     font-size: var(--form-font-size);
   }
 }
@@ -131,6 +135,30 @@
   .rc-select-selection-search-input {
     @apply min-w-[200px] box-border;
     font-size: var(--form-font-size);
+  }
+}
+
+/* ----------------------------------
+ * 1.3 SIZE VARIANTS
+ * ---------------------------------- */
+
+.rc-select--sm {
+  .rc-select-selector {
+    height: var(--form-height-sm-outer);
+  }
+
+  .rc-select-selection-search-input,
+  .rc-select-selection-item,
+  .rc-select-selection-placeholder {
+    font-size: var(--form-font-size-sm);
+  }
+
+  .rc-select-arrow {
+    @apply top-2;
+  }
+
+  .rc-select-clear {
+    @apply top-1;
   }
 }
 

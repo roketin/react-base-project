@@ -61,17 +61,24 @@
   --form-disabled-border: oklch(0.922 0 0); /* border/input */
   --form-disabled-opacity: 0.5;
   --button-radius: var(--radius);
-  --form-height: 2.5rem; /* 40px (h-10) */
+  --form-height: 2.5rem; /* 40px (h-10) - inner height for inputs */
+  --form-height-outer: calc(2.5rem + 2px); /* 42px - outer height with border */
   --form-padding-x: 0.75rem; /* 12px (px-3) */
   --form-font-size: 0.875rem; /* 14px (text-sm) */
 
   /* Form Sizing - Small */
-  --form-height-sm: 28px; /* 36px (h-9) */
+  --form-height-sm: 2rem; /* 32px (h-8) - inner height for inputs */
+  --form-height-sm-outer: calc(
+    2rem + 2px
+  ); /* 34px - outer height with border */
   --form-padding-x-sm: 0.75rem; /* 12px (px-3) */
   --form-font-size-sm: 0.75rem; /* 12px (text-xs) */
 
   /* Form Sizing - Large */
-  --form-height-lg: 2.75rem; /* 44px (h-11) */
+  --form-height-lg: 2.75rem; /* 44px (h-11) - inner height for inputs */
+  --form-height-lg-outer: calc(
+    2.75rem + 2px
+  ); /* 46px - outer height with border */
   --form-padding-x-lg: 2rem; /* 32px (px-8) - Button default, adjusted for inputs usually */
   --form-font-size-lg: 1rem; /* 16px (text-base) */
 

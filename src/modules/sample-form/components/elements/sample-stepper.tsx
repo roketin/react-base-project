@@ -4,7 +4,7 @@ import {
   type Step,
 } from '@/modules/app/components/base/r-stepper';
 import { useState } from 'react';
-import { ArrowLeft, ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 const steps: Step[] = [
@@ -41,23 +41,7 @@ const SampleStepper = () => {
           label: 'Back',
           icon: <ArrowLeft />,
         }}
-        cancelButton={{
-          label: 'Prev',
-          disabled: index === 0,
-          icon: <ChevronLeft className='size-4' />,
-          variant: 'outline',
-          iconPlacement: 'start',
-        }}
-        okButton={{
-          label: isLastStep ? 'Submit' : 'Next',
-          icon: isLastStep ? (
-            <Save className='size-4' />
-          ) : (
-            <ChevronRight className='size-4' />
-          ),
-          variant: 'default',
-          iconPlacement: 'end',
-        }}
+        className='pt-0'
       />
 
       <RStepper
