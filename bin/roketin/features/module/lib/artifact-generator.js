@@ -12,7 +12,10 @@ import { logCreated, logSkipped, logger } from '../../../lib/logger.js';
 import { getGeneratorTypes } from '../config/index.js';
 import { buildFeatureFlagKey, buildModuleId } from './module-meta.js';
 import { registerFeatureFlag } from './feature-flag-registry.js';
-import { ensureAncestorConfigs } from './config-scaffolder.js';
+import {
+  ensureAncestorConfigs,
+  ensureAncestorLocales,
+} from './config-scaffolder.js';
 
 export function getTypeConfigs() {
   return getGeneratorTypes();
@@ -101,6 +104,10 @@ export function generateArtifacts({
         featureFlagKey,
         moduleParts,
       });
+    }
+
+    if (type === 'locale') {
+      ensureAncestorLocales({ moduleParts });
     }
   });
 }
