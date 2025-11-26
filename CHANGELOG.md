@@ -1,3 +1,17 @@
+## [2.1.0] - 2025-11-26
+
+### 🚀 Features
+
+- _(ddd)_ Add form field set for better ui form
+
+### 🐛 Bug Fixes
+
+- _(ddd)_ When create sub module without parent should be generate localesc on parent
+- _(ddd)_ Reverse logic show/hide button on panel-header
+- _(ddd)_ For now recent global search show keyword query
+- _(ddd)_ Improve layout system
+- _(ddd)_ Update deps
+
 ## [2.0.2] - 2025-11-25
 
 ### 🚀 Features
