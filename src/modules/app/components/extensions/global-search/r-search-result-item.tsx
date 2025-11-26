@@ -6,9 +6,14 @@ import { FileText, Zap } from 'lucide-react';
 type SearchResultItemProps = {
   item: SearchableItem;
   onSelect: (item: SearchableItem) => void;
+  searchKeyword?: string;
 };
 
-export function RSearchResultItem({ item, onSelect }: SearchResultItemProps) {
+export function RSearchResultItem({
+  item,
+  onSelect,
+  searchKeyword,
+}: SearchResultItemProps) {
   const isAction = item.type === 'action';
   const isCommand = item.type === 'command';
   const isSpecial = isAction || isCommand;
@@ -46,7 +51,16 @@ export function RSearchResultItem({ item, onSelect }: SearchResultItemProps) {
           )}
         </div>
         <div className='text-xs text-muted-foreground truncate'>
-          {item.moduleTitle}
+          {searchKeyword ? (
+            <>
+              {item.moduleTitle} · searched:{' '}
+              <span className='font-medium text-foreground'>
+                "{searchKeyword}"
+              </span>
+            </>
+          ) : (
+            item.moduleTitle
+          )}
         </div>
       </div>
       <kbd

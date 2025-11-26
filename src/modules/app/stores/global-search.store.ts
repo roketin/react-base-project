@@ -71,7 +71,7 @@ type GlobalSearchStore = {
   setSelectedModule: (module: string | null) => void;
   setCurrentQuery: (query: string) => void;
   setUserId: (userId: string | undefined) => void;
-  trackAccess: (itemId: string) => void;
+  trackAccess: (itemId: string, query?: string) => void;
   getRecentIds: () => string[];
   getFrequentIds: () => string[];
   getSearchKeyword: (itemId: string) => string | undefined;
@@ -95,8 +95,11 @@ export const useGlobalSearchStore = create<GlobalSearchStore>((set, get) => ({
   },
 
   // Tracking Actions
-  trackAccess: (itemId) => {
+  trackAccess: (itemId, query) => {
     const { trackingData, currentQuery, userId } = get();
+    // Use passed query or fallback to currentQuery from store
+    const searchQuery = query || currentQuery;
+
     const newData: SearchTrackingData = {
       recent: [
         itemId,
@@ -108,7 +111,7 @@ export const useGlobalSearchStore = create<GlobalSearchStore>((set, get) => ({
       },
       searchKeywords: {
         ...trackingData.searchKeywords,
-        ...(currentQuery && { [itemId]: currentQuery }),
+        ...(searchQuery && { [itemId]: searchQuery }),
       },
       lastUpdated: Date.now(),
     };

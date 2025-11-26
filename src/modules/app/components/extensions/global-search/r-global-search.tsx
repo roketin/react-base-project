@@ -79,6 +79,7 @@ export function RGlobalSearch() {
   }, [isOpen, setIsOpen]);
 
   const onSelect = (item: SearchableItem) => {
+    // Track access first (this saves to recent)
     handleSelect(item);
 
     // Handle action with onExecute (custom execution)
@@ -223,13 +224,19 @@ export function RGlobalSearch() {
                     </div>
                   }
                 >
-                  {recentItems.map((item) => (
-                    <RSearchResultItem
-                      key={item.id}
-                      item={item}
-                      onSelect={onSelect}
-                    />
-                  ))}
+                  {recentItems.map((item) => {
+                    const { getSearchKeyword } =
+                      useGlobalSearchStore.getState();
+                    const savedKeyword = getSearchKeyword(item.id);
+                    return (
+                      <RSearchResultItem
+                        key={item.id}
+                        item={item}
+                        onSelect={onSelect}
+                        searchKeyword={savedKeyword}
+                      />
+                    );
+                  })}
                 </CommandGroup>
               ) : (
                 <div className='py-6 text-center text-sm'>

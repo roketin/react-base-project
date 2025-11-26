@@ -28,7 +28,7 @@ export function useGlobalSearch() {
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const allItems = useSearchableItems();
-  const { selectedModule, trackAccess, getRecentIds } = useGlobalSearchStore();
+  const { selectedModule, trackAccess, trackingData } = useGlobalSearchStore();
 
   // Debounce query with 300ms delay
   useEffect(() => {
@@ -56,13 +56,13 @@ export function useGlobalSearch() {
     return new Fuse(filteredItems, FUSE_OPTIONS);
   }, [filteredItems]);
 
-  // Get recent items
+  // Get recent items - reactive to trackingData changes
   const recentItems = useMemo(() => {
-    const recentIds = getRecentIds();
+    const recentIds = trackingData.recent.slice(0, 5); // RECENT_LIMIT = 5
     return recentIds
       .map((id) => allItems.find((item) => item.id === id))
       .filter((item): item is SearchableItem => item !== undefined);
-  }, [allItems, getRecentIds]);
+  }, [allItems, trackingData.recent]);
 
   // Parse query for identifier
   const parsedQuery = useMemo(() => {
@@ -146,9 +146,13 @@ export function useGlobalSearch() {
   // Handle item selection
   const handleSelect = useCallback(
     (item: SearchableItem) => {
-      trackAccess(item.id);
+      // Pass the actual query being used for search
+      const actualQuery = parsedQuery.hasIdentifier
+        ? parsedQuery.query
+        : debouncedQuery;
+      trackAccess(item.id, actualQuery);
     },
-    [trackAccess],
+    [trackAccess, debouncedQuery, parsedQuery],
   );
 
   return {
