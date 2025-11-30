@@ -51,7 +51,7 @@ const sampleMeta = {
 };
 
 const meta: Meta<typeof RDataTable<User, unknown>> = {
-  title: 'Base/RDataTable',
+  title: 'Components/Data Display/RDataTable',
   component: RDataTable<User, unknown>,
   parameters: {
     layout: 'fullscreen',
@@ -146,5 +146,31 @@ export const Loading: Story = {
 export const WithoutSearch: Story = {
   args: {
     allowSearch: false,
+  },
+};
+
+export const WithMobileView: Story = {
+  args: {
+    renderOnMobile: (row) => (
+      <div className='rounded-lg border bg-card p-4'>
+        <div className='flex items-start justify-between'>
+          <div className='flex-1'>
+            <h4 className='font-medium text-foreground'>{row.name}</h4>
+            <p className='text-sm text-muted-foreground'>{row.email}</p>
+          </div>
+          <span className='inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary'>
+            {row.role}
+          </span>
+        </div>
+      </div>
+    ),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Resize your browser to mobile width (< 768px) to see the mobile card view. The table will automatically switch between table and card layout with a smooth transition.',
+      },
+    },
   },
 };

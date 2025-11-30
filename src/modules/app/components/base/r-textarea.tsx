@@ -1,63 +1,85 @@
-import { forwardRef, useId } from 'react';
-import type { ReactNode } from 'react';
-import {
-  Textarea,
-  type TextareaProps,
-} from '@/modules/app/components/ui/textarea';
+import { forwardRef, type TextareaHTMLAttributes } from 'react';
 import { cn } from '@/modules/app/libs/utils';
+import { getTextareaClasses } from '@/modules/app/libs/ui-variants';
 
-export type TRTextareaProps = TextareaProps & {
-  label?: ReactNode;
-  description?: ReactNode;
-  error?: ReactNode;
-  requiredIndicator?: ReactNode;
+export type TRTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+  label?: string;
+  error?: string;
+  helperText?: string;
   wrapperClassName?: string;
+  fullWidth?: boolean;
+  resize?: 'none' | 'vertical' | 'horizontal' | 'both';
 };
 
 export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
-  function RTextarea(
+  (
     {
       label,
-      description,
       error,
-      requiredIndicator,
-      id,
-      className,
+      helperText,
       wrapperClassName,
+      fullWidth = false,
+      resize = 'vertical',
+      className,
+      disabled,
+      id,
       ...props
     },
     ref,
-  ) {
-    const generatedId = useId();
-    const textareaId = id ?? generatedId;
+  ) => {
+    const textareaId =
+      id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
+    const hasError = !!error;
 
     return (
-      <div className={cn('flex flex-col gap-2', wrapperClassName)}>
-        {label ? (
+      <div
+        className={cn(
+          'flex flex-col gap-1.5',
+          fullWidth && 'w-full',
+          wrapperClassName,
+        )}
+      >
+        {label && (
           <label
             htmlFor={textareaId}
-            className='flex items-center gap-1 text-sm font-medium text-foreground'
+            className={cn(
+              'text-sm font-medium text-slate-700',
+              disabled && 'opacity-50 cursor-not-allowed',
+            )}
           >
             {label}
-            {requiredIndicator ??
-              (props.required ? (
-                <span className='text-destructive'>*</span>
-              ) : null)}
           </label>
-        ) : null}
+        )}
 
-        <Textarea id={textareaId} ref={ref} className={className} {...props} />
+        <textarea
+          ref={ref}
+          id={textareaId}
+          disabled={disabled}
+          aria-invalid={hasError}
+          className={cn(
+            getTextareaClasses(hasError),
+            resize === 'none' && 'resize-none',
+            resize === 'vertical' && 'resize-y',
+            resize === 'horizontal' && 'resize-x',
+            resize === 'both' && 'resize',
+            className,
+          )}
+          {...props}
+        />
 
-        {description ? (
-          <p className='text-xs text-muted-foreground'>{description}</p>
-        ) : null}
-
-        {error ? <p className='text-xs text-destructive'>{error}</p> : null}
+        {(error || helperText) && (
+          <p
+            className={cn(
+              'text-xs',
+              hasError ? 'text-destructive' : 'text-slate-500',
+            )}
+          >
+            {error || helperText}
+          </p>
+        )}
       </div>
     );
   },
 );
 
 RTextarea.displayName = 'RTextarea';
-
-export default RTextarea;

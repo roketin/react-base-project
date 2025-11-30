@@ -81,7 +81,10 @@ export const fileSizeRule = ({
   return {
     name: 'check-file-size',
     test: (value, ctx: TestContext) => {
-      const fileSize = (value as File).size;
+      // Skip validation if value is null, undefined, or not a File
+      if (!value || !(value instanceof File)) return true;
+
+      const fileSize = value.size;
 
       if (min && max) {
         if (fileSize < byteToMb(min) || fileSize > byteToMb(max)) {

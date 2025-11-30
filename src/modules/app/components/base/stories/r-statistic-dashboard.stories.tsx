@@ -69,7 +69,7 @@ const metrics = [
 ];
 
 const meta: Meta<typeof RStatisticDashboard> = {
-  title: 'Base/RStatisticDashboard',
+  title: 'Components/Data Display/RStatisticDashboard',
   component: RStatisticDashboard,
   tags: ['autodocs'],
   args: {

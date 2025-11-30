@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Checkbox } from '@/modules/app/components/ui/checkbox';
+import { RCheckbox } from '@/modules/app/components/base/r-checkbox';
 import type {
   TDisableable,
   TLabelValueOption,
@@ -51,15 +51,15 @@ export function RCheckboxMultiple({
       )}
     >
       {options.map(({ label, value }, index) => {
-        const id = `${name ?? 'radio'}-${index}`;
+        const id = `checkbox-multiple-${index}`;
         return (
-          <Checkbox
+          <RCheckbox
             id={id}
             key={value}
             label={label}
             value={value}
             checked={checked?.includes(value)}
-            onCheckedChange={() => handleToggle(value)}
+            onChange={() => handleToggle(value)}
             disabled={disabled}
           />
         );

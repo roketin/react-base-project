@@ -1,7 +1,7 @@
 import RBtn from '@/modules/app/components/base/r-btn';
 import RDialog from '@/modules/app/components/base/r-dialog';
 import RForm from '@/modules/app/components/base/r-form';
-import RInput from '@/modules/app/components/base/r-input';
+import { RInput } from '@/modules/app/components/base/r-input';
 import { RFormDatePicker } from '@/modules/app/components/base/r-picker';
 import { RFormRangePicker } from '@/modules/app/components/base/r-range-picker';
 import RSelect from '@/modules/app/components/base/r-select';

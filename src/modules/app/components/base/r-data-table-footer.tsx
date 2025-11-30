@@ -1,14 +1,8 @@
-import RBtn from '@/modules/app/components/base/r-btn';
 import RSelect from '@/modules/app/components/base/r-select';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-} from '@/modules/app/components/ui/pagination';
+import { RPagination } from '@/modules/app/components/base/r-pagination';
 import { cn } from '@/modules/app/libs/utils';
 import type { TApiResponsePaginateMeta } from '@/modules/app/types/api.type';
 import type { TDisableable } from '@/modules/app/types/component.type';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 
 export type TRDataTableFooterProps = TDisableable & {
@@ -68,21 +62,6 @@ const RDataTableFooter = ({
   const safePagesToShow = Math.max(Math.floor(pagesToShow), 1);
 
   /**
-   * Computes the array of page numbers to display in the pagination control,
-   * centered around the current page and limited by pagesToShow.
-   */
-  const pageNumbers = useMemo<number[]>(() => {
-    if (pageCount < 1) return [];
-
-    const halfWindow = Math.floor(safePagesToShow / 2);
-    const maxStart = Math.max(pageCount - safePagesToShow + 1, 1);
-    const start = Math.max(Math.min(currentPage - halfWindow, maxStart), 1);
-    const end = Math.min(start + safePagesToShow - 1, pageCount);
-
-    return Array.from({ length: end - start + 1 }, (_, index) => start + index);
-  }, [currentPage, pageCount, safePagesToShow]);
-
-  /**
    * Calculates the starting entry number currently visible.
    * Uses 'from' from metadata if available, otherwise calculates based on current page and perPage.
    */
@@ -102,21 +81,7 @@ const RDataTableFooter = ({
     return Math.min(currentPage * perPage, total);
   }, [currentPage, perPage, to, total]);
 
-  // Boolean flags indicating if navigation to previous or next pages is possible
-  const canGoPrev = currentPage > 1;
-  const canGoNext = currentPage < pageCount;
   const isDisabled = disabled || pageCount < 1;
-
-  // Determine the first and last visible page numbers in the pagination control
-  const firstVisiblePage = pageNumbers[0] ?? 1;
-  const lastVisiblePage =
-    pageNumbers[pageNumbers.length - 1] ?? firstVisiblePage;
-
-  // Flags to determine whether to show ellipsis and first/last page links
-  const showLeadingEllipsis = firstVisiblePage > 2;
-  const showFirstPage = firstVisiblePage > 1;
-  const showTrailingEllipsis = lastVisiblePage < pageCount - 1;
-  const showLastPage = lastVisiblePage < pageCount;
 
   /**
    * Callback to handle page changes triggered by user interaction.
@@ -135,8 +100,8 @@ const RDataTableFooter = ({
   /**
    * Render the pagination footer layout including:
    * - Entry count display
-   * - Entries per page selector (RComboBox)
-   * - Pagination controls with buttons for first, previous, page numbers, next, and last
+   * - Entries per page selector (RSelect)
+   * - Pagination controls using RPagination component
    */
   return (
     <div
@@ -165,74 +130,14 @@ const RDataTableFooter = ({
         </div>
       </div>
 
-      <Pagination className='ml-auto w-auto'>
-        <PaginationContent>
-          <RBtn
-            title='Go to Previous'
-            variant='outline'
-            disabled={!canGoPrev || disabled}
-            onClick={() => handleChangePage(currentPage - 1)}
-            iconStart={<ChevronLeft size={20} />}
-          >
-            Prev
-          </RBtn>
-
-          {showFirstPage && (
-            <RBtn
-              variant={currentPage === 1 ? 'default' : 'outline'}
-              className={cn('cursor-pointer', {
-                'pointer-events-none': currentPage === 1,
-              })}
-              onClick={() => handleChangePage(1)}
-            >
-              1
-            </RBtn>
-          )}
-          {showLeadingEllipsis && (
-            <PaginationItem>
-              <span className='px-2 text-sm text-muted-foreground'>...</span>
-            </PaginationItem>
-          )}
-
-          {pageNumbers.map((page) => (
-            <RBtn
-              key={page}
-              variant={page === currentPage ? 'default' : 'outline'}
-              className={cn('cursor-pointer min-w-9 w-full', {
-                'pointer-events-none': currentPage === page,
-              })}
-              onClick={() => handleChangePage(page)}
-            >
-              {page}
-            </RBtn>
-          ))}
-
-          {showTrailingEllipsis && (
-            <PaginationItem>
-              <span className='px-2 text-sm text-muted-foreground'>...</span>
-            </PaginationItem>
-          )}
-          {showLastPage && (
-            <RBtn
-              variant={pageCount === currentPage ? 'default' : 'ghost'}
-              className='cursor-pointer'
-              onClick={() => handleChangePage(pageCount)}
-            >
-              {pageCount}
-            </RBtn>
-          )}
-
-          <RBtn
-            title='Go to Next'
-            variant='outline'
-            disabled={!canGoNext || disabled}
-            onClick={() => handleChangePage(currentPage + 1)}
-            iconEnd={<ChevronRight size={20} />}
-          >
-            Next
-          </RBtn>
-        </PaginationContent>
-      </Pagination>
+      <RPagination
+        currentPage={currentPage}
+        totalPages={pageCount}
+        onPageChange={handleChangePage}
+        siblingCount={Math.floor(safePagesToShow / 2)}
+        showFirstLast={true}
+        className='ml-auto'
+      />
     </div>
   );
 };

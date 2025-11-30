@@ -1,19 +1,23 @@
-import { Input } from '@/modules/app/components/ui/input';
-import { Switch } from '@/modules/app/components/ui/switch';
+import { RInput } from '@/modules/app/components/base/r-input';
+import { RSwitch } from '@/modules/app/components/base/r-switch';
 import { RCheckboxMultiple } from '@/modules/app/components/base/r-checkbox-multiple';
 import RSelect from '@/modules/app/components/base/r-select';
-import type { DefaultOptionType } from 'rc-select/lib/Select';
+import { RSelectInfinite } from '@/modules/app/components/base/r-select-infinite';
+import type { DefaultOptionType, BaseOptionType } from 'rc-select/lib/Select';
 import { RPicker } from '@/modules/app/components/base/r-picker';
 import { RRangePicker } from '@/modules/app/components/base/r-range-picker';
-import { Slider } from '@/modules/app/components/ui/slider';
+import { RSlider } from '@/modules/app/components/base/r-slider';
 import { RRadio } from '@/modules/app/components/base/r-radio';
 import type { TRPickerProps } from '@/modules/app/components/base/r-picker';
 import type { TRRangePickerProps } from '@/modules/app/components/base/r-range-picker';
-import type { TInputProps } from '@/modules/app/components/ui/input';
-import type { TInputSize } from '@/modules/app/components/ui/variants/input-variants';
+import type { TRInputProps } from '@/modules/app/components/base/r-input';
+import type { TRSelectProps } from '@/modules/app/components/base/r-select';
 import { type ComponentProps, type ReactNode } from 'react';
 import type { TRRadioOption } from '@/modules/app/components/base/r-radio';
+import type { InfiniteData } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+
+export type TInputSize = 'default' | 'sm' | 'lg';
 
 type TFilterRenderer<TValue> = (args: {
   value: TValue;
@@ -49,7 +53,7 @@ type FilterComponentOptions<
 
 type TFilterInputOptions = FilterComponentOptions<
   string | null,
-  TInputProps,
+  TRInputProps,
   'id' | 'value' | 'onChange'
 >;
 
@@ -64,7 +68,7 @@ export function filterInput({
     label,
     defaultValue: defaultValue ?? null,
     render: ({ value, onChange }) => (
-      <Input
+      <RInput
         {...inputProps}
         id={id}
         value={value ?? ''}
@@ -76,9 +80,14 @@ export function filterInput({
 
 type SelectMode = 'single' | 'multiple';
 
+type TLabeledValue = {
+  value: string;
+  label?: string;
+};
+
 type FilterSelectValue<TMode extends SelectMode> = TMode extends 'multiple'
-  ? string[] | null
-  : string | null;
+  ? Array<string | TLabeledValue> | null
+  : string | TLabeledValue | null;
 
 type FilterSelectComponentProps<
   TItem extends object | PrimitiveOption,
@@ -100,16 +109,15 @@ type FilterSelectComponentProps<
   dropdownClassName?: string;
   mode?: TMode;
   density?: TInputSize;
+  infiniteScroll?: TRSelectProps['infiniteScroll'];
 };
 
 type TFilterSelectOptions<
   TItem extends object | PrimitiveOption,
-  TLabel extends TItem extends object
-    ? keyof TItem
-    : never = TItem extends object ? keyof TItem : never,
-  TValue extends TItem extends object
-    ? keyof TItem
-    : never = TItem extends object ? keyof TItem : never,
+  TLabel extends TItem extends object ? keyof TItem : never =
+    TItem extends object ? keyof TItem : never,
+  TValue extends TItem extends object ? keyof TItem : never =
+    TItem extends object ? keyof TItem : never,
   TMode extends SelectMode = 'single',
 > = FilterComponentOptions<
   FilterSelectValue<TMode>,
@@ -119,12 +127,10 @@ type TFilterSelectOptions<
 
 export function filterSelect<
   TItem extends object | PrimitiveOption,
-  TLabel extends TItem extends object
-    ? keyof TItem
-    : never = TItem extends object ? keyof TItem : never,
-  TValue extends TItem extends object
-    ? keyof TItem
-    : never = TItem extends object ? keyof TItem : never,
+  TLabel extends TItem extends object ? keyof TItem : never =
+    TItem extends object ? keyof TItem : never,
+  TValue extends TItem extends object ? keyof TItem : never =
+    TItem extends object ? keyof TItem : never,
   TMode extends SelectMode = 'single',
 >({
   id,
@@ -179,6 +185,29 @@ export function filterSelect<
 
   const optionFilterProp = fieldNames?.label ?? 'label';
 
+  const toLabeledValue = (
+    val: string | number | TLabeledValue | null | undefined,
+  ): TLabeledValue | null => {
+    if (val === null || val === undefined) return null;
+    if (typeof val === 'object' && 'value' in val) {
+      return {
+        value: String((val as TLabeledValue).value),
+        label: (val as TLabeledValue).label,
+      };
+    }
+    const stringVal = String(val);
+    return { value: stringVal, label: stringVal };
+  };
+
+  const normalizeArrayValue = (
+    val: unknown,
+  ): Array<TLabeledValue> | undefined => {
+    if (!Array.isArray(val)) return undefined;
+    return val
+      .map((item) => toLabeledValue(item as string | TLabeledValue))
+      .filter((item): item is TLabeledValue => Boolean(item?.value));
+  };
+
   return {
     id,
     label,
@@ -199,35 +228,17 @@ export function filterSelect<
         options={selectOptions}
         fieldNames={fieldNames}
         optionFilterProp={optionFilterProp}
+        labelInValue
         value={
           isMultiple
-            ? ((value ?? []) as string[])
-            : ((value ?? undefined) as string | undefined)
+            ? (normalizeArrayValue(value) as unknown)
+            : ((toLabeledValue(
+                value as string | TLabeledValue | null | undefined,
+              ) ?? undefined) as unknown)
         }
-        onChange={(nextValue) => {
+        onChange={(nextValue: unknown) => {
           if (isMultiple) {
-            const rawValues = Array.isArray(nextValue)
-              ? nextValue
-              : nextValue == null
-                ? []
-                : [nextValue];
-            const normalizedValues = rawValues
-              .filter((item) => item !== undefined && item !== null)
-              .map((item) => {
-                if (
-                  typeof item === 'object' &&
-                  item !== null &&
-                  'value' in item
-                ) {
-                  return String(
-                    (item as { value: string | number | undefined }).value ??
-                      '',
-                  );
-                }
-                return String(item);
-              })
-              .filter((val) => val !== '');
-
+            const normalizedValues = normalizeArrayValue(nextValue) ?? [];
             onChange(
               (normalizedValues.length > 0
                 ? normalizedValues
@@ -241,19 +252,11 @@ export function filterSelect<
             return;
           }
 
-          const normalizedValue =
-            typeof nextValue === 'object' && 'value' in nextValue && nextValue
-              ? String(
-                  (nextValue as { value: string | number | undefined }).value ??
-                    '',
-                )
-              : String(nextValue);
-
-          onChange(
-            (normalizedValue === ''
-              ? null
-              : normalizedValue) as FilterSelectValue<TMode>,
+          const normalizedValue = toLabeledValue(
+            nextValue as string | TLabeledValue,
           );
+
+          onChange(normalizedValue as FilterSelectValue<TMode>);
         }}
       />
     ),
@@ -262,7 +265,7 @@ export function filterSelect<
 
 type TFilterSwitchOptions = FilterComponentOptions<
   boolean | null,
-  ComponentProps<typeof Switch>,
+  ComponentProps<typeof RSwitch>,
   'checked' | 'onCheckedChange' | 'id',
   {
     description?: ReactNode;
@@ -283,7 +286,7 @@ export function filterSwitch({
     defaultValue: defaultValue ?? null,
     render: ({ value, onChange }) => (
       <div className='flex items-center gap-3'>
-        <Switch
+        <RSwitch
           {...props}
           id={id}
           className={className}
@@ -356,11 +359,11 @@ export function filterCheckboxMultiple({
 }
 
 type TFilterSliderOptions = FilterComponentOptions<
-  number[] | null,
-  ComponentProps<typeof Slider>,
+  number | null,
+  ComponentProps<typeof RSlider>,
   'value' | 'defaultValue' | 'onValueChange' | 'id',
   {
-    formatValue?: (value: number[]) => ReactNode;
+    formatValue?: (value: number) => ReactNode;
   }
 >;
 
@@ -370,25 +373,23 @@ export function filterSlider({
   defaultValue,
   formatValue,
   ...props
-}: TFilterSliderOptions): TFilterItem<number[] | null> {
+}: TFilterSliderOptions): TFilterItem<number | null> {
   return {
     id,
     label,
     defaultValue: defaultValue ?? null,
     render: ({ value, onChange }) => {
-      const sliderValue = value ?? defaultValue ?? [];
-      const effectiveValue =
-        sliderValue.length > 0 ? sliderValue : (defaultValue ?? []);
-      const handleChange = (next: number[]) => {
-        onChange(next.length > 0 ? next : null);
+      const effectiveValue = value ?? defaultValue ?? 0;
+      const handleChange = (next: number) => {
+        onChange(next);
       };
 
       return (
         <div className='space-y-2'>
-          <Slider
+          <RSlider
             {...props}
             defaultValue={defaultValue ?? undefined}
-            value={effectiveValue.length > 0 ? effectiveValue : undefined}
+            value={effectiveValue}
             onValueChange={handleChange}
           />
           {formatValue && (
@@ -497,6 +498,147 @@ export function filterDatepickerMultiple({
 }
 
 // ---------------------------------------------------------------------------
+// Infinite scroll select
+// ---------------------------------------------------------------------------
+
+type MinimalInfiniteQueryResult<TPage> = {
+  data?: InfiniteData<TPage>;
+  fetchNextPage: () => Promise<unknown>;
+  hasNextPage?: boolean;
+  isFetchingNextPage: boolean;
+  isLoading: boolean;
+};
+
+type TFilterSelectInfiniteOptions<
+  TPage,
+  TOption extends BaseOptionType,
+  TParams extends Record<string, unknown>,
+  TLabel extends keyof TOption = keyof TOption,
+  TValue extends keyof TOption = keyof TOption,
+> = {
+  id: string;
+  label?: ReactNode;
+  defaultValue?: string | TLabeledValue | null;
+  query: (options: { variables: TParams }) => MinimalInfiniteQueryResult<TPage>;
+  getPageItems: (page: TPage) => TOption[];
+  baseParams?: TParams;
+  searchParamKey?: string;
+  deduplicateKey?: keyof TOption;
+  debounceMs?: number;
+  labelKey?: TLabel;
+  valueKey?: TValue;
+  placeholder?: string;
+  clearable?: boolean;
+  allowSearch?: boolean;
+  disabled?: boolean;
+  className?: string;
+  dropdownClassName?: string;
+};
+
+export function filterSelectInfinite<
+  TPage,
+  TOption extends BaseOptionType,
+  TParams extends Record<string, unknown> = Record<string, unknown>,
+  TLabel extends keyof TOption = keyof TOption,
+  TValue extends keyof TOption = keyof TOption,
+>({
+  id,
+  label,
+  defaultValue,
+  query,
+  getPageItems,
+  baseParams,
+  searchParamKey,
+  deduplicateKey,
+  debounceMs,
+  labelKey,
+  valueKey,
+  placeholder,
+  clearable = true,
+  allowSearch = true,
+  disabled,
+  dropdownClassName,
+  className,
+}: TFilterSelectInfiniteOptions<
+  TPage,
+  TOption,
+  TParams,
+  TLabel,
+  TValue
+>): TFilterItem<string | TLabeledValue | null> {
+  const toLabeledValue = (
+    val: string | number | TLabeledValue | null | undefined,
+  ): TLabeledValue | null => {
+    if (val === null || val === undefined) return null;
+    if (typeof val === 'object' && 'value' in val) {
+      return {
+        value: String((val as TLabeledValue).value),
+        label: (val as TLabeledValue).label,
+      };
+    }
+    const stringVal = String(val);
+    return { value: stringVal, label: stringVal };
+  };
+
+  return {
+    id,
+    label,
+    defaultValue: defaultValue ?? null,
+    render: ({ value, onChange }) => {
+      const fieldNames =
+        labelKey || valueKey
+          ? {
+              label: String(labelKey ?? 'label') as Extract<
+                keyof TOption,
+                string
+              >,
+              value: String(valueKey ?? 'value') as Extract<
+                keyof TOption,
+                string
+              >,
+            }
+          : undefined;
+
+      return (
+        <RSelectInfinite<TPage, TOption, TParams>
+          className={className}
+          dropdownClassName={dropdownClassName}
+          disabled={disabled}
+          placeholder={placeholder}
+          allowClear={clearable}
+          showSearch={allowSearch}
+          {...(fieldNames ? { fieldNames } : {})}
+          labelInValue
+          query={query}
+          getPageItems={getPageItems}
+          baseParams={baseParams}
+          searchParamKey={searchParamKey}
+          deduplicateKey={deduplicateKey}
+          debounceMs={debounceMs}
+          value={
+            (toLabeledValue(
+              value as string | TLabeledValue | null | undefined,
+            ) ?? undefined) as unknown
+          }
+          onChange={(nextValue: unknown) => {
+            if (nextValue === undefined || nextValue === null) {
+              onChange(null);
+              return;
+            }
+
+            const normalizedValue = toLabeledValue(
+              nextValue as string | TLabeledValue,
+            );
+
+            onChange(normalizedValue);
+          }}
+        />
+      );
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Escape hatch for custom components
 // ---------------------------------------------------------------------------
 
@@ -516,6 +658,7 @@ export function filterCustom<TValue>(
 export const filterItem = {
   input: filterInput,
   select: filterSelect,
+  selectInfinite: filterSelectInfinite,
   switch: filterSwitch,
   radio: filterRadio,
   checkboxMultiple: filterCheckboxMultiple,
@@ -528,6 +671,7 @@ export const filterItem = {
 export type {
   TFilterInputOptions,
   TFilterSelectOptions,
+  TFilterSelectInfiniteOptions,
   TFilterSwitchOptions,
   TFilterRadioOptions,
   TFilterCheckboxMultipleOptions,

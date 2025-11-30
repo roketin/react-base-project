@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, type ElementType } from 'react';
 import type { ForwardedRef, ReactNode, Ref } from 'react';
 import { cn } from '@/modules/app/libs/utils';
 import {
@@ -29,7 +29,7 @@ export type TRListProps<Item extends Record<string, unknown>> = {
   listClassName?: string;
   emptyContent?: ReactNode | ((info: { count: number }) => ReactNode);
   role?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: ElementType;
   virtual?: TRListVirtualProps<Item>;
   itemClassName?: string | ((item: Item, index: number) => string | undefined);
 };
@@ -163,4 +163,3 @@ export const RList = forwardRef(RListInnerComponent) as <
 ) => ReturnType<typeof RListInnerComponent>;
 
 export default RList;
-export type { TRListProps, TRListVirtualProps };

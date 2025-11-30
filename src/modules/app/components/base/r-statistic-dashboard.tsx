@@ -82,11 +82,35 @@ export function RStatisticDashboard({
         return (
           <RCard
             key={metric.id}
-            wrapperClassName={cn(
+            className={cn(
               'group relative overflow-hidden bg-linear-to-br from-background via-background to-muted/50',
               minimal && 'border-transparent bg-background/80 shadow-none',
               cardClassName,
             )}
+            header={
+              <div className='flex items-start justify-between gap-4'>
+                <div className='space-y-2'>
+                  <span className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
+                    {metric.label}
+                  </span>
+                  <div className='text-3xl font-semibold leading-tight'>
+                    {metric.value}
+                  </div>
+                </div>
+                {metric.icon ? (
+                  <div className='rounded-lg border border-border/70 bg-background/70 p-2 text-muted-foreground'>
+                    {metric.icon}
+                  </div>
+                ) : null}
+              </div>
+            }
+            footer={
+              metric.footer ? (
+                <div className='w-full text-xs text-muted-foreground'>
+                  {metric.footer}
+                </div>
+              ) : undefined
+            }
           >
             {metric.accentColor ? (
               <span
@@ -95,58 +119,40 @@ export function RStatisticDashboard({
               />
             ) : null}
 
-            <div className='flex items-start justify-between gap-4'>
-              <div className='space-y-2'>
-                <span className='text-sm font-semibold uppercase tracking-wide text-muted-foreground'>
-                  {metric.label}
-                </span>
-                <div className='text-3xl font-semibold'>{metric.value}</div>
-              </div>
-              {metric.icon ? (
-                <div className='rounded-lg border border-border/70 bg-background/70 p-2 text-muted-foreground'>
-                  {metric.icon}
+            <div className='space-y-4 pt-2'>
+              {metric.description ? (
+                <p className='text-sm text-muted-foreground'>
+                  {metric.description}
+                </p>
+              ) : null}
+
+              {metric.trend ? (
+                <div className='flex flex-wrap items-center gap-2'>
+                  <span
+                    className={cn(
+                      'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium',
+                      trendConfig.className,
+                    )}
+                  >
+                    {trendConfig.icon}
+                    <span>{trendValue}</span>
+                  </span>
+                  {metric.trend.label ? (
+                    <span className='text-xs text-muted-foreground'>
+                      {metric.trend.label}
+                    </span>
+                  ) : null}
                 </div>
               ) : null}
+
+              {metric.tags ? (
+                <div className='flex flex-wrap items-center gap-2'>
+                  {metric.tags}
+                </div>
+              ) : null}
+
+              {metric.chart ? <div>{metric.chart}</div> : null}
             </div>
-
-            {metric.description ? (
-              <p className='mt-3 text-sm text-muted-foreground'>
-                {metric.description}
-              </p>
-            ) : null}
-
-            {metric.trend ? (
-              <div className='mt-4 flex flex-wrap items-center gap-2'>
-                <span
-                  className={cn(
-                    'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium',
-                    trendConfig.className,
-                  )}
-                >
-                  {trendConfig.icon}
-                  <span>{trendValue}</span>
-                </span>
-                {metric.trend.label ? (
-                  <span className='text-xs text-muted-foreground'>
-                    {metric.trend.label}
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
-
-            {metric.tags ? (
-              <div className='mt-4 flex flex-wrap items-center gap-2'>
-                {metric.tags}
-              </div>
-            ) : null}
-
-            {metric.chart ? <div className='mt-4'>{metric.chart}</div> : null}
-
-            {metric.footer ? (
-              <div className='mt-4 border-t border-border/60 pt-4 text-xs text-muted-foreground'>
-                {metric.footer}
-              </div>
-            ) : null}
           </RCard>
         );
       })}

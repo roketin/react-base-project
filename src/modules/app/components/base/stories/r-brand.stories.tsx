@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Zap, Shield } from 'lucide-react';
 
 const meta: Meta<typeof RBrand> = {
-  title: 'Base/RBrand',
+  title: 'Components/Other/RBrand',
   component: RBrand,
   tags: ['autodocs'],
   parameters: {

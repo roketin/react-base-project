@@ -4,12 +4,12 @@ import RForm from '@/modules/app/components/base/r-form';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
 import { RInputNumber } from '@/modules/app/components/base/r-input-number';
 import { RInputPassword } from '@/modules/app/components/base/r-input-password';
-import { Checkbox } from '@/modules/app/components/ui/checkbox';
-import { Input } from '@/modules/app/components/ui/input';
+import { RCheckbox } from '@/modules/app/components/base/r-checkbox';
+import { RInput } from '@/modules/app/components/base/r-input';
 import { RRadio } from '@/modules/app/components/base/r-radio';
-import { Slider } from '@/modules/app/components/ui/slider';
-import { Switch } from '@/modules/app/components/ui/switch';
-import { Textarea } from '@/modules/app/components/ui/textarea';
+import { RSlider } from '@/modules/app/components/base/r-slider';
+import { RSwitch } from '@/modules/app/components/base/r-switch';
+import { RTextarea } from '@/modules/app/components/base/r-textarea';
 import { fileOrStringRule } from '@/modules/app/validators/file.validator';
 import Yup from '@/plugins/yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -29,10 +29,7 @@ import SampleStepper from '@/modules/sample-form/components/elements/sample-step
 import { useLeavePageGuard } from '@/modules/app/hooks/use-leave-page-guard';
 import { useGetSampleFormInfiniteList } from '@/modules/sample-form/services/sample-form.service';
 import { useInfiniteSelectOptions } from '@/modules/app/hooks/use-infinite-select';
-import type {
-  TApiDefaultQueryParams,
-  TApiResponsePaginate,
-} from '@/modules/app/types/api.type';
+import type { TApiResponsePaginate } from '@/modules/app/types/api.type';
 import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
 import { APP_EL } from '@/modules/app/constants/app.constant';
 
@@ -62,7 +59,7 @@ const formSchema = Yup.object().shape({
     .of(Yup.mixed<File | string>())
     .label('Multiple Images')
     .default([]),
-  slider: Yup.array().of(Yup.number()).default([0]).label('Slider'),
+  slider: Yup.number().default(0).label('Slider'),
   date_picker: Yup.date().required().label('Date Picker'),
   date_picker_range: yupDateRangeRequired('Date Picker Range'),
 });
@@ -96,10 +93,6 @@ const digitsOnlyMask: MaskitoOptions = {
     /\d/,
     /\d/,
   ],
-};
-
-const SAMPLE_SELECT_BASE_PARAMS: TApiDefaultQueryParams = {
-  per_page: 10,
 };
 
 const TodoSave = () => {
@@ -139,8 +132,8 @@ const TodoSave = () => {
     isInitialLoading: isInitialSampleSelectLoading,
     searchValue: selectSearch,
     setSearchValue: setSelectSearch,
-  } = useInfiniteSelectOptions({
-    baseParams: SAMPLE_SELECT_BASE_PARAMS,
+  } = useInfiniteSelectOptions<TApiResponsePaginate<TSampleItem>, TSampleItem>({
+    baseParams: {},
     query: useGetSampleFormInfiniteList,
     getPageItems: selectPageItems,
     searchParamKey: 'search',
@@ -170,7 +163,7 @@ const TodoSave = () => {
             label='Checkbox'
             valuePropName='checked'
           >
-            <Checkbox label='Checkbox Single' className='mt-2' />
+            <RCheckbox label='Checkbox Single' />
           </RFormField>
 
           {/* Checkbox Multiple */}
@@ -214,29 +207,23 @@ const TodoSave = () => {
             name='select_infinite'
             label='Select Infinite'
             labelDescription='Load more results while scrolling'
-            render={({ field }) => (
-              <RSelect
-                {...field}
-                allowClear
-                showSearch
-                placeholder='Search module'
-                options={sampleSelectOptions}
-                onSearch={setSelectSearch}
-                searchValue={selectSearch}
-                loading={isInitialSampleSelectLoading}
-                onChange={(value) => {
-                  field.onChange(value);
-                  setSelectSearch('');
-                }}
-                infiniteScroll={sampleSelectInfiniteScroll}
-                fieldNames={{
-                  label: 'name',
-                  value: 'id',
-                }}
-                optionFilterProp='name'
-              />
-            )}
-          />
+          >
+            <RSelect
+              allowClear
+              showSearch
+              placeholder='Search module'
+              options={sampleSelectOptions}
+              onSearch={setSelectSearch}
+              searchValue={selectSearch}
+              loading={isInitialSampleSelectLoading}
+              infiniteScroll={sampleSelectInfiniteScroll}
+              fieldNames={{
+                label: 'name',
+                value: 'id',
+              }}
+              optionFilterProp='name'
+            />
+          </RFormField>
 
           {/* Switch */}
           <RFormField
@@ -245,7 +232,7 @@ const TodoSave = () => {
             label='Switch'
             valuePropName='checked'
           >
-            <Switch className='mt-2' />
+            <RSwitch className='mt-2' />
           </RFormField>
 
           {/* Input */}
@@ -255,7 +242,7 @@ const TodoSave = () => {
             label='Input'
             withPlaceholder
           >
-            <Input />
+            <RInput />
           </RFormField>
 
           {/* Input Format */}
@@ -293,7 +280,7 @@ const TodoSave = () => {
 
           {/* Textarea */}
           <RFormField control={form.control} name='text_area' label='Text Area'>
-            <Textarea />
+            <RTextarea />
           </RFormField>
 
           {/* Date Picker */}
@@ -343,7 +330,7 @@ const TodoSave = () => {
             label='Slider'
             valuePropName='slider'
           >
-            <Slider min={0} max={100} step={1} className='mt-2' />
+            <RSlider min={0} max={100} step={1} className='mt-2' />
           </RFormField>
         </RForm>
 

@@ -19,7 +19,7 @@ const FRUITS: TLabelValueOption<string, string>[] = [
 ];
 
 const meta: Meta<typeof RCheckboxMultiple> = {
-  title: 'Base/Form/RCheckboxMultiple',
+  title: 'Components/Form Controls/RCheckboxMultiple',
   component: RCheckboxMultiple,
   tags: ['autodocs'],
   parameters: {

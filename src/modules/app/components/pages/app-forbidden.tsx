@@ -1,5 +1,5 @@
 import StatusPage from '@/modules/app/components/pages/status-page';
-import Button from '@/modules/app/components/ui/button';
+import RBtn from '@/modules/app/components/base/r-btn';
 
 const AppForbidden = () => {
   return (
@@ -7,7 +7,7 @@ const AppForbidden = () => {
       code='403'
       title='Access denied'
       description='You do not have permission to view this page. If you believe this is a mistake, please contact your administrator.'
-      action={<Button onClick={() => window.history.back()}>Go Back</Button>}
+      action={<RBtn onClick={() => window.history.back()}>Go Back</RBtn>}
     />
   );
 };

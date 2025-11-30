@@ -32,9 +32,9 @@ import { SidebarContext } from '@/modules/app/contexts/sidebar-context';
 // ... (imports remain the same)
 
 // ============================================================================
-// SIDEBAR PROVIDER
+// RSIDEBAR PROVIDER
 // ============================================================================
-export function SidebarProvider({
+export function RSidebarProvider({
   children,
   defaultOpen = true,
   open: openProp,
@@ -93,15 +93,19 @@ export function SidebarProvider({
 }
 
 // ============================================================================
-// MAIN SIDEBAR COMPONENT
+// MAIN RSIDEBAR COMPONENT
 // ============================================================================
-type SidebarProps = {
+type RSidebarProps = {
   children: ReactNode;
   className?: string;
   side?: 'left' | 'right';
 };
 
-export function Sidebar({ children, className, side = 'left' }: SidebarProps) {
+export function RSidebar({
+  children,
+  className,
+  side = 'left',
+}: RSidebarProps) {
   const { isCollapsed, openMobile, setOpenMobile } = useSidebar();
   const { isMobile } = useViewport();
 
@@ -158,10 +162,10 @@ export function Sidebar({ children, className, side = 'left' }: SidebarProps) {
 }
 
 // ============================================================================
-// SIDEBAR SUB-COMPONENTS
+// RSIDEBAR SUB-COMPONENTS
 // ============================================================================
 
-export function SidebarHeader({
+export function RSidebarHeader({
   children,
   className,
 }: {
@@ -175,7 +179,7 @@ export function SidebarHeader({
   );
 }
 
-export function SidebarContent({
+export function RSidebarContent({
   children,
   className,
 }: {
@@ -196,7 +200,7 @@ export function SidebarContent({
   );
 }
 
-export function SidebarFooter({
+export function RSidebarFooter({
   children,
   className,
 }: {
@@ -209,7 +213,7 @@ export function SidebarFooter({
   );
 }
 
-export function SidebarGroup({
+export function RSidebarGroup({
   children,
   className,
 }: {
@@ -219,7 +223,7 @@ export function SidebarGroup({
   return <div className={cn('space-y-1', className)}>{children}</div>;
 }
 
-export function SidebarGroupContent({
+export function RSidebarGroupContent({
   children,
   className,
 }: {
@@ -230,10 +234,10 @@ export function SidebarGroupContent({
 }
 
 // ============================================================================
-// MENU COMPONENTS
+// RSIDEBAR MENU COMPONENTS
 // ============================================================================
 
-export function SidebarMenu({
+export function RSidebarMenu({
   children,
   className,
 }: {
@@ -247,7 +251,7 @@ import { forwardRef } from 'react';
 
 // ...
 
-export const SidebarMenuItem = forwardRef<
+export const RSidebarMenuItem = forwardRef<
   HTMLLIElement,
   React.ComponentProps<'li'>
 >(({ children, className, ...props }, ref) => {
@@ -257,9 +261,9 @@ export const SidebarMenuItem = forwardRef<
     </li>
   );
 });
-SidebarMenuItem.displayName = 'SidebarMenuItem';
+RSidebarMenuItem.displayName = 'RSidebarMenuItem';
 
-type SidebarMenuButtonProps = {
+type RSidebarMenuButtonProps = {
   children: ReactNode;
   className?: string;
   asChild?: boolean;
@@ -269,7 +273,7 @@ type SidebarMenuButtonProps = {
   onClick?: (e?: React.MouseEvent) => void;
 };
 
-export function SidebarMenuButton({
+export function RSidebarMenuButton({
   children,
   className,
   asChild = false,
@@ -277,7 +281,7 @@ export function SidebarMenuButton({
   tooltip,
   size = 'default',
   onClick,
-}: SidebarMenuButtonProps) {
+}: RSidebarMenuButtonProps) {
   const { isCollapsed, isMobile, setOpenMobile } = useSidebar();
   const Comp = asChild ? Slot : 'button';
 
@@ -331,10 +335,10 @@ export function SidebarMenuButton({
 }
 
 // ============================================================================
-// SUBMENU COMPONENTS
+// RSIDEBAR SUBMENU COMPONENTS
 // ============================================================================
 
-export function SidebarMenuSub({
+export function RSidebarMenuSub({
   children,
   className,
 }: {
@@ -350,7 +354,7 @@ export function SidebarMenuSub({
   );
 }
 
-export function SidebarMenuSubItem({
+export function RSidebarMenuSubItem({
   children,
   className,
 }: {
@@ -360,7 +364,7 @@ export function SidebarMenuSubItem({
   return <li className={cn('relative', className)}>{children}</li>;
 }
 
-export function SidebarInset({
+export function RSidebarInset({
   className,
   ...props
 }: React.ComponentProps<'main'>) {
@@ -372,7 +376,7 @@ export function SidebarInset({
   );
 }
 
-export function SidebarTrigger({
+export function RSidebarTrigger({
   className,
   onClick,
   ...props

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Badge } from '@/modules/app/components/ui/badge';
+import { RBadge } from '../r-badge';
 import { RList, type TRListProps } from '../r-list';
 import RBtn from '@/modules/app/components/base/r-btn';
 
@@ -38,7 +38,7 @@ const ListStoryComponent = (props: ListStoryProps) => (
 );
 
 const meta: Meta<typeof ListStoryComponent> = {
-  title: 'Base/RList',
+  title: 'Components/Other/RList',
   component: ListStoryComponent,
   tags: ['autodocs'],
   args: {
@@ -55,9 +55,9 @@ const meta: Meta<typeof ListStoryComponent> = {
         {item.tags?.length ? (
           <div className='flex flex-wrap gap-1'>
             {item.tags.map((tag) => (
-              <Badge key={tag} variant='outline'>
+              <RBadge key={tag} variant='outline'>
                 {tag}
-              </Badge>
+              </RBadge>
             ))}
           </div>
         ) : null}

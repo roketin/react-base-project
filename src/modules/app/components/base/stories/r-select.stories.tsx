@@ -24,7 +24,7 @@ const options: Option[] = [
 ];
 
 const meta: Meta<typeof RSelect> = {
-  title: 'Base/Form/RSelect',
+  title: 'Components/Form Controls/RSelect',
   component: RSelect,
   tags: ['autodocs'],
   parameters: {

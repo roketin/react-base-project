@@ -1,9 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Save, ChevronRight, ArrowLeft, Check } from 'lucide-react';
+import { Save, ArrowLeft, Eye } from 'lucide-react';
 import { RPanelHeader } from '../r-panel-header';
+import RBtn from '../r-btn';
 
 const meta: Meta<typeof RPanelHeader> = {
-  title: 'Base/RPanelHeader',
+  title: 'Components/Layout/RPanelHeader',
   component: RPanelHeader,
   parameters: {
     layout: 'padded',
@@ -131,4 +132,159 @@ export const WithCustomClassName: Story = {
     onClose: () => alert('Close clicked'),
     onOk: () => alert('Ok clicked'),
   },
+};
+
+export const WithCustomActions: Story = {
+  args: {
+    title: 'Header with Custom Actions',
+    showClose: true,
+    onClose: () => alert('Close clicked'),
+    actions: (
+      <div className='flex items-center gap-2'>
+        <RBtn variant='outline' iconStart={<Eye className='size-4' />}>
+          View
+        </RBtn>
+        <RBtn variant='outline'>Cancel</RBtn>
+        <RBtn iconEnd={<Save className='size-4' />}>Save</RBtn>
+      </div>
+    ),
+  },
+};
+
+export const Sticky: Story = {
+  args: {
+    title: 'Sticky Header',
+    showClose: true,
+    showOk: true,
+    sticky: true,
+    stickyOffset: 0,
+    stickyClassName: 'shadow-lg',
+    onClose: () => alert('Close clicked'),
+    onOk: () => alert('Ok clicked'),
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ height: '150vh', paddingTop: '20px' }}>
+        <div
+          style={{
+            marginBottom: '20px',
+            padding: '10px',
+            background: '#f0f0f0',
+          }}
+        >
+          Scroll down to see sticky behavior with shadow
+        </div>
+        <Story />
+        <div
+          style={{ marginTop: '50vh', padding: '10px', background: '#f0f0f0' }}
+        >
+          End of content
+        </div>
+      </div>
+    ),
+  ],
+};
+
+export const StickyWithCustomClass: Story = {
+  args: {
+    title: 'Sticky with Custom Styling',
+    showClose: true,
+    sticky: true,
+    stickyOffset: 0,
+    stickyClassName: 'shadow-2xl bg-blue-50 border-b-2 border-blue-500',
+    actions: (
+      <div className='flex items-center gap-2'>
+        <RBtn variant='outline'>Cancel</RBtn>
+        <RBtn>Save</RBtn>
+      </div>
+    ),
+    onClose: () => alert('Close clicked'),
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ height: '150vh', paddingTop: '20px' }}>
+        <div
+          style={{
+            marginBottom: '20px',
+            padding: '10px',
+            background: '#f0f0f0',
+          }}
+        >
+          Scroll to see custom sticky styling (blue background + shadow)
+        </div>
+        <Story />
+        <div
+          style={{ marginTop: '50vh', padding: '10px', background: '#f0f0f0' }}
+        >
+          End of content
+        </div>
+      </div>
+    ),
+  ],
+};
+
+export const Responsive: Story = {
+  args: {
+    title: 'Responsive Header',
+    showClose: true,
+    responsive: true,
+    onClose: () => alert('Close clicked'),
+    actions: (
+      <div className='flex items-center gap-2'>
+        <RBtn variant='outline' iconStart={<Eye className='size-4' />}>
+          View
+        </RBtn>
+        <RBtn variant='outline'>Cancel</RBtn>
+        <RBtn iconEnd={<Save className='size-4' />}>Save</RBtn>
+      </div>
+    ),
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
+};
+
+export const ResponsiveSticky: Story = {
+  args: {
+    title: 'Responsive Sticky Header',
+    showClose: true,
+    sticky: true,
+    stickyOffset: 0,
+    responsive: true,
+    stickyClassName: 'shadow-lg',
+    onClose: () => alert('Close clicked'),
+    actions: (
+      <div className='flex items-center gap-2'>
+        <RBtn variant='outline' iconStart={<Eye className='size-4' />}>
+          View
+        </RBtn>
+        <RBtn variant='outline'>Cancel</RBtn>
+        <RBtn iconEnd={<Save className='size-4' />}>Save</RBtn>
+      </div>
+    ),
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ height: '150vh', paddingTop: '20px' }}>
+        <div
+          style={{
+            marginBottom: '20px',
+            padding: '10px',
+            background: '#f0f0f0',
+          }}
+        >
+          Resize window to mobile size to see dropdown menu. Scroll to see
+          sticky behavior.
+        </div>
+        <Story />
+        <div
+          style={{ marginTop: '50vh', padding: '10px', background: '#f0f0f0' }}
+        >
+          End of content
+        </div>
+      </div>
+    ),
+  ],
 };

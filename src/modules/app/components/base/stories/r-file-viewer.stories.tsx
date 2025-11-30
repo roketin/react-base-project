@@ -11,7 +11,7 @@ const SAMPLE_XLSX =
   'https://file-examples.com/storage/fe6b680f2661c3a18123cce/2017/02/file_example_XLSX_10.xlsx';
 
 const meta: Meta<typeof RFileViewer> = {
-  title: 'Base/RFileViewer',
+  title: 'Components/Media/RFileViewer',
   component: RFileViewer,
   tags: ['autodocs'],
   parameters: {

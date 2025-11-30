@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import RAvatar from '../r-avatar';
-import { Badge } from '@/modules/app/components/ui/badge';
+import { RBadge } from '../r-badge';
 
 const meta: Meta<typeof RAvatar> = {
-  title: 'Base/RAvatar',
+  title: 'Components/Data Display/RAvatar',
   component: RAvatar,
   tags: ['autodocs'],
   args: {
@@ -47,12 +47,12 @@ export const WithBadge: Story = {
     name: 'Marketing team',
     size: 'lg',
     badge: (
-      <Badge
+      <RBadge
         variant='secondary'
         className='rounded-full px-1.5 py-0 text-[10px]'
       >
         NEW
-      </Badge>
+      </RBadge>
     ),
   },
 };

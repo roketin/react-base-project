@@ -1,15 +1,14 @@
 import {
-  RadioGroup,
-  RadioGroupItem,
-} from '@/modules/app/components/ui/radio-group';
+  RRadioGroup,
+  RRadio as RRadioItem,
+} from '@/modules/app/components/base/r-radio-group';
 import type {
   TAriaInvalidProp,
   TDescriptiveOption,
   TDisableable,
   TLayoutOrientation,
 } from '@/modules/app/types/component.type';
-import { cn } from '@/modules/app/libs/utils';
-import { useId, useMemo, useState } from 'react';
+import { useId } from 'react';
 
 export type TRRadioOption = TDescriptiveOption<string>;
 
@@ -36,58 +35,25 @@ export function RRadio({
 }: TRRadioProps) {
   const baseId = useId();
   const groupName = name ?? `${baseId}-group`;
-  const isControlled = value !== undefined;
-  const [internalValue, setInternalValue] = useState<string | null>(
-    isControlled ? (value ?? null) : defaultValue,
-  );
-
-  const currentValue = isControlled ? (value ?? null) : internalValue;
-
-  const handleChange = (next: string) => {
-    if (!isControlled) {
-      setInternalValue(next ?? null);
-    }
-    onChange?.(next ?? null);
-  };
-
-  const groupClassName = useMemo(() => {
-    if (layout === 'horizontal') {
-      return cn('flex flex-wrap items-center gap-4', className);
-    }
-    return cn('grid gap-3', className);
-  }, [className, layout]);
 
   return (
-    <RadioGroup
+    <RRadioGroup
       name={groupName}
-      value={currentValue ?? undefined}
-      onValueChange={handleChange}
+      value={value ?? undefined}
+      defaultValue={defaultValue ?? undefined}
+      onChange={(val) => onChange?.(val)}
+      orientation={layout}
       disabled={disabled}
-      className={groupClassName}
+      wrapperClassName={className}
     >
-      {options.map((option, index) => {
-        const id = `${baseId}-option-${index}`;
-        const labelNode = option.description ? (
-          <div className='flex flex-col'>
-            <span>{option.label}</span>
-            <span className='text-sm text-muted-foreground'>
-              {option.description}
-            </span>
-          </div>
-        ) : (
-          option.label
-        );
-
-        return (
-          <RadioGroupItem
-            key={option.value}
-            id={id}
-            value={option.value}
-            label={labelNode}
-            disabled={disabled}
-          />
-        );
-      })}
-    </RadioGroup>
+      {options.map((option) => (
+        <RRadioItem
+          key={option.value}
+          value={option.value}
+          label={option.label}
+          description={option.description}
+        />
+      ))}
+    </RRadioGroup>
   );
 }

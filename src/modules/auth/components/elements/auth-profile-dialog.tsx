@@ -1,17 +1,17 @@
 import RBtn from '@/modules/app/components/base/r-btn';
 import RDialog from '@/modules/app/components/base/r-dialog';
 import RForm from '@/modules/app/components/base/r-form';
-import RInput from '@/modules/app/components/base/r-input';
 import { RFormDatePicker } from '@/modules/app/components/base/r-picker';
 import RSelect from '@/modules/app/components/base/r-select';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
-import RTextArea from '@/modules/app/components/base/r-textarea';
 import showAlert from '@/modules/app/components/base/show-alert';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import Yup from '@/plugins/yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { RInput } from '@/modules/app/components/base/r-input';
+import { RTextarea } from '@/modules/app/components/base/r-textarea';
 
 const genderOptions = [
   { id: 'male', name: 'Male' },
@@ -141,7 +141,7 @@ const ProfileDialog = ({
         </RFormField>
 
         <RFormField control={form.control} name='bio' label='Bio'>
-          <RTextArea
+          <RTextarea
             placeholder='Tell us about yourself (max 500 characters)'
             rows={4}
             maxLength={500}

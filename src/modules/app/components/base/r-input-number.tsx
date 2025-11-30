@@ -1,4 +1,4 @@
-import { Input } from '@/modules/app/components/ui/input';
+import { RInput } from '@/modules/app/components/base/r-input';
 import { safeRound } from '@/modules/app/libs/utils';
 import {
   useCallback,
@@ -362,7 +362,7 @@ const RInputNumber = ({
   );
 
   return (
-    <Input
+    <RInput
       value={displayValue}
       onKeyDown={handleKeyDown}
       onChange={handleChange}

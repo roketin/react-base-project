@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import RImg from '../r-img';
 
 const meta: Meta<typeof RImg> = {
-  title: 'Base/RImg',
+  title: 'Components/Media/RImg',
   component: RImg,
   tags: ['autodocs'],
   args: {

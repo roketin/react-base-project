@@ -30,7 +30,9 @@
 
 /* Input Field Styling */
 .rc-picker-input {
-  @apply relative p-2 text-[length:var(--form-font-size)] bg-[var(--form-bg)] w-full flex border border-[var(--form-border-color)] rounded-[var(--form-radius)] shadow-[var(--form-shadow)] outline-none;
+  @apply relative text-(length:--form-font-size) bg-(--form-bg) w-full flex border border-(--form-border-color) rounded-(--form-radius) shadow-(--form-shadow) outline-none;
+  padding: 0.5rem var(--form-padding-x);
+  height: var(--form-height-outer);
 
   input {
     @apply outline-none w-full;
@@ -66,7 +68,7 @@
 }
 .rc-picker-clear-btn::after {
   content: '×';
-  @apply text-xl relative top-[-1px] text-gray-500;
+  @apply text-xl relative -top-px text-gray-500;
 }
 
 /* Multiple Selection/Tags */

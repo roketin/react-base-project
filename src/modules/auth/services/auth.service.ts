@@ -8,8 +8,9 @@ import type {
 } from '@/modules/auth/types/auth.type';
 import http from '@/plugins/axios';
 import useAuthStore from '@/modules/auth/stores/auth.store';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
+import { createMutation, createQuery } from 'react-query-kit';
 
 export const AUTH_PROFILE_QUERY_KEY = ['auth', 'profile'] as const;
 
@@ -22,16 +23,23 @@ export const getAuthProfile = async (): Promise<TAuthProfile> => {
  * Login
  * @returns
  */
+const authLoginMutation = createMutation<
+  TApiResponse<TAuthLoginResponse>,
+  TAuthLogin,
+  AxiosError
+>({
+  mutationFn: async (payload) => {
+    const resp = await http.post('/auth/login', payload);
+    return resp.data;
+  },
+});
+
 export const useAuthLogin = () => {
   const queryClient = useQueryClient();
   const setCredential = useAuthStore((state) => state.setCredential);
   const setAuthData = useAuthStore((state) => state.setAuthData);
 
-  return useMutation<TApiResponse<TAuthLoginResponse>, AxiosError, TAuthLogin>({
-    mutationFn: async (payload) => {
-      const resp = await http.post('/auth/login', payload);
-      return resp.data;
-    },
+  return authLoginMutation({
     onSuccess: async (response) => {
       setCredential(response.data.access_token);
 
@@ -55,48 +63,38 @@ export const useAuthLogin = () => {
   });
 };
 
-/**
- * Forgot password
- * @returns
- */
-export const useAuthForgot = () => {
-  return useMutation<TApiResponse<unknown>, AxiosError, TAuthForgot>({
-    mutationFn: async (payload) => {
-      const resp = await http.post('/auth/forgot', payload);
-      return resp.data;
-    },
-  });
-};
+export const useAuthForgot = createMutation<
+  TApiResponse<unknown>,
+  TAuthForgot,
+  AxiosError
+>({
+  mutationFn: async (payload) => {
+    const resp = await http.post('/auth/forgot', payload);
+    return resp.data;
+  },
+});
 
-/**
- * Reset password
- * @returns
- */
-export const useAuthReset = () => {
-  return useMutation<TApiResponse<unknown>, AxiosError, TAuthReset>({
-    mutationFn: async (payload) => {
-      const resp = await http.post('/auth/reset', payload);
-      return resp.data;
-    },
-  });
-};
+export const useAuthReset = createMutation<
+  TApiResponse<unknown>,
+  TAuthReset,
+  AxiosError
+>({
+  mutationFn: async (payload) => {
+    const resp = await http.post('/auth/reset', payload);
+    return resp.data;
+  },
+});
 
-/**
- * Get profile
- * @returns
- */
-export const useAuthProfile = () => {
-  return useMutation<TAuthProfile, AxiosError, void>({
-    mutationFn: getAuthProfile,
-  });
-};
+export const useAuthProfile = createMutation<TAuthProfile, void, AxiosError>({
+  mutationFn: getAuthProfile,
+});
 
-export const useAuthProfileQuery = (enabled = true) => {
-  return useQuery<TAuthProfile, AxiosError>({
-    queryKey: AUTH_PROFILE_QUERY_KEY,
-    queryFn: getAuthProfile,
-    enabled,
-    staleTime: 1000 * 60 * 5,
-    retry: 1,
-  });
-};
+export const useAuthProfileQuery = createQuery<TAuthProfile, void, AxiosError>({
+  queryKey: AUTH_PROFILE_QUERY_KEY,
+  fetcher: async (_, { signal }) => {
+    const resp = await http.get<TApiResponse<TAuthProfile>>('/auth/me', {
+      signal,
+    });
+    return resp.data.data;
+  },
+});

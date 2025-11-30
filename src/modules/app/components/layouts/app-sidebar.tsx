@@ -1,18 +1,6 @@
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import { APP_SIDEBAR_MENUS } from '@/modules/app/libs/sidebar-menu.lib';
 import type { TSidebarMenu } from '@/modules/app/types/sidebar-menu.type';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubItem,
-} from '@/modules/app/components/ui/sidebar';
 import { useSidebar } from '@/modules/app/contexts/sidebar-context';
 import { nameToPath } from '@/modules/app/hooks/use-named-route';
 import { cn } from '@/modules/app/libs/utils';
@@ -27,6 +15,18 @@ import {
 } from '@/modules/app/components/ui/popover';
 import { AppUserMenu } from './app-layout-user-menu';
 import AppSidebarHeader from './app-sidebar-header';
+import {
+  RSidebar,
+  RSidebarContent,
+  RSidebarFooter,
+  RSidebarGroup,
+  RSidebarGroupContent,
+  RSidebarMenu,
+  RSidebarMenuButton,
+  RSidebarMenuItem,
+  RSidebarMenuSub,
+  RSidebarMenuSubItem,
+} from '@/modules/app/components/base/r-sidebar';
 
 // ============================================================================
 // TYPES
@@ -116,11 +116,11 @@ const SidebarLeafItem = memo(function SidebarLeafItem({
 
   const isActive = isPathActive(path, currentPath, false);
   const isSubItem = depth > 0;
-  const ItemWrapper = isSubItem ? SidebarMenuSubItem : SidebarMenuItem;
+  const ItemWrapper = isSubItem ? RSidebarMenuSubItem : RSidebarMenuItem;
 
   return (
     <ItemWrapper>
-      <SidebarMenuButton
+      <RSidebarMenuButton
         asChild
         isActive={isActive}
         size={isSubItem ? 'sub' : 'default'}
@@ -133,7 +133,7 @@ const SidebarLeafItem = memo(function SidebarLeafItem({
             {getTitle(item)}
           </span>
         </Link>
-      </SidebarMenuButton>
+      </RSidebarMenuButton>
     </ItemWrapper>
   );
 });
@@ -164,7 +164,7 @@ const SidebarParentItem = memo(function SidebarParentItem({
   }, [path, currentPath, item.children]);
 
   const isExpanded = openMenus.has(key) || isActive;
-  const ItemWrapper = depth > 0 ? SidebarMenuSubItem : SidebarMenuItem;
+  const ItemWrapper = depth > 0 ? RSidebarMenuSubItem : RSidebarMenuItem;
 
   // Collapsed mode with popover (top-level only)
   if (isCollapsed && depth === 0) {
@@ -174,14 +174,14 @@ const SidebarParentItem = memo(function SidebarParentItem({
       <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
         <PopoverTrigger asChild>
           <ItemWrapper>
-            <SidebarMenuButton isActive={isActive} tooltip={getTitle(item)}>
+            <RSidebarMenuButton isActive={isActive} tooltip={getTitle(item)}>
               <MenuIcon icon={item.icon} />
               <span>{getTitle(item)}</span>
-            </SidebarMenuButton>
+            </RSidebarMenuButton>
           </ItemWrapper>
         </PopoverTrigger>
         <PopoverContent side='right' align='start' className='w-64 p-2'>
-          <SidebarMenu className='space-y-1'>
+          <RSidebarMenu className='space-y-1'>
             <li className='px-2 py-1.5 text-sm font-semibold list-none'>
               {getTitle(item)}
             </li>
@@ -196,7 +196,7 @@ const SidebarParentItem = memo(function SidebarParentItem({
                 onClosePopover={closePopover}
               />
             ))}
-          </SidebarMenu>
+          </RSidebarMenu>
         </PopoverContent>
       </Popover>
     );
@@ -205,7 +205,7 @@ const SidebarParentItem = memo(function SidebarParentItem({
   // Expanded mode with accordion
   return (
     <ItemWrapper>
-      <SidebarMenuButton
+      <RSidebarMenuButton
         onClick={() => onToggleMenu(key)}
         isActive={isActive}
         className='justify-between'
@@ -221,8 +221,8 @@ const SidebarParentItem = memo(function SidebarParentItem({
             isExpanded && 'rotate-180',
           )}
         />
-      </SidebarMenuButton>
-      <SidebarMenuSub className={cn(!isExpanded && 'hidden')}>
+      </RSidebarMenuButton>
+      <RSidebarMenuSub className={cn(!isExpanded && 'hidden')}>
         {children.map((child) =>
           child.children?.length ? (
             <SidebarParentItem
@@ -245,7 +245,7 @@ const SidebarParentItem = memo(function SidebarParentItem({
             />
           ),
         )}
-      </SidebarMenuSub>
+      </RSidebarMenuSub>
     </ItemWrapper>
   );
 });
@@ -323,12 +323,12 @@ export function AppSidebar() {
   }, []);
 
   return (
-    <Sidebar>
+    <RSidebar>
       <AppSidebarHeader />
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
+      <RSidebarContent>
+        <RSidebarGroup>
+          <RSidebarGroupContent>
+            <RSidebarMenu>
               {accessibleMenus.map((menu) => (
                 <SidebarItemRouter
                   key={menu.name ?? menu.title}
@@ -341,14 +341,14 @@ export function AppSidebar() {
                   getTitle={getTitle}
                 />
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter className='pb-4'>
-        <SidebarMenu className='mb-3'>
-          <SidebarMenuItem>
-            <SidebarMenuButton
+            </RSidebarMenu>
+          </RSidebarGroupContent>
+        </RSidebarGroup>
+      </RSidebarContent>
+      <RSidebarFooter className='pb-4'>
+        <RSidebarMenu className='mb-3'>
+          <RSidebarMenuItem>
+            <RSidebarMenuButton
               onClick={toggleSidebar}
               tooltip={isCollapsed ? 'Expand Menu' : 'Collapse Menu'}
             >
@@ -356,11 +356,11 @@ export function AppSidebar() {
               <span className='whitespace-nowrap'>
                 {isCollapsed ? 'Expand Menu' : 'Collapse Menu'}
               </span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+            </RSidebarMenuButton>
+          </RSidebarMenuItem>
+        </RSidebarMenu>
         <AppUserMenu />
-      </SidebarFooter>
-    </Sidebar>
+      </RSidebarFooter>
+    </RSidebar>
   );
 }

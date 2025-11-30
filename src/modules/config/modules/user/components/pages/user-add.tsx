@@ -3,18 +3,22 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import RForm from '@/modules/app/components/base/r-form';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
 import { RFormFieldSet } from '@/modules/app/components/base/r-form-fieldset';
-import { Input } from '@/modules/app/components/ui/input';
+import { RInput } from '@/modules/app/components/base/r-input';
 import { RPanelHeader } from '@/modules/app/components/base/r-panel-header';
 import Yup from '@/plugins/yup';
 
 const schema = Yup.object({
-  fullName: Yup.string().required('Full name is required'),
-  email: Yup.string().email('Invalid email').required('Email is required'),
-  username: Yup.string().required('Username is required'),
+  fullName: Yup.string().default('').required('Full name is required'),
+  email: Yup.string()
+    .default('')
+    .email('Invalid email')
+    .required('Email is required'),
+  username: Yup.string().default('').required('Username is required'),
   password: Yup.string()
+    .default('')
     .min(6, 'Password must be at least 6 characters')
     .required('Password is required'),
-  bio: Yup.string(),
+  bio: Yup.string().default(''),
 });
 
 type FormValues = Yup.InferType<typeof schema>;
@@ -26,7 +30,6 @@ export default function UserAdd() {
   });
 
   const onSubmit = (data: FormValues) => {
-    // eslint-disable-next-line no-console
     console.log('Form submitted:', data);
   };
 
@@ -57,7 +60,7 @@ export default function UserAdd() {
               label='Full Name'
               withPlaceholder
             >
-              <Input />
+              <RInput />
             </RFormField>
             <RFormField
               control={form.control}
@@ -65,7 +68,7 @@ export default function UserAdd() {
               label='Email Address'
               withPlaceholder
             >
-              <Input type='email' />
+              <RInput type='email' />
             </RFormField>
           </div>
         </RFormFieldSet>
@@ -83,7 +86,7 @@ export default function UserAdd() {
               label='Username'
               withPlaceholder
             >
-              <Input />
+              <RInput />
             </RFormField>
             <RFormField
               control={form.control}
@@ -91,7 +94,7 @@ export default function UserAdd() {
               label='Password'
               withPlaceholder
             >
-              <Input type='password' />
+              <RInput type='password' />
             </RFormField>
             <RFormField
               control={form.control}
@@ -99,7 +102,7 @@ export default function UserAdd() {
               label='Bio'
               withPlaceholder
             >
-              <Input />
+              <RInput />
             </RFormField>
           </div>
         </RFormFieldSet>

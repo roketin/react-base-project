@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useMemo, useState } from 'react';
 import { RFilterMenu, type RFilterMenuProps, RFilterBar } from '../r-filter';
 import { filterItem } from '@/modules/app/libs/filter-utils';
-import { Badge } from '@/modules/app/components/ui/badge';
-import { Separator } from '@/modules/app/components/ui/separator';
+import { RBadge } from '../r-badge';
+import { RSeparator } from '../r-separator';
 import roketinConfig from '@config';
 
 const baseSchema = [
@@ -39,11 +39,11 @@ const baseSchema = [
   filterItem.slider({
     id: 'score',
     label: 'Customer score',
-    defaultValue: [40, 80],
+    defaultValue: 70,
     min: 0,
     max: 100,
     step: 5,
-    formatValue: ([from = 0, to = 0]) => `${from}-${to}`,
+    formatValue: (value = 0) => `${value}`,
   }),
   filterItem.datepickerRange({
     id: 'createdAt',
@@ -122,7 +122,7 @@ function toQueryString(values: Record<string, unknown>) {
 const persistenceConfig = roketinConfig.filters?.persistence;
 
 const meta: Meta<typeof RFilterMenu> = {
-  title: 'Base/RFilter',
+  title: 'Components/Other/RFilter',
   component: RFilterMenu,
   tags: ['autodocs'],
   parameters: {
@@ -209,12 +209,12 @@ export const MenuPlayground: Story = {
               {persistenceConfig?.debounceMs ?? 0}ms
             </p>
           </div>
-          <Badge variant='outline'>
+          <RBadge variant='outline'>
             Active filters&nbsp;
             <span className='font-semibold text-foreground'>
               {activeFilters}
             </span>
-          </Badge>
+          </RBadge>
         </div>
 
         <div className='grid gap-6 md:grid-cols-[320px_1fr]'>
@@ -266,11 +266,11 @@ export const MenuPlayground: Story = {
                   : 'No filters applied yet'}
               </span>
             </div>
-            <Separator className='my-3' />
+            <RSeparator className='my-3' />
             <pre className='whitespace-pre-wrap break-all rounded-md bg-background/80 p-3 text-[11px] text-muted-foreground'>
               {JSON.stringify(appliedValues, null, 2)}
             </pre>
-            <Separator className='my-3' />
+            <RSeparator className='my-3' />
             <div className='space-y-1'>
               <p className='text-xs font-semibold text-foreground'>
                 Query string
@@ -347,12 +347,12 @@ export const InlineBar: Story = {
               {persistenceConfig?.debounceMs ?? 0}ms
             </p>
           </div>
-          <Badge variant='outline'>
+          <RBadge variant='outline'>
             Active filters&nbsp;
             <span className='font-semibold text-foreground'>
               {activeInline}
             </span>
-          </Badge>
+          </RBadge>
         </div>
 
         <RFilterBar
@@ -385,7 +385,7 @@ export const InlineBar: Story = {
           <div className='flex flex-wrap items-center justify-between gap-2 text-sm text-foreground'>
             <span className='font-semibold'>Live payload</span>
           </div>
-          <Separator className='my-3' />
+          <RSeparator className='my-3' />
           <pre className='whitespace-pre-wrap break-all rounded-md bg-background/80 p-3 text-[11px] text-muted-foreground'>
             {JSON.stringify(params, null, 2)}
           </pre>

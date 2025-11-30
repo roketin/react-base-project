@@ -11,7 +11,7 @@ const DEFAULT_EXT = {
 
 // --- 1. Metadata Configuration ---
 const meta: Meta<typeof RFileUploader> = {
-  title: 'Base/Form/RFileUploader',
+  title: 'Components/Media/RFileUploader',
   component: RFileUploader,
   tags: ['autodocs'],
   parameters: {

@@ -9,6 +9,7 @@ import { cn } from '@/modules/app/libs/utils';
 import { useEffect, useMemo, type ReactNode } from 'react';
 import type { UseFormReturn, FieldValues } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import type { TFormFieldsetConfig } from '@/modules/app/contexts/form-config-context';
 
 export type TRFormProps<TFormValues extends FieldValues> = TDisableable & {
   id?: string;
@@ -21,6 +22,9 @@ export type TRFormProps<TFormValues extends FieldValues> = TDisableable & {
   showErrorPopup?: boolean;
   spacing?: string;
   hideHorizontalLine?: boolean;
+  fieldsetConfig?: TFormFieldsetConfig;
+  isPreview?: boolean;
+  isLoading?: boolean;
 };
 
 const RForm = <TFormValues extends FieldValues>({
@@ -35,13 +39,32 @@ const RForm = <TFormValues extends FieldValues>({
   spacing = '',
   disabled = false,
   hideHorizontalLine = false,
+  fieldsetConfig,
+  isPreview = false,
+  isLoading = false,
 }: TRFormProps<TFormValues>) => {
   const { trigger } = form;
   const { i18n } = useTranslation();
 
   const providerValue = useMemo(
-    () => ({ labelWidth, layout, disabled, hideHorizontalLine }),
-    [labelWidth, layout, disabled, hideHorizontalLine],
+    () => ({
+      labelWidth,
+      layout,
+      disabled,
+      hideHorizontalLine,
+      fieldsetConfig,
+      isPreview,
+      isLoading,
+    }),
+    [
+      labelWidth,
+      layout,
+      disabled,
+      hideHorizontalLine,
+      fieldsetConfig,
+      isPreview,
+      isLoading,
+    ],
   );
 
   // listener: re-validate hanya field yang sudah disentuh saat bahasa berubah

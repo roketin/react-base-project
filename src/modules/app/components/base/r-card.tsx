@@ -1,12 +1,4 @@
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/modules/app/components/ui/card';
+import { cn } from '@/modules/app/libs/utils';
 import React from 'react';
 
 type TRCardProps = {
@@ -16,7 +8,7 @@ type TRCardProps = {
   action?: React.ReactNode;
   children?: React.ReactNode;
   footer?: React.ReactNode;
-  wrapperClassName?: string;
+  className?: string;
 };
 
 export const RCard: React.FC<TRCardProps> = ({
@@ -26,18 +18,29 @@ export const RCard: React.FC<TRCardProps> = ({
   action,
   children,
   footer,
-  wrapperClassName,
+  className,
 }) => (
-  <Card className={wrapperClassName}>
-    {(header || title || description || action) && (
-      <CardHeader>
-        {header}
-        {title && <CardTitle>{title}</CardTitle>}
-        {description && <CardDescription>{description}</CardDescription>}
-        {action && <CardAction>{action}</CardAction>}
-      </CardHeader>
+  <div
+    className={cn(
+      'rounded-lg border bg-card text-card-foreground shadow-sm',
+      className,
     )}
-    {children && <CardContent>{children}</CardContent>}
-    {footer && <CardFooter>{footer}</CardFooter>}
-  </Card>
+  >
+    {(header || title || description || action) && (
+      <div className='flex flex-col space-y-1.5 p-6'>
+        {header}
+        {title && (
+          <h3 className='text-2xl font-semibold leading-none tracking-tight'>
+            {title}
+          </h3>
+        )}
+        {description && (
+          <p className='text-sm text-muted-foreground'>{description}</p>
+        )}
+        {action && <div className='flex items-center gap-2'>{action}</div>}
+      </div>
+    )}
+    {children && <div className='p-6 pt-0'>{children}</div>}
+    {footer && <div className='flex items-center p-6 pt-0'>{footer}</div>}
+  </div>
 );

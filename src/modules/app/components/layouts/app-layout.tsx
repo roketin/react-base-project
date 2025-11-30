@@ -1,9 +1,5 @@
 import { AppBootstrapLoading } from '@/modules/app/components/base/app-bootstrap-loading';
 import { AppSidebar } from '@/modules/app/components/layouts/app-sidebar';
-import {
-  SidebarInset,
-  SidebarProvider,
-} from '@/modules/app/components/ui/sidebar';
 import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAuthBootstrap } from '@/modules/auth/hooks/use-auth-bootstrap';
@@ -14,6 +10,10 @@ import {
 import { AppLayoutHeader } from './app-layout-header';
 import { APP_EL } from '../../constants/app.constant';
 import roketinConfig from '@config';
+import {
+  RSidebarInset,
+  RSidebarProvider,
+} from '@/modules/app/components/base/r-sidebar';
 
 /**
  * Main layout component for the application.
@@ -36,9 +36,9 @@ export default function AppLayout() {
      * The layout includes the sidebar, a header with navigation breadcrumbs,
      * language toggle, user profile popover, and main content outlet.
      */
-    <SidebarProvider>
+    <RSidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <RSidebarInset>
         {roketinConfig.search.enableSearchGlobal && (
           <div className='hidden mt-3 md:flex items-center justify-center'>
             <RGlobalSearchTrigger />
@@ -75,8 +75,8 @@ export default function AppLayout() {
             </Suspense>
           </div>
         </div>
-      </SidebarInset>
+      </RSidebarInset>
       {roketinConfig.search.enableSearchGlobal && <RGlobalSearch />}
-    </SidebarProvider>
+    </RSidebarProvider>
   );
 }

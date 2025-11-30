@@ -1,64 +1,139 @@
-import { forwardRef, useId } from 'react';
-import type { ReactNode } from 'react';
-import { Input, type TInputProps } from '@/modules/app/components/ui/input';
+import { forwardRef, type InputHTMLAttributes, useState } from 'react';
 import { cn } from '@/modules/app/libs/utils';
+import { getInputClasses } from '@/modules/app/libs/ui-variants';
+import { X } from 'lucide-react';
 
-export type TRInputProps = TInputProps & {
-  label?: ReactNode;
-  description?: ReactNode;
-  error?: ReactNode;
-  requiredIndicator?: ReactNode;
+export type TRInputProps = InputHTMLAttributes<HTMLInputElement> & {
+  label?: string;
+  error?: string;
+  helperText?: string;
   wrapperClassName?: string;
+  inputClassName?: string;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  fullWidth?: boolean;
+  clearable?: boolean;
+  onClear?: () => void;
 };
 
 export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
-  function RInput(
+  (
     {
       label,
-      description,
       error,
-      requiredIndicator,
-      id,
-      className,
+      helperText,
       wrapperClassName,
+      inputClassName,
+      leftIcon,
+      rightIcon,
+      fullWidth = false,
+      className,
+      disabled,
+      id,
+      clearable = false,
+      onClear,
+      value,
+      onChange,
       ...props
     },
     ref,
-  ) {
-    const generatedId = useId();
-    const inputId = id ?? generatedId;
+  ) => {
+    const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+    const hasError = !!error;
+    const [internalValue, setInternalValue] = useState(value ?? '');
+    const currentValue = value !== undefined ? value : internalValue;
+    const showClearButton = clearable && currentValue && !disabled;
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setInternalValue(e.target.value);
+      onChange?.(e);
+    };
+
+    const handleClear = () => {
+      setInternalValue('');
+      onClear?.();
+      if (onChange) {
+        const syntheticEvent = {
+          target: { value: '' },
+        } as React.ChangeEvent<HTMLInputElement>;
+        onChange(syntheticEvent);
+      }
+    };
 
     return (
-      <div className={cn('flex flex-col gap-2', wrapperClassName)}>
-        {label ? (
+      <div
+        className={cn(
+          'flex flex-col gap-1.5',
+          fullWidth && 'w-full',
+          wrapperClassName,
+          className,
+        )}
+      >
+        {label && (
           <label
             htmlFor={inputId}
-            className='flex items-center gap-1 text-sm font-medium text-foreground'
+            className={cn(
+              'text-sm font-medium text-slate-700',
+              disabled && 'opacity-50 cursor-not-allowed',
+            )}
           >
             {label}
-            {requiredIndicator ??
-              (props.required ? (
-                <span className='text-destructive'>*</span>
-              ) : null)}
           </label>
-        ) : null}
+        )}
 
-        <Input id={inputId} ref={ref} className={className} {...props} />
+        <div className='relative'>
+          {leftIcon && (
+            <div className='absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'>
+              {leftIcon}
+            </div>
+          )}
 
-        {description ? (
-          <p className='text-xs text-muted-foreground'>{description}</p>
-        ) : null}
-        {!description && error ? (
-          <p className='text-xs text-destructive'>{error}</p>
-        ) : null}
-        {description && error ? (
-          <p className='text-xs text-destructive'>{error}</p>
-        ) : null}
+          <input
+            ref={ref}
+            id={inputId}
+            disabled={disabled}
+            aria-invalid={hasError}
+            value={currentValue}
+            onChange={handleChange}
+            className={cn(
+              getInputClasses(hasError),
+              leftIcon && 'pl-10',
+              (rightIcon || showClearButton) && 'pr-10',
+              inputClassName ?? className,
+            )}
+            {...props}
+          />
+
+          {showClearButton && !rightIcon && (
+            <button
+              type='button'
+              onClick={handleClear}
+              className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors'
+            >
+              <X size={16} />
+            </button>
+          )}
+
+          {rightIcon && (
+            <div className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400'>
+              {rightIcon}
+            </div>
+          )}
+        </div>
+
+        {(error || helperText) && (
+          <p
+            className={cn(
+              'text-xs',
+              hasError ? 'text-destructive' : 'text-slate-500',
+            )}
+          >
+            {error || helperText}
+          </p>
+        )}
       </div>
     );
   },
 );
 
 RInput.displayName = 'RInput';
-
-export default RInput;

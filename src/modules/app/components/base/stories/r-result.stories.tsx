@@ -3,7 +3,7 @@ import { RResult } from '../r-result';
 import RBtn from '@/modules/app/components/base/r-btn';
 
 const meta: Meta<typeof RResult> = {
-  title: 'Base/RResult',
+  title: 'Components/Feedback/RResult',
   component: RResult,
   tags: ['autodocs'],
   parameters: {

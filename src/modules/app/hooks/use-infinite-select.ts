@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useEffect,
   useMemo,
   useState,
   type Dispatch,
@@ -27,8 +28,8 @@ type UseInfiniteSelectOptionsParams<
   TParams extends Record<string, unknown>,
   TResult extends MinimalInfiniteQueryResult<TPage>,
 > = {
-  baseParams: TParams;
-  query: (params: TParams) => TResult;
+  baseParams?: TParams;
+  query: (options: { variables: TParams }) => TResult;
   getPageItems: (page: TPage) => TOption[];
   searchParamKey?: string;
   initialSearchValue?: string;
@@ -36,6 +37,14 @@ type UseInfiniteSelectOptionsParams<
    * Extra options to append (e.g. from detail API in edit mode).
    */
   appendOptions?: TOption[];
+  /**
+   * Deduplicate options by this key. If not provided, no deduplication will be performed.
+   */
+  deduplicateKey?: keyof TOption;
+  /**
+   * Debounce delay in milliseconds for search input (default: 300ms)
+   */
+  debounceMs?: number;
 };
 
 type UseInfiniteSelectOptionsResult<
@@ -57,8 +66,8 @@ export function useInfiniteSelectOptions<
   TPage,
   TOption extends BaseOptionType = DefaultOptionType,
   TParams extends Record<string, unknown> = Record<string, unknown>,
-  TResult extends
-    MinimalInfiniteQueryResult<TPage> = MinimalInfiniteQueryResult<TPage>,
+  TResult extends MinimalInfiniteQueryResult<TPage> =
+    MinimalInfiniteQueryResult<TPage>,
 >({
   baseParams,
   query,
@@ -66,6 +75,8 @@ export function useInfiniteSelectOptions<
   searchParamKey,
   initialSearchValue,
   appendOptions = [],
+  deduplicateKey,
+  debounceMs = 300,
 }: UseInfiniteSelectOptionsParams<
   TPage,
   TOption,
@@ -73,22 +84,36 @@ export function useInfiniteSelectOptions<
   TResult
 >): UseInfiniteSelectOptionsResult<TPage, TOption, TParams, TResult> {
   const [searchValue, setSearchValue] = useState(initialSearchValue ?? '');
+  const [debouncedSearchValue, setDebouncedSearchValue] = useState(
+    initialSearchValue ?? '',
+  );
 
   const searchKey = searchParamKey ?? 'search';
 
-  const queryParams = useMemo(() => {
-    const params = { ...baseParams } as Record<string, unknown>;
+  // Debounce search value
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchValue(searchValue);
+    }, debounceMs);
 
-    if (searchValue.trim() !== '') {
-      params[searchKey] = searchValue;
+    return () => clearTimeout(timer);
+  }, [searchValue, debounceMs]);
+
+  const queryParams = useMemo(() => {
+    const params = { ...(baseParams ?? {}) } as Record<string, unknown>;
+
+    if (debouncedSearchValue.trim() !== '') {
+      params[searchKey] = debouncedSearchValue;
     } else if (searchKey in params) {
       delete params[searchKey];
     }
 
     return params as TParams;
-  }, [baseParams, searchKey, searchValue]);
+  }, [baseParams, searchKey, debouncedSearchValue]);
 
-  const queryResult = query(queryParams);
+  const queryResult = query({ variables: queryParams } as Parameters<
+    typeof query
+  >[0]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     queryResult;
@@ -98,8 +123,26 @@ export function useInfiniteSelectOptions<
       ? data.pages.flatMap((page) => getPageItems(page))
       : [];
 
-    return [...appendOptions, ...collected] as TOption[];
-  }, [appendOptions, data, getPageItems]);
+    const all = [...appendOptions, ...collected] as TOption[];
+
+    if (!deduplicateKey) return all;
+
+    const seen = new Set<string>();
+    const unique: TOption[] = [];
+
+    for (const item of all) {
+      const key = String(
+        deduplicateKey in item
+          ? (item as Record<string, unknown>)[deduplicateKey as string]
+          : undefined,
+      );
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      unique.push(item);
+    }
+
+    return unique;
+  }, [appendOptions, data, deduplicateKey, getPageItems]);
 
   const handleLoadMore = useCallback(() => {
     if (!hasNextPage || isFetchingNextPage) {

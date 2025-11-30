@@ -34,5 +34,8 @@
     "allModules": "Semua Module",
     "triggerLong": "Cari menu, module...",
     "triggerShort": "Cari..."
+  },
+  "fileUploader": {
+    "description": "Ekstensi yang diizinkan: {{extensions}} | Ukuran maks: {{maxSize}}MB"
   }
 }

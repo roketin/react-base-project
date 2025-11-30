@@ -1,45 +1,27 @@
 import {
   Children,
   isValidElement,
-  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
 import type { PropsWithChildren, ReactNode } from 'react';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/modules/app/components/ui/tabs';
 import { cn } from '@/modules/app/libs/utils';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const COMPONENT_MARKERS = {
-  item: Symbol('RTabItem'),
-  content: Symbol('RTabContent'),
-} as const;
+const PANEL_MARKER = Symbol('RTabPanel');
 
 type InternalComponent = {
-  rtabsType?: symbol;
+  rTabsType?: symbol;
 };
 
-export type TRTabItemProps = {
+export type TRTabPanelProps = PropsWithChildren<{
   tabKey: string;
-  label: ReactNode;
+  header: ReactNode;
   disabled?: boolean;
   forceRender?: boolean;
-};
-
-export type TRTabContentProps = PropsWithChildren<{
-  tabKey: string;
 }>;
-
-type ExtractedContent = {
-  tabKey: string;
-  node: ReactNode;
-};
 
 export type TRTabsProps = PropsWithChildren<{
   activeKey?: string;
@@ -51,42 +33,15 @@ export type TRTabsProps = PropsWithChildren<{
   contentClassName?: string;
   full?: boolean;
   variant?: 'default' | 'underline';
-  animation?: 'none' | 'fade' | 'slide';
   orientation?: 'horizontal' | 'vertical';
 }>;
 
-const animationClassMap = {
-  none: 'data-[state=inactive]:hidden',
-  fade: 'relative transition-opacity duration-200 ease-out data-[state=inactive]:absolute data-[state=inactive]:inset-0 data-[state=inactive]:opacity-0 data-[state=inactive]:pointer-events-none data-[state=active]:relative data-[state=active]:opacity-100',
-  slide:
-    'relative transition-all duration-200 ease-out data-[state=inactive]:absolute data-[state=inactive]:inset-0 data-[state=inactive]:opacity-0 data-[state=inactive]:translate-y-2 data-[state=inactive]:pointer-events-none data-[state=active]:relative data-[state=active]:opacity-100 data-[state=active]:translate-y-0',
-} as const satisfies Record<'none' | 'fade' | 'slide', string>;
+type TRTabPanelComponent = (props: TRTabPanelProps) => null;
 
-const variantClassMap = {
-  default: {
-    list: '',
-    trigger: '',
-  },
-  underline: {
-    list: 'bg-transparent p-0 rounded-none border-b border-border/60 gap-6',
-    trigger:
-      'bg-transparent data-[state=active]:bg-transparent border-b-2 border-transparent data-[state=active]:border-primary rounded-none px-0 pb-2 h-auto text-muted-foreground data-[state=active]:text-foreground shadow-none data-[state=active]:shadow-none',
-  },
-} as const satisfies Record<
-  'default' | 'underline',
-  { list: string; trigger: string }
->;
+const RTabPanel: TRTabPanelComponent = () => null;
 
-type TRTabItemComponent = (props: TRTabItemProps) => null;
-type TRTabContentComponent = (props: TRTabContentProps) => null;
-
-const RTabItem: TRTabItemComponent = () => null;
-const RTabContent: TRTabContentComponent = () => null;
-
-(RTabItem as InternalComponent).rtabsType = COMPONENT_MARKERS.item;
-(RTabItem as { displayName?: string }).displayName = 'RTabItem';
-(RTabContent as InternalComponent).rtabsType = COMPONENT_MARKERS.content;
-(RTabContent as { displayName?: string }).displayName = 'RTabContent';
+(RTabPanel as InternalComponent).rTabsType = PANEL_MARKER;
+(RTabPanel as { displayName?: string }).displayName = 'RTabPanel';
 
 function RTabs(props: TRTabsProps) {
   const {
@@ -99,300 +54,293 @@ function RTabs(props: TRTabsProps) {
     contentClassName,
     full = false,
     variant = 'default',
-    animation = 'none',
     orientation = 'horizontal',
     children,
   } = props;
 
-  const { items, contentByKey, orderedKeys, forceRenderKeys } = useMemo(() => {
-    const extractedItems: TRTabItemProps[] = [];
-    const extractedContents: ExtractedContent[] = [];
-    const extractedContentByKey = new Map<string, ExtractedContent>();
+  const { panels, orderedKeys, forceRenderKeys } = useMemo(() => {
+    const extractedPanels: Array<{
+      tabKey: string;
+      header: ReactNode;
+      content: ReactNode;
+      disabled?: boolean;
+    }> = [];
+    const forceRenderSet = new Set<string>();
 
     Children.forEach(children, (child) => {
-      if (!isValidElement(child)) {
-        return;
-      }
+      if (!isValidElement(child)) return;
 
       const componentType = (child.type as InternalComponent | undefined)
-        ?.rtabsType;
+        ?.rTabsType;
 
-      if (componentType === COMPONENT_MARKERS.item) {
-        const { tabKey, label, disabled, forceRender } =
-          child.props as TRTabItemProps;
-
-        if (!tabKey) {
-          return;
-        }
-
-        extractedItems.push({
+      if (componentType === PANEL_MARKER) {
+        const {
           tabKey,
-          label,
+          header,
           disabled,
-          forceRender: Boolean(forceRender),
-        });
-        return;
-      }
-
-      if (componentType === COMPONENT_MARKERS.content) {
-        const { tabKey, children: contentChildren } =
-          child.props as TRTabContentProps;
-
-        if (!tabKey) {
-          return;
+          forceRender,
+          children: content,
+        } = child.props as TRTabPanelProps;
+        if (tabKey) {
+          extractedPanels.push({ tabKey, header, content, disabled });
+          if (forceRender) forceRenderSet.add(tabKey);
         }
-
-        const normalizedContent: ExtractedContent = {
-          tabKey,
-          node: contentChildren,
-        };
-
-        extractedContents.push(normalizedContent);
-        extractedContentByKey.set(tabKey, normalizedContent);
       }
     });
 
-    const itemKeys = extractedItems.map((item) => item.tabKey);
-    const fallbackKeys = extractedContents
-      .map((content) => content.tabKey)
-      .filter((key) => !itemKeys.includes(key));
-
-    const orderedKeys =
-      itemKeys.length > 0
-        ? itemKeys
-        : fallbackKeys.length > 0
-          ? fallbackKeys
-          : [];
-
-    const forceRenderKeys = extractedItems
-      .filter((item) => item.forceRender)
-      .map((item) => item.tabKey);
-
     return {
-      items: extractedItems,
-      contentByKey: extractedContentByKey,
-      orderedKeys,
-      forceRenderKeys,
+      panels: extractedPanels,
+      orderedKeys: extractedPanels.map((p) => p.tabKey),
+      forceRenderKeys: Array.from(forceRenderSet),
     };
   }, [children]);
 
-  const resolveKey = useCallback(
-    (key?: string | null) => {
-      if (!key) {
-        return undefined;
-      }
+  const isControlled = activeKey !== undefined;
+  const firstKey = orderedKeys[0];
+  const validActiveKey =
+    activeKey && orderedKeys.includes(activeKey) ? activeKey : undefined;
+  const validDefaultKey =
+    defaultActiveKey && orderedKeys.includes(defaultActiveKey)
+      ? defaultActiveKey
+      : undefined;
 
-      return orderedKeys.includes(key) ? key : undefined;
-    },
-    [orderedKeys],
+  const [internalValue, setInternalValue] = useState<string>(
+    validActiveKey ?? validDefaultKey ?? firstKey,
   );
 
-  const firstKey = orderedKeys[0];
-  const isControlled = activeKey !== undefined;
-
-  const controlledKey = resolveKey(activeKey);
-  const defaultKey = resolveKey(defaultActiveKey);
-
-  const [internalValue, setInternalValue] = useState<string | undefined>(() => {
-    return controlledKey ?? defaultKey ?? firstKey;
-  });
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showPrev, setShowPrev] = useState(false);
+  const [showNext, setShowNext] = useState(false);
 
   useEffect(() => {
-    if (isControlled) {
-      setInternalValue(controlledKey ?? firstKey);
+    if (
+      !isControlled &&
+      internalValue &&
+      !orderedKeys.includes(internalValue)
+    ) {
+      setInternalValue(validDefaultKey ?? firstKey);
     }
-  }, [controlledKey, firstKey, isControlled]);
-
-  useEffect(() => {
-    if (!isControlled) {
-      setInternalValue((prev) => {
-        const resolvedPrev = resolveKey(prev);
-        if (resolvedPrev) {
-          return resolvedPrev;
-        }
-
-        return defaultKey ?? firstKey;
-      });
-    }
-  }, [defaultKey, firstKey, isControlled, resolveKey]);
+  }, [orderedKeys, internalValue, isControlled, validDefaultKey, firstKey]);
 
   const currentValue = isControlled
-    ? (controlledKey ?? firstKey)
-    : (resolveKey(internalValue) ?? defaultKey ?? firstKey);
-
-  const prevActiveKeyRef = useRef<string | undefined>(
-    currentValue ?? undefined,
-  );
-  const exitTimersRef = useRef<Record<string, number>>({});
-  const [leavingKeys, setLeavingKeys] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      prevActiveKeyRef.current = currentValue ?? undefined;
-      return;
-    }
-
-    if (animation === 'none') {
-      Object.values(exitTimersRef.current).forEach((timeoutId) => {
-        window.clearTimeout(timeoutId);
-      });
-      exitTimersRef.current = {};
-      setLeavingKeys([]);
-      prevActiveKeyRef.current = currentValue ?? undefined;
-      return;
-    }
-
-    const prevKey = prevActiveKeyRef.current;
-    if (
-      prevKey &&
-      prevKey !== currentValue &&
-      !forceRenderKeys.includes(prevKey)
-    ) {
-      setLeavingKeys((prev) =>
-        prev.includes(prevKey) ? prev : [...prev, prevKey],
-      );
-
-      if (exitTimersRef.current[prevKey]) {
-        window.clearTimeout(exitTimersRef.current[prevKey]);
-      }
-
-      const exitDuration = animation === 'slide' ? 220 : 200;
-      exitTimersRef.current[prevKey] = window.setTimeout(() => {
-        setLeavingKeys((prev) => prev.filter((key) => key !== prevKey));
-        delete exitTimersRef.current[prevKey];
-      }, exitDuration);
-    }
-
-    prevActiveKeyRef.current = currentValue ?? undefined;
-  }, [animation, currentValue, forceRenderKeys]);
-
-  useEffect(() => {
-    return () => {
-      if (typeof window === 'undefined') {
-        return;
-      }
-      Object.values(exitTimersRef.current).forEach((timeoutId) => {
-        window.clearTimeout(timeoutId);
-      });
-    };
-  }, []);
-
-  useEffect(() => {
-    if (animation === 'none') {
-      return;
-    }
-    setLeavingKeys((prev) =>
-      prev.filter((key) => !forceRenderKeys.includes(key)),
-    );
-  }, [animation, forceRenderKeys]);
-
-  useEffect(() => {
-    setLeavingKeys((prev) => prev.filter((key) => orderedKeys.includes(key)));
-  }, [orderedKeys]);
+    ? (validActiveKey ?? firstKey)
+    : orderedKeys.includes(internalValue)
+      ? internalValue
+      : firstKey;
 
   const isVertical = orientation === 'vertical';
-  const effectiveVariant =
-    isVertical && variant === 'underline' ? 'default' : variant;
-  const variantClasses = variantClassMap[effectiveVariant];
-  const animationClassName = animationClassMap[animation];
-  const rootClasses = cn(
-    full && 'w-full',
-    isVertical && 'lg:items-stretch',
-    className,
-  );
-  const listClasses = cn(
-    isVertical
-      ? cn(
-          'flex-col items-stretch gap-1 h-auto bg-muted/40 p-2',
-          full ? 'w-full' : 'w-full max-w-xs',
-        )
-      : full && 'w-full',
-    variantClasses.list,
-    !isVertical && full && effectiveVariant === 'default' && 'justify-between',
-    listClassName,
-  );
-  const triggerClasses = cn(
-    variantClasses.trigger,
-    isVertical &&
-      'justify-start px-3 py-2 h-auto w-full text-left flex-none data-[state=active]:bg-background data-[state=active]:shadow-sm',
-    full && !isVertical && effectiveVariant === 'default' && 'flex-1',
-    triggerClassName,
-  );
-  const contentClasses = cn(
-    'pt-2',
-    animation !== 'none' && 'min-h-[1px] overflow-hidden',
-    isVertical && 'lg:flex-1 lg:pl-4 w-full',
-    full && 'w-full',
-    animationClassName,
-    contentClassName,
-  );
 
-  const handleChange = (nextValue: string) => {
-    if (!orderedKeys.includes(nextValue)) {
-      return;
+  const checkScroll = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const { scrollLeft, scrollWidth, clientWidth } = container;
+    setShowPrev(scrollLeft > 5);
+    setShowNext(scrollLeft < scrollWidth - clientWidth - 5);
+  };
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container || isVertical || full) return;
+
+    checkScroll();
+    const resizeObserver = new ResizeObserver(checkScroll);
+    resizeObserver.observe(container);
+
+    container.addEventListener('scroll', checkScroll);
+    return () => {
+      resizeObserver.disconnect();
+      container.removeEventListener('scroll', checkScroll);
+    };
+  }, [isVertical, full, panels.length]);
+
+  const scroll = (direction: 'left' | 'right') => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const buttons = container.querySelectorAll('button[data-tab]');
+    if (buttons.length === 0) return;
+
+    const containerRect = container.getBoundingClientRect();
+    let targetButton: Element | null = null;
+
+    if (direction === 'left') {
+      for (let i = buttons.length - 1; i >= 0; i--) {
+        const button = buttons[i];
+        const rect = button.getBoundingClientRect();
+        if (rect.left < containerRect.left - 1) {
+          targetButton = button;
+          break;
+        }
+      }
+    } else {
+      for (let i = 0; i < buttons.length; i++) {
+        const button = buttons[i];
+        const rect = button.getBoundingClientRect();
+        if (rect.right > containerRect.right + 1) {
+          targetButton = button;
+          break;
+        }
+      }
     }
 
-    if (!isControlled) {
-      setInternalValue(nextValue);
+    if (targetButton) {
+      targetButton.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'start',
+      });
     }
-    onChange?.(nextValue);
+  };
+
+  const handleTabClick = (
+    tabKey: string,
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    if (!orderedKeys.includes(tabKey)) return;
+    if (!isControlled) setInternalValue(tabKey);
+    onChange?.(tabKey);
+
+    // Scroll clicked tab to center
+    if (!isVertical && !full) {
+      const button = event.currentTarget;
+      button.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
+      });
+    }
   };
 
   return (
-    <Tabs
-      orientation={orientation}
-      className={rootClasses}
-      value={currentValue}
-      onValueChange={handleChange}
+    <div
+      className={cn(
+        'flex gap-2',
+        isVertical ? 'flex-col lg:flex-row lg:items-start' : 'flex-col',
+        full && 'w-full',
+        className,
+      )}
     >
-      {items.length > 0 ? (
-        <TabsList className={listClasses}>
-          {items.map(({ tabKey, label, disabled }) => (
-            <TabsTrigger
-              key={tabKey}
-              value={tabKey}
-              disabled={disabled}
-              className={triggerClasses}
+      {panels.length > 0 && (
+        <div
+          className={cn(
+            !isVertical &&
+              variant === 'underline' &&
+              'w-full bg-white border-b border-gray-100',
+            !isVertical && !full && 'relative',
+          )}
+        >
+          {!isVertical && !full && showPrev && (
+            <button
+              type='button'
+              onClick={() => scroll('left')}
+              className='absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-r-md bg-background/95 p-1 shadow-md hover:bg-background'
+              aria-label='Scroll left'
             >
-              {label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      ) : null}
+              <ChevronLeft className='h-4 w-4' />
+            </button>
+          )}
 
-      {orderedKeys.map((tabKey) => {
-        const content = contentByKey.get(tabKey);
+          <div
+            ref={scrollContainerRef}
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+            className={cn(
+              !isVertical &&
+                !full &&
+                'overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden',
+            )}
+          >
+            <div
+              className={cn(
+                'inline-flex items-center gap-1',
+                isVertical
+                  ? 'flex-col items-stretch h-auto bg-muted/40 p-2 rounded-lg'
+                  : full
+                    ? 'w-full bg-muted text-muted-foreground h-9 justify-center rounded-lg p-1'
+                    : variant === 'underline'
+                      ? 'p-0 gap-0 h-auto'
+                      : 'bg-muted text-muted-foreground h-9 rounded-lg p-1',
+                full && isVertical && 'w-full max-w-xs',
+                listClassName,
+              )}
+            >
+              {panels.map(({ tabKey, header, disabled }) => {
+                const isActive = tabKey === currentValue;
+                return (
+                  <button
+                    key={tabKey}
+                    type='button'
+                    data-tab={tabKey}
+                    disabled={disabled}
+                    onClick={(e) => handleTabClick(tabKey, e)}
+                    className={cn(
+                      'inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50',
+                      variant === 'underline'
+                        ? cn(
+                            'bg-white border-b-2 border-transparent rounded-none px-4 pb-3 pt-3 h-auto text-slate-600 hover:text-slate-900',
+                            isActive &&
+                              'bg-transparent border-b-primary text-slate-900',
+                          )
+                        : cn(
+                            'rounded-md px-3 py-1.5',
+                            isActive
+                              ? 'bg-background text-foreground shadow-sm'
+                              : 'hover:bg-background/50',
+                          ),
+                      isVertical &&
+                        'justify-start w-full text-left h-auto px-3 py-2',
+                      !isVertical && !full && 'shrink-0 snap-start',
+                      full && !isVertical && 'flex-1',
+                      triggerClassName,
+                    )}
+                  >
+                    {header}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-        if (!content) {
-          return null;
-        }
+          {!isVertical && !full && showNext && (
+            <button
+              type='button'
+              onClick={() => scroll('right')}
+              className='absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-l-md bg-background/95 p-1 shadow-md hover:bg-background'
+              aria-label='Scroll right'
+            >
+              <ChevronRight className='h-4 w-4' />
+            </button>
+          )}
+        </div>
+      )}
 
-        const shouldRender =
-          forceRenderKeys.includes(tabKey) ||
-          tabKey === currentValue ||
-          leavingKeys.includes(tabKey);
+      {panels.map(({ tabKey, content }) => {
+        const isActive = tabKey === currentValue;
+        const shouldRender = isActive || forceRenderKeys.includes(tabKey);
 
-        if (!shouldRender) {
-          return null;
-        }
-
-        const shouldForceMount =
-          animation !== 'none' || forceRenderKeys.includes(tabKey);
+        if (!shouldRender) return null;
 
         return (
-          <TabsContent
+          <div
             key={tabKey}
-            value={tabKey}
-            forceMount={shouldForceMount ? true : undefined}
-            className={contentClasses}
+            className={cn(
+              'pt-2 outline-none',
+              !isActive && 'hidden',
+              isVertical && 'lg:flex-1 lg:pl-4 w-full',
+              full && 'w-full',
+              contentClassName,
+            )}
           >
-            {content.node}
-          </TabsContent>
+            {content}
+          </div>
         );
       })}
-    </Tabs>
+    </div>
   );
 }
 
-export { RTabs, RTabItem, RTabContent };
+export { RTabs, RTabPanel };
 export default RTabs;

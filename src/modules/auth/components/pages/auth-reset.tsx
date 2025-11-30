@@ -1,7 +1,7 @@
 import RForm from '@/modules/app/components/base/r-form';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
 import showAlert from '@/modules/app/components/base/show-alert';
-import Button from '@/modules/app/components/ui/button';
+import RBtn from '@/modules/app/components/base/r-btn';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import Yup from '@/plugins/yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -131,9 +131,9 @@ const AuthReset = () => {
           <RInputPassword />
         </RFormField>
 
-        <Button type='submit' className='w-full mt-3'>
+        <RBtn type='submit' className='w-full mt-3'>
           {tApp('save')}
-        </Button>
+        </RBtn>
       </RForm>
     </div>
   );

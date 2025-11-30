@@ -10,7 +10,7 @@ dayjs.extend(weekday);
 dayjs.extend(isoWeek);
 
 const meta: Meta<typeof RPicker> = {
-  title: 'Base/Form/RPicker',
+  title: 'Components/Form Controls/RPicker',
   component: RPicker,
   parameters: {
     layout: 'centered',

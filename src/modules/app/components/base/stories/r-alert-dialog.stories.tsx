@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AlertCircle, Trash2 } from 'lucide-react';
 
 const meta: Meta<typeof RAlertDialog> = {
-  title: 'Base/RAlertDialog',
+  title: 'Components/Feedback/RAlertDialog',
   component: RAlertDialog,
   parameters: {
     docs: {

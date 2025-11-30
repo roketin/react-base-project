@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import RForm, { type TRFormProps } from '../r-form';
 import { RFormField } from '../r-form-field';
-import { Input } from '@/modules/app/components/ui/input';
+import { RInput } from '../r-input';
 import RBtn from '../r-btn';
 import Yup from '@/plugins/yup';
 
@@ -54,7 +54,7 @@ const FormStory = (props: StoryProps) => {
           label='Full Name'
           withPlaceholder
         >
-          <Input />
+          <RInput />
         </RFormField>
         <RFormField
           control={form.control}
@@ -62,7 +62,7 @@ const FormStory = (props: StoryProps) => {
           label='Email Address'
           withPlaceholder
         >
-          <Input type='email' />
+          <RInput type='email' />
         </RFormField>
 
         {!props.hideHorizontalLine && <hr className='col-span-full my-4' />}
@@ -78,7 +78,7 @@ const FormStory = (props: StoryProps) => {
 };
 
 const meta: Meta<typeof FormStory> = {
-  title: 'Base/Form/RForm',
+  title: 'Components/Layout/RForm',
   component: FormStory,
   parameters: {
     layout: 'centered',

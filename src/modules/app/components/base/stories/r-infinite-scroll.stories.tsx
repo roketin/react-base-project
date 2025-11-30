@@ -10,7 +10,7 @@ type Item = {
 };
 
 const meta: Meta<typeof RInfiniteScroll<Item>> = {
-  title: 'Base/RInfiniteScroll',
+  title: 'Components/Other/RInfiniteScroll',
   component: RInfiniteScroll,
   tags: ['autodocs'],
   parameters: {

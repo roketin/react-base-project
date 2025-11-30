@@ -2,7 +2,7 @@ import Yup from '@/plugins/yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useCallback } from 'react';
-import { Input } from '@/modules/app/components/ui/input';
+import { RInput } from '@/modules/app/components/base/r-input';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
 import { RInputPassword } from '@/modules/app/components/base/r-input-password';
 import RForm from '@/modules/app/components/base/r-form';
@@ -84,9 +84,9 @@ const AuthLogin = () => {
             withPlaceholder
             description={t('form.emailDesc')}
           >
-            <Input
+            <RInput
               autoComplete='username'
-              prepend={<AtSign size={18} />}
+              leftIcon={<AtSign size={18} />}
               className='h-11'
             />
           </RFormField>
@@ -99,7 +99,7 @@ const AuthLogin = () => {
             withPlaceholder
           >
             <RInputPassword
-              prepend={<FileLock2 size={18} />}
+              leftIcon={<FileLock2 size={18} />}
               className='h-11'
             />
           </RFormField>

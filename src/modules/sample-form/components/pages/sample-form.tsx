@@ -21,14 +21,24 @@ import {
 import { safeArray } from '@/modules/app/libs/utils';
 import type { TApiDefaultQueryParams } from '@/modules/app/types/api.type';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
-import { useGetSampleFormList } from '@/modules/sample-form/services/sample-form.service';
+import {
+  useGetRickAndMortyCharactersInfinite,
+  useGetSampleFormList,
+} from '@/modules/sample-form/services/sample-form.service';
 import SampleFormDialog from '@/modules/sample-form/components/elements/sample-form-dialog';
 import type { TTestDialogSchema } from '@/modules/sample-form/components/elements/sample-form-dialog';
-import type { TSampleItem } from '@/modules/sample-form/types/sample-form.type';
-import { InspectIcon, Pencil, Plus, Trash } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import type {
+  TRickAndMortyCharacter,
+  TRickAndMortyCharactersResponse,
+  TSampleItem,
+} from '@/modules/sample-form/types/sample-form.type';
+import { Calendar, InspectIcon, Pencil, Plus, Trash } from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParam } from '@/modules/app/hooks/use-search-param';
+import { RCheckbox } from '@/modules/app/components/base/r-checkbox';
+import { useGetSampleFormInfiniteList } from '@/modules/sample-form/services/sample-form.service';
+import type { TApiResponsePaginate } from '@/modules/app/types/api.type';
 
 const countries = [
   { id: 'id', name: 'Indonesia' },
@@ -45,11 +55,6 @@ const tags = [
   { value: 'returning', label: 'Returning' },
   { value: 'vip', label: 'VIP' },
 ];
-
-const toCurrencyRange = (values: number[]) => {
-  const [min = 0, max = min] = values;
-  return `Rp ${min.toLocaleString()} - Rp ${max.toLocaleString()}`;
-};
 
 const SampleFormIndex = () => {
   // Permission
@@ -72,11 +77,60 @@ const SampleFormIndex = () => {
   const columns = useMemo<TRDataTableColumnDef<TSampleItem, unknown>[]>(
     () => [
       {
+        id: 'select',
+        headerAlign: 'center',
+        header: ({ table }) => (
+          <RCheckbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(checked) =>
+              table.toggleAllPageRowsSelected(checked)
+            }
+          />
+        ),
+        cell: ({ row }) => (
+          <div className='flex justify-center'>
+            <RCheckbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(checked) => row.toggleSelected(checked)}
+            />
+          </div>
+        ),
+        enableSorting: false,
+        size: 40,
+      },
+      {
+        header: t('columns.name'),
+        accessorKey: 'name',
+        cell: ({ row, getValue }) =>
+          tableCellLink(getValue<string>(), {
+            routeName: 'SampleFormEdit',
+            routeParams: { id: String(row.original.id) },
+          }),
+      },
+      {
+        id: 'code1',
+        header: t('columns.code', { i: 1 }),
+        accessorKey: 'code',
+        size: 130,
+      },
+      {
+        header: 'Budget',
+        accessorKey: 'budget',
+        size: 140,
+        cell: () => tableCurrency(100000000),
+      },
+      {
+        header: t('columns.createdAt'),
+        accessorKey: 'created_at',
+        size: 280,
+        cell: ({ getValue }) => tableDate(getValue<string>(), DATE_FORMAT.long),
+      },
+      {
         id: 'actions',
         header: t('columns.actions'),
-        sticky: 'left',
+        sticky: 'right',
         enableSorting: false,
-        size: 100,
+        size: 70,
         cell: ({ row }) => (
           <div className='flex items-center  gap-2'>
             <RTooltip content={t('actions.edit')}>
@@ -93,7 +147,8 @@ const SampleFormIndex = () => {
             <RTooltip content={t('actions.delete')}>
               <RBtn
                 size='iconSm'
-                variant='outline'
+                variant='destructive'
+                soft
                 onClick={() => {
                   showAlert(
                     {
@@ -121,76 +176,6 @@ const SampleFormIndex = () => {
             </RTooltip>
           </div>
         ),
-      },
-      {
-        header: t('columns.name'),
-        accessorKey: 'name',
-        cell: ({ row, getValue }) =>
-          tableCellLink(getValue<string>(), {
-            routeName: 'SampleFormEdit',
-            routeParams: { id: String(row.original.id) },
-          }),
-        size: 230,
-      },
-      {
-        id: 'code1',
-        header: t('columns.code', { i: 1 }),
-        accessorKey: 'code',
-        size: 100,
-      },
-      {
-        id: 'code2',
-        header: t('columns.code', { i: 2 }),
-        accessorKey: 'code',
-        size: 100,
-      },
-      {
-        id: 'code3',
-        header: t('columns.code', { i: 3 }),
-        accessorKey: 'code',
-        size: 100,
-      },
-      {
-        id: 'code4',
-        header: t('columns.code', { i: 4 }),
-        accessorKey: 'code',
-        size: 100,
-      },
-      {
-        id: 'code5',
-        header: t('columns.code', { i: 5 }),
-        accessorKey: 'code',
-        size: 100,
-      },
-      {
-        id: 'code6',
-        header: t('columns.code', { i: 6 }),
-        accessorKey: 'code',
-        size: 100,
-      },
-      {
-        id: 'code7',
-        header: t('columns.code', { i: 7 }),
-        accessorKey: 'code',
-        size: 100,
-      },
-      {
-        id: 'code8',
-        header: t('columns.code', { i: 8 }),
-        accessorKey: 'code',
-        size: 100,
-      },
-      {
-        header: 'Budget',
-        accessorKey: 'budget',
-        size: 150,
-        cell: () => tableCurrency(100000000),
-      },
-      {
-        header: t('columns.createdAt'),
-        accessorKey: 'created_at',
-        size: 190,
-        cell: ({ getValue }) => tableDate(getValue<string>(), DATE_FORMAT.long),
       },
     ],
     [navigate, t],
@@ -248,14 +233,36 @@ const SampleFormIndex = () => {
           options: tags,
           layout: 'horizontal',
         }),
-        filterItem.slider({
-          id: 'budget',
-          label: t('filters.budget.label'),
-          min: 0,
-          max: 1000,
-          step: 50,
-          defaultValue: [100, 500],
-          formatValue: toCurrencyRange,
+        filterItem.selectInfinite<
+          TApiResponsePaginate<TSampleItem>,
+          TSampleItem
+        >({
+          id: 'remote_sample',
+          label: 'Sample (API)',
+          query: useGetSampleFormInfiniteList,
+          getPageItems: (p) => p.data,
+          labelKey: 'name',
+          valueKey: 'id',
+          placeholder: 'Cari sample...',
+          searchParamKey: 'name',
+          deduplicateKey: 'id',
+        }),
+
+        filterItem.selectInfinite<
+          TRickAndMortyCharactersResponse<TRickAndMortyCharacter>,
+          TRickAndMortyCharacter,
+          { name?: string }
+        >({
+          id: 'character_v2',
+          label: 'Character V2 (No Lag)',
+          query: useGetRickAndMortyCharactersInfinite,
+          getPageItems: (p) =>
+            p.results.map((r) => ({ ...r, id: String(r.id) })),
+          labelKey: 'name',
+          valueKey: 'id',
+          placeholder: 'Search character (optimized)',
+          searchParamKey: 'name',
+          deduplicateKey: 'id',
         }),
       ] as TFilterItem[],
     [t],
@@ -267,13 +274,10 @@ const SampleFormIndex = () => {
   const [qryParams, setQryParams] =
     useObjectState<TApiDefaultQueryParams>(DEFAULT_QUERY_PARAMS);
 
-  // Debug: Log qryParams changes
-  useEffect(() => {
-    console.log('📊 Query params changed:', qryParams);
-  }, [qryParams]);
-
   // Get data
-  const { data, isFetching: isLoading } = useGetSampleFormList(qryParams);
+  const { data, isFetching: isLoading } = useGetSampleFormList({
+    variables: qryParams,
+  });
 
   // Test Dialog State
   const [isTestDialogOpen, setIsTestDialogOpen] = useState(false);
@@ -326,6 +330,37 @@ const SampleFormIndex = () => {
         meta={data?.meta}
         loading={isLoading}
         onChange={setQryParams}
+        renderOnMobile={(row) => (
+          <div className='border border-gray-100 p-4' key={row.id}>
+            <div className='flex items-start justify-between'>
+              <div className='flex-1'>
+                <h4 className='font-medium text-foreground'>{row.name}</h4>
+                <p className='text-sm text-muted-foreground'>{row.code}</p>
+              </div>
+              <div className='flex gap-1'>
+                <RBtn
+                  size='iconSm'
+                  variant='soft-success'
+                  onClick={() => navigate('SampleFormEdit', { id: row.id })}
+                >
+                  <Pencil size={16} />
+                </RBtn>
+                <RBtn size='iconSm' variant='soft-destructive'>
+                  <Trash size={16} className='text-destructive' />
+                </RBtn>
+              </div>
+            </div>
+            <div className='mt-3 flex items-center gap-4 text-sm text-muted-foreground'>
+              <span className='font-medium text-foreground'>
+                {tableCurrency(100000000)}
+              </span>
+              <span className='flex items-center gap-1'>
+                <Calendar size={14} />
+                {tableDate(row.created_at, DATE_FORMAT.short)}
+              </span>
+            </div>
+          </div>
+        )}
       />
     </div>
   );

@@ -1,14 +1,12 @@
 import RDataTableFooter from '@/modules/app/components/base/r-data-table-footer';
-import { Input } from '@/modules/app/components/ui/input';
-import { Skeleton } from '@/modules/app/components/ui/skeleton';
 import {
-  Table as TableCom,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/modules/app/components/ui/table';
+  RTable,
+  RThead,
+  RTbody,
+  RTr,
+  RTh,
+  RTd,
+} from '@/modules/app/components/base/r-simple-table';
 import { cn } from '@/modules/app/libs/utils';
 import type {
   TApiDefaultQueryParams,
@@ -23,6 +21,7 @@ import {
   type SortingState,
   type Table,
   type Header,
+  type RowSelectionState,
 } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ChevronsUpDown, Search } from 'lucide-react';
 import {
@@ -30,12 +29,16 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
+  useRef,
   useState,
 } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import { useIsMobile } from '@/modules/app/hooks/use-media-query';
+import { RSkeleton } from '@/modules/app/components/base/r-skeleton';
+import { RInput } from '@/modules/app/components/base/r-input';
 
 export type StickyPosition = 'left' | 'right' | 'none';
-
 type Alignment = 'left' | 'center' | 'right';
 
 export type TRDataTableColumnDef<TData, TValue> = ColumnDef<TData, TValue> & {
@@ -64,27 +67,23 @@ export type TRDataTableProps<TData, TValue> = TLoadable & {
   hoverable?: boolean;
   toolbarStart?: React.ReactNode;
   toolbarEnd?: React.ReactNode;
+  renderOnMobile?: (row: TData, index: number) => React.ReactNode;
 };
 
 export type TRDataTableRef<TData = unknown> = {
   getTable: () => Table<TData>;
 };
 
-export type TRDataTableSelected = {
-  [key: string]: boolean;
-};
+export type TRDataTableSelected = Record<string, boolean>;
 
-const ALIGN_CLASS_MAP: Record<Alignment, string> = {
-  left: 'text-left',
-  center: 'text-center',
-  right: 'text-right',
-};
-
-const JUSTIFY_CLASS_MAP: Record<Alignment, string> = {
+const JUSTIFY_CLASS: Record<Alignment, string> = {
   left: 'justify-start',
   center: 'justify-center',
   right: 'justify-end',
 };
+
+const RSkeleton_ROWS = Array.from({ length: 8 });
+const MOBILE_RSkeleton_ROWS = Array.from({ length: 5 });
 
 const RDataTableInner = <TData, TValue>(
   {
@@ -107,163 +106,276 @@ const RDataTableInner = <TData, TValue>(
     hoverable = true,
     toolbarStart,
     toolbarEnd,
+    renderOnMobile,
   }: TRDataTableProps<TData, TValue>,
   ref: React.Ref<TRDataTableRef<TData>>,
 ) => {
-  // State for tracking selected rows keyed by row ID.
   const [rowSelection, setRowSelection] =
-    useState<TRDataTableSelected>(initialSelected);
-
-  // State for managing sorting state of the table.
+    useState<RowSelectionState>(initialSelected);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [search, setSearch] = useState(initialSearch);
+  const isInitialized = useRef(false);
+  const isMobile = useIsMobile();
 
-  // Initialize the TanStack React Table instance with manual sorting and pagination support.
-  // Row selection and sorting state are controlled externally via state hooks.
+  // Debounced view mode with fade transition (like iPadOS)
+  const [viewMode, setViewMode] = useState<'mobile' | 'desktop'>(
+    isMobile ? 'mobile' : 'desktop',
+  );
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const transitionTimeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    const targetMode = isMobile ? 'mobile' : 'desktop';
+    if (targetMode === viewMode) return;
+
+    // Clear any pending transition
+    if (transitionTimeout.current) {
+      clearTimeout(transitionTimeout.current);
+    }
+
+    // Start fade out
+    setIsTransitioning(true);
+
+    // Wait for fade out, then switch view, then fade in
+    transitionTimeout.current = setTimeout(() => {
+      setViewMode(targetMode);
+      // Small delay before fade in
+      setTimeout(() => setIsTransitioning(false), 50);
+    }, 150);
+
+    return () => {
+      if (transitionTimeout.current) {
+        clearTimeout(transitionTimeout.current);
+      }
+    };
+  }, [isMobile, viewMode]);
+
+  const getRowId = useMemo(() => {
+    if (!rowId) return undefined;
+    return (row: TData, index: number) =>
+      String((row as Record<string, unknown>)[rowId] ?? index);
+  }, [rowId]);
+
+  // Generate stable column key for hot reload support
+  const columnKey = useMemo(
+    () =>
+      columns
+        .map((c) => c.id ?? (c as { accessorKey?: string }).accessorKey ?? '')
+        .join('-'),
+    [columns],
+  );
+
   const table = useReactTable({
-    state: {
-      rowSelection,
-      sorting,
-    },
     data,
     columns,
+    state: { rowSelection, sorting },
     manualSorting: true,
     manualPagination: true,
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
+    onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
-    getRowId: rowId
-      ? // Provide a custom row ID getter if rowId prop is specified.
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (row: any, index: number) => String(row[rowId] ?? index)
-      : undefined,
+    getCoreRowModel: getCoreRowModel(),
+    getRowId,
   });
 
-  /**
-   * Callback to notify parent components about changes in table query parameters such as
-   * sorting, pagination, and search.
-   *
-   * @param {Partial<TApiDefaultQueryParams>} params - Partial query parameters to update.
-   */
-  const onChangeTable = useCallback(
-    (params: Partial<TApiDefaultQueryParams>) => {
-      if (onChange) {
-        onChange(params);
-      }
-    },
+  const handleChange = useCallback(
+    (params: Partial<TApiDefaultQueryParams>) => onChange?.(params),
     [onChange],
   );
 
-  /**
-   * Effect to synchronize sorting changes with the parent component.
-   * Transforms the sorting state into API query parameters and resets page to 1.
-   * Runs whenever sorting or transformSort function changes.
-   */
-  useEffect(() => {
-    const actualSort = sorting?.[0];
-    const sortParams = (
-      actualSort
-        ? {
-            sort_field: transformSort
-              ? transformSort(actualSort.id)
-              : actualSort.id,
-            sort_order: actualSort.desc ? 'desc' : 'asc',
-          }
-        : {
-            sort_field: undefined,
-            sort_order: undefined,
-          }
-    ) as Partial<TApiDefaultQueryParams>;
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    handleChange({ search: value, page: 1 });
+  }, 300);
 
-    onChangeTable({ ...sortParams, page: 1 });
-  }, [onChangeTable, sorting, transformSort]);
-
-  /**
-   * Effect to notify parent components when the selected rows change.
-   * Runs whenever rowSelection state updates.
-   */
+  // Sync sorting to parent
   useEffect(() => {
-    if (onChangeSelected) {
-      onChangeSelected(rowSelection);
+    const sort = sorting[0];
+    handleChange({
+      sort_field: sort
+        ? transformSort
+          ? transformSort(sort.id)
+          : sort.id
+        : undefined,
+      sort_order: sort ? (sort.desc ? 'desc' : 'asc') : undefined,
+      page: 1,
+    });
+  }, [sorting, transformSort, handleChange]);
+
+  // Sync selection to parent
+  useEffect(() => {
+    onChangeSelected?.(rowSelection);
+  }, [rowSelection, onChangeSelected]);
+
+  // Handle initial search from URL
+  useEffect(() => {
+    if (initialSearch && !isInitialized.current) {
+      setSearch(initialSearch);
+      handleChange({ search: initialSearch, page: 1 });
+      isInitialized.current = true;
     }
-  }, [onChangeSelected, rowSelection]);
+  }, [initialSearch, handleChange]);
 
-  /**
-   * Expose imperative methods to parent components using ref.
-   * Provides access to the underlying TanStack table instance.
-   */
-  useImperativeHandle(ref, () => ({
-    getTable() {
-      return table;
-    },
-  }));
+  useImperativeHandle(ref, () => ({ getTable: () => table }), [table]);
 
-  /**
-   * Handles sorting toggles on column headers.
-   * Cycles through sorting states: none -> ascending -> descending -> none.
-   *
-   * @param {Header<TData, unknown>} header - The header cell that was clicked.
-   */
   const handleSort = useCallback((header: Header<TData, unknown>) => {
     if (!header.column.getCanSort()) return;
-    const isSorted = header.column.getIsSorted();
-    if (!isSorted) return header.column.toggleSorting(false);
-    if (isSorted === 'asc') return header.column.toggleSorting(true);
-    if (isSorted === 'desc') return header.column.clearSorting();
+    const sorted = header.column.getIsSorted();
+    if (!sorted) header.column.toggleSorting(false);
+    else if (sorted === 'asc') header.column.toggleSorting(true);
+    else header.column.clearSorting();
   }, []);
 
-  /**
-   * Renders placeholder skeleton rows to maintain table layout while data is loading.
-   * Always displays 8 skeleton rows, with skeleton cells matching the number of columns.
-   *
-   * @returns {JSX.Element} Skeleton rows for loading state.
-   */
-  const renderSkeletonRows = () => {
-    // Get the first header group (assume all header groups have same columns)
-    const headerGroups = table.getHeaderGroups();
-    const headerGroup = headerGroups[0];
-    const headers = headerGroup ? headerGroup.headers : [];
-    return (
-      <>
-        {Array.from({ length: 8 }).map((_, idx) => (
-          <TableRow key={idx}>
-            {headers.map((header) => (
-              <TableCell key={header.id} className='bg-inherit'>
-                <Skeleton className='h-9 w-full rounded-md' />
-              </TableCell>
-            ))}
-          </TableRow>
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const val = e.target.value;
+      setSearch(val);
+      debouncedSearch(val);
+    },
+    [debouncedSearch],
+  );
+
+  const tableClassName = cn('rt-table');
+
+  const showMobileView = viewMode === 'mobile' && !!renderOnMobile;
+  const headers = table.getHeaderGroups()[0]?.headers ?? [];
+  const rows = table.getRowModel().rows;
+
+  const renderRSkeletonRows = () =>
+    RSkeleton_ROWS.map((_, idx) => (
+      <RTr key={idx} hoverable={false}>
+        {headers.map((header) => (
+          <RTd key={header.id}>
+            <RSkeleton className='h-9 w-full rounded-md' />
+          </RTd>
         ))}
-      </>
+      </RTr>
+    ));
+
+  const renderMobileContent = () => {
+    if (loading) {
+      return (
+        <div className='space-y-3'>
+          {MOBILE_RSkeleton_ROWS.map((_, idx) => (
+            <RSkeleton key={idx} className='h-24 w-full rounded-md' />
+          ))}
+        </div>
+      );
+    }
+    if (!data.length) {
+      return (
+        <div className='flex h-24 w-full items-center justify-center rounded-md border text-sm text-muted-foreground'>
+          No results.
+        </div>
+      );
+    }
+    return (
+      <div className='space-y-3'>
+        {data.map((row, index) => renderOnMobile!(row, index))}
+      </div>
     );
   };
 
-  /**
-   * Debounced callback for handling search input changes.
-   * Delays invoking onChangeTable to reduce frequent queries.
-   */
-  const [search, setSearch] = useState<string>(initialSearch);
-  const [hasInitialized, setHasInitialized] = useState(false);
+  const renderHeaderCell = (header: Header<TData, unknown>) => {
+    const def = header.column.columnDef as TRDataTableColumnDef<TData, TValue>;
+    const sticky = def.sticky ?? 'none';
+    const offset = def.stickyOffset ?? 0;
+    const align = (def.headerAlign ?? 'left') as Alignment;
 
-  const debouncedSearch = useDebouncedCallback((search: string) => {
-    onChangeTable({ search, page: 1 });
-  }, 300);
+    return (
+      <RTh
+        key={header.id}
+        sticky={sticky}
+        stickyOffset={offset}
+        align={align}
+        style={{ width: header.getSize() }}
+        className={cn(header.column.getCanSort() && 'hover:bg-[#eee]')}
+      >
+        {!header.isPlaceholder && (
+          <div
+            role='presentation'
+            className={cn(
+              'flex select-none items-center gap-1',
+              JUSTIFY_CLASS[align],
+              align === 'right' ? 'flex-row-reverse' : 'flex-row',
+              header.column.getCanSort()
+                ? 'cursor-pointer hover:text-black'
+                : 'cursor-default',
+            )}
+            onClick={() => handleSort(header)}
+          >
+            {flexRender(header.column.columnDef.header, header.getContext())}
+            {header.column.getCanSort() && (
+              <div className='ml-3'>
+                {header.column.getIsSorted() === 'asc' ? (
+                  <ArrowUp size={16} />
+                ) : header.column.getIsSorted() === 'desc' ? (
+                  <ArrowDown size={16} />
+                ) : (
+                  <ChevronsUpDown size={16} className='opacity-20' />
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </RTh>
+    );
+  };
 
-  // Update search when initialSearch changes
-  useEffect(() => {
-    if (initialSearch && !hasInitialized) {
-      console.log('🔄 RDataTable: Setting initial search:', initialSearch);
-      setSearch(initialSearch);
-      onChangeTable({ search: initialSearch, page: 1 });
-      setHasInitialized(true);
-    }
-  }, [initialSearch, hasInitialized]); // eslint-disable-line react-hooks/exhaustive-deps
+  const renderTableContent = () => (
+    <RTable key={columnKey} fixed={fixed} className={tableClassName}>
+      <RThead>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <RTr key={headerGroup.id} hoverable={false}>
+            {headerGroup.headers.map(renderHeaderCell)}
+          </RTr>
+        ))}
+      </RThead>
+      <RTbody>
+        {loading ? (
+          renderRSkeletonRows()
+        ) : rows.length > 0 ? (
+          rows.map((row) => (
+            <RTr
+              key={row.id}
+              striped={striped}
+              hoverable={hoverable}
+              data-state={row.getIsSelected() && 'selected'}
+            >
+              {row.getVisibleCells().map((cell) => {
+                const def = cell.column.columnDef as TRDataTableColumnDef<
+                  TData,
+                  TValue
+                >;
+                const sticky = def.sticky ?? 'none';
+                const offset = def.stickyOffset ?? 0;
+                const align = (def.cellAlign ??
+                  def.headerAlign ??
+                  'left') as Alignment;
 
-  const tableClassName = cn(
-    'rt-table',
-    { 'table-fixed': fixed },
-    { 'rt-table--striped': striped },
-    hoverable ? 'rt-table--hoverable' : 'rt-table--no-hover',
+                return (
+                  <RTd
+                    key={cell.id}
+                    sticky={sticky}
+                    stickyOffset={offset}
+                    align={align}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </RTd>
+                );
+              })}
+            </RTr>
+          ))
+        ) : (
+          <RTr hoverable={false}>
+            <RTd colSpan={columns.length || 1}>
+              <div className='flex h-24 w-full items-center justify-center text-sm text-muted-foreground'>
+                No results.
+              </div>
+            </RTd>
+          </RTr>
+        )}
+      </RTbody>
+    </RTable>
   );
 
   return (
@@ -272,15 +384,10 @@ const RDataTableInner = <TData, TValue>(
         <div className='flex items-center gap-3 flex-1'>
           {allowSearch && (
             <div className='flex-1'>
-              <Input
-                clearable
+              <RInput
                 placeholder={searchPlaceholder}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  debouncedSearch(val);
-                  setSearch(val);
-                }}
-                prepend={<Search size={16} />}
+                onChange={handleSearchChange}
+                leftIcon={<Search size={16} />}
                 value={search}
               />
             </div>
@@ -290,140 +397,20 @@ const RDataTableInner = <TData, TValue>(
         {toolbarEnd}
       </div>
 
-      <div className='rounded-md border overflow-x-auto w-full min-w-0'>
-        <TableCom className={tableClassName}>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  const columnDef = header.column
-                    .columnDef as TRDataTableColumnDef<TData, TValue>;
-                  const sticky = columnDef.sticky ?? 'none';
-                  const offset = columnDef.stickyOffset ?? 0;
-                  const headerAlign = (columnDef.headerAlign ??
-                    'left') as Alignment;
-                  const headerAlignClass =
-                    headerAlign === 'left'
-                      ? ALIGN_CLASS_MAP.left
-                      : `!${ALIGN_CLASS_MAP[headerAlign]}`;
-                  const headerJustifyClass = JUSTIFY_CLASS_MAP[headerAlign];
-                  const headerDirectionClass =
-                    headerAlign === 'right' ? 'flex-row-reverse' : 'flex-row';
-                  return (
-                    <TableHead
-                      key={header.id}
-                      style={{
-                        width: header.getSize(),
-                        position: sticky === 'none' ? undefined : 'sticky',
-                        left: sticky === 'left' ? offset : undefined,
-                        right: sticky === 'right' ? offset : undefined,
-                        zIndex: sticky === 'none' ? undefined : 10,
-                      }}
-                      className={cn('bg-[#F7F7F7]', headerAlignClass)}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <div
-                          role='presentation'
-                          className={cn(
-                            'select-none flex items-center gap-1',
-                            headerJustifyClass,
-                            headerDirectionClass,
-                            header.column.getCanSort()
-                              ? 'cursor-pointer hover:text-black'
-                              : 'cursor-default',
-                          )}
-                          onClick={() => handleSort(header)}
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                          {header.column.getCanSort() && (
-                            <div className='ml-auto'>
-                              {{
-                                asc: <ArrowUp size={16} />,
-                                desc: <ArrowDown size={16} />,
-                              }[header.column.getIsSorted() as string] ?? (
-                                <ChevronsUpDown
-                                  size={16}
-                                  className='opacity-20'
-                                />
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              renderSkeletonRows()
-            ) : (
-              <>
-                {table.getRowModel().rows.length > 0 ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && 'selected'}
-                    >
-                      {row.getVisibleCells().map((cell) => {
-                        const columnDef = cell.column
-                          .columnDef as TRDataTableColumnDef<TData, TValue>;
-                        const sticky = columnDef.sticky ?? 'none';
-                        const offset = columnDef.stickyOffset ?? 0;
-                        const cellAlign = (columnDef.cellAlign ??
-                          columnDef.headerAlign ??
-                          'left') as Alignment;
-                        const cellAlignClass = ALIGN_CLASS_MAP[cellAlign];
-                        return (
-                          <TableCell
-                            key={cell.id}
-                            style={{
-                              position:
-                                sticky === 'none' ? undefined : 'sticky',
-                              left: sticky === 'left' ? offset : undefined,
-                              right: sticky === 'right' ? offset : undefined,
-                              zIndex: sticky === 'none' ? undefined : 5,
-                              backgroundColor: 'inherit',
-                            }}
-                            className={cn('bg-inherit', cellAlignClass)}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns?.length ?? 1}
-                      className='bg-inherit'
-                    >
-                      <div className='flex h-24 w-full items-center justify-center text-sm text-muted-foreground'>
-                        No results.
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </>
-            )}
-          </TableBody>
-        </TableCom>
+      <div
+        className={cn(
+          'transition-opacity duration-150 ease-in-out',
+          isTransitioning ? 'opacity-0' : 'opacity-100',
+        )}
+      >
+        {showMobileView ? renderMobileContent() : renderTableContent()}
       </div>
 
       {pagination && (
         <RDataTableFooter
           meta={meta}
           pagesToShow={5}
-          onChange={onChangeTable}
+          onChange={handleChange}
           disabled={loading}
         />
       )}

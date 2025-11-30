@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from '@/modules/app/components/ui/popover';
-import Button from '@/modules/app/components/ui/button';
+import RBtn from '@/modules/app/components/base/r-btn';
 import { ChevronDown, Filter as FilterIcon } from 'lucide-react';
 
 // ============================================================================
@@ -101,6 +101,33 @@ const mapKeys = (
   }
 
   return result;
+};
+
+/**
+ * Count active filters compared to defaults.
+ */
+const countActiveFilters = (
+  values: Record<string, unknown>,
+  schema: TFilterItem[],
+): number => {
+  const defaults = getDefaultValues(schema);
+
+  return Object.entries(values).filter(([key, value]) => {
+    const defaultValue = defaults[key];
+    if (value === null || value === undefined) return false;
+    if (value === defaultValue) return false;
+    if (Array.isArray(value) && value.length === 0) return false;
+    if (typeof value === 'string' && value.trim() === '') return false;
+    if (
+      typeof value === 'object' &&
+      !(value instanceof Date) &&
+      Object.keys(value as Record<string, unknown>).length === 0
+    ) {
+      return false;
+    }
+    if (value === false) return false;
+    return true;
+  }).length;
 };
 
 // ============================================================================
@@ -223,10 +250,18 @@ export function RFilterMenu({
   const { values, setValue, reset, getParams } = useFilter(schema, storageKey);
   const [open, setOpen] = useState(false);
   const [lastApplied, setLastApplied] = useState('');
-  const [isApplied, setIsApplied] = useState(false);
+  const [appliedValues, setAppliedValues] = useState<Record<string, unknown>>(
+    () => getDefaultValues(schema),
+  );
 
   const currentSnapshot = useMemo(() => serialize(values), [values]);
   const hasChanges = currentSnapshot !== lastApplied;
+
+  // Count active filters based on last applied values
+  const activeFilterCount = useMemo(
+    () => countActiveFilters(appliedValues, schema),
+    [appliedValues, schema],
+  );
 
   // Auto-apply on mount if has persisted values
   useEffect(() => {
@@ -238,8 +273,8 @@ export function RFilterMenu({
     if (currentSnapshot !== defaultSnapshot) {
       const mapped = mapKeys(params, keyMap);
       onSubmit?.(mapped);
-      setIsApplied(true);
       setLastApplied(currentSnapshot);
+      setAppliedValues(params);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -249,8 +284,8 @@ export function RFilterMenu({
     const mapped = mapKeys(params, keyMap);
     onSubmit?.(mapped);
     setOpen(false);
-    setIsApplied(true);
     setLastApplied(currentSnapshot);
+    setAppliedValues(params);
   }, [getParams, keyMap, onSubmit, currentSnapshot]);
 
   const handleReset = useCallback(() => {
@@ -268,21 +303,23 @@ export function RFilterMenu({
 
     onReset?.(mapped);
     setOpen(false);
-    setIsApplied(false);
     setLastApplied(serialize(cleared));
+    setAppliedValues(cleared);
   }, [reset, keyMap, onReset]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant='outline' className='relative'>
+        <RBtn variant='outline'>
           <FilterIcon />
           {buttonText}
-          <ChevronDown />
-          {isApplied && (
-            <span className='absolute top-1 right-1 h-2 w-2 rounded-full bg-primary' />
+          {activeFilterCount > 0 && (
+            <span className='ml-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-medium text-primary-foreground'>
+              {activeFilterCount}
+            </span>
           )}
-        </Button>
+          <ChevronDown />
+        </RBtn>
       </PopoverTrigger>
       <PopoverContent
         align='end'
@@ -303,12 +340,12 @@ export function RFilterMenu({
 
           {/* Actions */}
           <div className='flex justify-end gap-2 p-4 border-t bg-card sticky bottom-0'>
-            <Button variant='outline' onClick={handleReset}>
+            <RBtn variant='outline' onClick={handleReset}>
               Reset
-            </Button>
-            <Button onClick={handleApply} disabled={!hasChanges}>
+            </RBtn>
+            <RBtn onClick={handleApply} disabled={!hasChanges}>
               Apply
-            </Button>
+            </RBtn>
           </div>
         </div>
       </PopoverContent>

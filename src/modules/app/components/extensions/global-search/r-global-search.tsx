@@ -13,7 +13,7 @@ import type { SearchableItem } from '@/modules/app/types/global-search.type';
 import { RSearchResultItem } from './r-search-result-item';
 import { RSearchModuleFilter } from './r-search-module-filter';
 import { Clock } from 'lucide-react';
-import RInput from '@/modules/app/components/base/r-input';
+import { RInput } from '@/modules/app/components/base/r-input';
 import { setGlobalNavigate } from '@/modules/app/libs/navigation-helper';
 import { useTranslation } from 'react-i18next';
 

@@ -1,9 +1,9 @@
-import { SidebarHeader } from '@/modules/app/components/ui/sidebar';
 import { RBrand } from '@/modules/app/components/base/r-brand';
 import { useSidebar } from '../../contexts/sidebar-context';
 import { Link } from 'react-router-dom';
 import { useNamedRoute } from '../../hooks/use-named-route';
 import { cn } from '../../libs/utils';
+import { RSidebarHeader } from '@/modules/app/components/base/r-sidebar';
 
 const AppSidebarHeader = () => {
   const { isCollapsed } = useSidebar();
@@ -14,7 +14,7 @@ const AppSidebarHeader = () => {
   }
 
   return (
-    <SidebarHeader
+    <RSidebarHeader
       className={cn('transition-all duration-300 backface-visible pb-1 mt-2')}
     >
       <Link to={linkTo('DashboardIndex')}>
@@ -24,7 +24,7 @@ const AppSidebarHeader = () => {
           iconClassName='size-10'
         />
       </Link>
-    </SidebarHeader>
+    </RSidebarHeader>
   );
 };
 export default AppSidebarHeader;

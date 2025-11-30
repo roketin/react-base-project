@@ -53,7 +53,7 @@ const cardMask: MaskitoOptions = {
 };
 
 const meta: Meta<typeof RInputFormat> = {
-  title: 'Base/Form/RInputFormat',
+  title: 'Components/Inputs/RInputFormat',
   component: RInputFormat,
   parameters: {
     layout: 'centered',

@@ -9,7 +9,7 @@ import { RRangePicker, type TRRangePickerProps } from '../r-range-picker';
 dayjs.extend(isoWeek);
 
 const meta: Meta<typeof RRangePicker> = {
-  title: 'Base/Form/RRangePicker',
+  title: 'Components/Form Controls/RRangePicker',
   component: RRangePicker,
   parameters: {
     layout: 'centered',

@@ -3,14 +3,6 @@ import RStatisticDashboard, {
 } from '@/modules/app/components/base/r-statistic-dashboard';
 import { RCard } from '@/modules/app/components/base/r-card';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/modules/app/components/ui/table';
-import {
   BarChart,
   Bar,
   XAxis,
@@ -26,6 +18,14 @@ import {
   TrendingUp,
   Activity,
 } from 'lucide-react';
+import {
+  RTable,
+  RTbody,
+  RTd,
+  RTh,
+  RThead,
+} from '@/modules/app/components/base/r-simple-table';
+import { RTableRow } from '@/modules/app/components/base/r-table-simple';
 
 const Dashboard = () => {
   // Mock Data for Stats
@@ -136,7 +136,7 @@ const Dashboard = () => {
               <Activity className='text-muted-foreground size-4' />
             </div>
           }
-          wrapperClassName='col-span-4'
+          className='col-span-4'
         >
           <div className='h-[300px] w-full'>
             <ResponsiveContainer width='100%' height='100%' debounce={300}>
@@ -179,26 +179,26 @@ const Dashboard = () => {
         <RCard
           title='Recent Activity'
           description='Latest transactions from users.'
-          wrapperClassName='col-span-3'
+          className='col-span-3'
         >
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className='text-right'>Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <RTable>
+            <RThead>
+              <RTableRow>
+                <RTh>User</RTh>
+                <RTh>Status</RTh>
+                <RTh className='text-right'>Amount</RTh>
+              </RTableRow>
+            </RThead>
+            <RTbody>
               {recentActivity.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>
+                <RTableRow key={item.id}>
+                  <RTd>
                     <div className='font-medium'>{item.user}</div>
                     <div className='text-muted-foreground text-xs hidden md:inline'>
                       {item.id}
                     </div>
-                  </TableCell>
-                  <TableCell>
+                  </RTd>
+                  <RTd>
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
                         item.status === 'Completed'
@@ -210,14 +210,12 @@ const Dashboard = () => {
                     >
                       {item.status}
                     </span>
-                  </TableCell>
-                  <TableCell className='text-right font-medium'>
-                    {item.amount}
-                  </TableCell>
-                </TableRow>
+                  </RTd>
+                  <RTd className='text-right font-medium'>{item.amount}</RTd>
+                </RTableRow>
               ))}
-            </TableBody>
-          </Table>
+            </RTbody>
+          </RTable>
         </RCard>
       </div>
     </div>

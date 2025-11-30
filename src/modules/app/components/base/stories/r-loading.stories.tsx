@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { RLoading } from '../r-loading';
 
 const meta: Meta<typeof RLoading> = {
-  title: 'Base/RLoading',
+  title: 'Components/Feedback/RLoading',
   component: RLoading,
   parameters: {
     layout: 'centered',

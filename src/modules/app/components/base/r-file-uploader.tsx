@@ -17,8 +17,9 @@ import {
   Trash,
   Upload,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/modules/app/libs/utils';
-import Button from '@/modules/app/components/ui/button';
+import RBtn from '@/modules/app/components/base/r-btn';
 import { DEFAULT_EXT } from '@/modules/app/constants/app.constant';
 import {
   getFileExtensionFromFile,
@@ -186,11 +187,14 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
      */
     const handleFileChange_internal = useCallback(
       (e: ChangeEvent<HTMLInputElement>) => {
-        if (props.multiple) {
-          handleFileChange(e.target.files);
-        } else {
-          handleFileChange(e.target.files?.[0] ?? null);
+        const files = props.multiple
+          ? e.target.files
+          : (e.target.files?.[0] ?? null);
+        // Clear value so selecting the same file twice still triggers onChange
+        if (fileRef.current) {
+          fileRef.current.value = '';
         }
+        handleFileChange(files);
       },
       [handleFileChange, props.multiple],
     );
@@ -247,10 +251,16 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
         e.preventDefault();
         setIsDragOver(false);
         if (!disabledUpload) {
+          const files = props.multiple
+            ? e.dataTransfer.files
+            : (e.dataTransfer.files?.[0] ?? null);
+          if (fileRef.current) {
+            fileRef.current.value = '';
+          }
           if (props.multiple) {
-            handleFileChange(e.dataTransfer.files);
+            handleFileChange(files as FileList);
           } else {
-            handleFileChange(e.dataTransfer.files?.[0] ?? null);
+            handleFileChange(files as File | null);
           }
         }
       },
@@ -392,21 +402,21 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
           )}
         >
           {isAllowDelete && (
-            <Button
+            <RBtn
               title='Remove file'
               onClick={handleFileRemove_internal}
               className='absolute top-2 right-2'
-              variant='destructive'
+              variant='soft-destructive'
             >
               <Trash size={15} />
-            </Button>
+            </RBtn>
           )}
 
           {isAllowPreview && (
-            <Button
+            <RBtn
               variant='outline'
               className='absolute top-2 left-2'
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
                 e.preventDefault();
 
@@ -416,7 +426,7 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
               }}
             >
               <Search size={15} />
-            </Button>
+            </RBtn>
           )}
 
           {thumbnailContent}
@@ -730,7 +740,12 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
       return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
     }, []);
 
-    const defaultDesc = `Allowed extensions: ${accept.join(', ')} | Max size: ${maxSizeMB}MB${maxFiles ? ` | Max files: ${maxFiles}` : ''}`;
+    const { t } = useTranslation('app');
+
+    const defaultDesc = t('fileUploader.description', {
+      extensions: accept.join(', '),
+      maxSize: maxSizeMB,
+    });
 
     // Shared render item function (reused from compact logic, but adapted if needed)
     const renderListItem = (item: (typeof itemsToRender)[0]) => {
@@ -740,7 +755,7 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
       return (
         <div
           key={item.index}
-          className='flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 rounded-lg border border-border bg-background p-4'
+          className='flex justify-between gap-4 rounded-lg border border-border bg-background p-4'
         >
           <div className='flex items-center gap-3 flex-1 min-w-0'>
             {/* Icon or Image Preview */}
@@ -759,7 +774,7 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
             )}
 
             {/* File Info */}
-            <div className='flex-1 min-w-0'>
+            <div className='flex-1 min-w-0 overflow-hidden'>
               <p className='text-sm font-medium text-foreground truncate'>
                 {item.name || label}
               </p>
@@ -775,10 +790,10 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
 
           {/* Remove Button for non-image or explicit action */}
           {!disabledDelete && !isUploading && (
-            <Button
-              variant='ghost'
+            <RBtn
+              variant='soft-destructive'
               size='icon'
-              onClick={(e) => {
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 e.preventDefault();
                 e.stopPropagation();
                 handleFileRemove(item.index);
@@ -786,7 +801,7 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
               className='shrink-0 text-destructive hover:text-destructive/80'
             >
               <Trash size={16} />
-            </Button>
+            </RBtn>
           )}
         </div>
       );
@@ -795,7 +810,7 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
     // Compact variant render
     if (variant === 'compact') {
       return (
-        <div className='space-y-2'>
+        <div className='space-y-2 min-w-0 min-h-0'>
           {itemsToRender.map(renderListItem)}
 
           {/* Upload Button (Always visible to add more files if multiple, or if empty) */}
@@ -803,7 +818,7 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
             (!maxFiles || itemsToRender.length < maxFiles) && (
               <div
                 className={cn(
-                  'flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 rounded-lg border border-dashed border-border bg-muted/5 p-4',
+                  'flex min-w-0 min-h-0 gap-4 rounded-lg border border-dashed border-border bg-muted/5 p-4',
                   {
                     'border-solid': itemsToRender.length === 0,
                   },
@@ -817,20 +832,20 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
                     <p className='text-sm font-medium text-foreground truncate'>
                       {itemsToRender.length > 0 ? 'Add more files' : label}
                     </p>
-                    <p className='text-xs text-muted-foreground truncate'>
+                    <p className='text-xs text-muted-foreground'>
                       {defaultDesc}
                     </p>
                   </div>
                 </div>
-                <Button
+                <RBtn
                   variant='outline'
                   onClick={handleUploadClick}
                   disabled={disabledUpload || isUploading}
-                  className='gap-2 shrink-0 w-full sm:w-auto'
+                  className='gap-2 shrink-0 w-auto'
                 >
                   <Upload size={16} />
                   {isUploading ? 'Uploading...' : 'Upload'}
-                </Button>
+                </RBtn>
               </div>
             )}
 
@@ -867,10 +882,10 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
             {/* Add button below list */}
             {!disabledUpload &&
               (!maxFiles || itemsToRender.length < maxFiles) && (
-                <Button
+                <RBtn
                   variant='outline'
                   className='w-full border-dashed'
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.preventDefault();
                     e.stopPropagation();
                     fileRef.current?.click();
@@ -878,7 +893,7 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
                 >
                   <Upload size={16} className='mr-2' />
                   Add more files
-                </Button>
+                </RBtn>
               )}
           </div>
         ) : (
@@ -918,9 +933,7 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
         )}
 
         {showDescription && (
-          <div className='text-sm text-muted-foreground mt-2'>
-            {defaultDesc}
-          </div>
+          <div className='text-sm text-muted-foreground'>{defaultDesc}</div>
         )}
       </div>
     );

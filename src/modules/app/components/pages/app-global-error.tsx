@@ -1,5 +1,5 @@
 import StatusPage from '@/modules/app/components/pages/status-page';
-import Button from '@/modules/app/components/ui/button';
+import RBtn from '@/modules/app/components/base/r-btn';
 import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
 
 const FALLBACK_MESSAGE =
@@ -78,9 +78,7 @@ const AppGlobalError = () => {
       code={code ?? '500'}
       title={title}
       description={message}
-      action={
-        <Button onClick={() => window.location.reload()}>Try again</Button>
-      }
+      action={<RBtn onClick={() => window.location.reload()}>Try again</RBtn>}
     />
   );
 };

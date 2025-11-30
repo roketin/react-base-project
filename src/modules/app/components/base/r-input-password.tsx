@@ -1,28 +1,31 @@
 import { useState } from 'react';
-import { Input, type TInputProps } from '@/modules/app/components/ui/input';
-import Button from '@/modules/app/components/ui/button';
+import {
+  RInput,
+  type TRInputProps,
+} from '@/modules/app/components/base/r-input';
+import RBtn from '@/modules/app/components/base/r-btn';
 import type { TBaseInputDefaultProps } from '@/modules/app/types/component.type';
 import { Eye, EyeOff } from 'lucide-react';
 
 export const RInputPassword = (
-  props: React.ComponentProps<'input'> & TBaseInputDefaultProps & TInputProps,
+  props: React.ComponentProps<'input'> & TBaseInputDefaultProps & TRInputProps,
 ) => {
   const [show, setShow] = useState(false);
 
   return (
-    <Input
+    <RInput
       type={show ? 'text' : 'password'}
       {...props}
-      append={
-        <Button
+      rightIcon={
+        <RBtn
           type='button'
           variant='ghost'
-          size='sm'
-          className='flex-none'
+          size='icon'
+          className='h-6 w-6'
           onClick={() => setShow(!show)}
         >
-          {show ? <EyeOff /> : <Eye />}
-        </Button>
+          {show ? <EyeOff className='h-4 w-4' /> : <Eye className='h-4 w-4' />}
+        </RBtn>
       }
     />
   );

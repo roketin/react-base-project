@@ -51,7 +51,7 @@ const items: TRTimelineItem[] = [
 ];
 
 const meta: Meta<typeof RTimeline> = {
-  title: 'Base/RTimeline',
+  title: 'Components/Data Display/RTimeline',
   component: RTimeline,
   tags: ['autodocs'],
   args: {

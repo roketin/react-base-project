@@ -161,10 +161,34 @@ export function useFilter(items: TFilterItem[], persistKey?: string) {
   }, [dispatch, initialValues, storageKey]);
 
   const getParams = useCallback(() => {
+    const normalizeValue = (val: any): any => {
+      if (Array.isArray(val)) {
+        const mapped = val
+          .map((item) => normalizeValue(item))
+          .filter((item) => item !== null && item !== undefined);
+        return mapped.length > 0 ? mapped : null;
+      }
+
+      if (
+        val &&
+        typeof val === 'object' &&
+        'value' in val &&
+        (Object.keys(val).length === 1 ||
+          ('label' in val && Object.keys(val).length === 2))
+      ) {
+        return (val as { value?: unknown }).value ?? null;
+      }
+
+      return val;
+    };
+
     return Object.entries(values)
       .filter(([, value]) => value != null)
       .reduce<Record<string, any>>((acc, [k, v]) => {
-        acc[k] = v;
+        const normalized = normalizeValue(v);
+        if (normalized !== null && normalized !== undefined) {
+          acc[k] = normalized;
+        }
         return acc;
       }, {});
   }, [values]);

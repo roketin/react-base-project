@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { RInputPassword } from '../r-input-password';
 
 const meta: Meta<typeof RInputPassword> = {
-  title: 'Base/Form/RInputPassword',
+  title: 'Components/Inputs/RInputPassword',
   component: RInputPassword,
   parameters: {
     layout: 'centered',

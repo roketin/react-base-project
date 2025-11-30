@@ -1,5 +1,5 @@
 import StatusPage from '@/modules/app/components/pages/status-page';
-import Button from '@/modules/app/components/ui/button';
+import RBtn from '@/modules/app/components/base/r-btn';
 
 const AppNotFound = () => {
   return (
@@ -7,9 +7,7 @@ const AppNotFound = () => {
       title='Page not found'
       description="The page you're looking for could not be found or may have been moved."
       action={
-        <Button onClick={() => (window.location.href = '/')}>
-          Back to Home
-        </Button>
+        <RBtn onClick={() => (window.location.href = '/')}>Back to Home</RBtn>
       }
     />
   );

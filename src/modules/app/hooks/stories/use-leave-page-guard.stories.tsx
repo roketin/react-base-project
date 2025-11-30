@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useCallback, useMemo } from 'react';
-import { Input } from '@/modules/app/components/ui/input';
+import { RInput } from '@/modules/app/components/base/r-input';
 import {
   RouterProvider,
   createMemoryRouter,
@@ -51,7 +51,7 @@ const DemoForm = () => {
         </p>
       </div>
 
-      <Input
+      <RInput
         placeholder='Type to make form dirty…'
         value={dirty.current}
         onChange={(event) => dirty.updateCurrent(event.target.value)}

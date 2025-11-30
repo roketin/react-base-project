@@ -61,8 +61,10 @@
   --form-disabled-border: oklch(0.922 0 0); /* border/input */
   --form-disabled-opacity: 0.5;
   --button-radius: var(--radius);
-  --form-height: 2.5rem; /* 40px (h-10) - inner height for inputs */
-  --form-height-outer: calc(2.5rem + 2px); /* 42px - outer height with border */
+  --form-height: 2.25rem; /* 36px (h-9) - inner height for inputs */
+  --form-height-outer: calc(
+    2.25rem + 2px
+  ); /* 38px - outer height with border */
   --form-padding-x: 0.75rem; /* 12px (px-3) */
   --form-font-size: 0.875rem; /* 14px (text-sm) */
 
@@ -98,6 +100,12 @@
   --sidebar-menu-font-size: 13.5px; /* 13px */
   --sidebar-menu-font-size-sm: 0.75rem; /* 12px (text-xs) */
   --sidebar-menu-icon-size: 1.25rem; /* 20px (size-5) */
+
+  /* Table Configuration */
+  --table-font-size: 13px;
+  --table-header-font-size: 13px;
+  --table-cell-padding-x: 1rem; /* 16px (px-4) */
+  --table-cell-padding-y: 0.75rem; /* 12px (py-3) */
 }
 
 .dark {
@@ -279,6 +287,14 @@ body {
 }
 
 @layer components {
+  .rt-table {
+    font-size: var(--table-font-size) !important;
+  }
+
+  .rt-table thead th {
+    font-size: var(--table-header-font-size) !important;
+  }
+
   .rt-table tbody tr {
     @apply transition-colors;
   }

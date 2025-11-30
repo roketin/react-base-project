@@ -1,92 +1,149 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Settings, Trash2 } from 'lucide-react';
-import Button from '@/modules/app/components/ui/button';
+import RBtn from '@/modules/app/components/base/r-btn';
 import { RCard } from '@/modules/app/components/base/r-card';
 
-const meta: Meta<typeof RCard> = {
-  title: 'Base/RCard',
+const meta = {
+  title: 'Components/Data Display/RCard',
   component: RCard,
-  tags: ['autodocs'], // Enable automatic Docs page
-  argTypes: {
-    title: { control: 'text' },
-    description: { control: 'text' },
-    children: { control: 'text' },
-    wrapperClassName: { control: 'text' },
-  },
+  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
-};
+} satisfies Meta<typeof RCard>;
 
 export default meta;
 
-type Story = StoryObj<typeof RCard>;
+type Story = StoryObj<typeof meta>;
 
 /**
- * Main story showing the most basic use of RCard with Title and Content.
+ * Basic card using title, description, and body content.
  */
 export const Default: Story = {
-  args: {
-    title: 'Simple Card Title',
-    description: 'A brief description for this card.',
-    children: (
-      <div>
-        <p>Main card content is here.</p>
-        <p>
-          You can place JSX elements, text, or other components inside children.
-        </p>
-      </div>
-    ),
-  },
+  render: () => (
+    <RCard
+      className='w-[360px]'
+      title='Card Title'
+      description='Card description goes here.'
+    >
+      <p>This is the main content of the card.</p>
+    </RCard>
+  ),
 };
 
 /**
- * Story displaying all slot props, including Action, Footer, and Wrapper Class.
+ * Card that uses header, action, body, and footer slots.
  */
-export const WithAllSlots: Story = {
-  args: {
-    title: 'Complete Card with All Slots',
-    description:
-      'This is an example card utilizing header, action, and footer.',
-    children: (
+export const WithActionsAndFooter: Story = {
+  render: () => (
+    <RCard
+      className='w-[460px]'
+      header={<p className='text-sm font-medium text-primary'>Project</p>}
+      title='Complete Card'
+      description='This card showcases all available sections including actions.'
+      action={
+        <>
+          <RBtn variant='outline' size='iconSm'>
+            <Settings className='h-4 w-4' />
+          </RBtn>
+          <RBtn size='iconSm'>Edit</RBtn>
+        </>
+      }
+      footer={
+        <div className='flex w-full justify-between'>
+          <RBtn variant='ghost' className='text-destructive'>
+            <Trash2 className='mr-2 h-4 w-4' /> Delete
+          </RBtn>
+          <RBtn>Save Changes</RBtn>
+        </div>
+      }
+    >
       <div className='space-y-4'>
-        <p>Important data or forms are placed inside Content.</p>
-        <p>Props `children` are placed inside `CardContent`.</p>
+        <p>Important data or forms can be placed inside the content area.</p>
+        <p>You can add any React components here.</p>
       </div>
-    ),
-    action: (
-      <Button variant='outline' size='icon'>
-        <Settings className='h-4 w-4' />
-      </Button>
-    ),
-    footer: (
-      <div className='flex justify-between w-full'>
-        <Button variant='ghost' className='text-red-500'>
-          <Trash2 className='w-4 h-4 mr-2' /> Delete
-        </Button>
-        <Button>Save Changes</Button>
-      </div>
-    ),
-    // Adding Tailwind class for custom card size
-    wrapperClassName: 'w-[450px]',
-  },
+    </RCard>
+  ),
 };
 
 /**
- * Story that only uses the `header` prop for a highly custom layout.
+ * Card with a custom header layout for extra context.
  */
 export const CustomHeader: Story = {
-  args: {
-    header: (
-      <div className='flex items-center justify-between'>
-        <h2 className='text-xl font-bold'>Weekly Report</h2>
-        <span className='text-sm text-muted-foreground'>Oct 2025</span>
+  render: () => (
+    <RCard
+      className='w-[380px]'
+      header={
+        <div className='flex items-center gap-3'>
+          <div className='flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary'>
+            Q4
+          </div>
+          <div className='space-y-0.5'>
+            <p className='text-sm font-medium leading-none'>Weekly Report</p>
+            <p className='text-xs text-muted-foreground'>Oct 2025</p>
+          </div>
+        </div>
+      }
+      title='Revenue Snapshot'
+      description="Summary of this week's performance."
+      footer={
+        <RBtn variant='link' className='px-0'>
+          View Details
+        </RBtn>
+      }
+    >
+      <ul className='space-y-2 text-sm text-muted-foreground'>
+        <li>• New subscriptions increased by 8%.</li>
+        <li>• Average order value is up to $82.</li>
+        <li>• Customer satisfaction holds at 4.7/5.</li>
+      </ul>
+    </RCard>
+  ),
+};
+
+/**
+ * Simple card with only content.
+ */
+export const ContentOnly: Story = {
+  render: () => (
+    <RCard className='w-[320px]'>
+      <div className='space-y-3 pt-6'>
+        <p>A simple card with only content, no header or footer.</p>
+        <p className='text-sm text-muted-foreground'>
+          Add your own padding or layout inside the content area when no header
+          is provided.
+        </p>
       </div>
-    ),
-    children: (
-      <p>Report data is displayed here without built-in Title/Description.</p>
-    ),
-    footer: <Button variant='link'>View Details</Button>,
-    wrapperClassName: 'w-[300px]',
-  },
+    </RCard>
+  ),
+};
+
+/**
+ * Multiple cards in a grid layout.
+ */
+export const GridLayout: Story = {
+  render: () => (
+    <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
+      <RCard title='Card 1' description='First card in grid' className='h-full'>
+        <p>Content for card 1</p>
+      </RCard>
+      <RCard
+        title='Card 2'
+        description='Second card in grid'
+        className='h-full'
+      >
+        <p>Content for card 2</p>
+      </RCard>
+      <RCard title='Card 3' description='Third card in grid' className='h-full'>
+        <p>Content for card 3</p>
+      </RCard>
+      <RCard
+        title='Card 4'
+        description='Fourth card in grid'
+        className='h-full'
+      >
+        <p>Content for card 4</p>
+      </RCard>
+    </div>
+  ),
 };

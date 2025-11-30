@@ -25,7 +25,7 @@ const OffsetElementMock = () => (
 );
 
 const meta: Meta<typeof RStickyWrapper> = {
-  title: 'Base/RStickyWrapper',
+  title: 'Components/Layout/RStickyWrapper',
   component: RStickyWrapper,
   tags: ['autodocs'],
   parameters: {

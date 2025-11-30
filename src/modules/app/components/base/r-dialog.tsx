@@ -80,7 +80,7 @@ export function RDialog({
       {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
       <DialogContent
         aria-describedby={description ? descriptionId : undefined}
-        aria-labelledby={title ? titleId : undefined}
+        aria-labelledby={titleId}
         showCloseButton={showCloseButton}
         fullscreen={fullscreen}
         overlayClassName={cn(blurOverlay && 'backdrop-blur', overlayClassName)}
@@ -91,7 +91,7 @@ export function RDialog({
           contentClassName,
         )}
       >
-        {/* DialogTitle is required for accessibility - always render it */}
+        {/* DialogTitle is ALWAYS required for accessibility */}
         {!hideHeader && title ? (
           <DialogHeader className={cn('space-y-2', headerClassName)}>
             <DialogTitle id={titleId} className='text-xl font-semibold'>
@@ -117,11 +117,7 @@ export function RDialog({
           </DialogDescription>
         )}
 
-        {children && (
-          <div className={cn('p-0 overflow-y-auto', bodyClassName)}>
-            {children}
-          </div>
-        )}
+        {children && <div className={cn(bodyClassName)}>{children}</div>}
 
         {!hideFooter && footer ? (
           <DialogFooter

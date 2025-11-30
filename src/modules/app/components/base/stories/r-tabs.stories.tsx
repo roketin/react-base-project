@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import RTabs, { RTabContent, RTabItem } from '../r-tabs';
+import RTabs, { RTabPanel } from '../r-tabs';
 
 type Story = StoryObj<typeof RTabs>;
 
@@ -79,7 +79,7 @@ const TAB_CONFIG: TabConfig[] = [
 ];
 
 const meta: Meta<typeof RTabs> = {
-  title: 'Base/RTabs',
+  title: 'Components/Navigation/RTabs',
   component: RTabs,
   tags: ['autodocs'],
   parameters: {
@@ -97,10 +97,6 @@ const meta: Meta<typeof RTabs> = {
     full: {
       control: 'boolean',
     },
-    animation: {
-      control: 'inline-radio',
-      options: ['none', 'fade', 'slide'],
-    },
     onChange: {
       action: 'change',
     },
@@ -110,7 +106,6 @@ const meta: Meta<typeof RTabs> = {
     variant: 'default',
     orientation: 'horizontal',
     full: false,
-    animation: 'none',
   },
 };
 
@@ -145,19 +140,15 @@ const createRender =
         onChange={handleChange}
         className={className ?? 'w-[440px]'}
       >
-        {config.map(({ key, label, forceRender }) => (
-          <RTabItem
-            key={`trigger-${key}`}
+        {config.map(({ key, label, forceRender, panel }) => (
+          <RTabPanel
+            key={key}
             tabKey={key}
-            label={label}
+            header={label}
             forceRender={forceRender}
-          />
-        ))}
-
-        {config.map(({ key, panel }) => (
-          <RTabContent key={`content-${key}`} tabKey={key}>
+          >
             {panel}
-          </RTabContent>
+          </RTabPanel>
         ))}
       </RTabs>
     );
@@ -194,20 +185,6 @@ export const Vertical: Story = {
   },
 };
 
-export const FadeAnimation: Story = {
-  render: Template.render,
-  args: {
-    animation: 'fade',
-  },
-};
-
-export const SlideAnimation: Story = {
-  render: Template.render,
-  args: {
-    animation: 'slide',
-  },
-};
-
 const FORCE_RENDER_CONFIG: TabConfig[] = TAB_CONFIG.map((tab) =>
   tab.key === 'reports' ? { ...tab, forceRender: true } : tab,
 );
@@ -215,8 +192,166 @@ const FORCE_RENDER_CONFIG: TabConfig[] = TAB_CONFIG.map((tab) =>
 export const ForceRender: Story = {
   render: createRender(FORCE_RENDER_CONFIG),
   args: {
-    animation: 'slide',
     variant: 'underline',
     orientation: 'horizontal',
+  },
+};
+
+const MANY_TABS_CONFIG: TabConfig[] = [
+  {
+    key: 'dashboard',
+    label: 'Dashboard',
+    panel: (
+      <StatefulPanel title='Dashboard' description='Main dashboard view' />
+    ),
+  },
+  {
+    key: 'analytics',
+    label: 'Analytics',
+    panel: (
+      <StatefulPanel title='Analytics' description='View analytics data' />
+    ),
+  },
+  {
+    key: 'reports',
+    label: 'Reports',
+    panel: <StatefulPanel title='Reports' description='Generate reports' />,
+  },
+  {
+    key: 'users',
+    label: 'Users',
+    panel: <StatefulPanel title='Users' description='Manage users' />,
+  },
+  {
+    key: 'products',
+    label: 'Products',
+    panel: <StatefulPanel title='Products' description='Product catalog' />,
+  },
+  {
+    key: 'orders',
+    label: 'Orders',
+    panel: <StatefulPanel title='Orders' description='Order management' />,
+  },
+  {
+    key: 'inventory',
+    label: 'Inventory',
+    panel: <StatefulPanel title='Inventory' description='Stock management' />,
+  },
+  {
+    key: 'shipping',
+    label: 'Shipping',
+    panel: <StatefulPanel title='Shipping' description='Shipping options' />,
+  },
+  {
+    key: 'payments',
+    label: 'Payments',
+    panel: <StatefulPanel title='Payments' description='Payment methods' />,
+  },
+  {
+    key: 'settings',
+    label: 'Settings',
+    panel: <StatefulPanel title='Settings' description='System settings' />,
+  },
+];
+
+export const ManyTabs: Story = {
+  render: createRender(MANY_TABS_CONFIG),
+  args: {
+    variant: 'default',
+    full: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Example with many tabs showing horizontal scroll behavior. Tabs will scroll horizontally when they exceed container width.',
+      },
+    },
+  },
+};
+
+export const ManyTabsUnderline: Story = {
+  render: createRender(MANY_TABS_CONFIG),
+  args: {
+    variant: 'underline',
+    full: false,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Many tabs with underline variant and horizontal scroll.',
+      },
+    },
+  },
+};
+
+export const NestedTabs: Story = {
+  render: () => (
+    <RTabs defaultActiveKey='parent1' className='w-[600px]'>
+      <RTabPanel tabKey='parent1' header='Parent Tab 1'>
+        <div className='space-y-4'>
+          <p className='text-sm text-muted-foreground'>
+            This is parent tab 1 with nested tabs inside
+          </p>
+          <RTabs defaultActiveKey='child1a' variant='underline'>
+            <RTabPanel tabKey='child1a' header='Child 1A'>
+              <StatefulPanel
+                title='Child Tab 1A'
+                description='Nested tab content with independent state'
+              />
+            </RTabPanel>
+            <RTabPanel tabKey='child1b' header='Child 1B'>
+              <StatefulPanel
+                title='Child Tab 1B'
+                description='Another nested tab'
+              />
+            </RTabPanel>
+            <RTabPanel tabKey='child1c' header='Child 1C'>
+              <StatefulPanel
+                title='Child Tab 1C'
+                description='Third nested tab'
+              />
+            </RTabPanel>
+          </RTabs>
+        </div>
+      </RTabPanel>
+
+      <RTabPanel tabKey='parent2' header='Parent Tab 2'>
+        <div className='space-y-4'>
+          <p className='text-sm text-muted-foreground'>
+            Parent tab 2 with different nested tabs
+          </p>
+          <RTabs defaultActiveKey='child2a'>
+            <RTabPanel tabKey='child2a' header='Option A'>
+              <StatefulPanel
+                title='Option A'
+                description='Different nested structure'
+              />
+            </RTabPanel>
+            <RTabPanel tabKey='child2b' header='Option B'>
+              <StatefulPanel
+                title='Option B'
+                description='Independent from parent tab 1'
+              />
+            </RTabPanel>
+          </RTabs>
+        </div>
+      </RTabPanel>
+
+      <RTabPanel tabKey='parent3' header='Parent Tab 3'>
+        <StatefulPanel
+          title='Parent Tab 3'
+          description='This parent tab has no nested tabs'
+        />
+      </RTabPanel>
+    </RTabs>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Example showing nested tabs. Each parent tab can contain its own set of child tabs with independent state management.',
+      },
+    },
   },
 };

@@ -22,7 +22,7 @@ const options: TRRadioOption[] = [
 ];
 
 const meta: Meta<typeof RRadio> = {
-  title: 'Base/Form/RRadio',
+  title: 'Components/Form Controls/RRadio',
   component: RRadio,
   parameters: {
     layout: 'centered',

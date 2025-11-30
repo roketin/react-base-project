@@ -1,8 +1,8 @@
 import RForm from '@/modules/app/components/base/r-form';
 import { RFormField } from '@/modules/app/components/base/r-form-field';
 import showAlert from '@/modules/app/components/base/show-alert';
-import Button from '@/modules/app/components/ui/button';
-import { Input } from '@/modules/app/components/ui/input';
+import RBtn from '@/modules/app/components/base/r-btn';
+import { RInput } from '@/modules/app/components/base/r-input';
 import { linkTo, useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import Yup from '@/plugins/yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -118,13 +118,13 @@ const AuthForgot = () => {
             label={t('form.email')}
             withPlaceholder
           >
-            <Input autoComplete='username' className='h-11' />
+            <RInput autoComplete='username' className='h-11' />
           </RFormField>
 
           {/* Submit button */}
-          <Button type='submit' className='w-full h-11 text-base font-medium'>
+          <RBtn type='submit' className='w-full h-11 text-base font-medium'>
             {tApp('send')}
-          </Button>
+          </RBtn>
 
           {/* Back to login */}
           <Link

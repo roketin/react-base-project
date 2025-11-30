@@ -15,7 +15,7 @@ type Activity = {
 };
 
 const meta: Meta<typeof RVirtualScroll<Activity>> = {
-  title: 'Base/RVirtualScroll',
+  title: 'Components/Other/RVirtualScroll',
   component: RVirtualScroll,
   tags: ['autodocs'],
   parameters: {

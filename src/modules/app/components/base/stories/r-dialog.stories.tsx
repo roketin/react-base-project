@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import RDialog from '../r-dialog';
-import { Input } from '@/modules/app/components/ui/input';
-import { Textarea } from '@/modules/app/components/ui/textarea';
+import { RInput } from '../r-input';
+import { RTextarea } from '../r-textarea';
 import RBtn from '@/modules/app/components/base/r-btn';
 
 const meta: Meta<typeof RDialog> = {
-  title: 'Base/RDialog',
+  title: 'Components/Feedback/RDialog',
   component: RDialog,
   tags: ['autodocs'],
   args: {
@@ -50,9 +50,9 @@ export const Playground: Story = {
   render: (args) => (
     <RDialog {...args}>
       <div className='space-y-4'>
-        <Input placeholder='Name' />
-        <Input type='email' placeholder='Email address' />
-        <Textarea rows={3} placeholder='Optional message' />
+        <RInput placeholder='Name' />
+        <RInput type='email' placeholder='Email address' />
+        <RTextarea rows={3} placeholder='Optional message' />
       </div>
     </RDialog>
   ),

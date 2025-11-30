@@ -3,7 +3,6 @@ import { cn } from '@/modules/app/libs/utils';
 import {
   FormField,
   FormItem,
-  FormLabel,
   FormControl,
   FormMessage,
   FormDescription,
@@ -19,7 +18,8 @@ import type {
 import { useFormConfig } from '@/modules/app/contexts/form-config-context';
 import type { TLayoutOrientation } from '@/modules/app/types/component.type';
 import { useTranslation } from 'react-i18next';
-import { Separator } from '@/modules/app/components/ui/separator';
+import { RSeparator } from '@/modules/app/components/base/r-separator';
+import { RSkeleton } from '@/modules/app/components/base/r-skeleton';
 
 type TRenderFn<T extends FieldValues, N extends Path<T>> = (args: {
   field: ControllerRenderProps<T, N>;
@@ -39,10 +39,74 @@ type TRFormFieldProps<T extends FieldValues, N extends Path<T>> = {
   children?: React.ReactElement<Record<string, unknown>>;
   render?: TRenderFn<T, N>;
   notRequired?: boolean;
+  className?: string;
   withPlaceholder?: boolean;
   labelWidth?: string;
   valuePropName?: ValuePropName;
+  isPreview?: boolean;
+  previewContent?: React.ReactNode;
+  isLoading?: boolean;
 };
+
+// Helper Components
+const FieldLabel = ({
+  label,
+  labelDescription,
+  fieldId,
+  shouldShowRequired,
+  isHorizontal,
+}: {
+  label: string | React.ReactNode;
+  labelDescription?: string | React.ReactNode;
+  fieldId?: string;
+  shouldShowRequired: boolean;
+  isHorizontal: boolean;
+}) => (
+  <label className='block text-sm font-medium text-slate-700' htmlFor={fieldId}>
+    {label}
+    {shouldShowRequired && <span className='text-lg text-destructive'>*</span>}
+
+    {labelDescription && (
+      <div
+        className={cn('text-xs text-gray-400', {
+          'pr-5': isHorizontal,
+        })}
+      >
+        {labelDescription}
+      </div>
+    )}
+  </label>
+);
+
+const FieldLabelSkeleton = ({
+  labelDescription,
+}: {
+  labelDescription?: string | React.ReactNode;
+}) => (
+  <div className='block'>
+    <RSkeleton className='h-5 w-32' />
+    {labelDescription && <RSkeleton className='h-3 w-24 mt-1' />}
+  </div>
+);
+
+const FieldWrapper = ({
+  isHorizontal,
+  computedWidth,
+  children,
+}: {
+  isHorizontal: boolean;
+  computedWidth: string;
+  children: React.ReactNode;
+}) => (
+  <div
+    className={cn('flex flex-col gap-2', isHorizontal && 'md:grid md:gap-0')}
+    style={
+      isHorizontal ? { gridTemplateColumns: `${computedWidth} 1fr` } : undefined
+    }
+  >
+    {children}
+  </div>
+);
 
 export function RFormField<T extends FieldValues, N extends Path<T>>({
   control,
@@ -54,9 +118,13 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
   children,
   render,
   notRequired = false,
+  className,
   withPlaceholder = false,
   labelWidth,
   valuePropName = 'value',
+  isPreview = false,
+  previewContent,
+  isLoading = false,
 }: TRFormFieldProps<T, N>) {
   const { t } = useTranslation();
   const formConfig = useFormConfig();
@@ -67,7 +135,9 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
     formConfig?.layout ??
     'vertical') as TLayoutOrientation;
   const isHorizontal = layoutOrientation === 'horizontal';
-  const shouldShowRequired = !notRequired;
+  const isPreviewMode = isPreview || formConfig?.isPreview || false;
+  const isLoadingMode = isLoading || formConfig?.isLoading || false;
+  const shouldShowRequired = !notRequired && !isPreviewMode;
   const isDisabled = formConfig?.disabled ?? false;
   const showSeparator = isHorizontal && !formConfig?.hideHorizontalLine;
   const placeholder =
@@ -145,36 +215,91 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
             ? React.cloneElement(children, enhancedField)
             : null;
 
-        return (
-          <FormItem>
-            <div
-              className={cn(
-                'flex flex-col gap-2',
-                isHorizontal && 'md:grid md:gap-0',
+        // Loading mode: show skeleton
+        if (isLoadingMode) {
+          return (
+            <FormItem className={className}>
+              <FieldWrapper
+                isHorizontal={isHorizontal}
+                computedWidth={computedWidth}
+              >
+                {label && (
+                  <FieldLabelSkeleton labelDescription={labelDescription} />
+                )}
+
+                <div>
+                  <RSkeleton className='h-8 w-full' />
+                  {description && <RSkeleton className='h-3 w-48 mt-1.5' />}
+                </div>
+              </FieldWrapper>
+              {showSeparator && (
+                <RSeparator className='mt-4 border-t border-slate-100' />
               )}
-              style={
-                isHorizontal
-                  ? { gridTemplateColumns: `${computedWidth} 1fr` }
-                  : undefined
-              }
+            </FormItem>
+          );
+        }
+
+        // Preview mode: show preview content or field value
+        if (isPreviewMode) {
+          const displayContent =
+            previewContent !== undefined
+              ? previewContent
+              : renderProps.field.value?.toString() || '-';
+
+          return (
+            <FormItem className={className}>
+              <FieldWrapper
+                isHorizontal={isHorizontal}
+                computedWidth={computedWidth}
+              >
+                {label && (
+                  <label className='block text-sm font-medium text-slate-700'>
+                    {label}
+
+                    {labelDescription && (
+                      <div
+                        className={cn('text-xs text-gray-400', {
+                          'pr-5': isHorizontal,
+                        })}
+                      >
+                        {labelDescription}
+                      </div>
+                    )}
+                  </label>
+                )}
+
+                <div>
+                  <div className='text-sm text-slate-900'>{displayContent}</div>
+
+                  {description && (
+                    <FormDescription className='mt-1.5 text-xs'>
+                      {description}
+                    </FormDescription>
+                  )}
+                </div>
+              </FieldWrapper>
+              {showSeparator && (
+                <RSeparator className='mt-4 border-t border-slate-100' />
+              )}
+            </FormItem>
+          );
+        }
+
+        // Normal mode: editable form field
+        return (
+          <FormItem className={className}>
+            <FieldWrapper
+              isHorizontal={isHorizontal}
+              computedWidth={computedWidth}
             >
               {label && (
-                <FormLabel className='block' htmlFor={fieldId}>
-                  {label}
-                  {shouldShowRequired && (
-                    <span className='text-lg text-destructive'>*</span>
-                  )}
-
-                  {labelDescription && (
-                    <div
-                      className={cn('text-xs text-gray-400', {
-                        'pr-5': isHorizontal,
-                      })}
-                    >
-                      {labelDescription}
-                    </div>
-                  )}
-                </FormLabel>
+                <FieldLabel
+                  label={label}
+                  labelDescription={labelDescription}
+                  fieldId={fieldId}
+                  shouldShowRequired={shouldShowRequired}
+                  isHorizontal={isHorizontal}
+                />
               )}
 
               <div>
@@ -187,9 +312,9 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                 )}
                 <FormMessage className='mt-1.5' />
               </div>
-            </div>
+            </FieldWrapper>
             {showSeparator && (
-              <Separator className='mt-4 border-t border-slate-100' />
+              <RSeparator className='mt-4 border-t border-slate-100' />
             )}
           </FormItem>
         );

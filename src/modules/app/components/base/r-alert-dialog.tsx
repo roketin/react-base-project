@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/modules/app/components/ui/alert-dialog';
-import { buttonVariants } from '@/modules/app/components/ui/variants/button-variants';
+import { buttonVariants } from '@/modules/app/libs/ui-variants';
 import type { TLoadable } from '@/modules/app/types/component.type';
 import type { VariantProps } from 'class-variance-authority';
 import {

@@ -3,7 +3,7 @@ import { RTooltip } from '../r-tooltip';
 import RBtn from '@/modules/app/components/base/r-btn';
 
 const meta: Meta<typeof RTooltip> = {
-  title: 'Base/RTooltip',
+  title: 'Components/Feedback/RTooltip',
   component: RTooltip,
   tags: ['autodocs'],
   parameters: {

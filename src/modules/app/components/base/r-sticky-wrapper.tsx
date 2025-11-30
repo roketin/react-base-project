@@ -72,7 +72,6 @@ const RStickyWrapper: React.FC<TRRStickyWrapperProps> = memo(
     position = 'top',
     offset = 0,
     boundaryStop = true,
-    shadowOnSticky = false,
     onStickyChange,
     offsetElements,
     className,
@@ -127,23 +126,30 @@ const RStickyWrapper: React.FC<TRRStickyWrapperProps> = memo(
       const elements: HTMLElement[] = [];
       for (const target of targets) {
         if (!target) continue;
-        if (typeof target === 'function') {
-          const el = target();
-          if (el instanceof HTMLElement) {
-            elements.push(el);
+        try {
+          if (typeof target === 'function') {
+            const el = target();
+            if (el instanceof HTMLElement) {
+              elements.push(el);
+            }
+            continue;
           }
-          continue;
-        }
-        if (typeof target === 'string') {
-          const selector = target.startsWith('#') ? target : target;
-          const el = document.querySelector<HTMLElement>(selector);
-          if (el) {
-            elements.push(el);
+          if (typeof target === 'string') {
+            const selector = target.startsWith('#') ? target : target;
+            const el = document.querySelector<HTMLElement>(selector);
+            if (el) {
+              elements.push(el);
+            }
+            continue;
           }
-          continue;
-        }
-        if (target instanceof HTMLElement) {
-          elements.push(target);
+          if (target instanceof HTMLElement) {
+            elements.push(target);
+          }
+        } catch (error) {
+          console.warn(
+            'RStickyWrapper: Failed to resolve offset element',
+            error,
+          );
         }
       }
       return elements;
@@ -276,6 +282,8 @@ const RStickyWrapper: React.FC<TRRStickyWrapperProps> = memo(
      */
     useLayoutEffect(() => {
       const container = containerRef.current ?? window;
+      if (!container) return;
+
       const handleScroll = () => scheduleUpdate();
       const handleResize = () => scheduleUpdate();
 
@@ -399,12 +407,6 @@ const RStickyWrapper: React.FC<TRRStickyWrapperProps> = memo(
       });
     }
 
-    // ✅ Tambah shadow otomatis saat sticky aktif
-    const shadowClass =
-      shadowOnSticky && mode === 'fixed'
-        ? 'shadow-md transition-shadow'
-        : 'transition-shadow';
-
     const renderChildren =
       typeof children === 'function'
         ? (children as (isSticky: boolean) => ReactNode)(mode === 'fixed')
@@ -412,11 +414,7 @@ const RStickyWrapper: React.FC<TRRStickyWrapperProps> = memo(
 
     return (
       <div ref={wrapperRef} className='relative w-full'>
-        <div
-          ref={innerRef}
-          className={`${className ?? ''} ${shadowClass}`}
-          style={innerStyle}
-        >
+        <div ref={innerRef} className={`${className ?? ''}`} style={innerStyle}>
           {renderChildren}
         </div>
       </div>

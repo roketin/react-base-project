@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { RInputNumber, type TRInputNumberProps } from '../r-input-number';
 
 const meta: Meta<typeof RInputNumber> = {
-  title: 'Base/Form/RInputNumber',
+  title: 'Components/Inputs/RInputNumber',
   component: RInputNumber,
   parameters: {
     layout: 'centered',

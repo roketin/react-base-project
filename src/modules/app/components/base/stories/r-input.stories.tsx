@@ -1,171 +1,280 @@
-import { useState } from 'react';
-import { Mail, Search, ArrowRight, User } from 'lucide-react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { RInput } from '../r-input';
+import { Mail, Search, User, Lock, Eye } from 'lucide-react';
+import { useState } from 'react';
 
-const meta: Meta<typeof RInput> = {
-  title: 'Base/Form/RInput',
+const meta = {
+  title: 'Components/Inputs/RInput',
   component: RInput,
-  tags: ['autodocs'],
   parameters: {
     layout: 'centered',
   },
-  argTypes: {
-    type: { control: 'text' },
-    value: { control: 'text' },
-    placeholder: { control: 'text' },
-    prepend: { control: false, description: 'ReactNode for prefix slot' },
-    append: { control: false, description: 'ReactNode for suffix slot' },
-    clearable: { control: 'boolean' },
-    density: {
-      control: 'radio',
-      options: ['default', 'sm', 'lg', 'icon'],
-    },
-    disabled: { control: 'boolean' },
-    'aria-invalid': { control: 'boolean', description: 'Marks error state' },
-    onChange: { action: 'onChange' },
-    showCount: { control: 'boolean' },
-    countLimit: { control: 'number' },
-    countType: {
-      control: 'inline-radio',
-      options: ['character', 'word'],
-    },
-  },
-  args: {
-    label: 'Project name',
-    placeholder: 'Enter project name',
-    showCount: true,
-    countLimit: 40,
-    description: 'This will be visible to your teammates.',
-    required: true,
-    clearable: true,
-    disabled: false,
-    'aria-invalid': false,
-    density: 'default',
-  },
-};
+  tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <div style={{ width: '400px' }}>
+        <Story />
+      </div>
+    ),
+  ],
+} satisfies Meta<typeof RInput>;
 
 export default meta;
+type Story = StoryObj<typeof meta>;
 
-type Story = StoryObj<typeof RInput>;
-
-export const Playground: Story = {
-  render: (args) => {
-    const [value, setValue] = useState('Initial draft');
-    return (
-      <RInput
-        {...args}
-        value={value}
-        onChange={(event) => {
-          setValue(event.target.value);
-          args.onChange?.(event);
-        }}
-        className='w-64'
-      />
-    );
+export const Default: Story = {
+  args: {
+    placeholder: 'Enter text...',
   },
 };
 
-export const Sizes: Story = {
+export const WithLabel: Story = {
   args: {
-    clearable: false,
-    showCount: false,
-    label: undefined,
-    description: undefined,
-  },
-  render: (args) => (
-    <div className='flex w-64 flex-col gap-4'>
-      <RInput {...args} density='sm' placeholder='Small' label='Small' />
-      <RInput
-        {...args}
-        density='default'
-        placeholder='Default'
-        label='Default'
-      />
-      <RInput {...args} density='lg' placeholder='Large' label='Large' />
-      <RInput
-        {...args}
-        density='icon'
-        aria-label='Icon input'
-        label='Icon density'
-        showCount={false}
-        defaultValue='A'
-      />
-    </div>
-  ),
-};
-
-export const WithPrepend: Story = {
-  args: {
-    prepend: <Mail size={16} className='text-muted-foreground' />,
-    placeholder: 'email@example.com',
-    label: 'Work email',
-    className: 'w-72',
-    description: 'We’ll send project updates to this address.',
+    label: 'Email Address',
+    placeholder: 'Enter your email',
   },
 };
 
-export const WithAppend: Story = {
+export const WithValue: Story = {
   args: {
-    append: <Search size={16} className='text-muted-foreground mr-2' />,
-    placeholder: 'Search projects…',
+    label: 'Username',
+    value: 'john.doe',
+  },
+};
+
+export const WithHelperText: Story = {
+  args: {
+    label: 'Password',
+    type: 'password',
+    helperText: 'Must be at least 8 characters',
+    placeholder: 'Enter password',
+  },
+};
+
+export const WithError: Story = {
+  args: {
+    label: 'Email',
+    value: 'invalid-email',
+    error: 'Please enter a valid email address',
+  },
+};
+
+export const WithLeftIcon: Story = {
+  args: {
     label: 'Search',
-    className: 'w-72',
-    clearable: false,
+    placeholder: 'Search...',
+    leftIcon: <Search className='h-4 w-4' />,
   },
 };
 
-export const WithPrependAndAppend: Story = {
+export const WithRightIcon: Story = {
   args: {
-    prepend: <User size={16} className='text-muted-foreground' />,
-    append: <ArrowRight size={16} className='text-muted-foreground mr-2' />,
-    placeholder: 'Username',
-    label: 'Assign to',
-    className: 'w-72',
-    clearable: false,
+    label: 'Email',
+    placeholder: 'Enter your email',
+    rightIcon: <Mail className='h-4 w-4' />,
   },
 };
 
-export const CharacterCount: Story = {
+export const WithBothIcons: Story = {
   args: {
-    label: 'Title',
-    placeholder: 'Add a concise title',
-    countType: 'character',
-    showCount: true,
-    countLimit: 100,
-    description: 'Keep the title under 100 characters.',
-    className: 'w-72',
-  },
-};
-
-export const WordCount: Story = {
-  args: {
-    label: 'Slug',
-    placeholder: 'marketing site',
-    countType: 'word',
-    showCount: true,
-    defaultValue: 'marketing site',
-    description: 'Words are counted to keep slugs short and readable.',
-    className: 'w-72',
+    label: 'Username',
+    placeholder: 'Enter username',
+    leftIcon: <User className='h-4 w-4' />,
+    rightIcon: <Eye className='h-4 w-4' />,
   },
 };
 
 export const Disabled: Story = {
   args: {
-    value: 'Cannot be changed',
+    label: 'Disabled Input',
+    value: 'Cannot edit this',
     disabled: true,
-    label: 'Disabled input',
-    description: 'Users cannot interact with this field.',
-    className: 'w-72',
   },
 };
 
-export const ErrorState: Story = {
+export const FullWidth: Story = {
   args: {
-    value: 'Invalid input',
-    'aria-invalid': true,
-    label: 'API key',
-    error: 'The key must follow the format sk_live_***',
-    className: 'w-72',
+    label: 'Full Width',
+    placeholder: 'This input takes full width',
+    fullWidth: true,
   },
+};
+
+export const DifferentTypes: Story = {
+  render: () => (
+    <div className='space-y-4'>
+      <RInput label='Text' type='text' placeholder='Text input' />
+      <RInput label='Email' type='email' placeholder='email@example.com' />
+      <RInput label='Password' type='password' placeholder='Enter password' />
+      <RInput label='Number' type='number' placeholder='Enter number' />
+      <RInput label='Date' type='date' />
+      <RInput label='Time' type='time' />
+      <RInput label='URL' type='url' placeholder='https://example.com' />
+      <RInput label='Tel' type='tel' placeholder='+1 (555) 000-0000' />
+    </div>
+  ),
+  decorators: [
+    (Story) => (
+      <div style={{ width: '400px' }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
+
+export const Controlled: Story = {
+  render: () => {
+    const [value, setValue] = useState('');
+    return (
+      <div className='space-y-4'>
+        <RInput
+          label='Controlled Input'
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder='Type something...'
+        />
+        <p className='text-sm text-slate-600'>
+          Current value: {value || '(empty)'}
+        </p>
+      </div>
+    );
+  },
+};
+
+export const WithValidation: Story = {
+  render: () => {
+    const [email, setEmail] = useState('');
+    const [error, setError] = useState('');
+
+    const validateEmail = (value: string) => {
+      if (!value) {
+        setError('Email is required');
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        setError('Please enter a valid email');
+      } else {
+        setError('');
+      }
+    };
+
+    return (
+      <RInput
+        label='Email with Validation'
+        type='email'
+        value={email}
+        onChange={(e) => {
+          setEmail(e.target.value);
+          validateEmail(e.target.value);
+        }}
+        onBlur={() => validateEmail(email)}
+        error={error}
+        placeholder='Enter your email'
+        leftIcon={<Mail className='h-4 w-4' />}
+      />
+    );
+  },
+};
+
+export const SearchInput: Story = {
+  args: {
+    placeholder: 'Search...',
+    leftIcon: <Search className='h-4 w-4' />,
+  },
+};
+
+export const LoginForm: Story = {
+  render: () => (
+    <div className='space-y-4'>
+      <RInput
+        label='Username'
+        placeholder='Enter username'
+        leftIcon={<User className='h-4 w-4' />}
+      />
+      <RInput
+        label='Password'
+        type='password'
+        placeholder='Enter password'
+        leftIcon={<Lock className='h-4 w-4' />}
+      />
+    </div>
+  ),
+};
+
+export const Clearable: Story = {
+  render: () => {
+    const [value, setValue] = useState('Clear me!');
+    return (
+      <div className='space-y-4'>
+        <RInput
+          label='Clearable Input'
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder='Type something...'
+          clearable
+          onClear={() => console.log('Cleared!')}
+        />
+        <p className='text-sm text-slate-600'>
+          Current value: {value || '(empty)'}
+        </p>
+      </div>
+    );
+  },
+};
+
+export const ClearableWithIcon: Story = {
+  render: () => {
+    const [value, setValue] = useState('Search query');
+    return (
+      <RInput
+        label='Search with Clear'
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder='Search...'
+        leftIcon={<Search className='h-4 w-4' />}
+        clearable
+      />
+    );
+  },
+};
+
+export const AllStates: Story = {
+  render: () => (
+    <div className='space-y-4'>
+      <RInput label='Default' placeholder='Default state' />
+      <RInput label='With Value' value='Some text' />
+      <RInput
+        label='With Helper'
+        helperText='This is helper text'
+        placeholder='Enter text'
+      />
+      <RInput
+        label='With Error'
+        error='This field has an error'
+        value='Invalid value'
+      />
+      <RInput label='Disabled' disabled value='Disabled input' />
+      <RInput
+        label='With Left Icon'
+        leftIcon={<Mail className='h-4 w-4' />}
+        placeholder='Email'
+      />
+      <RInput
+        label='With Right Icon'
+        rightIcon={<Search className='h-4 w-4' />}
+        placeholder='Search'
+      />
+      <RInput
+        label='Clearable'
+        defaultValue='Clear me'
+        placeholder='Type something'
+        clearable
+      />
+    </div>
+  ),
+  decorators: [
+    (Story) => (
+      <div style={{ width: '400px' }}>
+        <Story />
+      </div>
+    ),
+  ],
 };

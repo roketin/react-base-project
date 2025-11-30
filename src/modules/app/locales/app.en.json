@@ -35,5 +35,8 @@
     "allModules": "All Modules",
     "triggerLong": "Search menus, modules...",
     "triggerShort": "Search..."
+  },
+  "fileUploader": {
+    "description": "Allowed extensions: {{extensions}} | Max size: {{maxSize}}MB"
   }
 }

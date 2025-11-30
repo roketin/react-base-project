@@ -18,6 +18,7 @@ import {
 } from 'react';
 import { Check, ChevronsUpDown, LoaderCircle } from 'lucide-react';
 import { cn } from '@/modules/app/libs/utils';
+import { RResult } from '@/modules/app/components/base/r-result';
 
 type OptionKey<Option extends BaseOptionType> = Extract<keyof Option, string>;
 
@@ -145,13 +146,17 @@ function RSelectBase<
       return null;
     }
 
+    // Check if there are any options
+    const hasOptions = props.options && props.options.length > 0;
+
     if (infiniteIsLoading) {
       return infiniteLoadingContent !== undefined
         ? infiniteLoadingContent
         : defaultLoadingFooter;
     }
 
-    if (!infiniteHasMore) {
+    // Only show "finished" footer if there are options
+    if (!infiniteHasMore && hasOptions) {
       return infiniteFinishedContent !== undefined
         ? infiniteFinishedContent
         : defaultFinishedFooter;
@@ -166,6 +171,7 @@ function RSelectBase<
     infiniteIsLoading,
     infiniteLoadingContent,
     infiniteOnLoadMore,
+    props.options,
   ]);
 
   const mergedDropdownRender = useCallback(
@@ -188,6 +194,26 @@ function RSelectBase<
 
   const finalDropdownRender =
     infiniteOnLoadMore || dropdownRender ? mergedDropdownRender : undefined;
+
+  const defaultNotFoundContent = useMemo(
+    () =>
+      props.loading ? (
+        <div className='flex items-center justify-center gap-2 px-3 py-6 text-sm text-muted-foreground'>
+          <LoaderCircle className='h-4 w-4 animate-spin' />
+          Loading...
+        </div>
+      ) : (
+        <div className='py-6'>
+          <RResult
+            status='empty'
+            size='sm'
+            title='No data'
+            description='No options available'
+          />
+        </div>
+      ),
+    [props.loading],
+  );
 
   const resolvedGetPopupContainer = useCallback(
     (node: HTMLElement) => {
@@ -216,6 +242,14 @@ function RSelectBase<
       dropdownRender={finalDropdownRender}
       onPopupScroll={mergedOnPopupScroll}
       getPopupContainer={resolvedGetPopupContainer}
+      notFoundContent={restProps.notFoundContent ?? defaultNotFoundContent}
+      filterOption={
+        restProps.filterOption !== undefined
+          ? restProps.filterOption
+          : props.onSearch
+            ? false
+            : undefined
+      }
       menuItemSelectedIcon={
         menuItemSelectedIcon ?? (isMultiple ? <Check size={14} /> : null)
       }

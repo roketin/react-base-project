@@ -10,7 +10,7 @@ const baseSteps: Step[] = [
 ];
 
 const meta: Meta<typeof RStepper> = {
-  title: 'Base/RStepper',
+  title: 'Components/Navigation/RStepper',
   component: RStepper,
   tags: ['autodocs'],
   argTypes: {

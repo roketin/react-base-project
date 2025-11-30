@@ -1,95 +1,102 @@
 import React, { type MouseEvent, type ReactNode } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { Loader2 } from 'lucide-react';
-import Button from '@/modules/app/components/ui/button';
-import type { VariantProps } from 'class-variance-authority';
-import type { buttonVariants } from '@/modules/app/components/ui/variants/button-variants';
+import { cn } from '@/modules/app/libs/utils';
+import { type VariantProps } from 'class-variance-authority';
+import { buttonVariants } from '@/modules/app/libs/ui-variants';
 
-// ✅ Define props
-export type TRBtnProps = React.ComponentProps<typeof Button> & {
-  debounceMs?: number;
-  loading?: boolean;
-  loadingLabel?: ReactNode;
-  iconStart?: ReactNode;
-  iconEnd?: ReactNode;
-  asChild?: boolean;
-};
+export type TRBtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof buttonVariants> & {
+    debounceMs?: number;
+    loading?: boolean;
+    loadingLabel?: ReactNode;
+    iconStart?: ReactNode;
+    iconEnd?: ReactNode;
+    soft?: boolean;
+  };
 
-// ✅ Use new React 19 forwardRef style (no more ElementRef)
-const RBtn = React.forwardRef(function RBtn(
-  {
-    debounceMs = 200,
-    loading = false,
-    loadingLabel = 'Loading...',
-    disabled,
-    onClick,
-    children,
-    iconStart,
-    iconEnd,
-    asChild,
-    ...rest
-  }: TRBtnProps,
-  ref: React.ForwardedRef<HTMLButtonElement>, // 👈 direct ref type
-) {
-  // Use useDebouncedCallback to debounce click handler
-  const debouncedOnClick = useDebouncedCallback(
-    (event: MouseEvent<HTMLButtonElement>) => {
-      if (loading) {
-        event.preventDefault();
-        return;
-      }
-      onClick?.(event);
+const RBtn = React.forwardRef<HTMLButtonElement, TRBtnProps>(
+  (
+    {
+      debounceMs = 200,
+      loading = false,
+      loadingLabel = 'Loading...',
+      disabled,
+      onClick,
+      children,
+      iconStart,
+      iconEnd,
+      soft = false,
+      variant = 'default',
+      size = 'default',
+      className,
+      type = 'button',
+      ...rest
     },
-    debounceMs,
-    { leading: true, trailing: false },
-  );
+    ref,
+  ) => {
+    const debouncedOnClick = useDebouncedCallback(
+      (event: MouseEvent<HTMLButtonElement>) => {
+        if (loading) {
+          event.preventDefault();
+          return;
+        }
+        onClick?.(event);
+      },
+      debounceMs,
+      { leading: true, trailing: false },
+    );
 
-  if (asChild) {
+    const softVariantMap: Record<string, TRBtnProps['variant']> = {
+      default: 'soft-default',
+      destructive: 'soft-destructive',
+      info: 'soft-info',
+      success: 'soft-success',
+      warning: 'soft-warning',
+      error: 'soft-error',
+      confirm: 'soft-confirm',
+    };
+
+    const finalVariant =
+      soft && variant && softVariantMap[variant]
+        ? softVariantMap[variant]
+        : variant;
+
     return (
-      <Button
+      <button
         ref={ref}
+        type={type}
         disabled={disabled || loading}
         aria-busy={loading}
         data-loading={loading ? '' : undefined}
         onClick={debouncedOnClick}
-        asChild
+        className={cn(
+          buttonVariants({ variant: finalVariant, size }),
+          className,
+        )}
         {...rest}
       >
-        {children}
-      </Button>
+        {loading ? (
+          <>
+            <Loader2 className='h-4 w-4 animate-spin' aria-hidden='true' />
+            {loadingLabel && <span className='sr-only'>{loadingLabel}</span>}
+          </>
+        ) : (
+          <>
+            {iconStart && (
+              <span className='flex items-center'>{iconStart}</span>
+            )}
+            {children}
+            {iconEnd && <span className='flex items-center'>{iconEnd}</span>}
+          </>
+        )}
+      </button>
     );
-  }
+  },
+);
 
-  return (
-    <Button
-      ref={ref}
-      disabled={disabled || loading}
-      aria-busy={loading}
-      data-loading={loading ? '' : undefined}
-      onClick={debouncedOnClick}
-      {...rest}
-    >
-      {loading ? (
-        <>
-          <Loader2 className='size-4 animate-spin' aria-hidden='true' />
-          <span className='sr-only'>{loadingLabel}</span>
-        </>
-      ) : (
-        <>
-          {iconStart && (
-            <span className='mr-0.5 flex items-center'>{iconStart}</span>
-          )}
-          {children}
-          {iconEnd && (
-            <span className='ml-0.5 flex items-center'>{iconEnd}</span>
-          )}
-        </>
-      )}
-    </Button>
-  );
-});
+RBtn.displayName = 'RBtn';
 
-export type TRBtnVariantProps = React.ComponentProps<typeof RBtn> &
-  VariantProps<typeof buttonVariants>;
+export type TRBtnVariantProps = VariantProps<typeof buttonVariants>;
 
 export default RBtn;
