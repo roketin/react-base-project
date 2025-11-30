@@ -1,3 +1,9 @@
+## [3.0.0] - 2025-11-30
+
+### 🚀 Features
+
+- _(ddd)_ Introduction self component, integration react-query-kit, improve storybook
+
 ## [2.1.0] - 2025-11-26
 
 ### 🚀 Features
