@@ -10,6 +10,10 @@ export type TRProgressProps = HTMLAttributes<HTMLDivElement> & {
   showValue?: boolean;
   animated?: boolean;
   striped?: boolean;
+  /** Auto animate from 0 to 100% using CSS animation */
+  autoAnimate?: boolean;
+  /** Duration for autoAnimate in milliseconds */
+  animationDuration?: number;
 };
 
 export const RProgress = forwardRef<HTMLDivElement, TRProgressProps>(
@@ -23,6 +27,8 @@ export const RProgress = forwardRef<HTMLDivElement, TRProgressProps>(
       showValue = false,
       animated = false,
       striped = false,
+      autoAnimate = false,
+      animationDuration = 4000,
       ...props
     },
     ref,
@@ -60,13 +66,21 @@ export const RProgress = forwardRef<HTMLDivElement, TRProgressProps>(
         >
           <div
             className={cn(
-              'h-full transition-all duration-300 ease-in-out',
+              'h-full',
+              !autoAnimate && 'transition-all duration-300 ease-in-out',
               variantClasses[variant],
               striped &&
-                'bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:20px_100%]',
+                'bg-linear-to-r from-transparent via-white/20 to-transparent bg-size-[20px_100%]',
               animated && striped && 'animate-progress-stripes',
             )}
-            style={{ width: `${percentage}%` }}
+            style={
+              autoAnimate
+                ? {
+                    width: '100%',
+                    animation: `progress-auto-animate ${animationDuration}ms linear forwards`,
+                  }
+                : { width: `${percentage}%` }
+            }
           />
         </div>
         {showValue && (

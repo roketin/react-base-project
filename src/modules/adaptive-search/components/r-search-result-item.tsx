@@ -1,23 +1,32 @@
 import { CommandItem } from '@/modules/app/components/ui/command';
-import type { SearchableItem } from '@/modules/app/types/global-search.type';
+import type { TSearchableItem } from '../types/adaptive-search.type';
 import { cn } from '@/modules/app/libs/utils';
 import { FileText, Zap } from 'lucide-react';
 
-type SearchResultItemProps = {
-  item: SearchableItem;
-  onSelect: (item: SearchableItem) => void;
+type TRSearchResultItemProps = {
+  item: TSearchableItem;
+  onSelect: (item: TSearchableItem) => void;
   searchKeyword?: string;
 };
 
+/**
+ * Search Result Item Component
+ *
+ * Renders a single search result with:
+ * - Icon (colored for actions, muted for menus/data)
+ * - Title and badge
+ * - Module name
+ * - Enter key hint
+ */
 export function RSearchResultItem({
   item,
   onSelect,
   searchKeyword,
-}: SearchResultItemProps) {
+}: TRSearchResultItemProps) {
   const isAction = item.type === 'action';
-  const isCommand = item.type === 'command';
-  const isSpecial = isAction || isCommand;
-  const badge = isSpecial ? item.badge : undefined;
+  const isData = item.type === 'data';
+  const isSpecial = isAction || isData;
+  const badge = item.badge;
 
   // Use item icon or default icon based on type
   const Icon = item.icon || (isSpecial ? Zap : FileText);

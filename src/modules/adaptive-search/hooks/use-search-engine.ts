@@ -1,34 +1,55 @@
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import Fuse, { type IFuseOptions } from 'fuse.js';
-import { useSearchableItems } from '@/modules/app/hooks/use-searchable-items';
-import { useGlobalSearchStore } from '@/modules/app/stores/global-search.store';
-import type { SearchableItem } from '@/modules/app/types/global-search.type';
+import type { TSearchableItem } from '../types/adaptive-search.type';
 import {
   parseSearchQuery,
   SEARCH_IDENTIFIERS,
 } from '@/modules/app/libs/search-identifier.lib';
 
-const FUSE_OPTIONS: IFuseOptions<SearchableItem> = {
+/**
+ * Fuse.js options for fuzzy search
+ */
+const FUSE_OPTIONS: IFuseOptions<TSearchableItem> = {
   keys: [
     { name: 'title', weight: 2 },
     { name: 'moduleTitle', weight: 1 },
-    { name: 'keywordsText', weight: 2 }, // Increased weight for keywords
+    { name: 'keywordsText', weight: 2 },
     { name: 'badge', weight: 1.5 },
   ],
-  threshold: 0.3, // Back to more strict for better results
+  threshold: 0.3,
   includeScore: true,
   minMatchCharLength: 1,
   ignoreLocation: true,
-  distance: 100, // Allow matches further apart
+  distance: 100,
   findAllMatches: true,
 };
 
-export function useGlobalSearch() {
-  const [query, setQuery] = useState('');
+/**
+ * Props for useSearchEngine hook
+ */
+type TUseSearchEngineProps = {
+  items: TSearchableItem[];
+  query: string;
+  onSelect?: (item: TSearchableItem) => void;
+};
+
+/**
+ * Core search engine hook using Fuse.js
+ *
+ * This hook provides:
+ * - Fuzzy search with debouncing
+ * - Identifier-based filtering (search, create, profile)
+ * - Query state management
+ * - Search results
+ *
+ * @param props - Configuration props
+ * @returns Search state and handlers
+ */
+export function useSearchEngine(props: TUseSearchEngineProps) {
+  const { items, query, onSelect } = props;
+
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
-  const allItems = useSearchableItems();
-  const { selectedModule, trackAccess, trackingData } = useGlobalSearchStore();
 
   // Debounce query with 300ms delay
   useEffect(() => {
@@ -43,31 +64,25 @@ export function useGlobalSearch() {
     return () => clearTimeout(timer);
   }, [query]);
 
-  // Filter items by selected module
-  const filteredItems = useMemo(() => {
-    if (!selectedModule || selectedModule === 'all') {
-      return allItems;
-    }
-    return allItems.filter((item) => item.module === selectedModule);
-  }, [allItems, selectedModule]);
-
   // Create Fuse instance
   const fuse = useMemo(() => {
-    return new Fuse(filteredItems, FUSE_OPTIONS);
-  }, [filteredItems]);
-
-  // Get recent items - reactive to trackingData changes
-  const recentItems = useMemo(() => {
-    const recentIds = trackingData.recent.slice(0, 5); // RECENT_LIMIT = 5
-    return recentIds
-      .map((id) => allItems.find((item) => item.id === id))
-      .filter((item): item is SearchableItem => item !== undefined);
-  }, [allItems, trackingData.recent]);
+    return new Fuse(items, FUSE_OPTIONS);
+  }, [items]);
 
   // Parse query for identifier
   const parsedQuery = useMemo(() => {
     return parseSearchQuery(debouncedQuery);
   }, [debouncedQuery]);
+
+  // Helper to dedupe items by id
+  const dedupeById = useCallback((itemList: TSearchableItem[]) => {
+    const seen = new Set<string>();
+    return itemList.filter((item) => {
+      if (seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
+  }, []);
 
   // Search results
   const searchResults = useMemo(() => {
@@ -84,7 +99,7 @@ export function useGlobalSearch() {
 
       if (identifierType === 'search') {
         // Find all search actions from all modules
-        const searchActions = filteredItems.filter(
+        const searchActions = items.filter(
           (item) =>
             item.type === 'action' &&
             item.keywords?.some(
@@ -92,77 +107,67 @@ export function useGlobalSearch() {
             ),
         );
 
-        // If user provided query, try to find relevant results first
+        // If user provided query after identifier, combine with fuzzy search
         if (parsedQuery.query) {
           const relevantResults = fuse.search(parsedQuery.query);
           const relevantItems = relevantResults.map((r) => r.item);
 
-          // Combine and remove duplicates by id
-          const combined = [...relevantItems, ...searchActions];
-          const uniqueItems = Array.from(
-            new Map(combined.map((item) => [item.id, item])).values(),
-          );
-
-          return uniqueItems;
+          // Prioritize fuzzy results first, then search actions
+          return dedupeById([...relevantItems, ...searchActions]);
         }
 
-        // No query, show all search actions and remove duplicates
-        return Array.from(
-          new Map(searchActions.map((item) => [item.id, item])).values(),
-        );
+        // No query after identifier, show all search actions (deduped)
+        return dedupeById(searchActions);
       }
 
       if (identifierType === 'profile') {
-        // Find profile actions
-        return filteredItems.filter(
+        // Find profile actions (deduped)
+        const profileActions = items.filter(
           (item) =>
             item.type === 'action' &&
             item.keywords?.some(
               (k) => k.includes('profile') || k.includes('profil'),
             ),
         );
+        return dedupeById(profileActions);
       }
 
       if (identifierType === 'create') {
-        // Find create actions
-        return filteredItems.filter(
+        // Find create actions (deduped)
+        const createActions = items.filter(
           (item) =>
             item.type === 'action' &&
             item.keywords?.some(
               (k) => k.includes('create') || k.includes('tambah'),
             ),
         );
+        return dedupeById(createActions);
       }
     }
 
     // Normal fuzzy search
     const results = fuse.search(debouncedQuery);
-    const items = results.map((result) => result.item);
+    const resultItems = results.map((result) => result.item);
 
     // Remove duplicates by id
-    return Array.from(new Map(items.map((item) => [item.id, item])).values());
-  }, [fuse, debouncedQuery, parsedQuery, filteredItems]);
+    return dedupeById(resultItems);
+  }, [debouncedQuery, items, fuse, parsedQuery, dedupeById]);
 
   // Handle item selection
   const handleSelect = useCallback(
-    (item: SearchableItem) => {
-      // Pass the actual query being used for search
-      const actualQuery = parsedQuery.hasIdentifier
-        ? parsedQuery.query
-        : debouncedQuery;
-      trackAccess(item.id, actualQuery);
+    (item: TSearchableItem) => {
+      if (onSelect) {
+        onSelect(item);
+      }
     },
-    [trackAccess, debouncedQuery, parsedQuery],
+    [onSelect],
   );
 
   return {
-    query,
-    setQuery,
     searchResults,
-    recentItems,
+    parsedQuery,
     handleSelect,
     hasQuery: debouncedQuery.trim().length > 0,
-    parsedQuery,
     isSearching,
   };
 }

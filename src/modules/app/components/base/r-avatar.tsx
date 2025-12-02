@@ -40,8 +40,13 @@ const PRESENCE_COLORS: Record<
 
 function getInitials(name?: string) {
   if (!name) return '';
-  const parts = name.trim().split(/\s+/);
+  // Filter hanya kata-kata yang mengandung huruf (abaikan simbol seperti "-")
+  const parts = name
+    .trim()
+    .split(/\s+/)
+    .filter((part) => /[a-zA-Z]/.test(part));
   const [first, second] = parts;
+  if (!first) return '';
   if (!second) {
     return first.slice(0, 2).toUpperCase();
   }

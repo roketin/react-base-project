@@ -4,12 +4,11 @@ import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useAuthBootstrap } from '@/modules/auth/hooks/use-auth-bootstrap';
 import {
-  RGlobalSearch,
-  RGlobalSearchTrigger,
-} from '@/modules/app/components/extensions/global-search';
+  RAdaptiveSearch,
+  RAdaptiveSearchTrigger,
+} from '@/modules/adaptive-search';
 import { AppLayoutHeader } from './app-layout-header';
 import { APP_EL } from '../../constants/app.constant';
-import roketinConfig from '@config';
 import {
   RSidebarInset,
   RSidebarProvider,
@@ -39,11 +38,9 @@ export default function AppLayout() {
     <RSidebarProvider>
       <AppSidebar />
       <RSidebarInset>
-        {roketinConfig.search.enableSearchGlobal && (
-          <div className='hidden mt-3 md:flex items-center justify-center'>
-            <RGlobalSearchTrigger />
-          </div>
-        )}
+        <div className='hidden mt-3 md:flex items-center justify-center'>
+          <RAdaptiveSearchTrigger />
+        </div>
         <div className='flex-1 flex flex-col bg-white box-border md:m-3 md:ml-0 rounded-xl shadow-sm min-w-0 pb-0.5 overflow-hidden'>
           <AppLayoutHeader />
           <div
@@ -76,7 +73,7 @@ export default function AppLayout() {
           </div>
         </div>
       </RSidebarInset>
-      {roketinConfig.search.enableSearchGlobal && <RGlobalSearch />}
+      <RAdaptiveSearch apiEnabled />
     </RSidebarProvider>
   );
 }

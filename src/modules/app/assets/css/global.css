@@ -361,3 +361,12 @@ body {
     background-position: -200% 0;
   }
 }
+
+@keyframes progress-auto-animate {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}

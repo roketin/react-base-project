@@ -1,12 +1,18 @@
 import { Search } from 'lucide-react';
-import { useGlobalSearchStore } from '@/modules/app/stores/global-search.store';
+import { useAdaptiveSearchStore } from '../stores/adaptive-search.store';
 import { cn } from '@/modules/app/libs/utils';
 import RBtn from '@/modules/app/components/base/r-btn';
 import { useTranslation } from 'react-i18next';
 
-export function RGlobalSearchTrigger() {
+/**
+ * Adaptive Search Trigger Button
+ *
+ * Button to open the search dialog
+ * Shows keyboard shortcut hint (Cmd+K / Ctrl+K)
+ */
+export function RAdaptiveSearchTrigger() {
   const { t } = useTranslation();
-  const { setIsOpen } = useGlobalSearchStore();
+  const { setIsOpen } = useAdaptiveSearchStore();
 
   return (
     <RBtn
