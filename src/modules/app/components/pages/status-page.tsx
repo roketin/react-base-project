@@ -4,6 +4,7 @@ import {
   type TRResultStatus,
 } from '@/modules/app/components/base/r-result';
 import { cn } from '@/modules/app/libs/utils';
+import { useTheme } from '@/modules/app/hooks/use-theme';
 
 type StatusPageProps = {
   code?: string;
@@ -23,10 +24,13 @@ const StatusPage = ({
   status = 'info',
   className,
 }: StatusPageProps) => {
+  // Initialize theme
+  useTheme();
+
   return (
     <div
       className={cn(
-        'h-full min-h-screen w-full bg-pattern px-6 py-16',
+        'h-full min-h-screen w-full px-6 py-16',
         'flex items-center justify-center',
         className,
       )}

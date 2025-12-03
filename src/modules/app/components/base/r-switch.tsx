@@ -92,14 +92,14 @@ export const RSwitch = forwardRef<HTMLInputElement, TRSwitchProps>(
                 'peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2',
                 'peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
                 hasError
-                  ? 'bg-red-200 peer-checked:bg-red-500 peer-focus-visible:ring-red-500/20'
-                  : 'bg-slate-200 peer-checked:bg-primary peer-focus-visible:ring-primary/20',
+                  ? 'bg-destructive/20 peer-checked:bg-destructive peer-focus-visible:ring-destructive/20'
+                  : 'bg-input peer-checked:bg-primary peer-focus-visible:ring-primary/20',
                 className,
               )}
             >
               <span
                 className={cn(
-                  'inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform',
+                  'inline-block h-5 w-5 transform rounded-full bg-background shadow-lg transition-transform',
                   isChecked ? 'translate-x-5' : 'translate-x-0.5',
                 )}
               />
@@ -112,7 +112,7 @@ export const RSwitch = forwardRef<HTMLInputElement, TRSwitchProps>(
                 <label
                   htmlFor={switchId}
                   className={cn(
-                    'text-sm font-medium text-slate-700 cursor-pointer select-none',
+                    'text-sm font-medium text-foreground cursor-pointer select-none',
                     disabled && 'opacity-50 cursor-not-allowed',
                   )}
                 >
@@ -120,7 +120,7 @@ export const RSwitch = forwardRef<HTMLInputElement, TRSwitchProps>(
                 </label>
               )}
               {description && (
-                <p className='text-xs text-slate-500'>{description}</p>
+                <p className='text-xs text-muted-foreground'>{description}</p>
               )}
             </div>
           )}
@@ -130,7 +130,7 @@ export const RSwitch = forwardRef<HTMLInputElement, TRSwitchProps>(
           <p
             className={cn(
               'text-xs ml-14',
-              hasError ? 'text-red-500' : 'text-slate-500',
+              hasError ? 'text-destructive' : 'text-muted-foreground',
             )}
           >
             {error || helperText}

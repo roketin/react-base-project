@@ -41,7 +41,7 @@ export default function AppLayout() {
         <div className='hidden mt-3 md:flex items-center justify-center'>
           <RAdaptiveSearchTrigger />
         </div>
-        <div className='flex-1 flex flex-col bg-white box-border md:m-3 md:ml-0 rounded-xl shadow-sm min-w-0 pb-0.5 overflow-hidden'>
+        <div className='flex-1 flex flex-col bg-background box-border md:m-3 md:ml-0 rounded-xl shadow-sm min-w-0 pb-0.5 overflow-hidden'>
           <AppLayoutHeader />
           <div
             id={APP_EL.CONTAINER}

@@ -57,11 +57,11 @@ const RAlertDialog = ({
   variant = 'info',
 }: TRAlertDialogProps) => {
   const defaultIconByVariant: Record<TRAlertVariant, React.ReactNode> = {
-    info: <Info className='h-16 w-16 text-blue-500' />,
-    success: <CheckCircle2 className='h-16 w-16 text-emerald-500' />,
-    warning: <AlertTriangle className='h-16 w-16 text-amber-500' />,
-    error: <OctagonAlert className='h-16 w-16 text-red-500' />,
-    confirm: <ShieldQuestion className='h-16 w-16 text-amber-500' />,
+    info: <Info className='h-16 w-16 text-info' />,
+    success: <CheckCircle2 className='h-16 w-16 text-success' />,
+    warning: <AlertTriangle className='h-16 w-16 text-warning' />,
+    error: <OctagonAlert className='h-16 w-16 text-destructive' />,
+    confirm: <ShieldQuestion className='h-16 w-16 text-warning' />,
   };
 
   return (

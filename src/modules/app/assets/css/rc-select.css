@@ -184,7 +184,7 @@
 
   /* Hover State */
   &:hover {
-    @apply bg-gray-50;
+    @apply bg-muted/50;
   }
 
   /* Active/Selected States */
@@ -193,7 +193,7 @@
   }
 
   &.rc-select-item-option-active {
-    @apply bg-gray-100;
+    @apply bg-muted;
   }
 
   /* Disabled State */

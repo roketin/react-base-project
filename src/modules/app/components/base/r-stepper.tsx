@@ -58,7 +58,7 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
     const icon = isLoading ? (
       <Loader2 className='size-4 animate-spin text-primary/50' />
     ) : isDisabled ? (
-      <span className='text-xs font-bold text-gray-400'>×</span>
+      <span className='text-xs font-bold text-muted-foreground'>×</span>
     ) : state === 'completed' ? (
       <Check className='size-4' />
     ) : (
@@ -72,12 +72,12 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
       <div
         className={`${baseCircle} ${
           isDisabled
-            ? 'bg-gray-100 text-gray-300 border-gray-300 cursor-not-allowed'
+            ? 'bg-muted text-muted-foreground border-border cursor-not-allowed'
             : state === 'completed'
-              ? 'bg-primary text-white border-primary'
+              ? 'bg-primary text-primary-foreground border-primary'
               : state === 'current'
-                ? 'bg-white text-primary border-primary'
-                : 'bg-gray-100 text-gray-400 border-gray-300'
+                ? 'bg-background text-primary border-primary'
+                : 'bg-muted text-muted-foreground border-border'
         }`}
       >
         {icon}
@@ -112,12 +112,12 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
               <span
                 className={`text-sm ${
                   isDisabled
-                    ? 'text-gray-400'
+                    ? 'text-muted-foreground'
                     : current
                       ? 'text-primary'
                       : completed
                         ? 'text-primary'
-                        : 'text-gray-400'
+                        : 'text-muted-foreground'
                 }`}
               >
                 {s.label}
@@ -147,12 +147,12 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
               key={s.id}
               className={`flex-1 flex  gap-3 items-center rounded-md border-2 p-3 text-center transition ${
                 isDisabled
-                  ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
+                  ? 'border-border bg-muted text-muted-foreground cursor-not-allowed'
                   : completed
                     ? 'border-primary bg-primary/10 text-primary'
                     : current
-                      ? 'border-primary bg-white text-primary'
-                      : 'border-gray-200 text-gray-400'
+                      ? 'border-primary bg-background text-primary'
+                      : 'border-border text-muted-foreground'
               } ${isClickable ? 'cursor-pointer hover:underline' : 'cursor-default'}`}
               onClick={() => {
                 if (isClickable && s.onClick) s.onClick(idx, s);
@@ -193,12 +193,12 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
               key={s.id}
               className={`flex flex-col items-center gap-1 border-t-4 p-3 transition ${
                 isDisabled
-                  ? ' border-gray-200 text-gray-400 cursor-not-allowed '
+                  ? ' border-border text-muted-foreground cursor-not-allowed '
                   : completed
-                    ? 'border-primary text-primary bg-teal-50/40'
+                    ? 'border-primary text-primary bg-primary/5'
                     : current
                       ? 'border-primary text-primary'
-                      : 'border-gray-200 text-gray-400'
+                      : 'border-border text-muted-foreground'
               } ${isClickable ? 'cursor-pointer hover:border-primary hover:primary' : 'cursor-default'}`}
               onClick={() => {
                 if (isClickable && s.onClick) s.onClick(idx, s);
@@ -210,12 +210,12 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
                 <span
                   className={`text-sm ${
                     isDisabled
-                      ? 'text-gray-400'
+                      ? 'text-muted-foreground'
                       : current
                         ? 'text-primary font-medium'
                         : completed
                           ? 'text-primary'
-                          : 'text-gray-500'
+                          : 'text-muted-foreground'
                   }`}
                 >
                   {s.label}
@@ -241,10 +241,10 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
               key={s.id}
               className={`h-2 w-16 rounded-full transition-all ${
                 isDisabled
-                  ? 'bg-gray-300 opacity-60 cursor-not-allowed'
+                  ? 'bg-muted opacity-60 cursor-not-allowed'
                   : current
                     ? 'bg-primary'
-                    : 'bg-gray-300'
+                    : 'bg-muted'
               } ${isClickable ? 'cursor-pointer hover:underline' : 'cursor-default'}`}
               onClick={() => {
                 if (isClickable && s.onClick) s.onClick(idx, s);
@@ -252,7 +252,7 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
               aria-disabled={isDisabled}
             >
               {isLoading && (
-                <Loader2 className='size-4 animate-spin text-gray-400' />
+                <Loader2 className='size-4 animate-spin text-muted-foreground' />
               )}
             </div>
           );
@@ -263,7 +263,7 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
 
   return (
     <div className={cn('relative', className)}>
-      <div className='relative h-2 rounded-full bg-gray-200'>
+      <div className='relative h-2 rounded-full bg-muted'>
         <div
           className='absolute inset-y-0 left-0 rounded-full bg-primary'
           style={{ width: `${percent}%` }}
@@ -296,10 +296,10 @@ export function RStepper<StepId extends string = string, StepData = unknown>({
               <span
                 className={`truncate text-sm ${
                   isDisabled
-                    ? 'text-gray-400'
+                    ? 'text-muted-foreground'
                     : completed || current
                       ? 'text-primary'
-                      : 'text-gray-400'
+                      : 'text-muted-foreground'
                 }`}
               >
                 {s.label}

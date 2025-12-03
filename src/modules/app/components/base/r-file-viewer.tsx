@@ -217,7 +217,7 @@ const RFileViewer = ({ src, show = false, onClose }: TRFileViewer) => {
         <div className='flex h-full w-full items-center justify-center'>
           <iframe
             title='viewer'
-            className='h-[80vh] w-full max-w-5xl border-0 rounded-md bg-white shadow-lg'
+            className='h-[80vh] w-full max-w-5xl border-0 rounded-md bg-background shadow-lg'
             src={actualSrc}
           />
         </div>
@@ -227,7 +227,7 @@ const RFileViewer = ({ src, show = false, onClose }: TRFileViewer) => {
         <div className='flex h-full w-full items-center justify-center'>
           <iframe
             title='office-viewer'
-            className='h-[80vh] w-full max-w-5xl border-0 rounded-md bg-white shadow-lg'
+            className='h-[80vh] w-full max-w-5xl border-0 rounded-md bg-background shadow-lg'
             src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(actualSrc)}`}
           />
         </div>

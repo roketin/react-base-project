@@ -109,35 +109,50 @@ const RDataTableFooter = ({
         {
           'pointer-events-none opacity-50': isDisabled,
         },
-        'flex flex-col md:flex-row md:items-center md:justify-between mt-5',
+        'flex flex-col gap-4 mt-5',
       )}
     >
-      <div className='text-sm mb-4 md:mb-0 flex items-center gap-3'>
-        <div>
-          {total
-            ? `Showing ${showingFrom} to ${showingTo} of ${total} entries`
-            : 'No entries to display'}
+      {/* Mobile: Pagination first, then info */}
+      <div className='flex md:hidden justify-center'>
+        <RPagination
+          currentPage={currentPage}
+          totalPages={pageCount}
+          onPageChange={handleChangePage}
+          siblingCount={0}
+          showFirstLast={false}
+        />
+      </div>
+
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+        <div className='text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
+          <div className='text-center sm:text-left'>
+            {total
+              ? `Showing ${showingFrom} to ${showingTo} of ${total} entries`
+              : 'No entries to display'}
+          </div>
+
+          <div className='w-full sm:w-[70px]'>
+            <RSelect
+              options={LIMIT_OPTIONS}
+              value={String(perPage)}
+              onChange={(val) =>
+                onChange?.({ page: 1, per_page: Number(val ?? perPage) })
+              }
+            />
+          </div>
         </div>
 
-        <div className='w-[70px]'>
-          <RSelect
-            options={LIMIT_OPTIONS}
-            value={String(perPage)}
-            onChange={(val) =>
-              onChange?.({ page: 1, per_page: Number(val ?? perPage) })
-            }
+        {/* Desktop: Pagination on the right */}
+        <div className='hidden md:block'>
+          <RPagination
+            currentPage={currentPage}
+            totalPages={pageCount}
+            onPageChange={handleChangePage}
+            siblingCount={Math.floor(safePagesToShow / 2)}
+            showFirstLast={true}
           />
         </div>
       </div>
-
-      <RPagination
-        currentPage={currentPage}
-        totalPages={pageCount}
-        onPageChange={handleChangePage}
-        siblingCount={Math.floor(safePagesToShow / 2)}
-        showFirstLast={true}
-        className='ml-auto'
-      />
     </div>
   );
 };

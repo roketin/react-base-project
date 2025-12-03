@@ -143,14 +143,14 @@ export const RSlider = forwardRef<HTMLInputElement, TRSliderProps>(
             <label
               htmlFor={sliderId}
               className={cn(
-                'text-sm font-medium text-slate-700',
+                'text-sm font-medium text-foreground',
                 disabled && 'opacity-50 cursor-not-allowed',
               )}
             >
               {label}
             </label>
             {showValue && (
-              <span className='text-sm font-medium text-slate-900'>
+              <span className='text-sm font-medium text-foreground'>
                 {formatValue(currentValue)}
               </span>
             )}
@@ -177,7 +177,7 @@ export const RSlider = forwardRef<HTMLInputElement, TRSliderProps>(
             id={`${sliderId}-track`}
             className={cn(
               'relative h-2 w-full rounded-full',
-              hasError ? 'bg-destructive/20' : 'bg-slate-200',
+              hasError ? 'bg-destructive/20' : 'bg-muted',
               disabled && 'opacity-50 cursor-not-allowed',
               !disabled && 'cursor-pointer',
             )}
@@ -197,7 +197,7 @@ export const RSlider = forwardRef<HTMLInputElement, TRSliderProps>(
             <div
               className={cn(
                 'absolute top-1/2 -translate-y-1/2 -translate-x-1/2',
-                'h-5 w-5 rounded-full bg-white shadow-md border-2 pointer-events-none',
+                'h-5 w-5 rounded-full bg-background shadow-md border-2 pointer-events-none',
                 isDragging ? 'scale-110' : 'transition-all',
                 hasError ? 'border-destructive' : 'border-primary',
                 disabled && 'cursor-not-allowed',
@@ -209,7 +209,7 @@ export const RSlider = forwardRef<HTMLInputElement, TRSliderProps>(
         </div>
 
         {showMinMax && (
-          <div className='flex justify-between text-xs text-slate-500'>
+          <div className='flex justify-between text-xs text-muted-foreground'>
             <span>{formatValue(min)}</span>
             <span>{formatValue(max)}</span>
           </div>
@@ -219,7 +219,7 @@ export const RSlider = forwardRef<HTMLInputElement, TRSliderProps>(
           <p
             className={cn(
               'text-xs',
-              hasError ? 'text-destructive' : 'text-slate-500',
+              hasError ? 'text-destructive' : 'text-muted-foreground',
             )}
           >
             {error || helperText}

@@ -1,11 +1,15 @@
 import { forwardRef, type HTMLAttributes } from 'react';
 import { cn } from '@/modules/app/libs/utils';
+import {
+  feedbackVariants,
+  type TFeedbackVariant,
+} from '@/modules/app/libs/ui-variants';
 
 // Linear Progress
 export type TRProgressProps = HTMLAttributes<HTMLDivElement> & {
   value?: number;
   max?: number;
-  variant?: 'default' | 'success' | 'warning' | 'error' | 'info';
+  variant?: TFeedbackVariant;
   size?: 'sm' | 'default' | 'lg';
   showValue?: boolean;
   animated?: boolean;
@@ -35,14 +39,6 @@ export const RProgress = forwardRef<HTMLDivElement, TRProgressProps>(
   ) => {
     const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
 
-    const variantClasses = {
-      default: 'bg-primary',
-      success: 'bg-green-600',
-      warning: 'bg-yellow-600',
-      error: 'bg-red-600',
-      info: 'bg-blue-600',
-    };
-
     const sizeClasses = {
       sm: 'h-1',
       default: 'h-2',
@@ -58,7 +54,7 @@ export const RProgress = forwardRef<HTMLDivElement, TRProgressProps>(
           aria-valuemax={max}
           aria-valuenow={value}
           className={cn(
-            'relative w-full overflow-hidden rounded-full bg-slate-200',
+            'relative w-full overflow-hidden rounded-full bg-muted',
             sizeClasses[size],
             className,
           )}
@@ -68,7 +64,7 @@ export const RProgress = forwardRef<HTMLDivElement, TRProgressProps>(
             className={cn(
               'h-full',
               !autoAnimate && 'transition-all duration-300 ease-in-out',
-              variantClasses[variant],
+              feedbackVariants.solid[variant],
               striped &&
                 'bg-linear-to-r from-transparent via-white/20 to-transparent bg-size-[20px_100%]',
               animated && striped && 'animate-progress-stripes',
@@ -85,7 +81,7 @@ export const RProgress = forwardRef<HTMLDivElement, TRProgressProps>(
         </div>
         {showValue && (
           <div className='flex justify-end'>
-            <span className='text-xs text-slate-600'>
+            <span className='text-xs text-muted-foreground'>
               {Math.round(percentage)}%
             </span>
           </div>
@@ -103,7 +99,7 @@ export type TRProgressCircularProps = HTMLAttributes<HTMLDivElement> & {
   max?: number;
   size?: number;
   strokeWidth?: number;
-  variant?: 'default' | 'success' | 'warning' | 'error' | 'info';
+  variant?: TFeedbackVariant;
   showValue?: boolean;
   indeterminate?: boolean;
 };
@@ -131,12 +127,12 @@ export const RProgressCircular = forwardRef<
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (percentage / 100) * circumference;
 
-    const variantColors = {
+    const strokeVariants: Record<TFeedbackVariant, string> = {
       default: 'stroke-primary',
-      success: 'stroke-green-600',
-      warning: 'stroke-yellow-600',
-      error: 'stroke-red-600',
-      info: 'stroke-blue-600',
+      success: 'stroke-success',
+      warning: 'stroke-warning',
+      error: 'stroke-destructive',
+      info: 'stroke-info',
     };
 
     return (
@@ -166,7 +162,7 @@ export const RProgressCircular = forwardRef<
             fill='none'
             stroke='currentColor'
             strokeWidth={strokeWidth}
-            className='text-slate-200'
+            className='text-muted'
           />
           {/* Progress circle */}
           <circle
@@ -178,7 +174,7 @@ export const RProgressCircular = forwardRef<
             strokeLinecap='round'
             className={cn(
               'transition-all duration-300 ease-in-out',
-              variantColors[variant],
+              strokeVariants[variant],
             )}
             style={{
               strokeDasharray: circumference,
@@ -189,7 +185,7 @@ export const RProgressCircular = forwardRef<
           />
         </svg>
         {showValue && !indeterminate && (
-          <span className='absolute text-xs font-medium text-slate-700'>
+          <span className='absolute text-xs font-medium text-foreground'>
             {Math.round(percentage)}%
           </span>
         )}

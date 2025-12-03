@@ -1,3 +1,4 @@
+import { RSeparator } from '@/modules/app/components/base/r-separator';
 import { useFormConfig } from '@/modules/app/contexts/form-config-context';
 
 // Type for RFormFieldSet props
@@ -70,13 +71,13 @@ export const RFormFieldSet: React.FC<RFormFieldSetProps> = ({
         {/* Title and Subtitle Area */}
         <div className={titleContainerClasses} style={titleStyle}>
           <h3
-            className={`text-md font-semibold text-gray-900 ${isHorizontal ? '' : 'lg:text-xl'}`}
+            className={`text-md font-semibold text-foreground ${isHorizontal ? '' : 'lg:text-xl'}`}
           >
             {title}
           </h3>
           {subtitle && (
             <p
-              className={`mt-1 text-xs text-gray-500 ${isHorizontal ? '' : 'lg:text-base'}`}
+              className={`mt-1 text-xs text-muted-foreground ${isHorizontal ? '' : 'lg:text-base'}`}
             >
               {subtitle}
             </p>
@@ -95,7 +96,7 @@ export const RFormFieldSet: React.FC<RFormFieldSetProps> = ({
       </div>
 
       {/* Divider */}
-      {finalDivider && <div className='border-b border-gray-100' />}
+      {finalDivider && <RSeparator />}
     </div>
   );
 };

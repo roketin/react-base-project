@@ -94,7 +94,7 @@ export const RPagination = forwardRef<HTMLDivElement, TRPaginationProps>(
             return (
               <span
                 key={`ellipsis-${index}`}
-                className='flex h-9 w-9 items-center justify-center text-slate-500'
+                className='flex h-9 w-9 items-center justify-center text-muted-foreground'
               >
                 <MoreHorizontal className='h-4 w-4' />
               </span>
@@ -159,7 +159,7 @@ const PaginationButton = forwardRef<HTMLButtonElement, PaginationButtonProps>(
           'disabled:pointer-events-none disabled:opacity-50',
           isActive
             ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-            : 'hover:bg-slate-100 hover:text-slate-900',
+            : 'hover:bg-muted hover:text-foreground',
           className,
         )}
         {...props}

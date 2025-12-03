@@ -62,13 +62,16 @@ const FieldLabel = ({
   shouldShowRequired: boolean;
   isHorizontal: boolean;
 }) => (
-  <label className='block text-sm font-medium text-slate-700' htmlFor={fieldId}>
+  <label
+    className='block text-sm font-medium text-foreground'
+    htmlFor={fieldId}
+  >
     {label}
     {shouldShowRequired && <span className='text-lg text-destructive'>*</span>}
 
     {labelDescription && (
       <div
-        className={cn('text-xs text-gray-400', {
+        className={cn('text-xs text-muted-foreground', {
           'pr-5': isHorizontal,
         })}
       >
@@ -233,7 +236,7 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                 </div>
               </FieldWrapper>
               {showSeparator && (
-                <RSeparator className='mt-4 border-t border-slate-100' />
+                <RSeparator className='mt-4 border-t border-border' />
               )}
             </FormItem>
           );
@@ -253,12 +256,12 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                 computedWidth={computedWidth}
               >
                 {label && (
-                  <label className='block text-sm font-medium text-slate-700'>
+                  <label className='block text-sm font-medium text-foreground'>
                     {label}
 
                     {labelDescription && (
                       <div
-                        className={cn('text-xs text-gray-400', {
+                        className={cn('text-xs text-muted-foreground', {
                           'pr-5': isHorizontal,
                         })}
                       >
@@ -269,7 +272,9 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                 )}
 
                 <div>
-                  <div className='text-sm text-slate-900'>{displayContent}</div>
+                  <div className='text-sm text-foreground'>
+                    {displayContent}
+                  </div>
 
                   {description && (
                     <FormDescription className='mt-1.5 text-xs'>
@@ -279,7 +284,7 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
                 </div>
               </FieldWrapper>
               {showSeparator && (
-                <RSeparator className='mt-4 border-t border-slate-100' />
+                <RSeparator className='mt-4 border-t border-border' />
               )}
             </FormItem>
           );
@@ -314,7 +319,7 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
               </div>
             </FieldWrapper>
             {showSeparator && (
-              <RSeparator className='mt-4 border-t border-slate-100' />
+              <RSeparator className='mt-4 border-t border-border' />
             )}
           </FormItem>
         );

@@ -154,7 +154,7 @@ export function RPanelHeader<TPayload = unknown>({
         ref={headerRef}
         id={id}
         className={cn(
-          'flex items-center justify-between gap-3 border-b border-slate-100 py-4 mb-4 bg-white/80 backdrop-blur-sm transition-all duration-200',
+          'flex items-center justify-between gap-3 border-b border-border py-4 mb-4 bg-background/80 backdrop-blur-sm transition-all duration-200',
           sticky && 'sticky',
           isSticky && stickyClassName,
           className,
@@ -188,7 +188,7 @@ export function RPanelHeader<TPayload = unknown>({
               </RBtn>
             )}
             {typeof title === 'string' ? (
-              <h2 className='text-lg font-semibold text-gray-900'>{title}</h2>
+              <h2 className='text-lg font-semibold text-primary'>{title}</h2>
             ) : (
               title
             )}

@@ -15,12 +15,9 @@ export function showAlertValidation(errors: FieldErrors) {
     variant: 'error',
     width: 320,
     description: (
-      <ul className='list-none pl-0 text-sm'>
+      <ul className='list-none pl-0 text-sm text-left md:w-[270px]'>
         {messages.map((msg) => (
-          <li
-            key={msg}
-            className='text-destructive py-2 border-b border-b-slate-100 flex gap-3 text-left!'
-          >
+          <li key={msg} className='text-destructive py-2 flex gap-3 text-left!'>
             <Info size={14} className='flex-none' />
             <div className='flex-1 -mt-1'>{msg}</div>
           </li>

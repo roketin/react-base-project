@@ -96,8 +96,8 @@ export const RRadio = forwardRef<HTMLInputElement, TRRadioProps>(
               'peer-focus:ring-2 peer-focus:ring-offset-0 peer-focus:ring-primary/20',
               'peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
               isChecked
-                ? 'border-primary bg-white'
-                : 'border-slate-300 bg-white',
+                ? 'border-primary bg-background'
+                : 'border-input bg-background',
               className,
             )}
           >
@@ -113,7 +113,7 @@ export const RRadio = forwardRef<HTMLInputElement, TRRadioProps>(
               <label
                 htmlFor={radioId}
                 className={cn(
-                  'text-sm text-slate-700 cursor-pointer select-none',
+                  'text-sm text-foreground cursor-pointer select-none',
                   isDisabled && 'opacity-50 cursor-not-allowed',
                 )}
               >
@@ -121,7 +121,7 @@ export const RRadio = forwardRef<HTMLInputElement, TRRadioProps>(
               </label>
             )}
             {description && (
-              <p className='text-xs text-slate-500'>{description}</p>
+              <p className='text-xs text-muted-foreground'>{description}</p>
             )}
           </div>
         )}
@@ -156,7 +156,7 @@ export const RRadioGroup = forwardRef<HTMLDivElement, TRRadioGroupProps>(
         {label && (
           <p
             className={cn(
-              'text-sm font-medium text-slate-700',
+              'text-sm font-medium text-foreground',
               disabled && 'opacity-50',
             )}
           >
@@ -186,7 +186,7 @@ export const RRadioGroup = forwardRef<HTMLDivElement, TRRadioGroupProps>(
           <p
             className={cn(
               'text-xs',
-              hasError ? 'text-red-500' : 'text-slate-500',
+              hasError ? 'text-destructive' : 'text-muted-foreground',
             )}
           >
             {error || helperText}

@@ -12,10 +12,10 @@ export const RSkeleton = forwardRef<HTMLDivElement, TRSkeletonProps>(
       <div
         ref={ref}
         className={cn(
-          'bg-slate-200',
+          'bg-muted',
           animation === 'pulse' && 'animate-pulse',
           animation === 'wave' &&
-            'animate-shimmer bg-linear-to-r from-slate-200 via-slate-100 to-slate-200 bg-size-[200%_100%]',
+            'animate-shimmer bg-linear-to-r from-muted via-muted/50 to-muted bg-size-[200%_100%]',
           variant === 'circular' && 'rounded-full',
           variant === 'rectangular' && 'rounded-md',
           variant === 'text' && 'rounded h-4',

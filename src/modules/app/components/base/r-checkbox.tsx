@@ -81,12 +81,12 @@ export const RCheckbox = forwardRef<HTMLInputElement, TRCheckboxProps>(
                 'peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
                 hasError
                   ? 'border-destructive peer-focus-visible:ring-destructive/20'
-                  : 'border-slate-300 peer-focus-visible:ring-primary/20',
+                  : 'border-input peer-focus-visible:ring-primary/20',
                 checked || indeterminate
                   ? hasError
                     ? 'bg-destructive border-destructive'
                     : 'bg-primary border-primary'
-                  : 'bg-white hover:border-slate-400',
+                  : 'bg-background hover:border-muted-foreground',
                 className,
               )}
             >
@@ -103,7 +103,7 @@ export const RCheckbox = forwardRef<HTMLInputElement, TRCheckboxProps>(
             <label
               htmlFor={checkboxId}
               className={cn(
-                'text-sm text-slate-700 cursor-pointer select-none leading-5',
+                'text-sm text-foreground cursor-pointer select-none leading-5',
                 disabled && 'opacity-50 cursor-not-allowed',
               )}
             >
@@ -116,7 +116,7 @@ export const RCheckbox = forwardRef<HTMLInputElement, TRCheckboxProps>(
           <p
             className={cn(
               'text-xs ml-7',
-              hasError ? 'text-destructive' : 'text-slate-500',
+              hasError ? 'text-destructive' : 'text-muted-foreground',
             )}
           >
             {error || helperText}

@@ -109,14 +109,14 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: #18171d;
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: #fb923c;
+  --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -138,7 +138,7 @@
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.22 0.015 280);
+  --sidebar: transparent;
   --sidebar-foreground: oklch(0.92 0.01 280);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -149,7 +149,7 @@
 
   /* Form Configuration Dark Mode */
   --form-border-color: var(--input);
-  --form-bg: var(--background);
+  --form-bg: #101015;
   --form-placeholder: oklch(0.708 0 0); /* muted-foreground */
   --form-text: var(--foreground);
 }
@@ -211,7 +211,17 @@
 
 html,
 body {
-  @apply h-full text-[14px] bg-slate-100;
+  @apply h-full text-[14px];
+}
+
+html.light,
+html.light body {
+  @apply bg-slate-100;
+}
+
+html.dark,
+html.dark body {
+  @apply bg-[#232229];
 }
 
 #root {
@@ -304,37 +314,15 @@ body {
   }
 
   .rt-table--striped tbody tr:nth-of-type(even):not([data-state='selected']) {
-    @apply bg-gray-50!;
+    @apply bg-muted/30!;
   }
 
   .rt-table--hoverable tbody tr:not([data-state='selected']):hover {
-    @apply bg-[#F7F7F7]!;
+    @apply bg-muted/50!;
   }
 
   .rt-table--no-hover tbody tr:not([data-state='selected']):hover {
     background-color: inherit !important;
-  }
-}
-
-.bg-pattern {
-  position: relative;
-
-  &::before {
-    @apply absolute inset-0;
-    content: '';
-    background-color: #ffffff;
-
-    /* background-image:
-      repeating-radial-gradient(circle at 0 0, transparent 0, #fff 20px),
-      repeating-linear-gradient(var(--primary), #fff); */
-
-    background-image:
-      linear-gradient(var(--primary) 1px, transparent 1px),
-      linear-gradient(to right, var(--primary) 1px, #ffffff 1px);
-    background-size: 30px 30px;
-
-    opacity: 0.03;
-    z-index: -1;
   }
 }
 

@@ -7,10 +7,10 @@ const labelVariants = cva(
   {
     variants: {
       variant: {
-        default: 'text-slate-700',
-        error: 'text-red-500',
-        success: 'text-green-600',
-        muted: 'text-slate-500',
+        default: 'text-foreground',
+        error: 'text-destructive',
+        success: 'text-success',
+        muted: 'text-muted-foreground',
       },
       size: {
         default: 'text-sm',
@@ -18,7 +18,7 @@ const labelVariants = cva(
         lg: 'text-base',
       },
       required: {
-        true: "after:content-['*'] after:ml-0.5 after:text-red-500",
+        true: "after:content-['*'] after:ml-0.5 after:text-destructive",
         false: '',
       },
     },

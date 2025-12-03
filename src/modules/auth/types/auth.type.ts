@@ -2,23 +2,26 @@ import type { TPermission } from '@/modules/app/constants/permission.constant';
 
 export type TAuthStore = {
   token: string;
+  refreshToken: string;
   authData: TAuthProfile | null;
   isAuthenticated: () => boolean;
-  setCredential: (token: string) => void;
+  setCredential: (token: string, refreshToken: string) => void;
   clearCredential: () => void;
   setAuthData: (data: TAuthProfile) => void;
 };
 
 export type TAuthLogin = {
-  username: string;
+  login: string;
   password: string;
 };
 
 export type TAuthLoginResponse = {
   access_token: string;
+  refresh_token: string;
+  is_first_time_login: boolean;
 };
 
-export type TAuthForgot = Pick<TAuthLogin, 'username'>;
+export type TAuthForgot = Pick<TAuthLogin, 'login'>;
 
 export type TAuthReset = {
   password: string;

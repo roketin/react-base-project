@@ -13,7 +13,9 @@ export function useAuthBootstrap() {
     [token, authData],
   );
 
-  const profileQuery = useAuthProfileQuery(shouldFetch);
+  const profileQuery = useAuthProfileQuery({
+    enabled: shouldFetch,
+  });
 
   useEffect(() => {
     if (!profileQuery.data) return;

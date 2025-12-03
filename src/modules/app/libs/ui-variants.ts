@@ -122,7 +122,7 @@ export const inputErrorClasses = cn(
 /**
  * Get complete input classes with optional error state
  */
-export const getInputClasses = (hasError?: boolean, className?: string) => {
+export const getInputClasses = (_hasError?: boolean, className?: string) => {
   return cn(inputBaseClasses, inputErrorClasses, className);
 };
 
@@ -144,6 +144,55 @@ export const textareaBaseClasses = cn(
 /**
  * Get complete textarea classes with optional error state
  */
-export const getTextareaClasses = (hasError?: boolean, className?: string) => {
+export const getTextareaClasses = (_hasError?: boolean, className?: string) => {
   return cn(textareaBaseClasses, inputErrorClasses, className);
 };
+
+/**
+ * Centralized feedback/status variant styles
+ * Used by RAlert, RProgress, Toast, and other feedback components
+ */
+export type TFeedbackVariant =
+  | 'default'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'error';
+
+export const feedbackVariants = {
+  /** Background styles for alert/banner components */
+  bg: {
+    default: 'bg-muted border-border text-foreground',
+    info: 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200',
+    success:
+      'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200',
+    warning:
+      'bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200',
+    error:
+      'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200',
+  },
+  /** Solid color styles */
+  solid: {
+    default: 'bg-primary',
+    info: 'bg-blue-600 dark:bg-blue-500',
+    success: 'bg-green-600 dark:bg-green-500',
+    warning: 'bg-yellow-600 dark:bg-yellow-500',
+    error: 'bg-red-600 dark:bg-red-500',
+  },
+  /** Text/icon color styles */
+  text: {
+    default: 'text-primary',
+    info: 'text-blue-600 dark:text-blue-400',
+    success: 'text-green-600 dark:text-green-400',
+    warning: 'text-yellow-600 dark:text-yellow-400',
+    error: 'text-red-600 dark:text-red-400',
+  },
+  /** Border color styles */
+  border: {
+    default: 'border-primary/20',
+    info: 'border-blue-600/20 dark:border-blue-400/20',
+    success: 'border-green-600/20 dark:border-green-400/20',
+    warning: 'border-yellow-600/20 dark:border-yellow-400/20',
+    error: 'border-red-600/20 dark:border-red-400/20',
+  },
+} as const;

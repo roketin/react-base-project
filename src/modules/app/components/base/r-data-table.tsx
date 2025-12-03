@@ -37,6 +37,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { useIsMobile } from '@/modules/app/hooks/use-media-query';
 import { RSkeleton } from '@/modules/app/components/base/r-skeleton';
 import { RInput } from '@/modules/app/components/base/r-input';
+import { RResult } from '@/modules/app/components/base/r-result';
 
 export type StickyPosition = 'left' | 'right' | 'none';
 type Alignment = 'left' | 'center' | 'right';
@@ -263,8 +264,13 @@ const RDataTableInner = <TData, TValue>(
     }
     if (!data.length) {
       return (
-        <div className='flex h-24 w-full items-center justify-center rounded-md border text-sm text-muted-foreground'>
-          No results.
+        <div className='rounded-md border py-8'>
+          <RResult
+            status='empty'
+            size='sm'
+            title='No results'
+            description='No data available to display'
+          />
         </div>
       );
     }
@@ -288,7 +294,7 @@ const RDataTableInner = <TData, TValue>(
         stickyOffset={offset}
         align={align}
         style={{ width: header.getSize() }}
-        className={cn(header.column.getCanSort() && 'hover:bg-[#eee]')}
+        className={cn(header.column.getCanSort() && 'hover:bg-muted/70')}
       >
         {!header.isPlaceholder && (
           <div
@@ -298,7 +304,7 @@ const RDataTableInner = <TData, TValue>(
               JUSTIFY_CLASS[align],
               align === 'right' ? 'flex-row-reverse' : 'flex-row',
               header.column.getCanSort()
-                ? 'cursor-pointer hover:text-black'
+                ? 'cursor-pointer hover:text-foreground'
                 : 'cursor-default',
             )}
             onClick={() => handleSort(header)}
@@ -368,8 +374,13 @@ const RDataTableInner = <TData, TValue>(
         ) : (
           <RTr hoverable={false}>
             <RTd colSpan={columns.length || 1}>
-              <div className='flex h-24 w-full items-center justify-center text-sm text-muted-foreground'>
-                No results.
+              <div className='py-8'>
+                <RResult
+                  status='empty'
+                  size='sm'
+                  title='No results'
+                  description='No data available to display'
+                />
               </div>
             </RTd>
           </RTr>

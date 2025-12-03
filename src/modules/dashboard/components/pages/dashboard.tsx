@@ -24,8 +24,8 @@ import {
   RTd,
   RTh,
   RThead,
+  RTr,
 } from '@/modules/app/components/base/r-simple-table';
-import { RTableRow } from '@/modules/app/components/base/r-table-simple';
 
 const Dashboard = () => {
   // Mock Data for Stats
@@ -183,15 +183,15 @@ const Dashboard = () => {
         >
           <RTable>
             <RThead>
-              <RTableRow>
+              <RTr>
                 <RTh>User</RTh>
                 <RTh>Status</RTh>
                 <RTh className='text-right'>Amount</RTh>
-              </RTableRow>
+              </RTr>
             </RThead>
             <RTbody>
               {recentActivity.map((item) => (
-                <RTableRow key={item.id}>
+                <RTr key={item.id}>
                   <RTd>
                     <div className='font-medium'>{item.user}</div>
                     <div className='text-muted-foreground text-xs hidden md:inline'>
@@ -212,7 +212,7 @@ const Dashboard = () => {
                     </span>
                   </RTd>
                   <RTd className='text-right font-medium'>{item.amount}</RTd>
-                </RTableRow>
+                </RTr>
               ))}
             </RTbody>
           </RTable>

@@ -8,18 +8,14 @@ import { RInputPassword } from '@/modules/app/components/base/r-input-password';
 import RForm from '@/modules/app/components/base/r-form';
 import { Link } from 'react-router-dom';
 import { linkTo, useNamedRoute } from '@/modules/app/hooks/use-named-route';
-import { ArrowRightIcon, AtSign, FileLock2 } from 'lucide-react';
+import { ArrowRightIcon, Key, User } from 'lucide-react';
 import { useAuthLogin } from '@/modules/auth/services/auth.service';
 import { useTranslation } from 'react-i18next';
 import { tl } from '@/modules/app/libs/locale-utils';
 import RBtn from '@/modules/app/components/base/r-btn';
 
 const formSchema = Yup.object().shape({
-  username: Yup.string()
-    .default('')
-    .email()
-    .required()
-    .label(tl('auth:form.email')),
+  login: Yup.string().default('').required().label(tl('auth:form.email')),
   password: Yup.string().default('').required().label(tl('auth:form.password')),
 });
 
@@ -79,14 +75,13 @@ const AuthLogin = () => {
           {/* Email */}
           <RFormField
             control={form.control}
-            name='username'
+            name='login'
             label={t('form.email')}
             withPlaceholder
-            description={t('form.emailDesc')}
           >
             <RInput
               autoComplete='username'
-              leftIcon={<AtSign size={18} />}
+              leftIcon={<User size={18} />}
               className='h-11'
             />
           </RFormField>
@@ -98,10 +93,7 @@ const AuthLogin = () => {
             label={t('form.password')}
             withPlaceholder
           >
-            <RInputPassword
-              leftIcon={<FileLock2 size={18} />}
-              className='h-11'
-            />
+            <RInputPassword leftIcon={<Key size={18} />} className='h-11' />
           </RFormField>
 
           {/* Forgot password link */}

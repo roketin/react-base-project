@@ -43,7 +43,7 @@ export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
           <label
             htmlFor={textareaId}
             className={cn(
-              'text-sm font-medium text-slate-700',
+              'text-sm font-medium text-foreground',
               disabled && 'opacity-50 cursor-not-allowed',
             )}
           >
@@ -71,7 +71,7 @@ export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
           <p
             className={cn(
               'text-xs',
-              hasError ? 'text-destructive' : 'text-slate-500',
+              hasError ? 'text-destructive' : 'text-muted-foreground',
             )}
           >
             {error || helperText}

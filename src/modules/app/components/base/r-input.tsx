@@ -73,7 +73,7 @@ export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
           <label
             htmlFor={inputId}
             className={cn(
-              'text-sm font-medium text-slate-700',
+              'text-sm font-medium text-foreground',
               disabled && 'opacity-50 cursor-not-allowed',
             )}
           >
@@ -83,7 +83,7 @@ export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
 
         <div className='relative'>
           {leftIcon && (
-            <div className='absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'>
+            <div className='absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground'>
               {leftIcon}
             </div>
           )}
@@ -108,14 +108,14 @@ export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
             <button
               type='button'
               onClick={handleClear}
-              className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors'
+              className='absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors'
             >
               <X size={16} />
             </button>
           )}
 
           {rightIcon && (
-            <div className='absolute right-3 top-1/2 -translate-y-1/2 text-slate-400'>
+            <div className='absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground'>
               {rightIcon}
             </div>
           )}
@@ -125,7 +125,7 @@ export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
           <p
             className={cn(
               'text-xs',
-              hasError ? 'text-destructive' : 'text-slate-500',
+              hasError ? 'text-destructive' : 'text-muted-foreground',
             )}
           >
             {error || helperText}

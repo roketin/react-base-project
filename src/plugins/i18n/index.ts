@@ -26,18 +26,23 @@ for (const path in modulesLocales) {
   }
 }
 
+const defaultLang =
+  roketinConfig.languages.supported.find((l) => l.isDefault)?.code ?? 'id';
+
 i18n
   .use(initReactI18next) // bind react-i18next
   .init({
     resources,
-    fallbackLng: 'en',
+    fallbackLng: defaultLang,
     debug: roketinConfig.languages.debug,
     ns: ['app'], // default namespace
     defaultNS: 'app',
     interpolation: {
       escapeValue: false, // react sudah auto escape
     },
-    lng: localStorage.getItem(roketinConfig.app.shortName + '-lang') || 'en',
+    lng:
+      localStorage.getItem(roketinConfig.app.shortName + '-lang') ||
+      defaultLang,
   });
 
 i18n.on('languageChanged', (lng) => {

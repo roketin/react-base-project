@@ -9,11 +9,15 @@ import {
 import { toast as sonnerToast } from 'sonner';
 import { cn } from '@/modules/app/libs/utils';
 import { RProgress } from '@/modules/app/components/base/r-progress';
+import {
+  feedbackVariants,
+  type TFeedbackVariant,
+} from '@/modules/app/libs/ui-variants';
 
-type CustomToastProps = {
+type TCustomToastProps = {
   title: string;
   description?: string;
-  variant?: 'default' | 'success' | 'warning' | 'error' | 'info';
+  variant?: TFeedbackVariant;
   duration?: number;
   toastId: string | number;
 };
@@ -24,17 +28,9 @@ export const CustomToast = ({
   variant = 'error',
   duration = 4000,
   toastId,
-}: CustomToastProps) => {
+}: TCustomToastProps) => {
   const handleClose = () => {
     sonnerToast.dismiss(toastId);
-  };
-
-  const variantStyles = {
-    default: 'border-primary/20',
-    success: 'border-green-600/20',
-    warning: 'border-yellow-600/20',
-    error: 'border-red-600/20',
-    info: 'border-blue-600/20',
   };
 
   const variantIcons = {
@@ -48,8 +44,8 @@ export const CustomToast = ({
   return (
     <div
       className={cn(
-        'relative w-full rounded-lg border bg-background p-4 shadow-lg',
-        variantStyles[variant],
+        'relative w-full rounded-lg border bg-background p-4 shadow-lg md:min-w-[300px]',
+        feedbackVariants.border[variant],
       )}
     >
       <div className='flex items-start justify-between gap-3'>

@@ -36,3 +36,16 @@ export const DATE_FORMAT = {
   /** e.g. Selasa, 31 Desember 2024, 14:05 */
   datetimeLong: 'dddd, DD MMMM YYYY, HH:mm',
 };
+
+/**
+ * Default order for module access/permission display in role management
+ * Permissions will be sorted in this order, then alphabetically for unlisted ones
+ */
+export const DEFAULT_MODULE_ACCESS_ORDER = [
+  'View',
+  'Create',
+  'Update',
+  'Delete',
+  'Export',
+  'Import',
+];

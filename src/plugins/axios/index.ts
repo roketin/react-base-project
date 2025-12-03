@@ -48,7 +48,9 @@ http.interceptors.response.use(
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
     };
-    const isLoginEndpoint = originalRequest.url?.includes('/v1/auth/login');
+    const isLoginEndpoint =
+      originalRequest.url?.includes('/v1/auth/login') ||
+      originalRequest.url?.includes('/v1/auth/refresh-token');
 
     /**
      * Handling all error to global alert
@@ -63,7 +65,7 @@ http.interceptors.response.use(
           : responseData.message;
 
       showToast.error({
-        title: 'Information',
+        title: 'Opps..',
         description: message ?? 'Something error ..',
         duration: 2000,
       });
@@ -98,7 +100,9 @@ http.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
         return axios(originalRequest as InternalAxiosRequestConfig);
       } catch {
+        // Refresh token failed, clear credentials and redirect to login
         useAuthStore.getState().clearCredential();
+        window.location.href = '/auth/login';
         return Promise.reject(error);
       }
     }

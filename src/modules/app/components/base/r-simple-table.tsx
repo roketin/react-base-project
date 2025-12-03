@@ -116,8 +116,8 @@ export const RTh = forwardRef<HTMLTableCellElement, TRThProps>(
           zIndex: sticky !== 'none' ? 10 : undefined,
         }}
         className={cn(
-          'border-b bg-[#F7F7F7] px-4 py-3 font-medium text-muted-foreground transition-colors',
-          'text-[length:var(--table-header-font-size)]',
+          'border-b bg-muted px-4 py-3 font-medium text-muted-foreground transition-colors',
+          'text-(length:--table-header-font-size)',
           alignClass,
           className,
         )}
@@ -162,11 +162,10 @@ export const RTd = forwardRef<HTMLTableCellElement, TRTdProps>(
           left: sticky === 'left' ? stickyOffset : undefined,
           right: sticky === 'right' ? stickyOffset : undefined,
           zIndex: sticky !== 'none' ? 5 : undefined,
-          backgroundColor: 'inherit',
         }}
         className={cn(
-          'border-b bg-inherit px-4 py-3',
-          'text-[length:var(--table-font-size)]',
+          'border-b bg-background px-4 py-3',
+          'text-(length:--table-font-size)',
           alignClass,
           className,
         )}

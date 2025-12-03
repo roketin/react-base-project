@@ -5,7 +5,7 @@ import {
 } from '@/modules/app/components/ui/popover';
 import RAvatar from '@/modules/app/components/base/r-avatar';
 import RBtn from '@/modules/app/components/base/r-btn';
-import { LogOut, UserRound } from 'lucide-react';
+import { LogOut, UserRound, Sun, Moon, Monitor } from 'lucide-react';
 import { useAuth } from '@/modules/auth/hooks/use-auth';
 import { useNamedRoute } from '@/modules/app/hooks/use-named-route';
 import { useCallback } from 'react';
@@ -16,6 +16,14 @@ import {
   useDelayedExpanded,
 } from '@/modules/app/contexts/sidebar-context';
 import { useProfileDialogStore } from '@/modules/auth/stores/profile-dialog.store';
+import { useTheme, type TTheme } from '@/modules/app/hooks/use-theme';
+import { cn } from '@/modules/app/libs/utils';
+
+const themeOptions: { value: TTheme; icon: typeof Sun }[] = [
+  { value: 'light', icon: Sun },
+  { value: 'dark', icon: Moon },
+  { value: 'system', icon: Monitor },
+];
 
 const AppUserMenu = () => {
   const { user, logout } = useAuth();
@@ -23,6 +31,7 @@ const AppUserMenu = () => {
   const { isCollapsed } = useSidebar();
   const { isOpen: isProfileOpen, setOpen: setIsProfileOpen } =
     useProfileDialogStore();
+  const { theme, setTheme } = useTheme();
 
   // Use helper hook for delayed visibility
   const showUserInfo = useDelayedExpanded(300);
@@ -86,6 +95,29 @@ const AppUserMenu = () => {
               {user?.email || '...'}
             </p>
           </div>
+
+          {/* Theme Switcher */}
+          <div className='border-b border-border/60 px-4 py-3'>
+            <p className='text-xs text-muted-foreground mb-2'>Theme</p>
+            <div className='flex items-center gap-1 p-1 rounded-lg bg-muted'>
+              {themeOptions.map(({ value, icon: Icon }) => (
+                <button
+                  key={value}
+                  onClick={() => setTheme(value)}
+                  className={cn(
+                    'flex-1 flex items-center justify-center rounded-md p-1.5 transition-colors',
+                    theme === value
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground',
+                  )}
+                  title={value.charAt(0).toUpperCase() + value.slice(1)}
+                >
+                  <Icon className='h-4 w-4' />
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className='flex flex-col gap-1 p-2'>
             <RBtn
               variant='ghost'

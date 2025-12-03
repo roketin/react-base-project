@@ -69,36 +69,48 @@ export function RAnchor({
     const container = containerRef.current ?? window;
     let currentActive = '';
 
-    const containerTop =
-      container instanceof Window
-        ? 0
-        : (container as HTMLElement).getBoundingClientRect().top;
+    try {
+      const containerTop =
+        container instanceof Window
+          ? 0
+          : (container as HTMLElement).getBoundingClientRect().top;
 
-    for (const item of allItems) {
-      const target = document.querySelector(item.href);
-      if (!target) continue;
+      for (const item of allItems) {
+        try {
+          const target = document.querySelector(item.href);
+          if (!target) continue;
 
-      const rect = target.getBoundingClientRect();
-      const relativeTop = rect.top - containerTop;
+          const rect = target.getBoundingClientRect();
+          const relativeTop = rect.top - containerTop;
 
-      if (relativeTop <= offsetTop + 50) {
-        currentActive = item.href;
+          if (relativeTop <= offsetTop + 50) {
+            currentActive = item.href;
+          }
+        } catch (error) {
+          // Invalid selector, skip this item
+          console.warn(`Invalid anchor href: ${item.href}`, error);
+          continue;
+        }
       }
-    }
 
-    if (currentActive) {
-      setActiveLink((prev) => {
-        if (prev === currentActive) return prev;
-        onChange?.(currentActive);
-        updateInkPosition(currentActive);
-        return currentActive;
-      });
+      if (currentActive) {
+        setActiveLink((prev) => {
+          if (prev === currentActive) return prev;
+          onChange?.(currentActive);
+          updateInkPosition(currentActive);
+          return currentActive;
+        });
+      }
+    } catch (error) {
+      console.error('Error in anchor scroll handler:', error);
     }
   }, [items, offsetTop, onChange, updateInkPosition]);
 
   // Calculate which section is in view and update on resize/scroll
   useEffect(() => {
     const container = containerRef.current ?? window;
+    const currentLinksRef = linksRef.current;
+
     handleScrollOrResize(); // Initial check
 
     container.addEventListener('scroll', handleScrollOrResize, {
@@ -120,6 +132,8 @@ export function RAnchor({
       container.removeEventListener('scroll', handleScrollOrResize);
       window.removeEventListener('resize', handleScrollOrResize);
       resizeObserver?.disconnect();
+      // Cleanup refs
+      currentLinksRef.clear();
     };
   }, [handleScrollOrResize]);
 
@@ -128,31 +142,39 @@ export function RAnchor({
     href: string,
   ) => {
     e.preventDefault();
-    const target = document.querySelector(href);
-    if (!target) return;
 
-    const container = containerRef.current;
-    const targetElement = target as HTMLElement;
+    try {
+      const target = document.querySelector(href);
+      if (!target) {
+        console.warn(`Anchor target not found: ${href}`);
+        return;
+      }
 
-    if (container instanceof Window || !container) {
-      window.scrollTo({
-        top: targetElement.offsetTop - offsetTop,
-        behavior: 'smooth',
-      });
-    } else {
-      // For custom container, calculate position relative to container
-      const containerRect = container.getBoundingClientRect();
-      const targetRect = targetElement.getBoundingClientRect();
-      const scrollTop = container.scrollTop;
+      const container = containerRef.current;
+      const targetElement = target as HTMLElement;
 
-      container.scrollTo({
-        top: scrollTop + targetRect.top - containerRect.top - offsetTop,
-        behavior: 'smooth',
-      });
+      if (container instanceof Window || !container) {
+        window.scrollTo({
+          top: targetElement.offsetTop - offsetTop,
+          behavior: 'smooth',
+        });
+      } else {
+        // For custom container, calculate position relative to container
+        const containerRect = container.getBoundingClientRect();
+        const targetRect = targetElement.getBoundingClientRect();
+        const scrollTop = container.scrollTop;
+
+        container.scrollTo({
+          top: scrollTop + targetRect.top - containerRect.top - offsetTop,
+          behavior: 'smooth',
+        });
+      }
+
+      setActiveLink(href);
+      onChange?.(href);
+    } catch (error) {
+      console.error(`Error scrolling to anchor: ${href}`, error);
     }
-
-    setActiveLink(href);
-    onChange?.(href);
   };
 
   const renderItem = (item: TAnchorItem, level: number = 0) => {

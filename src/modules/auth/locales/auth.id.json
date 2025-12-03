@@ -1,4 +1,8 @@
 {
+  "layout": {
+    "welcomeTitle": "Selamat Datang Kembali!",
+    "welcomeDescription": "Masuk untuk mengakses dasbor Anda dan mengelola aplikasi dengan mudah."
+  },
   "login": {
     "title": "Masuk",
     "subTitle": "Silakan masuk terlebih dahulu untuk mengakses dasbor."
@@ -16,10 +20,10 @@
     "successDesc": "Kata sandi berhasil diatur ulang."
   },
   "form": {
-    "email": "Email",
-    "emailDesc": "Masukkan email yang terdaftar di sistem.",
+    "email": "Nama pengguna",
+    "emailDesc": "Masukkan nama pengguna yang terdaftar di sistem.",
     "password": "Kata Sandi",
-    "submit": "Masuk",
+    "submit": "Login",
     "forgotPassword": "Lupa Kata Sandi?",
     "newPassword": "Kata Sandi Baru",
     "newPasswordConfirm": "Konfirmasi Kata Sandi Baru"

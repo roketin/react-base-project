@@ -1,4 +1,8 @@
 {
+  "layout": {
+    "welcomeTitle": "Welcome Back!",
+    "welcomeDescription": "Sign in to access your dashboard and manage your application with ease."
+  },
   "login": {
     "title": "Login",
     "subTitle": "Please log in first to access the dashboard."

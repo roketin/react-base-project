@@ -226,7 +226,7 @@ function RTabs(props: TRTabsProps) {
           className={cn(
             !isVertical &&
               variant === 'underline' &&
-              'w-full bg-white border-b border-gray-100',
+              'w-full bg-background border-b border-border',
             !isVertical && !full && 'relative',
           )}
         >
@@ -280,9 +280,9 @@ function RTabs(props: TRTabsProps) {
                       'inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50',
                       variant === 'underline'
                         ? cn(
-                            'bg-white border-b-2 border-transparent rounded-none px-4 pb-3 pt-3 h-auto text-slate-600 hover:text-slate-900',
+                            'bg-background border-b-2 border-transparent rounded-none px-4 pb-3 pt-3 h-auto text-muted-foreground hover:text-foreground',
                             isActive &&
-                              'bg-transparent border-b-primary text-slate-900',
+                              'bg-transparent border-b-primary text-foreground',
                           )
                         : cn(
                             'rounded-md px-3 py-1.5',
