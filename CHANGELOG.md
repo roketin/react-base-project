@@ -1,3 +1,10 @@
+## [3.1.0] - 2025-12-03
+
+### 🚀 Features
+
+- _(ddd)_ Global search as module plug & play, improve toast, avatar, progress
+- _(ddd)_ Dark mode support, added news component collapse, fab, popconfirm
+
 ## [3.0.0] - 2025-11-30
 
 ### 🚀 Features
