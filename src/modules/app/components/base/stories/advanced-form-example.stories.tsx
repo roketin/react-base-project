@@ -153,6 +153,7 @@ const AdvancedFormExample = () => {
                     <RInput
                       placeholder='John'
                       leftIcon={<User className='h-4 w-4' />}
+                      size='default'
                     />
                   </RFormField>
 
@@ -161,7 +162,7 @@ const AdvancedFormExample = () => {
                     name='lastName'
                     label='Last Name'
                   >
-                    <RInput placeholder='Doe' />
+                    <RInput placeholder='Doe' size='default' />
                   </RFormField>
                 </div>
 
@@ -170,11 +171,12 @@ const AdvancedFormExample = () => {
                     type='email'
                     placeholder='john.doe@example.com'
                     leftIcon={<Mail className='h-4 w-4' />}
+                    size='default'
                   />
                 </RFormField>
 
                 <RFormField control={form.control} name='phone' label='Phone'>
-                  <RInput placeholder='+1 (555) 000-0000' />
+                  <RInput placeholder='+1 (555) 000-0000' size='default' />
                 </RFormField>
 
                 <RFormField
@@ -203,7 +205,7 @@ const AdvancedFormExample = () => {
                   label='Username'
                   description='Must be unique and at least 3 characters'
                 >
-                  <RInput placeholder='johndoe' />
+                  <RInput placeholder='johndoe' size='default' />
                 </RFormField>
 
                 <RFormField
@@ -216,6 +218,7 @@ const AdvancedFormExample = () => {
                     type='password'
                     placeholder='Enter password'
                     leftIcon={<Lock className='h-4 w-4' />}
+                    size='default'
                   />
                 </RFormField>
 

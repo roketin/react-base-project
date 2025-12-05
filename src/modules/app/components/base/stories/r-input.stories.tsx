@@ -28,10 +28,57 @@ export const Default: Story = {
   },
 };
 
+export const Sizes: Story = {
+  render: () => (
+    <div className='space-y-4'>
+      <RInput
+        size='xs'
+        label='Extra Small (xs)'
+        placeholder='Extra small input'
+      />
+      <RInput size='sm' label='Small (sm)' placeholder='Small input' />
+      <RInput size='default' label='Default' placeholder='Default input' />
+      <RInput size='lg' label='Large (lg)' placeholder='Large input' />
+    </div>
+  ),
+};
+
+export const SizesWithIcons: Story = {
+  render: () => (
+    <div className='space-y-4'>
+      <RInput
+        size='xs'
+        label='Extra Small with Icon'
+        placeholder='Search...'
+        leftIcon={<Search className='h-3 w-3' />}
+      />
+      <RInput
+        size='sm'
+        label='Small with Icon'
+        placeholder='Search...'
+        leftIcon={<Search className='h-3.5 w-3.5' />}
+      />
+      <RInput
+        size='default'
+        label='Default with Icon'
+        placeholder='Search...'
+        leftIcon={<Search className='h-4 w-4' />}
+      />
+      <RInput
+        size='lg'
+        label='Large with Icon'
+        placeholder='Search...'
+        leftIcon={<Search className='h-5 w-5' />}
+      />
+    </div>
+  ),
+};
+
 export const WithLabel: Story = {
   args: {
     label: 'Email Address',
     placeholder: 'Enter your email',
+    size: 'lg',
   },
 };
 
@@ -48,6 +95,7 @@ export const WithHelperText: Story = {
     type: 'password',
     helperText: 'Must be at least 8 characters',
     placeholder: 'Enter password',
+    size: 'sm',
   },
 };
 
@@ -56,6 +104,7 @@ export const WithError: Story = {
     label: 'Email',
     value: 'invalid-email',
     error: 'Please enter a valid email address',
+    size: 'lg',
   },
 };
 
@@ -63,7 +112,8 @@ export const WithLeftIcon: Story = {
   args: {
     label: 'Search',
     placeholder: 'Search...',
-    leftIcon: <Search className='h-4 w-4' />,
+    leftIcon: <Search className='h-3 w-3' />,
+    size: 'xs',
   },
 };
 
@@ -71,7 +121,8 @@ export const WithRightIcon: Story = {
   args: {
     label: 'Email',
     placeholder: 'Enter your email',
-    rightIcon: <Mail className='h-4 w-4' />,
+    rightIcon: <Mail className='h-5 w-5' />,
+    size: 'lg',
   },
 };
 
@@ -89,6 +140,7 @@ export const Disabled: Story = {
     label: 'Disabled Input',
     value: 'Cannot edit this',
     disabled: true,
+    size: 'sm',
   },
 };
 
@@ -103,14 +155,42 @@ export const FullWidth: Story = {
 export const DifferentTypes: Story = {
   render: () => (
     <div className='space-y-4'>
-      <RInput label='Text' type='text' placeholder='Text input' />
-      <RInput label='Email' type='email' placeholder='email@example.com' />
-      <RInput label='Password' type='password' placeholder='Enter password' />
-      <RInput label='Number' type='number' placeholder='Enter number' />
-      <RInput label='Date' type='date' />
-      <RInput label='Time' type='time' />
-      <RInput label='URL' type='url' placeholder='https://example.com' />
-      <RInput label='Tel' type='tel' placeholder='+1 (555) 000-0000' />
+      <RInput
+        label='Text (xs)'
+        type='text'
+        placeholder='Text input'
+        size='xs'
+      />
+      <RInput
+        label='Email (sm)'
+        type='email'
+        placeholder='email@example.com'
+        size='sm'
+      />
+      <RInput
+        label='Password (default)'
+        type='password'
+        placeholder='Enter password'
+      />
+      <RInput
+        label='Number (lg)'
+        type='number'
+        placeholder='Enter number'
+        size='lg'
+      />
+      <RInput label='Date (sm)' type='date' size='sm' />
+      <RInput label='Time (xs)' type='time' size='xs' />
+      <RInput
+        label='URL (lg)'
+        type='url'
+        placeholder='https://example.com'
+        size='lg'
+      />
+      <RInput
+        label='Tel (default)'
+        type='tel'
+        placeholder='+1 (555) 000-0000'
+      />
     </div>
   ),
   decorators: [
@@ -177,7 +257,8 @@ export const WithValidation: Story = {
 export const SearchInput: Story = {
   args: {
     placeholder: 'Search...',
-    leftIcon: <Search className='h-4 w-4' />,
+    leftIcon: <Search className='h-3 w-3' />,
+    size: 'xs',
   },
 };
 
@@ -187,13 +268,15 @@ export const LoginForm: Story = {
       <RInput
         label='Username'
         placeholder='Enter username'
-        leftIcon={<User className='h-4 w-4' />}
+        leftIcon={<User className='h-5 w-5' />}
+        size='lg'
       />
       <RInput
         label='Password'
         type='password'
         placeholder='Enter password'
-        leftIcon={<Lock className='h-4 w-4' />}
+        leftIcon={<Lock className='h-5 w-5' />}
+        size='lg'
       />
     </div>
   ),
