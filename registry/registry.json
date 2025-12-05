@@ -5,7 +5,7 @@
   "homepage": "https://github.com/roketin/react-base-project",
   "baseUrl": "https://raw.githubusercontent.com/roketin/react-base-project/feat/registry",
   "registryDependencies": [],
-  "items": [
+  "components": [
     {
       "name": "r-btn",
       "type": "registry:component",
