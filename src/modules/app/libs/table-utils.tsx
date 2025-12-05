@@ -98,5 +98,5 @@ export function tableCellLink(
 }
 
 // Thin wrappers to keep table helpers self-contained but reuse global formatters
-export const tableDateCell = appFormatDate;
-export const tableCurrencyCell = appFormatCurrency;
+export const tableCellDate = appFormatDate;
+export const tableCellCurrency = appFormatCurrency;
