@@ -1,3 +1,16 @@
+## [3.2.0] - 2025-12-05
+
+### 🐛 Bug Fixes
+
+- _(ddd)_ Tooltip dark mode text
+- _(ddd)_ Simplify logic for handling theme mode
+- _(ddd)_ Add size variants for input & button groups
+- _(ddd)_ Update story for button group & input
+- _(ddd)_ Decrease and maintain z-index issue on dialog & alert-dialog
+- _(ddd)_ Dialog add prevent close on overlay and escape
+- _(ddd)_ Consistency naming table cell helper
+- _(ddd)_ Update deps & fix unit-test issue
+
 ## [3.1.0] - 2025-12-03
 
 ### 🚀 Features
