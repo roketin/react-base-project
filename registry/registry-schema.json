@@ -1,0 +1,163 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Roketin Component Registry",
+  "description": "Schema for Roketin UI component registry",
+  "type": "object",
+  "required": ["name", "baseUrl", "items"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON schema reference"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the registry"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the registry"
+    },
+    "homepage": {
+      "type": "string",
+      "description": "Homepage URL of the registry"
+    },
+    "baseUrl": {
+      "type": "string",
+      "description": "Base URL for raw file access (e.g., raw.githubusercontent.com)"
+    },
+    "registryDependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Global registry dependencies"
+    },
+    "items": {
+      "type": "array",
+      "description": "List of registry items (components, libs, etc.)",
+      "items": {
+        "$ref": "#/definitions/RegistryItem"
+      }
+    }
+  },
+  "definitions": {
+    "RegistryItem": {
+      "type": "object",
+      "required": ["name", "type", "files"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Unique identifier for the component"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "registry:component",
+            "registry:ui",
+            "registry:lib",
+            "registry:hook",
+            "registry:style"
+          ],
+          "description": "Type of registry item"
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable title"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the component"
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "NPM package dependencies"
+        },
+        "devDependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "NPM dev dependencies"
+        },
+        "registryDependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Other registry items this depends on"
+        },
+        "files": {
+          "type": "array",
+          "description": "Files included in this registry item",
+          "items": {
+            "$ref": "#/definitions/RegistryFile"
+          }
+        },
+        "tailwind": {
+          "type": "object",
+          "description": "Tailwind CSS configuration",
+          "properties": {
+            "config": {
+              "type": "object",
+              "description": "Tailwind config to merge"
+            }
+          }
+        },
+        "cssVars": {
+          "type": "object",
+          "description": "CSS variables configuration",
+          "properties": {
+            "light": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "dark": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "docs": {
+          "type": "string",
+          "description": "Documentation URL"
+        }
+      }
+    },
+    "RegistryFile": {
+      "type": "object",
+      "required": ["path", "type"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Source path relative to baseUrl"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "registry:component",
+            "registry:ui",
+            "registry:lib",
+            "registry:hook",
+            "registry:style"
+          ],
+          "description": "Type of file"
+        },
+        "target": {
+          "type": "string",
+          "description": "Target path where the file should be copied"
+        },
+        "content": {
+          "type": "string",
+          "description": "Inline content (optional, alternative to path)"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1056 @@
+{
+  "$schema": "./registry-schema.json",
+  "name": "roketin-ui",
+  "description": "Roketin React Component Library",
+  "homepage": "https://github.com/roketin/reactjs-base-project",
+  "baseUrl": "https://raw.githubusercontent.com/roketin/reactjs-base-project/main",
+  "registryDependencies": [],
+  "items": [
+    {
+      "name": "r-btn",
+      "type": "registry:component",
+      "title": "Button",
+      "description": "A customizable button component with variants, loading state, and debounce support.",
+      "dependencies": [
+        "use-debounce",
+        "lucide-react",
+        "class-variance-authority"
+      ],
+      "registryDependencies": ["utils", "ui-variants"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-btn.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-btn.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-input",
+      "type": "registry:component",
+      "title": "Input",
+      "description": "A flexible input component with label, error state, icons, and clearable support.",
+      "dependencies": ["lucide-react", "class-variance-authority"],
+      "registryDependencies": ["utils", "ui-variants"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-input.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-select",
+      "type": "registry:component",
+      "title": "Select",
+      "description": "A select component with search, multiple selection, and infinite scroll support.",
+      "dependencies": ["rc-select", "lucide-react"],
+      "registryDependencies": ["utils", "r-result"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-select.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-select.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-card",
+      "type": "registry:component",
+      "title": "Card",
+      "description": "A card component with header, title, description, and footer sections.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-card.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-card.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-dialog",
+      "type": "registry:component",
+      "title": "Dialog",
+      "description": "A dialog/modal component with customizable sizes and accessibility support.",
+      "dependencies": ["@radix-ui/react-dialog"],
+      "registryDependencies": ["utils", "ui-dialog"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-dialog.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-dialog.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-alert",
+      "type": "registry:component",
+      "title": "Alert",
+      "description": "An alert component for displaying feedback messages.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-alert.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-alert.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-alert-dialog",
+      "type": "registry:component",
+      "title": "Alert Dialog",
+      "description": "An alert dialog for confirmations and important messages.",
+      "dependencies": ["@radix-ui/react-alert-dialog"],
+      "registryDependencies": ["utils", "ui-alert-dialog"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-alert-dialog.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-alert-dialog.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-avatar",
+      "type": "registry:component",
+      "title": "Avatar",
+      "description": "An avatar component for displaying user images or initials.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-avatar.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-avatar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-badge",
+      "type": "registry:component",
+      "title": "Badge",
+      "description": "A badge component for labels and status indicators.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-badge.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-badge.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-breadcrumbs",
+      "type": "registry:component",
+      "title": "Breadcrumbs",
+      "description": "A breadcrumbs component for navigation hierarchy.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-breadcrumbs.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-breadcrumbs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-checkbox",
+      "type": "registry:component",
+      "title": "Checkbox",
+      "description": "A checkbox component with label support.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-checkbox.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-checkbox.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-checkbox-multiple",
+      "type": "registry:component",
+      "title": "Checkbox Multiple",
+      "description": "A multiple checkbox group component.",
+      "dependencies": [],
+      "registryDependencies": ["utils", "r-checkbox"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-checkbox-multiple.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-checkbox-multiple.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-collapse",
+      "type": "registry:component",
+      "title": "Collapse",
+      "description": "A collapsible content component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-collapse.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-collapse.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-data-table",
+      "type": "registry:component",
+      "title": "Data Table",
+      "description": "A powerful data table with sorting, pagination, selection, and infinite scroll.",
+      "dependencies": ["@tanstack/react-table", "lucide-react", "use-debounce"],
+      "registryDependencies": [
+        "utils",
+        "r-simple-table",
+        "r-data-table-footer",
+        "r-skeleton",
+        "r-input",
+        "r-result"
+      ],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-data-table.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-data-table.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-data-table-footer",
+      "type": "registry:component",
+      "title": "Data Table Footer",
+      "description": "Footer component for data table with pagination controls.",
+      "dependencies": [],
+      "registryDependencies": ["utils", "r-pagination"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-data-table-footer.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-data-table-footer.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-file-uploader",
+      "type": "registry:component",
+      "title": "File Uploader",
+      "description": "A file upload component with drag and drop support.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-file-uploader.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-file-uploader.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-file-viewer",
+      "type": "registry:component",
+      "title": "File Viewer",
+      "description": "A file viewer component for previewing uploaded files.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-file-viewer.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-file-viewer.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-filter",
+      "type": "registry:component",
+      "title": "Filter",
+      "description": "A filter component for data filtering interfaces.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-filter.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-filter.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-float-button",
+      "type": "registry:component",
+      "title": "Float Button",
+      "description": "A floating action button component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-float-button.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-float-button.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-form",
+      "type": "registry:component",
+      "title": "Form",
+      "description": "A form component with react-hook-form integration.",
+      "dependencies": ["react-hook-form"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-form.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-form-field",
+      "type": "registry:component",
+      "title": "Form Field",
+      "description": "A form field wrapper component with validation support.",
+      "dependencies": ["react-hook-form"],
+      "registryDependencies": ["utils", "r-form"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-form-field.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-form-field.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-form-fieldset",
+      "type": "registry:component",
+      "title": "Form Fieldset",
+      "description": "A fieldset component for grouping form fields.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-form-fieldset.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-form-fieldset.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-img",
+      "type": "registry:component",
+      "title": "Image",
+      "description": "An image component with loading states and error handling.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-img.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-img.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-infinite-scroll",
+      "type": "registry:component",
+      "title": "Infinite Scroll",
+      "description": "An infinite scroll container component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-infinite-scroll.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-infinite-scroll.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-input-format",
+      "type": "registry:component",
+      "title": "Input Format",
+      "description": "A formatted input component for masked inputs.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-input-format.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-input-format.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-input-number",
+      "type": "registry:component",
+      "title": "Input Number",
+      "description": "A number input component with formatting support.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-input-number.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-input-number.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-input-password",
+      "type": "registry:component",
+      "title": "Input Password",
+      "description": "A password input component with show/hide toggle.",
+      "dependencies": [],
+      "registryDependencies": ["utils", "r-input"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-input-password.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-input-password.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-label",
+      "type": "registry:component",
+      "title": "Label",
+      "description": "A label component for form inputs.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-label.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-label.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-lang-switcher",
+      "type": "registry:component",
+      "title": "Language Switcher",
+      "description": "A language switcher component for i18n.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-lang-switcher.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-lang-switcher.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-list",
+      "type": "registry:component",
+      "title": "List",
+      "description": "A list component for rendering collections.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-list.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-list.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-loading",
+      "type": "registry:component",
+      "title": "Loading",
+      "description": "A loading spinner component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-loading.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-loading.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-menu",
+      "type": "registry:component",
+      "title": "Menu",
+      "description": "A menu component for navigation.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-menu.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-menu.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-navigate",
+      "type": "registry:component",
+      "title": "Navigate",
+      "description": "A navigation component wrapper.",
+      "dependencies": ["react-router"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-navigate.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-navigate.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-pagination",
+      "type": "registry:component",
+      "title": "Pagination",
+      "description": "A pagination component for navigating pages.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-pagination.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-pagination.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-panel-header",
+      "type": "registry:component",
+      "title": "Panel Header",
+      "description": "A panel header component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-panel-header.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-panel-header.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-picker",
+      "type": "registry:component",
+      "title": "Picker",
+      "description": "A date/time picker component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-picker.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-popconfirm",
+      "type": "registry:component",
+      "title": "Popconfirm",
+      "description": "A popconfirm component for confirmation dialogs.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-popconfirm.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-popconfirm.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-progress",
+      "type": "registry:component",
+      "title": "Progress",
+      "description": "A progress bar component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-progress.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-progress.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-radio",
+      "type": "registry:component",
+      "title": "Radio",
+      "description": "A radio button component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-radio.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-radio.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-radio-group",
+      "type": "registry:component",
+      "title": "Radio Group",
+      "description": "A radio group component for radio selections.",
+      "dependencies": [],
+      "registryDependencies": ["utils", "r-radio"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-radio-group.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-radio-group.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-range-picker",
+      "type": "registry:component",
+      "title": "Range Picker",
+      "description": "A date range picker component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-range-picker.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-range-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-result",
+      "type": "registry:component",
+      "title": "Result",
+      "description": "A result component for success/error/info states.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-result.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-result.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-select-infinite",
+      "type": "registry:component",
+      "title": "Select Infinite",
+      "description": "A select component with infinite scroll loading.",
+      "dependencies": [],
+      "registryDependencies": ["utils", "r-select"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-select-infinite.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-select-infinite.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-separator",
+      "type": "registry:component",
+      "title": "Separator",
+      "description": "A separator/divider component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-separator.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-separator.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-sidebar",
+      "type": "registry:component",
+      "title": "Sidebar",
+      "description": "A sidebar navigation component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-sidebar.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-sidebar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-simple-table",
+      "type": "registry:component",
+      "title": "Simple Table",
+      "description": "A simple table component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-simple-table.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-simple-table.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-skeleton",
+      "type": "registry:component",
+      "title": "Skeleton",
+      "description": "A skeleton loading component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-skeleton.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-skeleton.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-slider",
+      "type": "registry:component",
+      "title": "Slider",
+      "description": "A slider/range component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-slider.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-slider.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-statistic-dashboard",
+      "type": "registry:component",
+      "title": "Statistic Dashboard",
+      "description": "A statistic display component for dashboards.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-statistic-dashboard.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-statistic-dashboard.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-stepper",
+      "type": "registry:component",
+      "title": "Stepper",
+      "description": "A stepper component for multi-step forms.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-stepper.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-stepper.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-sticky-wrapper",
+      "type": "registry:component",
+      "title": "Sticky Wrapper",
+      "description": "A sticky position wrapper component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-sticky-wrapper.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-sticky-wrapper.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-switch",
+      "type": "registry:component",
+      "title": "Switch",
+      "description": "A toggle switch component.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-switch.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-switch.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-tabs",
+      "type": "registry:component",
+      "title": "Tabs",
+      "description": "A tabs component for tabbed interfaces.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-tabs.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-tabs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-textarea",
+      "type": "registry:component",
+      "title": "Textarea",
+      "description": "A textarea component for multi-line input.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-textarea.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-textarea.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-theme-switcher",
+      "type": "registry:component",
+      "title": "Theme Switcher",
+      "description": "A theme switcher component for dark/light modes.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-theme-switcher.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-theme-switcher.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-timeline",
+      "type": "registry:component",
+      "title": "Timeline",
+      "description": "A timeline component for displaying events.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-timeline.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-timeline.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-tooltip",
+      "type": "registry:component",
+      "title": "Tooltip",
+      "description": "A tooltip component for additional information.",
+      "dependencies": [],
+      "registryDependencies": ["utils", "ui-tooltip"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-tooltip.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-tooltip.tsx"
+        }
+      ]
+    },
+    {
+      "name": "r-virtual-scroll",
+      "type": "registry:component",
+      "title": "Virtual Scroll",
+      "description": "A virtual scroll component for large lists.",
+      "dependencies": [],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/base/r-virtual-scroll.tsx",
+          "type": "registry:component",
+          "target": "src/modules/app/components/base/r-virtual-scroll.tsx"
+        }
+      ]
+    },
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "title": "Utils",
+      "description": "Utility functions including cn() for class merging.",
+      "dependencies": ["clsx", "tailwind-merge", "dayjs"],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "src/modules/app/libs/utils.ts",
+          "type": "registry:lib",
+          "target": "src/modules/app/libs/utils.ts"
+        }
+      ]
+    },
+    {
+      "name": "ui-variants",
+      "type": "registry:lib",
+      "title": "UI Variants",
+      "description": "CVA variants for UI components (button, input, etc).",
+      "dependencies": ["class-variance-authority"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/libs/ui-variants.ts",
+          "type": "registry:lib",
+          "target": "src/modules/app/libs/ui-variants.ts"
+        }
+      ]
+    },
+    {
+      "name": "ui-dialog",
+      "type": "registry:ui",
+      "title": "UI Dialog (Radix)",
+      "description": "Base dialog primitive from Radix UI.",
+      "dependencies": ["@radix-ui/react-dialog"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/ui/dialog.tsx",
+          "type": "registry:ui",
+          "target": "src/modules/app/components/ui/dialog.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ui-alert-dialog",
+      "type": "registry:ui",
+      "title": "UI Alert Dialog (Radix)",
+      "description": "Base alert dialog primitive from Radix UI.",
+      "dependencies": ["@radix-ui/react-alert-dialog"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/ui/alert-dialog.tsx",
+          "type": "registry:ui",
+          "target": "src/modules/app/components/ui/alert-dialog.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ui-tooltip",
+      "type": "registry:ui",
+      "title": "UI Tooltip (Radix)",
+      "description": "Base tooltip primitive from Radix UI.",
+      "dependencies": ["@radix-ui/react-tooltip"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/ui/tooltip.tsx",
+          "type": "registry:ui",
+          "target": "src/modules/app/components/ui/tooltip.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ui-dropdown-menu",
+      "type": "registry:ui",
+      "title": "UI Dropdown Menu (Radix)",
+      "description": "Base dropdown menu primitive from Radix UI.",
+      "dependencies": ["@radix-ui/react-dropdown-menu"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/ui/dropdown-menu.tsx",
+          "type": "registry:ui",
+          "target": "src/modules/app/components/ui/dropdown-menu.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ui-popover",
+      "type": "registry:ui",
+      "title": "UI Popover (Radix)",
+      "description": "Base popover primitive from Radix UI.",
+      "dependencies": ["@radix-ui/react-popover"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/ui/popover.tsx",
+          "type": "registry:ui",
+          "target": "src/modules/app/components/ui/popover.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ui-sheet",
+      "type": "registry:ui",
+      "title": "UI Sheet (Radix)",
+      "description": "Base sheet/drawer primitive from Radix UI.",
+      "dependencies": ["@radix-ui/react-dialog"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/ui/sheet.tsx",
+          "type": "registry:ui",
+          "target": "src/modules/app/components/ui/sheet.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ui-command",
+      "type": "registry:ui",
+      "title": "UI Command",
+      "description": "Command palette component using cmdk.",
+      "dependencies": ["cmdk"],
+      "registryDependencies": ["utils", "ui-dialog"],
+      "files": [
+        {
+          "path": "src/modules/app/components/ui/command.tsx",
+          "type": "registry:ui",
+          "target": "src/modules/app/components/ui/command.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ui-form",
+      "type": "registry:ui",
+      "title": "UI Form",
+      "description": "Form components with react-hook-form integration.",
+      "dependencies": ["react-hook-form", "@hookform/resolvers"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/ui/form.tsx",
+          "type": "registry:ui",
+          "target": "src/modules/app/components/ui/form.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ui-sonner",
+      "type": "registry:ui",
+      "title": "UI Sonner",
+      "description": "Toast notifications using Sonner.",
+      "dependencies": ["sonner"],
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "src/modules/app/components/ui/sonner.tsx",
+          "type": "registry:ui",
+          "target": "src/modules/app/components/ui/sonner.tsx"
+        }
+      ]
+    }
+  ]
+}
