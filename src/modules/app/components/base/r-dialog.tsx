@@ -42,6 +42,10 @@ export type TRDialogProps = Omit<DialogProps, 'children'> & {
   hideFooter?: boolean;
   showCloseButton?: boolean;
   fullscreen?: boolean;
+  /** Prevent closing when clicking outside the dialog */
+  preventCloseOnOverlay?: boolean;
+  /** Prevent closing when pressing Escape key */
+  preventCloseOnEscape?: boolean;
 };
 
 export function RDialog({
@@ -63,6 +67,8 @@ export function RDialog({
   hideFooter = false,
   showCloseButton = true,
   fullscreen = false,
+  preventCloseOnOverlay = false,
+  preventCloseOnEscape = false,
   ...dialogProps
 }: TRDialogProps) {
   const titleId = useId();
@@ -90,6 +96,12 @@ export function RDialog({
           fullscreen ? '' : SIZE_MAP[size],
           contentClassName,
         )}
+        onInteractOutside={
+          preventCloseOnOverlay ? (e) => e.preventDefault() : undefined
+        }
+        onEscapeKeyDown={
+          preventCloseOnEscape ? (e) => e.preventDefault() : undefined
+        }
       >
         {/* DialogTitle is ALWAYS required for accessibility */}
         {!hideHeader && title ? (
@@ -121,7 +133,7 @@ export function RDialog({
 
         {!hideFooter && footer ? (
           <DialogFooter
-            className={cn('gap-2', footerAlignment, footerClassName)}
+            className={cn('gap-1', footerAlignment, footerClassName)}
           >
             {footer}
           </DialogFooter>
