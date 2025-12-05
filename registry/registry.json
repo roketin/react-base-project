@@ -2,8 +2,8 @@
   "$schema": "./registry-schema.json",
   "name": "roketin-ui",
   "description": "Roketin React Component Library",
-  "homepage": "https://github.com/roketin/reactjs-base-project",
-  "baseUrl": "https://raw.githubusercontent.com/roketin/reactjs-base-project/main",
+  "homepage": "https://github.com/roketin/react-base-project",
+  "baseUrl": "https://raw.githubusercontent.com/roketin/react-base-project/feat/registry",
   "registryDependencies": [],
   "items": [
     {
