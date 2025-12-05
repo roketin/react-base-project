@@ -1,6 +1,10 @@
 import { prettyDOM, render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+import i18n from '@/plugins/i18n';
+
+// Force English language for tests
+i18n.changeLanguage('en');
 
 export function renderWithConfig(ui: React.ReactElement) {
   const client = new QueryClient({

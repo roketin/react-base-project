@@ -13,14 +13,7 @@ import { RSeparator } from '../r-separator';
 import { RSkeleton } from '../r-skeleton';
 
 import { RPagination } from '../r-pagination';
-import {
-  RTableSimple,
-  RTableHeader,
-  RTableBody,
-  RTableRow,
-  RTableHead,
-  RTableCell,
-} from '../r-table-simple';
+import { RTable, RThead, RTbody, RTr, RTh, RTd } from '../r-simple-table';
 import { RProgress, RProgressCircular } from '../r-progress';
 
 describe('Base Components', () => {
@@ -250,21 +243,21 @@ describe('Base Components', () => {
     });
   });
 
-  describe('RTableSimple', () => {
+  describe('RTable', () => {
     it('renders table', () => {
       render(
-        <RTableSimple>
-          <RTableHeader>
-            <RTableRow>
-              <RTableHead>Header</RTableHead>
-            </RTableRow>
-          </RTableHeader>
-          <RTableBody>
-            <RTableRow>
-              <RTableCell>Cell</RTableCell>
-            </RTableRow>
-          </RTableBody>
-        </RTableSimple>,
+        <RTable>
+          <RThead>
+            <RTr>
+              <RTh>Header</RTh>
+            </RTr>
+          </RThead>
+          <RTbody>
+            <RTr>
+              <RTd>Cell</RTd>
+            </RTr>
+          </RTbody>
+        </RTable>,
       );
       expect(screen.getByText('Header')).toBeInTheDocument();
       expect(screen.getByText('Cell')).toBeInTheDocument();

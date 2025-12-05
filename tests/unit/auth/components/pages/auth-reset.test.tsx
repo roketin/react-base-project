@@ -24,7 +24,6 @@ describe('AuthReset', () => {
     await userEvent.click(screen.getByRole('button', { name: /save/i }));
 
     // checks
-
     await waitFor(() => {
       expect(
         screen.getAllByText(/must be at least 8 characters/i),
