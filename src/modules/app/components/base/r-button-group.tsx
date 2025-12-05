@@ -1,5 +1,7 @@
 import { forwardRef, type ReactNode } from 'react';
 import { cn } from '@/modules/app/libs/utils';
+import { type VariantProps } from 'class-variance-authority';
+import { buttonVariants } from '@/modules/app/libs/ui-variants';
 
 export type TRButtonGroupProps = {
   children?: ReactNode;
@@ -8,12 +10,13 @@ export type TRButtonGroupProps = {
   attached?: boolean;
 };
 
-export type TRButtonGroupItemProps = {
+export type TRButtonGroupItemProps = VariantProps<typeof buttonVariants> & {
   children: ReactNode;
   onClick?: () => void;
   active?: boolean;
   disabled?: boolean;
   className?: string;
+  soft?: boolean;
 };
 
 const RButtonGroup = forwardRef<HTMLDivElement, TRButtonGroupProps>(
@@ -47,7 +50,37 @@ const RButtonGroup = forwardRef<HTMLDivElement, TRButtonGroupProps>(
 RButtonGroup.displayName = 'RButtonGroup';
 
 const RButtonGroupItem = forwardRef<HTMLButtonElement, TRButtonGroupItemProps>(
-  ({ children, onClick, active, disabled, className }, ref) => {
+  (
+    {
+      children,
+      onClick,
+      active,
+      disabled,
+      className,
+      variant = 'outline',
+      size = 'default',
+      soft = false,
+    },
+    ref,
+  ) => {
+    const softVariantMap: Record<string, TRButtonGroupItemProps['variant']> = {
+      default: 'soft-default',
+      destructive: 'soft-destructive',
+      info: 'soft-info',
+      success: 'soft-success',
+      warning: 'soft-warning',
+      error: 'soft-error',
+      confirm: 'soft-confirm',
+    };
+
+    const finalVariant =
+      soft && variant && softVariantMap[variant]
+        ? softVariantMap[variant]
+        : variant;
+
+    // When active, use primary variant styling
+    const activeVariant = active ? 'default' : finalVariant;
+
     return (
       <button
         ref={ref}
@@ -55,11 +88,9 @@ const RButtonGroupItem = forwardRef<HTMLButtonElement, TRButtonGroupItemProps>(
         onClick={onClick}
         disabled={disabled}
         className={cn(
-          'inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors',
-          'border border-border bg-background hover:bg-muted',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-          'disabled:pointer-events-none disabled:opacity-50',
-          active && 'bg-primary text-primary-foreground hover:bg-primary/90',
+          buttonVariants({ variant: activeVariant, size }),
+          // Override shadow for button group items
+          'shadow-none',
           className,
         )}
       >

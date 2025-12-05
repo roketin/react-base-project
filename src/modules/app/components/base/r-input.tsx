@@ -1,20 +1,22 @@
 import { forwardRef, type InputHTMLAttributes, useState } from 'react';
 import { cn } from '@/modules/app/libs/utils';
-import { getInputClasses } from '@/modules/app/libs/ui-variants';
+import { inputVariants } from '@/modules/app/libs/ui-variants';
 import { X } from 'lucide-react';
+import { type VariantProps } from 'class-variance-authority';
 
-export type TRInputProps = InputHTMLAttributes<HTMLInputElement> & {
-  label?: string;
-  error?: string;
-  helperText?: string;
-  wrapperClassName?: string;
-  inputClassName?: string;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
-  fullWidth?: boolean;
-  clearable?: boolean;
-  onClear?: () => void;
-};
+export type TRInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> &
+  VariantProps<typeof inputVariants> & {
+    label?: string;
+    error?: string;
+    helperText?: string;
+    wrapperClassName?: string;
+    inputClassName?: string;
+    leftIcon?: React.ReactNode;
+    rightIcon?: React.ReactNode;
+    fullWidth?: boolean;
+    clearable?: boolean;
+    onClear?: () => void;
+  };
 
 export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
   (
@@ -34,6 +36,7 @@ export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
       onClear,
       value,
       onChange,
+      size = 'default',
       ...props
     },
     ref,
@@ -43,6 +46,44 @@ export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
     const [internalValue, setInternalValue] = useState(value ?? '');
     const currentValue = value !== undefined ? value : internalValue;
     const showClearButton = clearable && currentValue && !disabled;
+
+    // Icon padding based on size
+    const iconPaddingLeft = {
+      xs: 'pl-7',
+      sm: 'pl-8',
+      default: 'pl-10',
+      lg: 'pl-10',
+    };
+
+    const iconPaddingRight = {
+      xs: 'pr-7',
+      sm: 'pr-8',
+      default: 'pr-10',
+      lg: 'pr-10',
+    };
+
+    const iconPositionLeft = {
+      xs: 'left-2',
+      sm: 'left-2.5',
+      default: 'left-3',
+      lg: 'left-3',
+    };
+
+    const iconPositionRight = {
+      xs: 'right-2',
+      sm: 'right-2.5',
+      default: 'right-3',
+      lg: 'right-3',
+    };
+
+    const clearIconSize = {
+      xs: 12,
+      sm: 14,
+      default: 16,
+      lg: 16,
+    };
+
+    const sizeKey = (size ?? 'default') as 'xs' | 'sm' | 'default' | 'lg';
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setInternalValue(e.target.value);
@@ -83,7 +124,12 @@ export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
 
         <div className='relative'>
           {leftIcon && (
-            <div className='absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground'>
+            <div
+              className={cn(
+                'absolute top-1/2 -translate-y-1/2 text-muted-foreground',
+                iconPositionLeft[sizeKey],
+              )}
+            >
               {leftIcon}
             </div>
           )}
@@ -96,10 +142,10 @@ export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
             value={currentValue}
             onChange={handleChange}
             className={cn(
-              getInputClasses(hasError),
-              leftIcon && 'pl-10',
-              (rightIcon || showClearButton) && 'pr-10',
-              inputClassName ?? className,
+              inputVariants({ size: sizeKey }),
+              leftIcon && iconPaddingLeft[sizeKey],
+              (rightIcon || showClearButton) && iconPaddingRight[sizeKey],
+              inputClassName,
             )}
             {...props}
           />
@@ -108,14 +154,22 @@ export const RInput = forwardRef<HTMLInputElement, TRInputProps>(
             <button
               type='button'
               onClick={handleClear}
-              className='absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors'
+              className={cn(
+                'absolute top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors',
+                iconPositionRight[sizeKey],
+              )}
             >
-              <X size={16} />
+              <X size={clearIconSize[sizeKey]} />
             </button>
           )}
 
           {rightIcon && (
-            <div className='absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground'>
+            <div
+              className={cn(
+                'absolute top-1/2 -translate-y-1/2 text-muted-foreground',
+                iconPositionRight[sizeKey],
+              )}
+            >
               {rightIcon}
             </div>
           )}

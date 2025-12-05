@@ -6,7 +6,8 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        default:
+          'bg-primary text-primary-foreground hover:bg-primary/90 dark:text-white',
         destructive:
           'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline:
@@ -95,8 +96,42 @@ export const badgeVariants = cva(
 );
 
 /**
- * Base input classes for consistent styling across all input components
+ * Input variants using CVA for consistent styling with size support
  * Uses CSS variables defined in global.css for centralized theming
+ */
+export const inputVariants = cva(
+  cn(
+    'flex w-full rounded-[var(--form-radius)] border bg-[var(--form-bg)] text-[var(--form-text)]',
+    'transition-colors duration-200',
+    'placeholder:text-[var(--form-placeholder)]',
+    'focus:outline-none focus:ring-2 focus:ring-offset-0',
+    'disabled:cursor-not-allowed disabled:opacity-[var(--form-disabled-opacity)] disabled:bg-[var(--form-disabled-bg)]',
+    'border-[var(--form-border-color)] focus:border-primary focus:ring-primary/20',
+    'shadow-[var(--form-shadow)]',
+    // Error state classes
+    'aria-invalid:border-destructive',
+    'aria-invalid:focus:border-destructive',
+    'aria-invalid:focus:ring-destructive/20',
+  ),
+  {
+    variants: {
+      size: {
+        default:
+          'h-[var(--form-height-outer)] px-[var(--form-padding-x)] py-2 text-[length:var(--form-font-size)]',
+        sm: 'h-[var(--form-height-sm-outer)] px-[var(--form-padding-x-sm)] py-1.5 text-sm',
+        xs: 'h-8 px-2 py-1 text-xs',
+        lg: 'h-[var(--form-height-lg-outer)] px-[var(--form-padding-x-lg)] py-2.5 text-base',
+      },
+    },
+    defaultVariants: {
+      size: 'default',
+    },
+  },
+);
+
+/**
+ * Base input classes for consistent styling across all input components
+ * @deprecated Use inputVariants instead for size support
  */
 export const inputBaseClasses = cn(
   'flex w-full rounded-[var(--form-radius)] border bg-[var(--form-bg)] text-[var(--form-text)]',
@@ -112,6 +147,7 @@ export const inputBaseClasses = cn(
 
 /**
  * Input classes with error state
+ * @deprecated Use inputVariants instead
  */
 export const inputErrorClasses = cn(
   'aria-invalid:border-destructive',
@@ -121,6 +157,7 @@ export const inputErrorClasses = cn(
 
 /**
  * Get complete input classes with optional error state
+ * @deprecated Use inputVariants instead for size support
  */
 export const getInputClasses = (_hasError?: boolean, className?: string) => {
   return cn(inputBaseClasses, inputErrorClasses, className);
