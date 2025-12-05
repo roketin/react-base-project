@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-alert",
+  "type": "registry:component",
+  "title": "Alert",
+  "description": "An alert component for displaying feedback messages.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-alert.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-alert.tsx"
+    }
+  ]
+}

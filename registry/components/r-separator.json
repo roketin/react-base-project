@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-separator",
+  "type": "registry:component",
+  "title": "Separator",
+  "description": "A separator/divider component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-separator.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-separator.tsx"
+    }
+  ]
+}

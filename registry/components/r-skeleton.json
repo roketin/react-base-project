@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-skeleton",
+  "type": "registry:component",
+  "title": "Skeleton",
+  "description": "A skeleton loading component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-skeleton.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-skeleton.tsx"
+    }
+  ]
+}

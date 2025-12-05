@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-label",
+  "type": "registry:component",
+  "title": "Label",
+  "description": "A label component for form inputs.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-label.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-label.tsx"
+    }
+  ]
+}

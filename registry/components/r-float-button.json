@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-float-button",
+  "type": "registry:component",
+  "title": "Float Button",
+  "description": "A floating action button component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-float-button.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-float-button.tsx"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-range-picker",
+  "type": "registry:component",
+  "title": "Range Picker",
+  "description": "A date range picker component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-range-picker.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-range-picker.tsx"
+    }
+  ]
+}

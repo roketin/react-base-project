@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-img",
+  "type": "registry:component",
+  "title": "Image",
+  "description": "An image component with loading states and error handling.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-img.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-img.tsx"
+    }
+  ]
+}

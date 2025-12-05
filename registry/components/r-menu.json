@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-menu",
+  "type": "registry:component",
+  "title": "Menu",
+  "description": "A menu component for navigation.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-menu.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-menu.tsx"
+    }
+  ]
+}

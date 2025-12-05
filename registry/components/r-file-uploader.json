@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-file-uploader",
+  "type": "registry:component",
+  "title": "File Uploader",
+  "description": "A file upload component with drag and drop support.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-file-uploader.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-file-uploader.tsx"
+    }
+  ]
+}

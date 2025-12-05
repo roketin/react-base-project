@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-theme-switcher",
+  "type": "registry:component",
+  "title": "Theme Switcher",
+  "description": "A theme switcher component for dark/light modes.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-theme-switcher.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-theme-switcher.tsx"
+    }
+  ]
+}

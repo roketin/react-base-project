@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-navigate",
+  "type": "registry:component",
+  "title": "Navigate",
+  "description": "A navigation component wrapper.",
+  "dependencies": ["react-router"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-navigate.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-navigate.tsx"
+    }
+  ]
+}

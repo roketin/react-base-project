@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-badge",
+  "type": "registry:component",
+  "title": "Badge",
+  "description": "A badge component for labels and status indicators.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-badge.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-badge.tsx"
+    }
+  ]
+}

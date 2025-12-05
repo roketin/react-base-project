@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-file-viewer",
+  "type": "registry:component",
+  "title": "File Viewer",
+  "description": "A file viewer component for previewing uploaded files.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-file-viewer.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-file-viewer.tsx"
+    }
+  ]
+}

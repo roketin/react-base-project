@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-switch",
+  "type": "registry:component",
+  "title": "Switch",
+  "description": "A toggle switch component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-switch.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-switch.tsx"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "ui-sheet",
+  "type": "registry:ui",
+  "title": "UI Sheet (Radix)",
+  "description": "Base sheet/drawer primitive from Radix UI.",
+  "dependencies": ["@radix-ui/react-dialog"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/ui/sheet.tsx",
+      "type": "registry:ui",
+      "target": "src/modules/app/components/ui/sheet.tsx"
+    }
+  ]
+}

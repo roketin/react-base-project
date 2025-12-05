@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-data-table-footer",
+  "type": "registry:component",
+  "title": "Data Table Footer",
+  "description": "Footer component for data table with pagination controls.",
+  "dependencies": [],
+  "registryDependencies": ["utils", "r-pagination"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-data-table-footer.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-data-table-footer.tsx"
+    }
+  ]
+}

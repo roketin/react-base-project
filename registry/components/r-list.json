@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-list",
+  "type": "registry:component",
+  "title": "List",
+  "description": "A list component for rendering collections.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-list.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-list.tsx"
+    }
+  ]
+}

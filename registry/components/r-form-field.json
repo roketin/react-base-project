@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-form-field",
+  "type": "registry:component",
+  "title": "Form Field",
+  "description": "A form field wrapper component with validation support.",
+  "dependencies": ["react-hook-form"],
+  "registryDependencies": ["utils", "r-form"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-form-field.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-form-field.tsx"
+    }
+  ]
+}

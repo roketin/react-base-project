@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-checkbox-multiple",
+  "type": "registry:component",
+  "title": "Checkbox Multiple",
+  "description": "A multiple checkbox group component.",
+  "dependencies": [],
+  "registryDependencies": ["utils", "r-checkbox"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-checkbox-multiple.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-checkbox-multiple.tsx"
+    }
+  ]
+}

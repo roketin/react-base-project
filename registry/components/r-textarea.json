@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-textarea",
+  "type": "registry:component",
+  "title": "Textarea",
+  "description": "A textarea component for multi-line input.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-textarea.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-textarea.tsx"
+    }
+  ]
+}

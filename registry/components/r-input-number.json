@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-input-number",
+  "type": "registry:component",
+  "title": "Input Number",
+  "description": "A number input component with formatting support.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-input-number.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-input-number.tsx"
+    }
+  ]
+}

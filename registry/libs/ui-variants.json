@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "ui-variants",
+  "type": "registry:lib",
+  "title": "UI Variants",
+  "description": "CVA variants for UI components (button, input, etc).",
+  "dependencies": ["class-variance-authority"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/libs/ui-variants.ts",
+      "type": "registry:lib",
+      "target": "src/modules/app/libs/ui-variants.ts"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "utils",
+  "type": "registry:lib",
+  "title": "Utils",
+  "description": "Utility functions including cn() for class merging.",
+  "dependencies": ["clsx", "tailwind-merge", "dayjs"],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "src/modules/app/libs/utils.ts"
+    }
+  ]
+}

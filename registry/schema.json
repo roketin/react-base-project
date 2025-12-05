@@ -3,48 +3,56 @@
   "title": "Roketin Component Registry",
   "description": "Schema for Roketin UI component registry",
   "type": "object",
-  "required": ["name", "baseUrl", "items"],
-  "properties": {
-    "$schema": {
-      "type": "string",
-      "description": "JSON schema reference"
-    },
-    "name": {
-      "type": "string",
-      "description": "Name of the registry"
-    },
-    "description": {
-      "type": "string",
-      "description": "Description of the registry"
-    },
-    "homepage": {
-      "type": "string",
-      "description": "Homepage URL of the registry"
-    },
-    "baseUrl": {
-      "type": "string",
-      "description": "Base URL for raw file access (e.g., raw.githubusercontent.com)"
-    },
-    "registryDependencies": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Global registry dependencies"
-    },
-    "items": {
-      "type": "array",
-      "description": "List of registry items (components, libs, etc.)",
-      "items": {
-        "$ref": "#/definitions/RegistryItem"
-      }
-    }
-  },
   "definitions": {
+    "RegistryIndex": {
+      "type": "object",
+      "required": ["name", "baseUrl"],
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "JSON schema reference"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the registry"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the registry"
+        },
+        "homepage": {
+          "type": "string",
+          "description": "Homepage URL of the registry"
+        },
+        "baseUrl": {
+          "type": "string",
+          "description": "Base URL for raw file access (e.g., raw.githubusercontent.com)"
+        },
+        "components": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of component names"
+        },
+        "libs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of library names"
+        },
+        "ui": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of UI primitive names"
+        }
+      }
+    },
     "RegistryItem": {
       "type": "object",
       "required": ["name", "type", "files"],
       "properties": {
+        "$schema": {
+          "type": "string",
+          "description": "JSON schema reference"
+        },
         "name": {
           "type": "string",
           "description": "Unique identifier for the component"
@@ -70,31 +78,23 @@
         },
         "dependencies": {
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": { "type": "string" },
           "description": "NPM package dependencies"
         },
         "devDependencies": {
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": { "type": "string" },
           "description": "NPM dev dependencies"
         },
         "registryDependencies": {
           "type": "array",
-          "items": {
-            "type": "string"
-          },
+          "items": { "type": "string" },
           "description": "Other registry items this depends on"
         },
         "files": {
           "type": "array",
           "description": "Files included in this registry item",
-          "items": {
-            "$ref": "#/definitions/RegistryFile"
-          }
+          "items": { "$ref": "#/definitions/RegistryFile" }
         },
         "tailwind": {
           "type": "object",
@@ -112,15 +112,11 @@
           "properties": {
             "light": {
               "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
+              "additionalProperties": { "type": "string" }
             },
             "dark": {
               "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
+              "additionalProperties": { "type": "string" }
             }
           }
         },

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-statistic-dashboard",
+  "type": "registry:component",
+  "title": "Statistic Dashboard",
+  "description": "A statistic display component for dashboards.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-statistic-dashboard.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-statistic-dashboard.tsx"
+    }
+  ]
+}

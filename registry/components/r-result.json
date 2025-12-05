@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-result",
+  "type": "registry:component",
+  "title": "Result",
+  "description": "A result component for success/error/info states.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-result.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-result.tsx"
+    }
+  ]
+}

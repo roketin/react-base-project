@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-timeline",
+  "type": "registry:component",
+  "title": "Timeline",
+  "description": "A timeline component for displaying events.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-timeline.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-timeline.tsx"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-lang-switcher",
+  "type": "registry:component",
+  "title": "Language Switcher",
+  "description": "A language switcher component for i18n.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-lang-switcher.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-lang-switcher.tsx"
+    }
+  ]
+}

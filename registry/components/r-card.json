@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-card",
+  "type": "registry:component",
+  "title": "Card",
+  "description": "A card component with header, title, description, and footer sections.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-card.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-card.tsx"
+    }
+  ]
+}

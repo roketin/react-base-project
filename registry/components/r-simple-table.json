@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-simple-table",
+  "type": "registry:component",
+  "title": "Simple Table",
+  "description": "A simple table component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-simple-table.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-simple-table.tsx"
+    }
+  ]
+}

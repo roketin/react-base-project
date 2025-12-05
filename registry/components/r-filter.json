@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-filter",
+  "type": "registry:component",
+  "title": "Filter",
+  "description": "A filter component for data filtering interfaces.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-filter.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-filter.tsx"
+    }
+  ]
+}

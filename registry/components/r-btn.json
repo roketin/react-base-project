@@ -1,0 +1,26 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-btn",
+  "type": "registry:component",
+  "title": "Button",
+  "description": "A customizable button component with variants, loading state, and debounce support.",
+  "dependencies": ["use-debounce", "lucide-react", "class-variance-authority"],
+  "registryDependencies": ["utils", "ui-variants"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-btn.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-btn.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "src/modules/app/libs/utils.ts"
+    },
+    {
+      "path": "src/modules/app/libs/ui-variants.ts",
+      "type": "registry:lib",
+      "target": "src/modules/app/libs/ui-variants.ts"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-loading",
+  "type": "registry:component",
+  "title": "Loading",
+  "description": "A loading spinner component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-loading.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-loading.tsx"
+    }
+  ]
+}

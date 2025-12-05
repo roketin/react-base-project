@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-progress",
+  "type": "registry:component",
+  "title": "Progress",
+  "description": "A progress bar component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-progress.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-progress.tsx"
+    }
+  ]
+}

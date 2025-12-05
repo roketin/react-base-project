@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-popconfirm",
+  "type": "registry:component",
+  "title": "Popconfirm",
+  "description": "A popconfirm component for confirmation dialogs.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-popconfirm.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-popconfirm.tsx"
+    }
+  ]
+}

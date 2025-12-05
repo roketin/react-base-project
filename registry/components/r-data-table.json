@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-data-table",
+  "type": "registry:component",
+  "title": "Data Table",
+  "description": "A powerful data table with sorting, pagination, selection, and infinite scroll.",
+  "dependencies": ["@tanstack/react-table", "lucide-react", "use-debounce"],
+  "registryDependencies": [
+    "utils",
+    "r-simple-table",
+    "r-data-table-footer",
+    "r-skeleton",
+    "r-input",
+    "r-result"
+  ],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-data-table.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-data-table.tsx"
+    }
+  ]
+}

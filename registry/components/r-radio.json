@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-radio",
+  "type": "registry:component",
+  "title": "Radio",
+  "description": "A radio button component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-radio.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-radio.tsx"
+    }
+  ]
+}

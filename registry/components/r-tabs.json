@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-tabs",
+  "type": "registry:component",
+  "title": "Tabs",
+  "description": "A tabs component for tabbed interfaces.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-tabs.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-tabs.tsx"
+    }
+  ]
+}

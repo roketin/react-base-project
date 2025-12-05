@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-stepper",
+  "type": "registry:component",
+  "title": "Stepper",
+  "description": "A stepper component for multi-step forms.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-stepper.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-stepper.tsx"
+    }
+  ]
+}

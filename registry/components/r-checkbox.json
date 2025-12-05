@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-checkbox",
+  "type": "registry:component",
+  "title": "Checkbox",
+  "description": "A checkbox component with label support.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-checkbox.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-checkbox.tsx"
+    }
+  ]
+}

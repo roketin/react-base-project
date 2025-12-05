@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-avatar",
+  "type": "registry:component",
+  "title": "Avatar",
+  "description": "An avatar component for displaying user images or initials.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-avatar.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-avatar.tsx"
+    }
+  ]
+}

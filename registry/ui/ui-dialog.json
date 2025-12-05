@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "ui-dialog",
+  "type": "registry:ui",
+  "title": "UI Dialog (Radix)",
+  "description": "Base dialog primitive from Radix UI.",
+  "dependencies": ["@radix-ui/react-dialog"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/ui/dialog.tsx",
+      "type": "registry:ui",
+      "target": "src/modules/app/components/ui/dialog.tsx"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "ui-tooltip",
+  "type": "registry:ui",
+  "title": "UI Tooltip (Radix)",
+  "description": "Base tooltip primitive from Radix UI.",
+  "dependencies": ["@radix-ui/react-tooltip"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/ui/tooltip.tsx",
+      "type": "registry:ui",
+      "target": "src/modules/app/components/ui/tooltip.tsx"
+    }
+  ]
+}

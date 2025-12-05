@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "ui-form",
+  "type": "registry:ui",
+  "title": "UI Form",
+  "description": "Form components with react-hook-form integration.",
+  "dependencies": ["react-hook-form", "@hookform/resolvers"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/ui/form.tsx",
+      "type": "registry:ui",
+      "target": "src/modules/app/components/ui/form.tsx"
+    }
+  ]
+}

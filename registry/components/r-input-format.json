@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-input-format",
+  "type": "registry:component",
+  "title": "Input Format",
+  "description": "A formatted input component for masked inputs.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-input-format.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-input-format.tsx"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "ui-alert-dialog",
+  "type": "registry:ui",
+  "title": "UI Alert Dialog (Radix)",
+  "description": "Base alert dialog primitive from Radix UI.",
+  "dependencies": ["@radix-ui/react-alert-dialog"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/ui/alert-dialog.tsx",
+      "type": "registry:ui",
+      "target": "src/modules/app/components/ui/alert-dialog.tsx"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-form-fieldset",
+  "type": "registry:component",
+  "title": "Form Fieldset",
+  "description": "A fieldset component for grouping form fields.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-form-fieldset.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-form-fieldset.tsx"
+    }
+  ]
+}

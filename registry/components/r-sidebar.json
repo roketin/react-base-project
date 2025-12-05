@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-sidebar",
+  "type": "registry:component",
+  "title": "Sidebar",
+  "description": "A sidebar navigation component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-sidebar.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-sidebar.tsx"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "ui-sonner",
+  "type": "registry:ui",
+  "title": "UI Sonner",
+  "description": "Toast notifications using Sonner.",
+  "dependencies": ["sonner"],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/ui/sonner.tsx",
+      "type": "registry:ui",
+      "target": "src/modules/app/components/ui/sonner.tsx"
+    }
+  ]
+}

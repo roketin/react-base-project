@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-alert-dialog",
+  "type": "registry:component",
+  "title": "Alert Dialog",
+  "description": "An alert dialog for confirmations and important messages.",
+  "dependencies": ["@radix-ui/react-alert-dialog"],
+  "registryDependencies": ["utils", "ui-alert-dialog"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-alert-dialog.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-alert-dialog.tsx"
+    }
+  ]
+}

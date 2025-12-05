@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-dialog",
+  "type": "registry:component",
+  "title": "Dialog",
+  "description": "A dialog/modal component with customizable sizes and accessibility support.",
+  "dependencies": ["@radix-ui/react-dialog"],
+  "registryDependencies": ["utils", "ui-dialog"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-dialog.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-dialog.tsx"
+    }
+  ]
+}

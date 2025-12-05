@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-input",
+  "type": "registry:component",
+  "title": "Input",
+  "description": "A flexible input component with label, error state, icons, and clearable support.",
+  "dependencies": ["lucide-react", "class-variance-authority"],
+  "registryDependencies": ["utils", "ui-variants"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-input.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-input.tsx"
+    }
+  ]
+}

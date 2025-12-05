@@ -1,0 +1,16 @@
+{
+  "$schema": "../schema.json",
+  "name": "r-panel-header",
+  "type": "registry:component",
+  "title": "Panel Header",
+  "description": "A panel header component.",
+  "dependencies": [],
+  "registryDependencies": ["utils"],
+  "files": [
+    {
+      "path": "src/modules/app/components/base/r-panel-header.tsx",
+      "type": "registry:component",
+      "target": "src/modules/app/components/base/r-panel-header.tsx"
+    }
+  ]
+}

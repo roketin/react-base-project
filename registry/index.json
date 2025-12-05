@@ -1,6 +1,9 @@
 {
-  "version": "1.0.0",
-  "lastUpdated": "2025-12-05",
+  "$schema": "./schema.json",
+  "name": "roketin-ui",
+  "description": "Roketin React Component Library",
+  "homepage": "https://github.com/roketin/react-base-project",
+  "baseUrl": "https://raw.githubusercontent.com/roketin/react-base-project/feat/registry",
   "components": [
     "r-alert",
     "r-alert-dialog",
