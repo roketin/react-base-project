@@ -42,8 +42,7 @@ export const generatorConfig = {
     route: {
       label: 'Route',
       folder: 'routes',
-      getFileName: ({ moduleName, isChild }) =>
-        `${kebabCase(moduleName)}.routes${isChild ? '.child' : ''}.tsx`,
+      getFileName: ({ moduleName }) => `${kebabCase(moduleName)}.routes.tsx`,
       getContent: routeTemplate,
     },
     store: {

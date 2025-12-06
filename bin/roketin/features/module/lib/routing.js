@@ -99,7 +99,6 @@ export function injectChildRoutesIntoParent({
   const parentRouteFileBase = kebabCase(parentParts.at(-1));
   const candidateFiles = [
     path.join(parentRouteDir, `${parentRouteFileBase}.routes.tsx`),
-    path.join(parentRouteDir, `${parentRouteFileBase}.routes.child.tsx`),
   ];
   const parentRouteFilePath = candidateFiles.find((candidate) =>
     fs.existsSync(candidate),
@@ -118,7 +117,7 @@ export function injectChildRoutesIntoParent({
   const relativePathToChild = path.relative(routeDir, childRouteFilePath);
   const normalizedRelativePath = normalizeImportPath(relativePathToChild);
 
-  const childRoutesIdentifier = `${camelCase(moduleName)}ChildRoutes`;
+  const childRoutesIdentifier = `${camelCase(moduleName)}Routes`;
   const importStatement = `import { ${childRoutesIdentifier} } from "${normalizedRelativePath}";`;
 
   let parentContent = fs.readFileSync(parentRouteFilePath, 'utf8');

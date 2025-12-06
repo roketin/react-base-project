@@ -1,4 +1,5 @@
 import moduleFeature from './module/index.js';
+import moduleMoveFeature from './module-move/index.js';
 import infoFeature from './info/index.js';
 import viewRoutesFeature from './view-router/index.js';
 import releaseFeature from './release/index.js';
@@ -9,6 +10,12 @@ const featureDefinitions = [
     description: 'Scaffold a feature module',
     handler: moduleFeature,
     aliases: ['module-child'],
+  },
+  {
+    name: 'module:move',
+    description: 'Move a module to a different location',
+    handler: moduleMoveFeature,
+    aliases: ['module:promote'],
   },
   {
     name: 'info',

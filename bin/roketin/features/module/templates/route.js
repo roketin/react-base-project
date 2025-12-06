@@ -32,11 +32,10 @@ export function routeTemplate({
 import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
 import { Outlet } from "react-router-dom";
 
-// This is a CHILD ROUTE.
-// The generator tries to link it into the parent route automatically.
-// Please double-check ${parentRoutePathEstimate} if the parent structure is customized.
+// This is a CHILD ROUTE (nested module).
+// Auto-linked into parent route: ${parentRoutePathEstimate}
 
-export const ${camelCase(moduleName)}ChildRoutes = createAppRoutes(${routeConfig});
+export const ${camelCase(moduleName)}Routes = createAppRoutes(${routeConfig});
 `;
   }
 
@@ -47,10 +46,8 @@ export const ${camelCase(moduleName)}ChildRoutes = createAppRoutes(${routeConfig
   return `import { createAppRoutes } from "@/modules/app/libs/routes-utils";
 import ${capitalize(moduleName)}Index from "../components/pages/${kebabCase(moduleName)}";
 import { Outlet } from "react-router-dom";
-// import { ${camelCase(moduleName)}ChildRoutes } from "./${kebabCase(moduleName)}.routes.child"; // Example Child Route
 
-// Child routes generated with \`pnpm roketin module-child\` are auto-linked into this file when possible.
-// Verify the registration below if you heavily customized the route structure.
+// Child routes from nested modules are auto-linked into this file.
 
 export const ${camelCase(moduleName)}Routes = createAppRoutes(${routeConfig});
 `;
