@@ -1,3 +1,11 @@
+## [3.3.0] - 2025-12-06
+
+### 🚀 Features
+
+- _(cli)_ Add module move feature and update routing logic
+- _(http)_ Add skipGlobalError option to request config and update error handling
+- _(data-list)_ Add RDataList component with search, sort, and pagination features
+
 ## [3.2.0] - 2025-12-05
 
 ### 🐛 Bug Fixes
