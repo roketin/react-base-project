@@ -59,9 +59,7 @@ export function createScaffoldRouteContent({
     isChild,
     moduleParts,
   );
-  const exportName = isChild
-    ? `${camelCase(moduleName)}ChildRoutes`
-    : `${camelCase(moduleName)}Routes`;
+  const exportName = `${camelCase(moduleName)}Routes`;
   const childNotice = isChild
     ? `// This is a CHILD ROUTE.\n// The generator tries to link it into the parent route automatically.\n// Please double-check the parent route file if the structure is customized.\n\n`
     : '';
