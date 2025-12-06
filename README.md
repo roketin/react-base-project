@@ -382,23 +382,64 @@ pnpm roketin info
    - `Standard`: Generates module config + feature flag entry, pages, routes, locale stub, types, and services (the default set).
    - `All folders`: Scaffolds every supported artifact (hooks, contexts, stores, etc.).
    - `Custom`: Lets you pick specific file types via a checkbox prompt.
-4. **Child Routes & Auto-Linking:** For nested paths, the CLI asks if the final segment should be treated as a child route. Child routes produce `.routes.child.tsx` files **and the generator automatically imports/spreads them inside the parent route file** (including grandparents, recursively). If you already customized the parent route structure, skim the resulting diff to confirm the insertion landed where you expect.
+4. **Child Routes & Auto-Linking:** For nested paths, the CLI asks if the final segment should be treated as a child route. All routes use a unified naming convention (`<module>.routes.tsx`) regardless of nesting level. The generator automatically imports and spreads child routes inside the parent route file (including grandparents, recursively). If you already customized the parent route structure, skim the resulting diff to confirm the insertion landed where you expect.
 5. **Auto-Scaffold Parents:** When a parent route/config is missing (e.g., you run `pnpm roketin module master-data/sales` before `master-data` exists), the CLI now creates both the lightweight parent route scaffold and the parent module config (complete with its own feature flag). Only minimal shells are generated—no placeholder page component—so you retain full control over the actual content and menu labels.
 6. **Idempotent Files:** Existing files are never overwritten unless you opted in at the overwrite prompt. Skipped items are logged for visibility.
 7. **Feature flags on autopilot:** Whenever the `config` generator runs, the CLI adds (or reuses) a `VITE_FEATURE_<FLAG>` entry in `feature-flags.config.ts` so toggling a module is as simple as flipping the env value.
+
+### Route Discovery
+
+The application uses a smart route discovery system:
+
+- **Top-level modules** (`src/modules/*/routes/*.routes.tsx`) are auto-discovered by `app.routes.tsx`
+- **Nested modules** (`src/modules/*/modules/*/routes/*.routes.tsx`) are imported by their parent module's route file
+- All route files use the same naming convention: `<module>.routes.tsx` (no `.child` suffix needed)
+
+This means when you create a nested module like `master-data/client`, the CLI:
+
+1. Creates `src/modules/master-data/modules/client/routes/client.routes.tsx`
+2. Auto-imports `clientRoutes` into `master-data.routes.tsx`
+3. The parent route is discovered by `app.routes.tsx`, which loads all children automatically
 
 ### Generated Artifacts
 
 Depending on your selections, the generator can produce:
 
 - `components/pages/<feature>.tsx` – Page skeleton.
-- `routes/<feature>.routes(.child).tsx` – Route config using `createAppRoutes`.
+- `routes/<feature>.routes.tsx` – Route config using `createAppRoutes`.
 - `locales/<feature>.en.json` – Locale stub for feature-specific translations.
 - `services/<feature>.service.ts` – API placeholder.
 - `types/<feature>.type.ts` – Type definitions scaffold.
 - Optional extras: hooks, contexts, stores, libs, constants, etc.
 
 All generated route containers ship with a `handle.breadcrumbOptions.disabled` flag. This keeps parent breadcrumbs (e.g., “Master Data”) displayed but non-clickable until you intentionally enable navigation for them.
+
+### Moving Modules
+
+Use `module:move` to relocate modules between different locations:
+
+```bash
+# Promote a child module to standalone (top-level)
+pnpm roketin module:move master-data/client client
+
+# Move a module to a different parent
+pnpm roketin module:move master-data/client user-management/client
+
+# Demote a standalone module to become a child
+pnpm roketin module:move client master-data/client
+
+# Interactive mode (prompts for destination)
+pnpm roketin module:move master-data/client
+```
+
+The command automatically handles:
+
+- Moving the folder to the new location
+- Updating all import paths across the codebase
+- Removing the module from its old parent route (if it was a child)
+- Adding the module to its new parent route (if becoming a child)
+- Updating route file comments to reflect the new location
+- Cleaning up empty directories
 
 ---
 
@@ -491,7 +532,7 @@ src/modules/
     └── modules/
         └── user/
             ├── user.config.ts
-            ├── routes/user.routes.child.tsx
+            ├── routes/user.routes.tsx
             └── components/pages/user.tsx
 ```
 
