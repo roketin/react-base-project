@@ -47,6 +47,7 @@ http.interceptors.response.use(
      */
     const originalRequest = error.config as InternalAxiosRequestConfig & {
       _retry?: boolean;
+      skipGlobalError?: boolean;
     };
     const isLoginEndpoint =
       originalRequest.url?.includes('/v1/auth/login') ||
@@ -55,8 +56,11 @@ http.interceptors.response.use(
     /**
      * Handling all error to global alert
      * Show toast for all errors except 401 from non-login endpoints (will be handled by refresh token)
+     * Skip toast if skipGlobalError is set to true
      */
-    const shouldShowToast = response?.status !== 401 || isLoginEndpoint;
+    const shouldShowToast =
+      !originalRequest.skipGlobalError &&
+      (response?.status !== 401 || isLoginEndpoint);
 
     if (shouldShowToast) {
       const message =
