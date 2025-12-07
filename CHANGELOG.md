@@ -1,3 +1,14 @@
+## [3.3.1] - 2025-12-07
+
+### 🚀 Features
+
+- _(styles)_ Update color variables and button/badges variants for improved theming
+- Add TableColumnBuilder for dynamic column definitions
+
+### 📚 Documentation
+
+- Update README to clarify child routes and module moving features
+
 ## [3.3.0] - 2025-12-06
 
 ### 🚀 Features
