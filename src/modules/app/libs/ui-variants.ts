@@ -16,20 +16,21 @@ export const buttonVariants = cva(
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
-        info: 'bg-blue-500 text-white hover:bg-blue-600',
-        success: 'bg-emerald-500 text-white hover:bg-emerald-600',
-        warning: 'bg-amber-500 text-white hover:bg-amber-600',
-        error: 'bg-red-500 text-white hover:bg-red-600',
+        info: 'bg-info text-info-foreground hover:bg-info/90',
+        success: 'bg-success text-success-foreground hover:bg-success/90',
+        warning: 'bg-warning text-warning-foreground hover:bg-warning/90',
+        error:
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         confirm:
           'bg-purple-500 text-white hover:bg-purple-600 disabled:bg-purple-400',
         'soft-default': 'bg-primary/10 text-primary hover:bg-primary/20',
         'soft-destructive':
           'bg-destructive/10 text-destructive hover:bg-destructive/20',
-        'soft-info': 'bg-blue-500/10 text-blue-700 hover:bg-blue-500/20',
-        'soft-success':
-          'bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20',
-        'soft-warning': 'bg-amber-500/10 text-amber-700 hover:bg-amber-500/20',
-        'soft-error': 'bg-red-500/10 text-red-700 hover:bg-red-500/20',
+        'soft-info': 'bg-info/10 text-info hover:bg-info/20',
+        'soft-success': 'bg-success/10 text-success hover:bg-success/20',
+        'soft-warning': 'bg-warning/10 text-warning hover:bg-warning/20',
+        'soft-error':
+          'bg-destructive/10 text-destructive hover:bg-destructive/20',
         'soft-confirm':
           'bg-purple-500/10 text-purple-700 hover:bg-purple-500/20',
       },
@@ -60,27 +61,26 @@ export const badgeVariants = cva(
         default:
           'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
         secondary:
-          'border-transparent bg-slate-100 text-slate-900 hover:bg-slate-200',
+          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
         destructive:
-          'border-transparent bg-red-600 text-white hover:bg-red-700',
-        outline: 'border-slate-200 text-slate-900 hover:bg-slate-100',
+          'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
+        outline: 'border-border text-foreground hover:bg-accent',
         success:
-          'border-transparent bg-green-600 text-white hover:bg-green-700',
+          'border-transparent bg-success text-success-foreground hover:bg-success/80',
         warning:
-          'border-transparent bg-yellow-600 text-white hover:bg-yellow-700',
-        info: 'border-transparent bg-blue-600 text-white hover:bg-blue-700',
+          'border-transparent bg-warning text-warning-foreground hover:bg-warning/80',
+        info: 'border-transparent bg-info text-info-foreground hover:bg-info/80',
         'soft-default':
           'border-transparent bg-primary/10 text-primary hover:bg-primary/20',
         'soft-secondary':
-          'border-transparent bg-slate-100 text-slate-700 hover:bg-slate-200',
+          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
         'soft-destructive':
-          'border-transparent bg-red-100 text-red-700 hover:bg-red-200',
+          'border-transparent bg-destructive/10 text-destructive hover:bg-destructive/20',
         'soft-success':
-          'border-transparent bg-green-100 text-green-700 hover:bg-green-200',
+          'border-transparent bg-success/10 text-success hover:bg-success/20',
         'soft-warning':
-          'border-transparent bg-yellow-100 text-yellow-700 hover:bg-yellow-200',
-        'soft-info':
-          'border-transparent bg-blue-100 text-blue-700 hover:bg-blue-200',
+          'border-transparent bg-warning/10 text-warning hover:bg-warning/20',
+        'soft-info': 'border-transparent bg-info/10 text-info hover:bg-info/20',
       },
       size: {
         default: 'px-2.5 py-0.5 text-xs',
@@ -200,36 +200,33 @@ export const feedbackVariants = {
   /** Background styles for alert/banner components */
   bg: {
     default: 'bg-muted border-border text-foreground',
-    info: 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-200',
-    success:
-      'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 text-green-800 dark:text-green-200',
-    warning:
-      'bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200',
-    error:
-      'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800 text-red-800 dark:text-red-200',
+    info: 'bg-info/10 border-info/20 text-info',
+    success: 'bg-success/10 border-success/20 text-success',
+    warning: 'bg-warning/10 border-warning/20 text-warning',
+    error: 'bg-destructive/10 border-destructive/20 text-destructive',
   },
   /** Solid color styles */
   solid: {
     default: 'bg-primary',
-    info: 'bg-blue-600 dark:bg-blue-500',
-    success: 'bg-green-600 dark:bg-green-500',
-    warning: 'bg-yellow-600 dark:bg-yellow-500',
-    error: 'bg-red-600 dark:bg-red-500',
+    info: 'bg-info',
+    success: 'bg-success',
+    warning: 'bg-warning',
+    error: 'bg-destructive',
   },
   /** Text/icon color styles */
   text: {
     default: 'text-primary',
-    info: 'text-blue-600 dark:text-blue-400',
-    success: 'text-green-600 dark:text-green-400',
-    warning: 'text-yellow-600 dark:text-yellow-400',
-    error: 'text-red-600 dark:text-red-400',
+    info: 'text-info',
+    success: 'text-success',
+    warning: 'text-warning',
+    error: 'text-destructive',
   },
   /** Border color styles */
   border: {
     default: 'border-primary/20',
-    info: 'border-blue-600/20 dark:border-blue-400/20',
-    success: 'border-green-600/20 dark:border-green-400/20',
-    warning: 'border-yellow-600/20 dark:border-yellow-400/20',
-    error: 'border-red-600/20 dark:border-red-400/20',
+    info: 'border-info/20',
+    success: 'border-success/20',
+    warning: 'border-warning/20',
+    error: 'border-destructive/20',
   },
 } as const;

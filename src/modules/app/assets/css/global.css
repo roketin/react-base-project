@@ -29,11 +29,11 @@
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
   --success: oklch(0.745 0.194 148.25);
-  --success-foreground: oklch(0.222 0.013 147.67);
+  --success-foreground: oklch(1 0 0);
   --warning: oklch(0.827 0.171 74.79);
-  --warning-foreground: oklch(0.282 0.056 73.59);
+  --warning-foreground: oklch(1 0 0);
   --info: oklch(0.725 0.186 239.64);
-  --info-foreground: oklch(0.274 0.021 236.69);
+  --info-foreground: oklch(1 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
