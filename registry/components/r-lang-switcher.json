@@ -3,14 +3,14 @@
   "name": "r-lang-switcher",
   "type": "registry:component",
   "title": "Language Switcher",
-  "description": "A language switcher component for i18n.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "description": "A language switcher component with i18n support.",
+  "dependencies": ["react-i18next", "lucide-react", "sonner"],
+  "registryDependencies": ["utils", "ui-popover", "r-btn"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-lang-switcher.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-lang-switcher.tsx"
+      "target": "r-lang-switcher.tsx"
     }
   ]
 }

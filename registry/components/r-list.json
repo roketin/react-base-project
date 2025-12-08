@@ -3,14 +3,14 @@
   "name": "r-list",
   "type": "registry:component",
   "title": "List",
-  "description": "A list component for rendering collections.",
+  "description": "A list component with virtualization support.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": ["utils", "r-virtual-scroll"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-list.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-list.tsx"
+      "target": "r-list.tsx"
     }
   ]
 }

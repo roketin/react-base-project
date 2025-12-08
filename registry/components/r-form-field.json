@@ -3,14 +3,14 @@
   "name": "r-form-field",
   "type": "registry:component",
   "title": "Form Field",
-  "description": "A form field wrapper component with validation support.",
-  "dependencies": ["react-hook-form"],
-  "registryDependencies": ["utils", "r-form"],
+  "description": "A form field component with label, error handling, and various layouts.",
+  "dependencies": ["react-hook-form", "react-i18next"],
+  "registryDependencies": ["utils", "ui-form", "r-separator", "r-skeleton"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-form-field.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-form-field.tsx"
+      "target": "r-form-field.tsx"
     }
   ]
 }

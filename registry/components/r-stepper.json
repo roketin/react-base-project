@@ -3,14 +3,14 @@
   "name": "r-stepper",
   "type": "registry:component",
   "title": "Stepper",
-  "description": "A stepper component for multi-step forms.",
-  "dependencies": [],
+  "description": "A stepper component for multi-step processes.",
+  "dependencies": ["lucide-react"],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-stepper.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-stepper.tsx"
+      "target": "r-stepper.tsx"
     }
   ]
 }

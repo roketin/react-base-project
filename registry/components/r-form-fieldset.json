@@ -3,14 +3,14 @@
   "name": "r-form-fieldset",
   "type": "registry:component",
   "title": "Form Fieldset",
-  "description": "A fieldset component for grouping form fields.",
+  "description": "A form fieldset component for grouping form fields.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": ["r-separator"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-form-fieldset.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-form-fieldset.tsx"
+      "target": "r-form-fieldset.tsx"
     }
   ]
 }

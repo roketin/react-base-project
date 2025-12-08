@@ -3,14 +3,14 @@
   "name": "r-popconfirm",
   "type": "registry:component",
   "title": "Popconfirm",
-  "description": "A popconfirm component for confirmation dialogs.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "description": "A popconfirm component for confirming actions.",
+  "dependencies": ["lucide-react"],
+  "registryDependencies": ["utils", "ui-popover", "ui-variants", "r-btn"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-popconfirm.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-popconfirm.tsx"
+      "target": "r-popconfirm.tsx"
     }
   ]
 }

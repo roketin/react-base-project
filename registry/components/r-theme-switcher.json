@@ -3,14 +3,14 @@
   "name": "r-theme-switcher",
   "type": "registry:component",
   "title": "Theme Switcher",
-  "description": "A theme switcher component for dark/light modes.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "description": "A theme switcher component for light/dark/system modes.",
+  "dependencies": ["lucide-react"],
+  "registryDependencies": ["utils", "ui-dropdown-menu", "r-btn"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-theme-switcher.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-theme-switcher.tsx"
+      "target": "r-theme-switcher.tsx"
     }
   ]
 }

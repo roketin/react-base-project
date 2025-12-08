@@ -3,14 +3,14 @@
   "name": "r-panel-header",
   "type": "registry:component",
   "title": "Panel Header",
-  "description": "A panel header component.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "description": "A panel header component with back button and actions.",
+  "dependencies": ["lucide-react", "class-variance-authority"],
+  "registryDependencies": ["utils", "ui-variants", "r-btn", "ui-dropdown-menu"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-panel-header.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-panel-header.tsx"
+      "target": "r-panel-header.tsx"
     }
   ]
 }

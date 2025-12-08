@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/base/r-avatar.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-avatar.tsx"
+      "target": "r-avatar.tsx"
     }
   ]
 }

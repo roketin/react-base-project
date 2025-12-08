@@ -3,14 +3,14 @@
   "name": "r-textarea",
   "type": "registry:component",
   "title": "Textarea",
-  "description": "A textarea component for multi-line input.",
+  "description": "A textarea component for multi-line text input.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": ["utils", "ui-variants"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-textarea.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-textarea.tsx"
+      "target": "r-textarea.tsx"
     }
   ]
 }

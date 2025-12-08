@@ -4,13 +4,13 @@
   "type": "registry:component",
   "title": "Collapse",
   "description": "A collapsible content component.",
-  "dependencies": [],
+  "dependencies": ["lucide-react"],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-collapse.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-collapse.tsx"
+      "target": "r-collapse.tsx"
     }
   ]
 }

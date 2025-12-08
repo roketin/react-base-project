@@ -5,12 +5,12 @@
   "title": "Radio",
   "description": "A radio button component.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": ["r-radio-group"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-radio.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-radio.tsx"
+      "target": "r-radio.tsx"
     }
   ]
 }

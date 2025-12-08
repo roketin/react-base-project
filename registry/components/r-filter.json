@@ -3,14 +3,14 @@
   "name": "r-filter",
   "type": "registry:component",
   "title": "Filter",
-  "description": "A filter component for data filtering interfaces.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "description": "A filter component with popover for advanced filtering options.",
+  "dependencies": ["lucide-react"],
+  "registryDependencies": ["utils", "ui-popover", "r-btn"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-filter.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-filter.tsx"
+      "target": "r-filter.tsx"
     }
   ]
 }

@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/base/r-input.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-input.tsx"
+      "target": "r-input.tsx"
     }
   ]
 }

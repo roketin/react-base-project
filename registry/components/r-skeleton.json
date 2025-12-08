@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/base/r-skeleton.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-skeleton.tsx"
+      "target": "r-skeleton.tsx"
     }
   ]
 }

@@ -4,13 +4,13 @@
   "type": "registry:component",
   "title": "Pagination",
   "description": "A pagination component for navigating pages.",
-  "dependencies": [],
+  "dependencies": ["lucide-react"],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-pagination.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-pagination.tsx"
+      "target": "r-pagination.tsx"
     }
   ]
 }

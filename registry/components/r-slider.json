@@ -3,14 +3,14 @@
   "name": "r-slider",
   "type": "registry:component",
   "title": "Slider",
-  "description": "A slider/range component.",
+  "description": "A slider component for selecting values.",
   "dependencies": [],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-slider.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-slider.tsx"
+      "target": "r-slider.tsx"
     }
   ]
 }

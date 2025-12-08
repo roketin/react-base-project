@@ -3,14 +3,14 @@
   "name": "r-timeline",
   "type": "registry:component",
   "title": "Timeline",
-  "description": "A timeline component for displaying events.",
+  "description": "A timeline component for displaying chronological events.",
   "dependencies": [],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-timeline.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-timeline.tsx"
+      "target": "r-timeline.tsx"
     }
   ]
 }

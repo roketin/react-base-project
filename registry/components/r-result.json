@@ -4,13 +4,13 @@
   "type": "registry:component",
   "title": "Result",
   "description": "A result component for success/error/info states.",
-  "dependencies": [],
+  "dependencies": ["lucide-react"],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-result.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-result.tsx"
+      "target": "r-result.tsx"
     }
   ]
 }

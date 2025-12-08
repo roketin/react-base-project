@@ -3,14 +3,14 @@
   "name": "r-switch",
   "type": "registry:component",
   "title": "Switch",
-  "description": "A toggle switch component.",
+  "description": "A switch/toggle component.",
   "dependencies": [],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-switch.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-switch.tsx"
+      "target": "r-switch.tsx"
     }
   ]
 }

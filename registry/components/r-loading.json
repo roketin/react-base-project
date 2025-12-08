@@ -4,13 +4,13 @@
   "type": "registry:component",
   "title": "Loading",
   "description": "A loading spinner component.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "dependencies": ["lucide-react", "clsx"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-loading.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-loading.tsx"
+      "target": "r-loading.tsx"
     }
   ]
 }

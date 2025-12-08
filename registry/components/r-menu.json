@@ -3,14 +3,14 @@
   "name": "r-menu",
   "type": "registry:component",
   "title": "Menu",
-  "description": "A menu component for navigation.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "description": "A menu component with nested items support.",
+  "dependencies": ["lucide-react"],
+  "registryDependencies": ["utils", "ui-dropdown-menu"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-menu.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-menu.tsx"
+      "target": "r-menu.tsx"
     }
   ]
 }

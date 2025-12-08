@@ -3,14 +3,14 @@
   "name": "r-radio-group",
   "type": "registry:component",
   "title": "Radio Group",
-  "description": "A radio group component for radio selections.",
+  "description": "A radio group component.",
   "dependencies": [],
-  "registryDependencies": ["utils", "r-radio"],
+  "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-radio-group.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-radio-group.tsx"
+      "target": "r-radio-group.tsx"
     }
   ]
 }

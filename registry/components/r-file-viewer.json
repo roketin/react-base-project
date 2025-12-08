@@ -3,14 +3,14 @@
   "name": "r-file-viewer",
   "type": "registry:component",
   "title": "File Viewer",
-  "description": "A file viewer component for previewing uploaded files.",
+  "description": "A file viewer component for previewing images and documents.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": ["utils", "r-dialog", "r-img", "r-loading"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-file-viewer.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-file-viewer.tsx"
+      "target": "r-file-viewer.tsx"
     }
   ]
 }

@@ -3,14 +3,14 @@
   "name": "r-tabs",
   "type": "registry:component",
   "title": "Tabs",
-  "description": "A tabs component for tabbed interfaces.",
-  "dependencies": [],
+  "description": "A tabs component for organizing content.",
+  "dependencies": ["lucide-react"],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-tabs.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-tabs.tsx"
+      "target": "r-tabs.tsx"
     }
   ]
 }

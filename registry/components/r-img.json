@@ -3,14 +3,14 @@
   "name": "r-img",
   "type": "registry:component",
   "title": "Image",
-  "description": "An image component with loading states and error handling.",
+  "description": "An image component with lazy loading and fallback support.",
   "dependencies": [],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-img.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-img.tsx"
+      "target": "r-img.tsx"
     }
   ]
 }

@@ -3,14 +3,14 @@
   "name": "r-breadcrumbs",
   "type": "registry:component",
   "title": "Breadcrumbs",
-  "description": "A breadcrumbs component for navigation hierarchy.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "description": "A breadcrumbs component for navigation.",
+  "dependencies": ["lucide-react", "react-i18next"],
+  "registryDependencies": ["utils", "ui-dropdown-menu"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-breadcrumbs.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-breadcrumbs.tsx"
+      "target": "r-breadcrumbs.tsx"
     }
   ]
 }

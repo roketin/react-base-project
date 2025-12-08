@@ -3,14 +3,14 @@
   "name": "r-form",
   "type": "registry:component",
   "title": "Form",
-  "description": "A form component with react-hook-form integration.",
-  "dependencies": ["react-hook-form"],
-  "registryDependencies": ["utils"],
+  "description": "A form component with validation and React Hook Form integration.",
+  "dependencies": ["react-hook-form", "react-i18next"],
+  "registryDependencies": ["utils", "ui-form"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-form.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-form.tsx"
+      "target": "r-form.tsx"
     }
   ]
 }

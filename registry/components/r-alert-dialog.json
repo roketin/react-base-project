@@ -4,13 +4,17 @@
   "type": "registry:component",
   "title": "Alert Dialog",
   "description": "An alert dialog for confirmations and important messages.",
-  "dependencies": ["@radix-ui/react-alert-dialog"],
-  "registryDependencies": ["utils", "ui-alert-dialog"],
+  "dependencies": [
+    "@radix-ui/react-alert-dialog",
+    "lucide-react",
+    "class-variance-authority"
+  ],
+  "registryDependencies": ["utils", "ui-alert-dialog", "ui-variants", "r-btn"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-alert-dialog.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-alert-dialog.tsx"
+      "target": "r-alert-dialog.tsx"
     }
   ]
 }

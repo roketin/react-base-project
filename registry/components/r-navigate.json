@@ -3,14 +3,14 @@
   "name": "r-navigate",
   "type": "registry:component",
   "title": "Navigate",
-  "description": "A navigation component wrapper.",
-  "dependencies": ["react-router"],
-  "registryDependencies": ["utils"],
+  "description": "A navigation component for routing.",
+  "dependencies": [],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-navigate.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-navigate.tsx"
+      "target": "r-navigate.tsx"
     }
   ]
 }

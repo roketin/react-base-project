@@ -3,14 +3,14 @@
   "name": "r-select-infinite",
   "type": "registry:component",
   "title": "Select Infinite",
-  "description": "A select component with infinite scroll loading.",
-  "dependencies": [],
-  "registryDependencies": ["utils", "r-select"],
+  "description": "A select component with infinite scroll support.",
+  "dependencies": ["@tanstack/react-query"],
+  "registryDependencies": ["r-select"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-select-infinite.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-select-infinite.tsx"
+      "target": "r-select-infinite.tsx"
     }
   ]
 }

@@ -3,14 +3,14 @@
   "name": "r-virtual-scroll",
   "type": "registry:component",
   "title": "Virtual Scroll",
-  "description": "A virtual scroll component for large lists.",
-  "dependencies": [],
+  "description": "A virtual scrolling component for large lists.",
+  "dependencies": ["@tanstack/react-virtual"],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-virtual-scroll.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-virtual-scroll.tsx"
+      "target": "r-virtual-scroll.tsx"
     }
   ]
 }

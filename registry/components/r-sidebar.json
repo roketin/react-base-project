@@ -3,14 +3,14 @@
   "name": "r-sidebar",
   "type": "registry:component",
   "title": "Sidebar",
-  "description": "A sidebar navigation component.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "description": "A sidebar component with collapsible and responsive behavior.",
+  "dependencies": ["@radix-ui/react-slot", "lucide-react"],
+  "registryDependencies": ["utils", "ui-sheet", "ui-tooltip"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-sidebar.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-sidebar.tsx"
+      "target": "r-sidebar.tsx"
     }
   ]
 }

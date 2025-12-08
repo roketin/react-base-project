@@ -4,13 +4,13 @@
   "type": "registry:component",
   "title": "Checkbox",
   "description": "A checkbox component with label support.",
-  "dependencies": [],
+  "dependencies": ["lucide-react"],
   "registryDependencies": ["utils"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-checkbox.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-checkbox.tsx"
+      "target": "r-checkbox.tsx"
     }
   ]
 }

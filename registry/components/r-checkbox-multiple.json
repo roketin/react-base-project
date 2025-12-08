@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/base/r-checkbox-multiple.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-checkbox-multiple.tsx"
+      "target": "r-checkbox-multiple.tsx"
     }
   ]
 }

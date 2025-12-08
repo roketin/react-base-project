@@ -3,14 +3,14 @@
   "name": "r-infinite-scroll",
   "type": "registry:component",
   "title": "Infinite Scroll",
-  "description": "An infinite scroll container component.",
+  "description": "An infinite scroll component for loading more content.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": ["utils", "r-virtual-scroll"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-infinite-scroll.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-infinite-scroll.tsx"
+      "target": "r-infinite-scroll.tsx"
     }
   ]
 }

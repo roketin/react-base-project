@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/base/r-select.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-select.tsx"
+      "target": "r-select.tsx"
     }
   ]
 }

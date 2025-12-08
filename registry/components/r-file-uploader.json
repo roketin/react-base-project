@@ -3,14 +3,14 @@
   "name": "r-file-uploader",
   "type": "registry:component",
   "title": "File Uploader",
-  "description": "A file upload component with drag and drop support.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "description": "A file uploader component with drag-and-drop support.",
+  "dependencies": ["lucide-react", "react-i18next"],
+  "registryDependencies": ["utils", "r-btn"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-file-uploader.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-file-uploader.tsx"
+      "target": "r-file-uploader.tsx"
     }
   ]
 }

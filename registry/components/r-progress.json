@@ -5,12 +5,12 @@
   "title": "Progress",
   "description": "A progress bar component.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": ["utils", "ui-variants"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-progress.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-progress.tsx"
+      "target": "r-progress.tsx"
     }
   ]
 }

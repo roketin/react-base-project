@@ -4,13 +4,13 @@
   "type": "registry:component",
   "title": "Alert",
   "description": "An alert component for displaying feedback messages.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "dependencies": ["lucide-react"],
+  "registryDependencies": ["utils", "ui-variants"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-alert.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-alert.tsx"
+      "target": "r-alert.tsx"
     }
   ]
 }

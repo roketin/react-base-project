@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/base/r-separator.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-separator.tsx"
+      "target": "r-separator.tsx"
     }
   ]
 }

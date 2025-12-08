@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/base/r-card.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-card.tsx"
+      "target": "r-card.tsx"
     }
   ]
 }

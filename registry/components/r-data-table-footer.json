@@ -3,14 +3,14 @@
   "name": "r-data-table-footer",
   "type": "registry:component",
   "title": "Data Table Footer",
-  "description": "Footer component for data table with pagination controls.",
+  "description": "A footer component for data tables with pagination and page size controls.",
   "dependencies": [],
-  "registryDependencies": ["utils", "r-pagination"],
+  "registryDependencies": ["utils", "r-select", "r-pagination"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-data-table-footer.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-data-table-footer.tsx"
+      "target": "r-data-table-footer.tsx"
     }
   ]
 }

@@ -4,13 +4,13 @@
   "type": "registry:component",
   "title": "Badge",
   "description": "A badge component for labels and status indicators.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "dependencies": ["lucide-react", "class-variance-authority"],
+  "registryDependencies": ["utils", "ui-variants"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-badge.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-badge.tsx"
+      "target": "r-badge.tsx"
     }
   ]
 }

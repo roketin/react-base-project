@@ -3,14 +3,14 @@
   "name": "r-input-number",
   "type": "registry:component",
   "title": "Input Number",
-  "description": "A number input component with formatting support.",
+  "description": "A number input component with min/max validation.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": ["utils", "r-input"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-input-number.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-input-number.tsx"
+      "target": "r-input-number.tsx"
     }
   ]
 }

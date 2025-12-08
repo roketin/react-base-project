@@ -3,14 +3,14 @@
   "name": "r-sticky-wrapper",
   "type": "registry:component",
   "title": "Sticky Wrapper",
-  "description": "A sticky position wrapper component.",
+  "description": "A sticky wrapper component for fixed positioning.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-sticky-wrapper.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-sticky-wrapper.tsx"
+      "target": "r-sticky-wrapper.tsx"
     }
   ]
 }

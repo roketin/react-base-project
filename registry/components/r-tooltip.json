@@ -3,14 +3,14 @@
   "name": "r-tooltip",
   "type": "registry:component",
   "title": "Tooltip",
-  "description": "A tooltip component for additional information.",
+  "description": "A tooltip component for providing context.",
   "dependencies": [],
   "registryDependencies": ["utils", "ui-tooltip"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-tooltip.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-tooltip.tsx"
+      "target": "r-tooltip.tsx"
     }
   ]
 }

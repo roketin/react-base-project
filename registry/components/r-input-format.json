@@ -3,14 +3,14 @@
   "name": "r-input-format",
   "type": "registry:component",
   "title": "Input Format",
-  "description": "A formatted input component for masked inputs.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "description": "An input component with formatting support using Maskito.",
+  "dependencies": ["@maskito/core", "@maskito/react"],
+  "registryDependencies": ["r-input"],
   "files": [
     {
       "path": "src/modules/app/components/base/r-input-format.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-input-format.tsx"
+      "target": "r-input-format.tsx"
     }
   ]
 }
