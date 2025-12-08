@@ -13,6 +13,21 @@
       "target": "r-form.tsx"
     },
     {
+      "path": "src/modules/app/components/base/show-alert-validation.tsx",
+      "type": "registry:component",
+      "target": "show-alert-validation.tsx"
+    },
+    {
+      "path": "src/modules/app/contexts/form-config-context.tsx",
+      "type": "registry:context",
+      "target": "form-config-context.tsx"
+    },
+    {
+      "path": "src/modules/app/types/component.type.ts",
+      "type": "registry:type",
+      "target": "component.type.ts"
+    },
+    {
       "path": "src/modules/app/libs/utils.ts",
       "type": "registry:lib",
       "target": "utils.ts"
