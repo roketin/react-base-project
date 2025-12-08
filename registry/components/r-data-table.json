@@ -5,12 +5,27 @@
   "title": "Data Table",
   "description": "A data table component with sorting, filtering, and pagination.",
   "dependencies": ["@tanstack/react-table", "lucide-react"],
-  "registryDependencies": ["utils", "r-simple-table", "r-data-table-footer"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-data-table.tsx",
       "type": "registry:component",
       "target": "r-data-table.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/base/r-simple-table.tsx",
+      "type": "registry:component",
+      "target": "r-simple-table.tsx"
+    },
+    {
+      "path": "src/modules/app/components/base/r-data-table-footer.tsx",
+      "type": "registry:component",
+      "target": "r-data-table-footer.tsx"
     }
   ]
 }

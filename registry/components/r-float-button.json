@@ -5,12 +5,17 @@
   "title": "Float Button",
   "description": "A floating action button component.",
   "dependencies": ["class-variance-authority"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-float-button.tsx",
       "type": "registry:component",
       "target": "r-float-button.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

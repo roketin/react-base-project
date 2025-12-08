@@ -5,12 +5,17 @@
   "title": "Image",
   "description": "An image component with lazy loading and fallback support.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-img.tsx",
       "type": "registry:component",
       "target": "r-img.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

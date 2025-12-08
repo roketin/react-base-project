@@ -5,12 +5,27 @@
   "title": "Sidebar",
   "description": "A sidebar component with collapsible and responsive behavior.",
   "dependencies": ["@radix-ui/react-slot", "lucide-react"],
-  "registryDependencies": ["utils", "ui-sheet", "ui-tooltip"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-sidebar.tsx",
       "type": "registry:component",
       "target": "r-sidebar.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/ui/sheet.tsx",
+      "type": "registry:ui",
+      "target": "sheet.tsx"
+    },
+    {
+      "path": "src/modules/app/components/ui/tooltip.tsx",
+      "type": "registry:ui",
+      "target": "tooltip.tsx"
     }
   ]
 }

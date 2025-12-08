@@ -5,12 +5,17 @@
   "title": "Stepper",
   "description": "A stepper component for multi-step processes.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-stepper.tsx",
       "type": "registry:component",
       "target": "r-stepper.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

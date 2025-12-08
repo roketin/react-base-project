@@ -5,12 +5,17 @@
   "title": "UI Tooltip (Radix)",
   "description": "Base tooltip primitive from Radix UI.",
   "dependencies": ["@radix-ui/react-tooltip"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/ui/tooltip.tsx",
       "type": "registry:ui",
       "target": "tooltip.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

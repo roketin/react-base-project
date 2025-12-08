@@ -5,12 +5,17 @@
   "title": "UI Form",
   "description": "Form components with react-hook-form integration.",
   "dependencies": ["react-hook-form", "@hookform/resolvers"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/ui/form.tsx",
       "type": "registry:ui",
       "target": "form.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

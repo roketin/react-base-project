@@ -5,12 +5,17 @@
   "title": "UI Dropdown Menu (Radix)",
   "description": "Base dropdown menu primitive from Radix UI.",
   "dependencies": ["@radix-ui/react-dropdown-menu"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/ui/dropdown-menu.tsx",
       "type": "registry:ui",
       "target": "dropdown-menu.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

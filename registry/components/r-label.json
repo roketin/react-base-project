@@ -5,12 +5,17 @@
   "title": "Label",
   "description": "A label component for form inputs.",
   "dependencies": ["class-variance-authority"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-label.tsx",
       "type": "registry:component",
       "target": "r-label.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

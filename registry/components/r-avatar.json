@@ -4,13 +4,18 @@
   "type": "registry:component",
   "title": "Avatar",
   "description": "An avatar component for displaying user images or initials.",
-  "dependencies": [],
-  "registryDependencies": ["utils"],
+  "dependencies": ["lucide-react"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-avatar.tsx",
       "type": "registry:component",
       "target": "r-avatar.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

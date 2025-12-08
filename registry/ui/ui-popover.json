@@ -5,12 +5,17 @@
   "title": "UI Popover (Radix)",
   "description": "Base popover primitive from Radix UI.",
   "dependencies": ["@radix-ui/react-popover"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/ui/popover.tsx",
       "type": "registry:ui",
       "target": "popover.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

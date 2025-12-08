@@ -5,12 +5,17 @@
   "title": "Form Fieldset",
   "description": "A form fieldset component for grouping form fields.",
   "dependencies": [],
-  "registryDependencies": ["r-separator"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-form-fieldset.tsx",
       "type": "registry:component",
       "target": "r-form-fieldset.tsx"
+    },
+    {
+      "path": "src/modules/app/components/base/r-separator.tsx",
+      "type": "registry:component",
+      "target": "r-separator.tsx"
     }
   ]
 }

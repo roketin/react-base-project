@@ -5,12 +5,17 @@
   "title": "Slider",
   "description": "A slider component for selecting values.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-slider.tsx",
       "type": "registry:component",
       "target": "r-slider.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

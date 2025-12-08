@@ -5,12 +5,22 @@
   "title": "File Uploader",
   "description": "A file uploader component with drag-and-drop support.",
   "dependencies": ["lucide-react", "react-i18next"],
-  "registryDependencies": ["utils", "r-btn"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-file-uploader.tsx",
       "type": "registry:component",
       "target": "r-file-uploader.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/base/r-btn.tsx",
+      "type": "registry:component",
+      "target": "r-btn.tsx"
     }
   ]
 }

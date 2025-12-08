@@ -5,12 +5,17 @@
   "title": "UI Variants",
   "description": "CVA variants for UI components (button, input, etc).",
   "dependencies": ["class-variance-authority"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/libs/ui-variants.ts",
       "type": "registry:lib",
       "target": "ui-variants.ts"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

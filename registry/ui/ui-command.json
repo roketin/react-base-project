@@ -5,12 +5,22 @@
   "title": "UI Command",
   "description": "Command palette component using cmdk.",
   "dependencies": ["cmdk"],
-  "registryDependencies": ["utils", "ui-dialog"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/ui/command.tsx",
       "type": "registry:ui",
       "target": "command.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/ui/dialog.tsx",
+      "type": "registry:ui",
+      "target": "dialog.tsx"
     }
   ]
 }

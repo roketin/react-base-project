@@ -5,12 +5,17 @@
   "title": "Card",
   "description": "A card component with header, title, description, and footer sections.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-card.tsx",
       "type": "registry:component",
       "target": "r-card.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

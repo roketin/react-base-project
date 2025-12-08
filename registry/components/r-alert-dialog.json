@@ -9,12 +9,32 @@
     "lucide-react",
     "class-variance-authority"
   ],
-  "registryDependencies": ["utils", "ui-alert-dialog", "ui-variants", "r-btn"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-alert-dialog.tsx",
       "type": "registry:component",
       "target": "r-alert-dialog.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/ui/alert-dialog.tsx",
+      "type": "registry:ui",
+      "target": "alert-dialog.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/ui-variants.ts",
+      "type": "registry:lib",
+      "target": "ui-variants.ts"
+    },
+    {
+      "path": "src/modules/app/components/base/r-btn.tsx",
+      "type": "registry:component",
+      "target": "r-btn.tsx"
     }
   ]
 }

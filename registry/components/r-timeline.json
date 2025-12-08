@@ -5,12 +5,17 @@
   "title": "Timeline",
   "description": "A timeline component for displaying chronological events.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-timeline.tsx",
       "type": "registry:component",
       "target": "r-timeline.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

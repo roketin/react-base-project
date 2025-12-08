@@ -5,12 +5,17 @@
   "title": "Picker",
   "description": "A date/time picker component.",
   "dependencies": ["rc-picker", "dayjs"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-picker.tsx",
       "type": "registry:component",
       "target": "r-picker.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

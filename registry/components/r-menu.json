@@ -5,12 +5,22 @@
   "title": "Menu",
   "description": "A menu component with nested items support.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["utils", "ui-dropdown-menu"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-menu.tsx",
       "type": "registry:component",
       "target": "r-menu.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/ui/dropdown-menu.tsx",
+      "type": "registry:ui",
+      "target": "dropdown-menu.tsx"
     }
   ]
 }

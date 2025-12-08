@@ -5,12 +5,22 @@
   "title": "Tooltip",
   "description": "A tooltip component for providing context.",
   "dependencies": [],
-  "registryDependencies": ["utils", "ui-tooltip"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-tooltip.tsx",
       "type": "registry:component",
       "target": "r-tooltip.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/ui/tooltip.tsx",
+      "type": "registry:ui",
+      "target": "tooltip.tsx"
     }
   ]
 }

@@ -5,12 +5,22 @@
   "title": "Textarea",
   "description": "A textarea component for multi-line text input.",
   "dependencies": [],
-  "registryDependencies": ["utils", "ui-variants"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-textarea.tsx",
       "type": "registry:component",
       "target": "r-textarea.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/libs/ui-variants.ts",
+      "type": "registry:lib",
+      "target": "ui-variants.ts"
     }
   ]
 }

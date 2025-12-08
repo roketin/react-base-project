@@ -5,12 +5,22 @@
   "title": "Breadcrumbs",
   "description": "A breadcrumbs component for navigation.",
   "dependencies": ["lucide-react", "react-i18next"],
-  "registryDependencies": ["utils", "ui-dropdown-menu"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-breadcrumbs.tsx",
       "type": "registry:component",
       "target": "r-breadcrumbs.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/ui/dropdown-menu.tsx",
+      "type": "registry:ui",
+      "target": "dropdown-menu.tsx"
     }
   ]
 }

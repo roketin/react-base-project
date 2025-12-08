@@ -5,12 +5,17 @@
   "title": "Select Infinite",
   "description": "A select component with infinite scroll support.",
   "dependencies": ["@tanstack/react-query"],
-  "registryDependencies": ["r-select"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-select-infinite.tsx",
       "type": "registry:component",
       "target": "r-select-infinite.tsx"
+    },
+    {
+      "path": "src/modules/app/components/base/r-select.tsx",
+      "type": "registry:component",
+      "target": "r-select.tsx"
     }
   ]
 }

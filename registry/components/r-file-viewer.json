@@ -5,12 +5,32 @@
   "title": "File Viewer",
   "description": "A file viewer component for previewing images and documents.",
   "dependencies": [],
-  "registryDependencies": ["utils", "r-dialog", "r-img", "r-loading"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-file-viewer.tsx",
       "type": "registry:component",
       "target": "r-file-viewer.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/base/r-dialog.tsx",
+      "type": "registry:component",
+      "target": "r-dialog.tsx"
+    },
+    {
+      "path": "src/modules/app/components/base/r-img.tsx",
+      "type": "registry:component",
+      "target": "r-img.tsx"
+    },
+    {
+      "path": "src/modules/app/components/base/r-loading.tsx",
+      "type": "registry:component",
+      "target": "r-loading.tsx"
     }
   ]
 }

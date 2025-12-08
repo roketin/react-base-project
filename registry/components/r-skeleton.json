@@ -5,12 +5,17 @@
   "title": "Skeleton",
   "description": "A skeleton loading component.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-skeleton.tsx",
       "type": "registry:component",
       "target": "r-skeleton.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

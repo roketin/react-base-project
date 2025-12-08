@@ -5,12 +5,17 @@
   "title": "UI Sheet (Radix)",
   "description": "Base sheet/drawer primitive from Radix UI.",
   "dependencies": ["@radix-ui/react-dialog"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/ui/sheet.tsx",
       "type": "registry:ui",
       "target": "sheet.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

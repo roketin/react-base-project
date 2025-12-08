@@ -5,12 +5,17 @@
   "title": "UI Alert Dialog (Radix)",
   "description": "Base alert dialog primitive from Radix UI.",
   "dependencies": ["@radix-ui/react-alert-dialog"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/ui/alert-dialog.tsx",
       "type": "registry:ui",
       "target": "alert-dialog.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

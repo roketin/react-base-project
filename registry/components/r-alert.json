@@ -5,12 +5,22 @@
   "title": "Alert",
   "description": "An alert component for displaying feedback messages.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["utils", "ui-variants"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-alert.tsx",
       "type": "registry:component",
       "target": "r-alert.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/libs/ui-variants.ts",
+      "type": "registry:lib",
+      "target": "ui-variants.ts"
     }
   ]
 }

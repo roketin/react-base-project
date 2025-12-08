@@ -5,12 +5,22 @@
   "title": "Input",
   "description": "A flexible input component with label, error state, icons, and clearable support.",
   "dependencies": ["lucide-react", "class-variance-authority"],
-  "registryDependencies": ["utils", "ui-variants"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-input.tsx",
       "type": "registry:component",
       "target": "r-input.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/libs/ui-variants.ts",
+      "type": "registry:lib",
+      "target": "ui-variants.ts"
     }
   ]
 }

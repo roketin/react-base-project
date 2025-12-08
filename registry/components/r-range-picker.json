@@ -5,12 +5,17 @@
   "title": "Range Picker",
   "description": "A date range picker component.",
   "dependencies": ["rc-picker", "dayjs", "lucide-react"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-range-picker.tsx",
       "type": "registry:component",
       "target": "r-range-picker.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

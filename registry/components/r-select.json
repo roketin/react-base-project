@@ -5,12 +5,22 @@
   "title": "Select",
   "description": "A select component with search, multiple selection, and infinite scroll support.",
   "dependencies": ["rc-select", "lucide-react"],
-  "registryDependencies": ["utils", "r-result"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-select.tsx",
       "type": "registry:component",
       "target": "r-select.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/base/r-result.tsx",
+      "type": "registry:component",
+      "target": "r-result.tsx"
     }
   ]
 }

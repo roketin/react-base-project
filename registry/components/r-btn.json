@@ -5,7 +5,7 @@
   "title": "Button",
   "description": "A customizable button component with variants, loading state, and debounce support.",
   "dependencies": ["use-debounce", "lucide-react", "class-variance-authority"],
-  "registryDependencies": ["utils", "ui-variants"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-btn.tsx",

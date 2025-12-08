@@ -5,12 +5,22 @@
   "title": "Checkbox Multiple",
   "description": "A multiple checkbox group component.",
   "dependencies": [],
-  "registryDependencies": ["utils", "r-checkbox"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-checkbox-multiple.tsx",
       "type": "registry:component",
       "target": "r-checkbox-multiple.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/base/r-checkbox.tsx",
+      "type": "registry:component",
+      "target": "r-checkbox.tsx"
     }
   ]
 }

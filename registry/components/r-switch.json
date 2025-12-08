@@ -5,12 +5,17 @@
   "title": "Switch",
   "description": "A switch/toggle component.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-switch.tsx",
       "type": "registry:component",
       "target": "r-switch.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

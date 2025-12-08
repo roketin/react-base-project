@@ -5,12 +5,17 @@
   "title": "Simple Table",
   "description": "A simple table component.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-simple-table.tsx",
       "type": "registry:component",
       "target": "r-simple-table.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

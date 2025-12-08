@@ -5,12 +5,17 @@
   "title": "UI Sonner",
   "description": "Toast notifications using Sonner.",
   "dependencies": ["sonner"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/ui/sonner.tsx",
       "type": "registry:ui",
       "target": "sonner.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

@@ -5,12 +5,22 @@
   "title": "Statistic Dashboard",
   "description": "A statistic dashboard component for displaying metrics.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["utils", "r-card"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-statistic-dashboard.tsx",
       "type": "registry:component",
       "target": "r-statistic-dashboard.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/base/r-card.tsx",
+      "type": "registry:component",
+      "target": "r-card.tsx"
     }
   ]
 }

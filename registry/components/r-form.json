@@ -5,12 +5,22 @@
   "title": "Form",
   "description": "A form component with validation and React Hook Form integration.",
   "dependencies": ["react-hook-form", "react-i18next"],
-  "registryDependencies": ["utils", "ui-form"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-form.tsx",
       "type": "registry:component",
       "target": "r-form.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/ui/form.tsx",
+      "type": "registry:ui",
+      "target": "form.tsx"
     }
   ]
 }

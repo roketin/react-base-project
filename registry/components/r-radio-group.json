@@ -5,12 +5,17 @@
   "title": "Radio Group",
   "description": "A radio group component.",
   "dependencies": [],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-radio-group.tsx",
       "type": "registry:component",
       "target": "r-radio-group.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

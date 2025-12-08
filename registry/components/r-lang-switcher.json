@@ -5,12 +5,27 @@
   "title": "Language Switcher",
   "description": "A language switcher component with i18n support.",
   "dependencies": ["react-i18next", "lucide-react", "sonner"],
-  "registryDependencies": ["utils", "ui-popover", "r-btn"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-lang-switcher.tsx",
       "type": "registry:component",
       "target": "r-lang-switcher.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/ui/popover.tsx",
+      "type": "registry:ui",
+      "target": "popover.tsx"
+    },
+    {
+      "path": "src/modules/app/components/base/r-btn.tsx",
+      "type": "registry:component",
+      "target": "r-btn.tsx"
     }
   ]
 }

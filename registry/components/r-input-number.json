@@ -5,12 +5,22 @@
   "title": "Input Number",
   "description": "A number input component with min/max validation.",
   "dependencies": [],
-  "registryDependencies": ["utils", "r-input"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-input-number.tsx",
       "type": "registry:component",
       "target": "r-input-number.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/base/r-input.tsx",
+      "type": "registry:component",
+      "target": "r-input.tsx"
     }
   ]
 }

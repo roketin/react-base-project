@@ -5,12 +5,17 @@
   "title": "Pagination",
   "description": "A pagination component for navigating pages.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["utils"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-pagination.tsx",
       "type": "registry:component",
       "target": "r-pagination.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
     }
   ]
 }

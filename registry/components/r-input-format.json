@@ -5,12 +5,17 @@
   "title": "Input Format",
   "description": "An input component with formatting support using Maskito.",
   "dependencies": ["@maskito/core", "@maskito/react"],
-  "registryDependencies": ["r-input"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-input-format.tsx",
       "type": "registry:component",
       "target": "r-input-format.tsx"
+    },
+    {
+      "path": "src/modules/app/components/base/r-input.tsx",
+      "type": "registry:component",
+      "target": "r-input.tsx"
     }
   ]
 }

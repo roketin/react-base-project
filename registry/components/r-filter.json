@@ -5,12 +5,27 @@
   "title": "Filter",
   "description": "A filter component with popover for advanced filtering options.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["utils", "ui-popover", "r-btn"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-filter.tsx",
       "type": "registry:component",
       "target": "r-filter.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/ui/popover.tsx",
+      "type": "registry:ui",
+      "target": "popover.tsx"
+    },
+    {
+      "path": "src/modules/app/components/base/r-btn.tsx",
+      "type": "registry:component",
+      "target": "r-btn.tsx"
     }
   ]
 }

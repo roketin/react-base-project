@@ -5,12 +5,32 @@
   "title": "Popconfirm",
   "description": "A popconfirm component for confirming actions.",
   "dependencies": ["lucide-react"],
-  "registryDependencies": ["utils", "ui-popover", "ui-variants", "r-btn"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-popconfirm.tsx",
       "type": "registry:component",
       "target": "r-popconfirm.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/ui/popover.tsx",
+      "type": "registry:ui",
+      "target": "popover.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/ui-variants.ts",
+      "type": "registry:lib",
+      "target": "ui-variants.ts"
+    },
+    {
+      "path": "src/modules/app/components/base/r-btn.tsx",
+      "type": "registry:component",
+      "target": "r-btn.tsx"
     }
   ]
 }

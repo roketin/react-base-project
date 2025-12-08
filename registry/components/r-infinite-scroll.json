@@ -5,12 +5,22 @@
   "title": "Infinite Scroll",
   "description": "An infinite scroll component for loading more content.",
   "dependencies": [],
-  "registryDependencies": ["utils", "r-virtual-scroll"],
+  "registryDependencies": [],
   "files": [
     {
       "path": "src/modules/app/components/base/r-infinite-scroll.tsx",
       "type": "registry:component",
       "target": "r-infinite-scroll.tsx"
+    },
+    {
+      "path": "src/modules/app/libs/utils.ts",
+      "type": "registry:lib",
+      "target": "utils.ts"
+    },
+    {
+      "path": "src/modules/app/components/base/r-virtual-scroll.tsx",
+      "type": "registry:component",
+      "target": "r-virtual-scroll.tsx"
     }
   ]
 }
