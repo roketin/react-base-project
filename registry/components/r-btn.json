@@ -10,17 +10,17 @@
     {
       "path": "src/modules/app/components/base/r-btn.tsx",
       "type": "registry:component",
-      "target": "src/modules/app/components/base/r-btn.tsx"
+      "target": "r-btn.tsx"
     },
     {
       "path": "src/modules/app/libs/utils.ts",
       "type": "registry:lib",
-      "target": "src/modules/app/libs/utils.ts"
+      "target": "utils.ts"
     },
     {
       "path": "src/modules/app/libs/ui-variants.ts",
       "type": "registry:lib",
-      "target": "src/modules/app/libs/ui-variants.ts"
+      "target": "ui-variants.ts"
     }
   ]
 }
