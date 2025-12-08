@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/ui/form.tsx",
       "type": "registry:ui",
-      "target": "src/modules/app/components/ui/form.tsx"
+      "target": "form.tsx"
     }
   ]
 }

@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/libs/ui-variants.ts",
       "type": "registry:lib",
-      "target": "src/modules/app/libs/ui-variants.ts"
+      "target": "ui-variants.ts"
     }
   ]
 }

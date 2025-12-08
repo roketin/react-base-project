@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/libs/utils.ts",
       "type": "registry:lib",
-      "target": "src/modules/app/libs/utils.ts"
+      "target": "utils.ts"
     }
   ]
 }

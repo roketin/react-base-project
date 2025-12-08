@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/ui/alert-dialog.tsx",
       "type": "registry:ui",
-      "target": "src/modules/app/components/ui/alert-dialog.tsx"
+      "target": "alert-dialog.tsx"
     }
   ]
 }

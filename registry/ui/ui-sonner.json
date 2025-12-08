@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/ui/sonner.tsx",
       "type": "registry:ui",
-      "target": "src/modules/app/components/ui/sonner.tsx"
+      "target": "sonner.tsx"
     }
   ]
 }

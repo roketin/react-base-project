@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/ui/dropdown-menu.tsx",
       "type": "registry:ui",
-      "target": "src/modules/app/components/ui/dropdown-menu.tsx"
+      "target": "dropdown-menu.tsx"
     }
   ]
 }

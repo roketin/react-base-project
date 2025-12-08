@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/ui/dialog.tsx",
       "type": "registry:ui",
-      "target": "src/modules/app/components/ui/dialog.tsx"
+      "target": "dialog.tsx"
     }
   ]
 }

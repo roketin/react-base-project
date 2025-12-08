@@ -10,7 +10,7 @@
     {
       "path": "src/modules/app/components/ui/command.tsx",
       "type": "registry:ui",
-      "target": "src/modules/app/components/ui/command.tsx"
+      "target": "command.tsx"
     }
   ]
 }
