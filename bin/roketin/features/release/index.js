@@ -36,34 +36,6 @@ export default async function versionFeature({ args }) {
   console.clear();
   console.log(` 🚀 Roketin Release System | Current App Version: ${current}`);
 
-  // Verify branch = develop
-  try {
-    const branch = execSync('git rev-parse --abbrev-ref HEAD')
-      .toString()
-      .trim();
-    if (branch !== 'develop' && branch !== 'ddd') {
-      console.log(
-        `❌ Release blocked: You are on '${branch}' branch. Switch to 'develop' before releasing.`,
-      );
-      return;
-    }
-  } catch {
-    console.log('⚠️ Unable to determine Git branch. Aborting for safety.');
-    return;
-  }
-
-  // // Check git status — block release if no changes
-  // try {
-  //   const status = execSync('git status --porcelain').toString().trim();
-  //   if (!status) {
-  //     console.log('⚠️ No changes detected in Git. Nothing to release.');
-  //     return;
-  //   }
-  // } catch {
-  //   console.log('⚠️ Unable to verify git status. Aborting for safety.');
-  //   return;
-  // }
-
   const type = await select({
     message: 'Select release type:',
     choices: [
