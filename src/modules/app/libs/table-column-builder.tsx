@@ -14,12 +14,32 @@ import { RBadge } from '@/modules/app/components/base/r-badge';
 
 type Alignment = 'left' | 'center' | 'right';
 
+/** Helper type to get nested keys with dot notation */
+type NestedKeyOf<T> = T extends object
+  ? {
+      [K in keyof T & string]: T[K] extends
+        | string
+        | number
+        | boolean
+        | null
+        | undefined
+        | Date
+        ? K
+        : T[K] extends object
+          ? K | `${K}.${NestedKeyOf<T[K]>}`
+          : K;
+    }[keyof T & string]
+  : never;
+
 /**
  * Options for text column
  */
-export type TextColumnOptions<TData> = {
+export type TextColumnOptions<
+  TData,
+  K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
+> = {
   /** Accessor key for the data property */
-  accessorKey: string;
+  accessorKey: K;
   /** Column header text */
   header: string;
   /** Column width */
@@ -39,10 +59,10 @@ export type TextColumnOptions<TData> = {
 /**
  * Options for number column
  */
-export type NumberColumnOptions<TData> = Omit<
-  TextColumnOptions<TData>,
-  'render'
-> & {
+export type NumberColumnOptions<
+  TData,
+  K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
+> = Omit<TextColumnOptions<TData, K>, 'render'> & {
   /** Number formatter */
   format?: (value: number) => string;
   /** Fallback value when null/undefined */
@@ -52,9 +72,12 @@ export type NumberColumnOptions<TData> = Omit<
 /**
  * Options for date column
  */
-export type DateColumnOptions = {
+export type DateColumnOptions<
+  TData,
+  K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
+> = {
   /** Accessor key for the data property */
-  accessorKey: string;
+  accessorKey: K;
   /** Column header text */
   header: string;
   /** Column width */
@@ -76,9 +99,12 @@ export type DateColumnOptions = {
 /**
  * Options for currency column
  */
-export type CurrencyColumnOptions = {
+export type CurrencyColumnOptions<
+  TData,
+  K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
+> = {
   /** Accessor key for the data property */
-  accessorKey: string;
+  accessorKey: K;
   /** Column header text */
   header: string;
   /** Column width */
@@ -100,9 +126,12 @@ export type CurrencyColumnOptions = {
 /**
  * Options for badge column
  */
-export type BadgeColumnOptions<TData> = {
+export type BadgeColumnOptions<
+  TData,
+  K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
+> = {
   /** Accessor key for the data property */
-  accessorKey: string;
+  accessorKey: K;
   /** Column header text */
   header: string;
   /** Column width */
@@ -148,11 +177,30 @@ export type CheckboxColumnOptions = {
 };
 
 /**
+ * Options for row number column
+ */
+export type RowNumberColumnOptions = {
+  /** Column header text */
+  header?: string;
+  /** Column width */
+  size?: number;
+  /** Sticky position */
+  sticky?: StickyPosition;
+  /** Header alignment */
+  headerAlign?: Alignment;
+  /** Cell alignment */
+  cellAlign?: Alignment;
+};
+
+/**
  * Options for link column
  */
-export type LinkColumnOptions<TData> = {
+export type LinkColumnOptions<
+  TData,
+  K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
+> = {
   /** Accessor key for the data property */
-  accessorKey: string;
+  accessorKey: K;
   /** Column header text */
   header: string;
   /** Column width */
@@ -209,7 +257,9 @@ export class TableColumnBuilder<TData> {
   /**
    * Add a text column
    */
-  text(options: TextColumnOptions<TData>): this {
+  text<K extends NestedKeyOf<TData>>(
+    options: TextColumnOptions<TData, K>,
+  ): this {
     const {
       accessorKey,
       header,
@@ -222,7 +272,7 @@ export class TableColumnBuilder<TData> {
     } = options;
 
     this.columns.push({
-      accessorKey,
+      accessorKey: accessorKey as string,
       header,
       size,
       sticky,
@@ -232,7 +282,7 @@ export class TableColumnBuilder<TData> {
       cell: render
         ? ({ row }) =>
             render(row.original[accessorKey as keyof TData], row.original)
-        : undefined,
+        : ({ getValue }) => String(getValue() ?? '-'),
     });
 
     return this;
@@ -241,7 +291,9 @@ export class TableColumnBuilder<TData> {
   /**
    * Add a number column with optional formatting
    */
-  number(options: NumberColumnOptions<TData>): this {
+  number<K extends NestedKeyOf<TData>>(
+    options: NumberColumnOptions<TData, K>,
+  ): this {
     const {
       accessorKey,
       header,
@@ -255,7 +307,7 @@ export class TableColumnBuilder<TData> {
     } = options;
 
     this.columns.push({
-      accessorKey,
+      accessorKey: accessorKey as string,
       header,
       size,
       sticky,
@@ -275,7 +327,9 @@ export class TableColumnBuilder<TData> {
   /**
    * Add a date column with formatting
    */
-  date(options: DateColumnOptions): this {
+  date<K extends NestedKeyOf<TData>>(
+    options: DateColumnOptions<TData, K>,
+  ): this {
     const {
       accessorKey,
       header,
@@ -289,7 +343,7 @@ export class TableColumnBuilder<TData> {
     } = options;
 
     this.columns.push({
-      accessorKey,
+      accessorKey: accessorKey as string,
       header,
       size,
       sticky,
@@ -308,7 +362,9 @@ export class TableColumnBuilder<TData> {
   /**
    * Add a currency column with formatting
    */
-  currency(options: CurrencyColumnOptions): this {
+  currency<K extends NestedKeyOf<TData>>(
+    options: CurrencyColumnOptions<TData, K>,
+  ): this {
     const {
       accessorKey,
       header,
@@ -322,7 +378,7 @@ export class TableColumnBuilder<TData> {
     } = options;
 
     this.columns.push({
-      accessorKey,
+      accessorKey: accessorKey as string,
       header,
       size,
       sticky,
@@ -343,7 +399,9 @@ export class TableColumnBuilder<TData> {
   /**
    * Add a badge/tag column
    */
-  badge(options: BadgeColumnOptions<TData>): this {
+  badge<K extends NestedKeyOf<TData>>(
+    options: BadgeColumnOptions<TData, K>,
+  ): this {
     const {
       accessorKey,
       header,
@@ -356,7 +414,7 @@ export class TableColumnBuilder<TData> {
     } = options;
 
     this.columns.push({
-      accessorKey,
+      accessorKey: accessorKey as string,
       header,
       size,
       sticky,
@@ -441,9 +499,37 @@ export class TableColumnBuilder<TData> {
   }
 
   /**
+   * Add a row number column
+   */
+  rowNumber(options?: RowNumberColumnOptions): this {
+    const {
+      header = 'No',
+      size = 60,
+      sticky,
+      headerAlign = 'center',
+      cellAlign = 'center',
+    } = options || {};
+
+    this.columns.push({
+      id: 'rowNumber',
+      header,
+      size,
+      sticky,
+      enableSorting: false,
+      headerAlign,
+      cellAlign,
+      cell: ({ row }) => row.index + 1,
+    });
+
+    return this;
+  }
+
+  /**
    * Add a link column
    */
-  link(options: LinkColumnOptions<TData>): this {
+  link<K extends NestedKeyOf<TData>>(
+    options: LinkColumnOptions<TData, K>,
+  ): this {
     const {
       accessorKey,
       header,
@@ -461,7 +547,7 @@ export class TableColumnBuilder<TData> {
     } = options;
 
     this.columns.push({
-      accessorKey,
+      accessorKey: accessorKey as string,
       header,
       size,
       sticky,
