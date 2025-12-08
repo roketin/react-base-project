@@ -18,7 +18,7 @@
       "target": "show-alert-validation.tsx"
     },
     {
-      "path": "src/modules/app/contexts/form-config-context.tsx",
+      "path": "src/modules/app/contexts/form-config-context.ts",
       "type": "registry:context",
       "target": "form-config-context.tsx"
     },
