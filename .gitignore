@@ -26,3 +26,8 @@ dist-ssr
 coverage
 src/@types/i18next.d.ts
 storybook-static/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
