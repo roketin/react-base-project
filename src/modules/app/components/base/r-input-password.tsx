@@ -7,10 +7,18 @@ import RBtn from '@/modules/app/components/base/r-btn';
 import type { TBaseInputDefaultProps } from '@/modules/app/types/component.type';
 import { Eye, EyeOff } from 'lucide-react';
 
-export const RInputPassword = (
-  props: React.ComponentProps<'input'> & TBaseInputDefaultProps & TRInputProps,
-) => {
-  const [show, setShow] = useState(false);
+export type TRInputPasswordProps = React.ComponentProps<'input'> &
+  TBaseInputDefaultProps &
+  TRInputProps & {
+    /** Show password by default */
+    defaultVisible?: boolean;
+  };
+
+export const RInputPassword = ({
+  defaultVisible = false,
+  ...props
+}: TRInputPasswordProps) => {
+  const [show, setShow] = useState(defaultVisible);
 
   return (
     <RInput
