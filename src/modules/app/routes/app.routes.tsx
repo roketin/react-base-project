@@ -33,6 +33,12 @@ export function loadRoutes(): TAppRouteObject[] {
       continue;
     }
 
+    // Skip nested/child module routes (e.g., modules/master-data/modules/client/routes/...)
+    // These are already imported by their parent module's route file
+    if (/modules\/[^/]+\/modules\//.test(path)) {
+      continue;
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mod: any = routeModules[path];
 

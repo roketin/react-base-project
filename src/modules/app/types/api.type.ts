@@ -34,7 +34,7 @@ export type TApiResponsePaginateMeta = {
  */
 export type TApiDefaultQueryParams = Partial<{
   sort_order: string;
-  sort_field: string;
+  sort_by: string;
   search: string;
   per_page: number;
   page: number;
