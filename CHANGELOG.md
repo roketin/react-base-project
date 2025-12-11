@@ -1,3 +1,24 @@
+## [3.4.0] - 2025-12-11
+
+### 🚀 Features
+
+- *(app)* Update deps & add framer motion
+- Textarea support variant & auto grow
+- Improve result, list, alert-dialog with animation
+- *(data-table)* Add prop empty content
+- *(password)* Add prop default visible
+- *(app)* Add form detail context for reusable passing detail to child
+- *(app)* Improve locales on functional hooks
+- *(app)* Improve some reusable helper
+- Completed unit-test for all r-components & improve some component functional
+
+### 🐛 Bug Fixes
+
+- *(app)* Remove .env and add example env
+
+### 🧪 Testing
+
+- Add vitest config with v8 provider
 ## [3.3.1] - 2025-12-07
 
 ### 🚀 Features
