@@ -37,5 +37,11 @@
   },
   "fileUploader": {
     "description": "Ekstensi yang diizinkan: {{extensions}} | Ukuran maks: {{maxSize}}MB"
+  },
+  "leavePageGuard": {
+    "message": "Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin meninggalkan halaman ini?",
+    "title": "Tinggalkan halaman ini?",
+    "leave": "Tinggalkan",
+    "stay": "Tetap di sini"
   }
 }

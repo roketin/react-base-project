@@ -4,6 +4,7 @@ import {
   useBeforeUnload,
   useBlocker,
 } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import showAlert, {
   type TAlertConfirmationConfig,
 } from '@/modules/app/components/base/show-alert';
@@ -21,15 +22,16 @@ export type LeavePageGuard = {
   confirmNavigation: () => Promise<boolean>;
 };
 
-const DEFAULT_MESSAGE =
-  'You have unsaved changes. Are you sure you want to leave this page?';
-
 export function useLeavePageGuard({
   enabled,
-  message = DEFAULT_MESSAGE,
+  message,
   confirmStrategy = 'alert',
   alertConfig,
 }: LeavePageGuardOptions): LeavePageGuard {
+  const { t } = useTranslation('app');
+  const defaultMessage = t('leavePageGuard.message');
+  const finalMessage = message ?? defaultMessage;
+
   const [canSafelyLeave, setCanSafelyLeaveState] = useState(!enabled);
   const enabledRef = useRef(enabled);
   enabledRef.current = enabled;
@@ -46,9 +48,9 @@ export function useLeavePageGuard({
       (event) => {
         if (!enabledRef.current) return;
         event.preventDefault();
-        event.returnValue = message;
+        event.returnValue = finalMessage;
       },
-      [message],
+      [finalMessage],
     ),
     { capture: true },
   );
@@ -89,10 +91,10 @@ export function useLeavePageGuard({
       const result = await new Promise<boolean>((resolve) => {
         showAlert(
           {
-            title: alertConfig?.title ?? 'Leave this page?',
-            description: alertConfig?.description ?? message,
-            okText: alertConfig?.okText ?? 'Leave',
-            cancelText: alertConfig?.cancelText ?? 'Stay',
+            title: alertConfig?.title ?? t('leavePageGuard.title'),
+            description: alertConfig?.description ?? finalMessage,
+            okText: alertConfig?.okText ?? t('leavePageGuard.leave'),
+            cancelText: alertConfig?.cancelText ?? t('leavePageGuard.stay'),
             manualClose: true,
             type: 'confirm',
             ...alertConfig,
@@ -110,12 +112,12 @@ export function useLeavePageGuard({
       return result;
     }
 
-    const confirmResult = window.confirm(message);
+    const confirmResult = window.confirm(finalMessage);
     if (confirmResult) {
       setCanSafelyLeave(true);
     }
     return confirmResult;
-  }, [alertConfig, confirmStrategy, message, setCanSafelyLeave]);
+  }, [alertConfig, confirmStrategy, finalMessage, setCanSafelyLeave, t]);
 
   useEffect(() => {
     if (blockerState !== 'blocked') {

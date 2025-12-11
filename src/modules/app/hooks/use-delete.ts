@@ -15,6 +15,8 @@ type TDeleteHelperOptions<T> = {
   onErrorDeleteAction?: (error: unknown) => void;
   /** Function to get id from item, defaults to item.id */
   getId?: (item: T) => string;
+  /** Success title shown in toast */
+  successTitle?: string;
   /** Success message shown in toast */
   successMessage?: string;
   /** Use popconfirm instead of alert dialog */
@@ -36,6 +38,7 @@ export const useDeleteHelper = <T extends { id?: string | number }>(
     onSuccessDeleteAction,
     onErrorDeleteAction,
     getId = (item) => String(item.id),
+    successTitle,
     successMessage = 'Data deleted successfully',
     usePopconfirm = false,
   } = options;
@@ -70,7 +73,7 @@ export const useDeleteHelper = <T extends { id?: string | number }>(
             await deleteAction(id);
 
             showToast.success({
-              title: 'Success',
+              title: successTitle,
               description: successMessage,
             });
 
@@ -92,6 +95,7 @@ export const useDeleteHelper = <T extends { id?: string | number }>(
       getId,
       onErrorDeleteAction,
       onSuccessDeleteAction,
+      successTitle,
       successMessage,
       usePopconfirm,
     ],
@@ -109,7 +113,7 @@ export const useDeleteHelper = <T extends { id?: string | number }>(
           await deleteAction(id);
 
           showToast.success({
-            title: 'Success',
+            title: successTitle,
             description: successMessage,
           });
 
@@ -129,6 +133,7 @@ export const useDeleteHelper = <T extends { id?: string | number }>(
       isDeleting,
       onErrorDeleteAction,
       onSuccessDeleteAction,
+      successTitle,
       successMessage,
     ],
   );
