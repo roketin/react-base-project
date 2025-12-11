@@ -1,15 +1,27 @@
-import { forwardRef, type TextareaHTMLAttributes } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+  type TextareaHTMLAttributes,
+} from 'react';
 import { cn } from '@/modules/app/libs/utils';
-import { getTextareaClasses } from '@/modules/app/libs/ui-variants';
+import { textareaVariants } from '@/modules/app/libs/ui-variants';
+import { type VariantProps } from 'class-variance-authority';
 
-export type TRTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
-  label?: string;
-  error?: string;
-  helperText?: string;
-  wrapperClassName?: string;
-  fullWidth?: boolean;
-  resize?: 'none' | 'vertical' | 'horizontal' | 'both';
-};
+export type TRTextareaProps = Omit<
+  TextareaHTMLAttributes<HTMLTextAreaElement>,
+  'size'
+> &
+  VariantProps<typeof textareaVariants> & {
+    label?: string;
+    error?: string;
+    helperText?: string;
+    wrapperClassName?: string;
+    fullWidth?: boolean;
+    resize?: 'none' | 'vertical' | 'horizontal' | 'both';
+    autoResize?: boolean;
+  };
 
 export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
   (
@@ -23,13 +35,58 @@ export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
       className,
       disabled,
       id,
+      autoResize = false,
+      onInput,
+      value,
+      defaultValue,
+      style,
+      size = 'default',
       ...props
     },
     ref,
   ) => {
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
     const textareaId =
       id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
     const hasError = !!error;
+
+    const handleAutoResize = useCallback(
+      (element: HTMLTextAreaElement | null) => {
+        if (!autoResize || !element) return;
+        element.style.height = 'auto';
+        element.style.height = `${element.scrollHeight}px`;
+      },
+      [autoResize],
+    );
+
+    useEffect(() => {
+      handleAutoResize(textareaRef.current);
+    }, [handleAutoResize, value, defaultValue]);
+
+    const handleInput = (event: React.FormEvent<HTMLTextAreaElement>): void => {
+      handleAutoResize(event.currentTarget);
+      onInput?.(event);
+    };
+
+    const setRefs = (node: HTMLTextAreaElement | null) => {
+      textareaRef.current = node;
+
+      if (typeof ref === 'function') {
+        ref(node);
+      } else if (ref) {
+        ref.current = node;
+      }
+    };
+
+    const resizeClass = autoResize
+      ? 'resize-none'
+      : resize === 'none'
+        ? 'resize-none'
+        : resize === 'vertical'
+          ? 'resize-y'
+          : resize === 'horizontal'
+            ? 'resize-x'
+            : 'resize';
 
     return (
       <div
@@ -52,18 +109,18 @@ export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
         )}
 
         <textarea
-          ref={ref}
+          ref={setRefs}
           id={textareaId}
           disabled={disabled}
           aria-invalid={hasError}
-          className={cn(
-            getTextareaClasses(hasError),
-            resize === 'none' && 'resize-none',
-            resize === 'vertical' && 'resize-y',
-            resize === 'horizontal' && 'resize-x',
-            resize === 'both' && 'resize',
-            className,
-          )}
+          className={cn(textareaVariants({ size }), resizeClass, className)}
+          value={value}
+          defaultValue={defaultValue}
+          onInput={handleInput}
+          style={{
+            ...(autoResize ? { overflow: 'hidden' } : {}),
+            ...style,
+          }}
           {...props}
         />
 

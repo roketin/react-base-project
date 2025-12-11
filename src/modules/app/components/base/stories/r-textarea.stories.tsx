@@ -97,3 +97,61 @@ export const FullWidth: Story = {
     ),
   ],
 };
+
+export const SizeExtraSmall: Story = {
+  args: {
+    label: 'Extra Small Size',
+    placeholder: 'Extra small textarea',
+    size: 'xs',
+  },
+};
+
+export const SizeSmall: Story = {
+  args: {
+    label: 'Small Size',
+    placeholder: 'Small textarea',
+    size: 'sm',
+  },
+};
+
+export const SizeDefault: Story = {
+  args: {
+    label: 'Default Size',
+    placeholder: 'Default textarea',
+    size: 'default',
+  },
+};
+
+export const SizeLarge: Story = {
+  args: {
+    label: 'Large Size',
+    placeholder: 'Large textarea',
+    size: 'lg',
+  },
+};
+
+export const AutoGrow: Story = {
+  args: {
+    label: 'Auto Grow',
+    placeholder: 'Type here and the textarea will grow automatically...',
+    autoGrow: true,
+    defaultValue:
+      'This textarea automatically adjusts its height based on content.\n\nTry adding more lines to see it grow!',
+  },
+};
+
+export const AutoGrowWithFullWidth: Story = {
+  args: {
+    label: 'Auto Grow Full Width',
+    placeholder: 'Auto-growing textarea with full width',
+    autoGrow: true,
+    fullWidth: true,
+  },
+  decorators: [
+    (Story) => (
+      <div style={{ width: '500px' }}>
+        <Story />
+      </div>
+    ),
+  ],
+};
