@@ -10,7 +10,7 @@ export type TRTableProps = ComponentPropsWithoutRef<'table'> & {
 export const RTable = forwardRef<HTMLTableElement, TRTableProps>(
   ({ className, fixed = false, bordered = false, ...props }, ref) => {
     return (
-      <div className='w-full min-w-0 overflow-x-auto rounded-md border'>
+      <div className='w-full min-w-0 overflow-x-auto rounded-md border border-b-0 p-px'>
         <table
           ref={ref}
           className={cn(

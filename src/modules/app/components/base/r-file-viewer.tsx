@@ -4,16 +4,9 @@ import {
   getFileGroupType,
 } from '@/modules/app/libs/file-utils';
 import { cn } from '@/modules/app/libs/utils';
-import {
-  memo,
-  useEffect,
-  useMemo,
-  useState,
-  type ImgHTMLAttributes,
-} from 'react';
-import RDialog from '@/modules/app/components/base/r-dialog';
-import { RImg } from '@/modules/app/components/base/r-img';
-import { RLoading } from '@/modules/app/components/base/r-loading';
+import { memo, useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { X } from 'lucide-react';
 
 export type TRFileViewer = {
   show?: boolean;
@@ -35,13 +28,11 @@ const generateObjectUrl = ({
 };
 
 const RFileViewer = ({ src, show = false, onClose }: TRFileViewer) => {
-  // Check is file
   const isFileObject = useMemo<boolean>(
     () => !(!src || !(src instanceof File)),
     [src],
   );
 
-  // Get file group type
   const mimeType = useMemo(() => {
     if (!src) return undefined;
     if (isFileObject) {
@@ -56,24 +47,16 @@ const RFileViewer = ({ src, show = false, onClose }: TRFileViewer) => {
   }, [isFileObject, src]);
 
   const fileGroupType = useMemo(() => {
-    if (!src) {
-      return 'custom';
-    }
-
+    if (!src) return 'custom';
     const ext = isFileObject
       ? getFileExtensionFromFile(src as unknown as File)
       : getFileExtensionFromString(src as string);
-
     return getFileGroupType(ext, mimeType);
   }, [isFileObject, mimeType, src]);
 
-  // Actual src
   const actualSrc = useMemo<string | null>(() => {
     if (!src) return null;
-    return generateObjectUrl({
-      isFileObject,
-      src,
-    });
+    return generateObjectUrl({ isFileObject, src });
   }, [isFileObject, src]);
 
   useEffect(() => {
@@ -84,170 +67,137 @@ const RFileViewer = ({ src, show = false, onClose }: TRFileViewer) => {
   }, [actualSrc, isFileObject]);
 
   const [isZoomed, setIsZoomed] = useState(false);
-  const [isZoomable, setIsZoomable] = useState(false);
-  const [imageDimensions, setImageDimensions] = useState<{
-    width: number;
-    height: number;
-  }>({ width: 0, height: 0 });
-  const [zoomScale, setZoomScale] = useState(1);
 
   useEffect(() => {
-    if (!show) {
-      setIsZoomed(false);
-    }
+    if (!show) setIsZoomed(false);
   }, [show, src]);
 
+  // Lock body scroll when open
   useEffect(() => {
-    setIsZoomable(false);
-    setImageDimensions({ width: 0, height: 0 });
-    setZoomScale(1);
-  }, [actualSrc]);
-
-  const handleImageLoad: ImgHTMLAttributes<HTMLImageElement>['onLoad'] = (
-    event,
-  ) => {
-    const target = event.currentTarget;
-    const naturalWidth = target?.naturalWidth ?? 0;
-    const naturalHeight = target?.naturalHeight ?? 0;
-
-    setImageDimensions({
-      width: naturalWidth,
-      height: naturalHeight,
-    });
-    setIsZoomed(false);
-    setZoomScale(1);
-
-    if (typeof window !== 'undefined') {
-      const { innerWidth, innerHeight } = window;
-      const isLargeImage =
-        naturalWidth >= innerWidth || naturalHeight >= innerHeight;
-      if (isLargeImage) {
-        setIsZoomable(false);
-        setIsZoomed(false);
-        setZoomScale(1);
-        return;
-      }
-
-      const widthScale = innerWidth / naturalWidth;
-      const heightScale = innerHeight / naturalHeight;
-      const scaleToFit = Math.min(widthScale, heightScale);
-
-      const clampedScale = Number.isFinite(scaleToFit)
-        ? Math.min(Math.max(scaleToFit, 1), 4)
-        : 1;
-
-      setZoomScale(clampedScale);
-      setIsZoomable(clampedScale > 1.01);
+    if (show) {
+      document.body.style.overflow = 'hidden';
     } else {
-      setIsZoomable(false);
-      setIsZoomed(false);
-      setZoomScale(1);
+      document.body.style.overflow = '';
     }
-  };
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [show]);
 
-  const imageStyles =
-    isZoomable && imageDimensions.width && imageDimensions.height
-      ? {
-          width: `${imageDimensions.width}px`,
-          height: `${imageDimensions.height}px`,
-          maxWidth: isZoomed ? '100%' : `${imageDimensions.width}px`,
-          maxHeight: isZoomed ? '100%' : `${imageDimensions.height}px`,
-        }
-      : {
-          maxWidth: '100%',
-          maxHeight: '100%',
-        };
+  // Close on escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    if (show) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [show, onClose]);
 
   return (
-    <RDialog
-      open={show}
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-      hideHeader
-      hideFooter
-      showCloseButton
-      fullscreen
-      contentClassName='bg-black/30 backdrop-blur-md'
-    >
-      {fileGroupType === 'image' && actualSrc && (
-        <div className='flex h-full w-full items-center justify-center p-4 overflow-hidden'>
-          <RImg
-            src={actualSrc}
-            alt='File preview'
-            onClick={() => {
-              if (!isZoomable) return;
-              setIsZoomed((prev) => !prev);
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className='fixed inset-0 z-9999 flex items-center justify-center bg-black/80 backdrop-blur-sm'
+          onClick={onClose}
+        >
+          {/* Close button */}
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ delay: 0.1 }}
+            onClick={onClose}
+            className='absolute top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors cursor-pointer'
+          >
+            <X size={20} />
+          </motion.button>
+
+          {/* Content */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              width: isZoomed ? 'calc(100vw - 40px)' : 'auto',
+              height: isZoomed ? 'calc(100svh - 40px)' : 'auto',
             }}
-            lazy={false}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
             className={cn(
-              'items-center justify-center',
-              isZoomable
-                ? isZoomed
-                  ? 'h-full w-full max-h-full max-w-full'
-                  : 'h-auto w-auto'
-                : 'h-full w-full max-h-full max-w-full',
+              'relative',
+              isZoomed ? 'overflow-hidden' : 'overflow-hidden',
             )}
-            imageClassName={cn(
-              'rounded-md shadow-lg transition-transform duration-200 ease-out object-contain',
-              isZoomable
-                ? isZoomed
-                  ? 'cursor-zoom-out w-full h-full'
-                  : 'cursor-zoom-in w-auto h-auto'
-                : 'cursor-default w-full h-full',
-            )}
-            onLoad={handleImageLoad}
-            loader={
-              <div className='absolute inset-0 grid place-items-center'>
-                <RLoading hideLabel iconClassName='size-8 text-white' />
-              </div>
-            }
             style={{
-              ...imageStyles,
-              transform: `scale(${isZoomable && isZoomed ? zoomScale : 1})`,
-              transition:
-                'transform 250ms ease, max-width 250ms ease, max-height 250ms ease',
-              transformOrigin: 'center center',
+              maxWidth: isZoomed ? undefined : '90vw',
+              maxHeight: isZoomed ? undefined : '90svh',
             }}
-          />
-        </div>
-      )}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {fileGroupType === 'image' && actualSrc && (
+              <motion.img
+                src={actualSrc}
+                alt='File preview'
+                onClick={() => setIsZoomed((prev) => !prev)}
+                animate={{
+                  scale: isZoomed ? 1.5 : 1,
+                  borderRadius: isZoomed ? '0px' : '8px',
+                }}
+                transition={{
+                  duration: 0.4,
+                  ease: [0.4, 0, 0.2, 1],
+                }}
+                className={cn(
+                  'shadow-2xl object-contain block mx-auto',
+                  isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in',
+                )}
+                style={{
+                  maxWidth: isZoomed ? 'calc(100vw - 40px)' : '85vw',
+                  maxHeight: isZoomed ? 'calc(100svh - 40px)' : '85svh',
+                  transformOrigin: 'center center',
+                }}
+              />
+            )}
 
-      {fileGroupType === 'pdf' && actualSrc && (
-        <div className='flex h-full w-full items-center justify-center'>
-          <iframe
-            title='viewer'
-            className='h-[80vh] w-full max-w-5xl border-0 rounded-md bg-background shadow-lg'
-            src={actualSrc}
-          />
-        </div>
-      )}
+            {fileGroupType === 'pdf' && actualSrc && (
+              <iframe
+                title='PDF viewer'
+                className='h-[85vh] w-[85vw] max-w-5xl rounded-lg bg-white shadow-2xl'
+                src={actualSrc}
+              />
+            )}
 
-      {fileGroupType === 'doc' && actualSrc && !isFileObject && (
-        <div className='flex h-full w-full items-center justify-center'>
-          <iframe
-            title='office-viewer'
-            className='h-[80vh] w-full max-w-5xl border-0 rounded-md bg-background shadow-lg'
-            src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(actualSrc)}`}
-          />
-        </div>
-      )}
+            {fileGroupType === 'doc' && actualSrc && !isFileObject && (
+              <iframe
+                title='Office viewer'
+                className='h-[85vh] w-[85vw] max-w-5xl rounded-lg bg-white shadow-2xl'
+                src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(actualSrc)}`}
+              />
+            )}
 
-      {fileGroupType === 'doc' && actualSrc && isFileObject && (
-        <div className='flex h-full flex-col items-center justify-center gap-2 p-6 text-sm text-muted-foreground'>
-          <span>Office Online preview requires a publicly accessible URL.</span>
-          <span className='text-xs'>
-            Please upload the document or download it locally to view.
-          </span>
-        </div>
-      )}
+            {fileGroupType === 'doc' && actualSrc && isFileObject && (
+              <div className='rounded-lg bg-white/10 p-8 text-center text-white'>
+                <p>Office Online preview requires a publicly accessible URL.</p>
+                <p className='mt-2 text-sm text-white/70'>
+                  Please upload the document or download it locally to view.
+                </p>
+              </div>
+            )}
 
-      {fileGroupType === 'custom' && (
-        <div className='flex h-full items-center justify-center p-4 text-sm text-muted-foreground'>
-          File not supported.
-        </div>
+            {fileGroupType === 'custom' && (
+              <div className='rounded-lg bg-white/10 p-8 text-center text-white'>
+                File type not supported for preview.
+              </div>
+            )}
+          </motion.div>
+        </motion.div>
       )}
-    </RDialog>
+    </AnimatePresence>
   );
 };
 

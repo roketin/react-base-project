@@ -10,9 +10,9 @@ import React, {
 } from 'react';
 import {
   AudioWaveform,
-  FileArchive,
   FileImage,
   FileSpreadsheet,
+  FileText,
   Search,
   Trash,
   Upload,
@@ -334,9 +334,9 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
 
         return (
           <div className='flex h-full flex-col items-center justify-center px-2 text-center'>
-            <FileArchive size={50} />
+            <FileText size={50} strokeWidth={1} />
             {fileName && (
-              <div className='mt-3 w-full wrap-break-word text-xs'>
+              <div className='mt-3 w-full wrap-break-word text-sm'>
                 {fileName}
               </div>
             )}
@@ -389,10 +389,10 @@ const RFileThumbnail = forwardRef<TRFileUploaderRef, TRFileUploaderThumbsProps>(
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className={cn(
-            'overflow-hidden rounded-lg relative transition-all ease-in-out',
+            'overflow-hidden rounded-lg relative transition-all ease-in-out p-3',
             previewSrc
-              ? 'border-2 border-solid border-border bg-background shadow-sm'
-              : 'border-2 border-dashed border-muted-foreground/25 bg-muted/5',
+              ? 'border border-solid border-border bg-background'
+              : 'border border-dashed border-muted-foreground/25 bg-muted/5',
             !disabledUpload && !previewSrc
               ? 'cursor-pointer hover:border-primary/50 hover:bg-primary/5'
               : '',
@@ -545,9 +545,15 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
       });
 
       remotePreviews.forEach((r, index) => {
+        // Extract filename from URL, removing query params (e.g., AWS S3 presigned URLs)
+        const urlWithoutParams = r.split('?')[0];
+        const fileName = decodeURIComponent(
+          urlWithoutParams.split('/').pop() ?? 'Remote File',
+        );
+
         items.push({
           preview: r,
-          name: r.split('/').pop() ?? 'Remote File',
+          name: fileName,
           index: files.length + index,
           groupType: getFileGroupType(getFileExtensionFromString(r)),
         });
@@ -749,33 +755,20 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
 
     // Shared render item function (reused from compact logic, but adapted if needed)
     const renderListItem = (item: (typeof itemsToRender)[0]) => {
-      const itemIsImage = item.groupType === 'image';
-      const hasPreview = item.preview && itemIsImage;
-
       return (
         <div
           key={item.index}
           className='flex justify-between gap-4 rounded-lg border border-border bg-background p-4'
         >
           <div className='flex items-center gap-3 flex-1 min-w-0'>
-            {/* Icon or Image Preview */}
-            {hasPreview ? (
-              <div className='relative group shrink-0'>
-                <img
-                  src={item.preview}
-                  alt={item.name || 'preview'}
-                  className='size-10 rounded-lg object-cover'
-                />
-              </div>
-            ) : (
-              <div className='flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0'>
-                {ICON_MAP[icon]}
-              </div>
-            )}
+            {/* Always show icon */}
+            <div className='flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0'>
+              {ICON_MAP[icon]}
+            </div>
 
             {/* File Info */}
             <div className='flex-1 min-w-0 overflow-hidden'>
-              <p className='text-sm font-medium text-foreground truncate'>
+              <p className='text-sm font-medium text-foreground line-clamp-1'>
                 {item.name || label}
               </p>
               <p className='text-xs text-muted-foreground truncate'>
@@ -788,7 +781,7 @@ const RFileUploader = forwardRef<TRFileUploaderRef, TRFileUploaderProps>(
             </div>
           </div>
 
-          {/* Remove Button for non-image or explicit action */}
+          {/* Remove Button */}
           {!disabledDelete && !isUploading && (
             <RBtn
               variant='soft-destructive'
