@@ -518,7 +518,7 @@ type TFilterSelectInfiniteOptions<
 > = {
   id: string;
   label?: ReactNode;
-  defaultValue?: string | TLabeledValue | null;
+  defaultValue?: string | TLabeledValue | Array<string | TLabeledValue> | null;
   query: (options: { variables: TParams }) => MinimalInfiniteQueryResult<TPage>;
   getPageItems: (page: TPage) => TOption[];
   baseParams?: TParams;
@@ -533,7 +533,14 @@ type TFilterSelectInfiniteOptions<
   disabled?: boolean;
   className?: string;
   dropdownClassName?: string;
+  multiple?: boolean;
 };
+
+type FilterSelectInfiniteValue =
+  | string
+  | TLabeledValue
+  | Array<string | TLabeledValue>
+  | null;
 
 export function filterSelectInfinite<
   TPage,
@@ -559,13 +566,16 @@ export function filterSelectInfinite<
   disabled,
   dropdownClassName,
   className,
+  multiple,
 }: TFilterSelectInfiniteOptions<
   TPage,
   TOption,
   TParams,
   TLabel,
   TValue
->): TFilterItem<string | TLabeledValue | null> {
+>): TFilterItem<FilterSelectInfiniteValue> {
+  const isMultiple = multiple === true;
+
   const toLabeledValue = (
     val: string | number | TLabeledValue | null | undefined,
   ): TLabeledValue | null => {
@@ -578,6 +588,15 @@ export function filterSelectInfinite<
     }
     const stringVal = String(val);
     return { value: stringVal, label: stringVal };
+  };
+
+  const normalizeArrayValue = (
+    val: unknown,
+  ): Array<TLabeledValue> | undefined => {
+    if (!Array.isArray(val)) return undefined;
+    return val
+      .map((item) => toLabeledValue(item as string | TLabeledValue))
+      .filter((item): item is TLabeledValue => Boolean(item?.value));
   };
 
   return {
@@ -607,6 +626,7 @@ export function filterSelectInfinite<
           placeholder={placeholder}
           allowClear={clearable}
           showSearch={allowSearch}
+          mode={isMultiple ? 'multiple' : undefined}
           {...(fieldNames ? { fieldNames } : {})}
           labelInValue
           query={query}
@@ -616,11 +636,19 @@ export function filterSelectInfinite<
           deduplicateKey={deduplicateKey}
           debounceMs={debounceMs}
           value={
-            (toLabeledValue(
-              value as string | TLabeledValue | null | undefined,
-            ) ?? undefined) as unknown
+            isMultiple
+              ? (normalizeArrayValue(value) as unknown)
+              : ((toLabeledValue(
+                  value as string | TLabeledValue | null | undefined,
+                ) ?? undefined) as unknown)
           }
           onChange={(nextValue: unknown) => {
+            if (isMultiple) {
+              const normalizedValues = normalizeArrayValue(nextValue) ?? [];
+              onChange(normalizedValues.length > 0 ? normalizedValues : null);
+              return;
+            }
+
             if (nextValue === undefined || nextValue === null) {
               onChange(null);
               return;

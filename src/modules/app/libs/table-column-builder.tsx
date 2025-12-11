@@ -32,16 +32,9 @@ type NestedKeyOf<T> = T extends object
   : never;
 
 /**
- * Options for text column
+ * Common column options shared across all column types
  */
-export type TextColumnOptions<
-  TData,
-  K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
-> = {
-  /** Accessor key for the data property */
-  accessorKey: K;
-  /** Column header text */
-  header: string;
+type CommonColumnOptions = {
   /** Column width */
   size?: number;
   /** Sticky position */
@@ -52,6 +45,21 @@ export type TextColumnOptions<
   headerAlign?: Alignment;
   /** Cell alignment */
   cellAlign?: Alignment;
+  /** Hide column by default */
+  hidden?: boolean;
+};
+
+/**
+ * Options for text column
+ */
+export type TextColumnOptions<
+  TData,
+  K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
+> = CommonColumnOptions & {
+  /** Accessor key for the data property */
+  accessorKey: K;
+  /** Column header text */
+  header: string;
   /** Custom render function */
   render?: (value: unknown, row: TData) => ReactNode;
 };
@@ -62,7 +70,11 @@ export type TextColumnOptions<
 export type NumberColumnOptions<
   TData,
   K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
-> = Omit<TextColumnOptions<TData, K>, 'render'> & {
+> = CommonColumnOptions & {
+  /** Accessor key for the data property */
+  accessorKey: K;
+  /** Column header text */
+  header: string;
   /** Number formatter */
   format?: (value: number) => string;
   /** Fallback value when null/undefined */
@@ -75,25 +87,15 @@ export type NumberColumnOptions<
 export type DateColumnOptions<
   TData,
   K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
-> = {
+> = CommonColumnOptions & {
   /** Accessor key for the data property */
   accessorKey: K;
   /** Column header text */
   header: string;
-  /** Column width */
-  size?: number;
   /** Date format (dayjs format) */
   format?: string;
   /** Fallback value when null/undefined */
   fallback?: string;
-  /** Sticky position */
-  sticky?: StickyPosition;
-  /** Enable sorting */
-  enableSorting?: boolean;
-  /** Header alignment */
-  headerAlign?: Alignment;
-  /** Cell alignment */
-  cellAlign?: Alignment;
 };
 
 /**
@@ -102,25 +104,15 @@ export type DateColumnOptions<
 export type CurrencyColumnOptions<
   TData,
   K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
-> = {
+> = CommonColumnOptions & {
   /** Accessor key for the data property */
   accessorKey: K;
   /** Column header text */
   header: string;
-  /** Column width */
-  size?: number;
   /** Currency prefix */
   prefix?: string;
   /** Fallback value when null/undefined */
   fallback?: string;
-  /** Sticky position */
-  sticky?: StickyPosition;
-  /** Enable sorting */
-  enableSorting?: boolean;
-  /** Header alignment */
-  headerAlign?: Alignment;
-  /** Cell alignment */
-  cellAlign?: Alignment;
 };
 
 /**
@@ -129,67 +121,45 @@ export type CurrencyColumnOptions<
 export type BadgeColumnOptions<
   TData,
   K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
-> = {
+> = CommonColumnOptions & {
   /** Accessor key for the data property */
   accessorKey: K;
   /** Column header text */
   header: string;
-  /** Column width */
-  size?: number;
   /** Custom render function for badge */
   render?: (value: unknown, row: TData) => ReactNode;
-  /** Sticky position */
-  sticky?: StickyPosition;
-  /** Enable sorting */
-  enableSorting?: boolean;
-  /** Header alignment */
-  headerAlign?: Alignment;
-  /** Cell alignment */
-  cellAlign?: Alignment;
 };
 
 /**
  * Options for action column
  */
-export type ActionColumnOptions<TData> = {
+export type ActionColumnOptions<TData> = Omit<
+  CommonColumnOptions,
+  'enableSorting'
+> & {
   /** Column header text */
   header?: string;
-  /** Column width */
-  size?: number;
-  /** Sticky position */
-  sticky?: StickyPosition;
   /** Render function for action buttons */
   render: (row: TData) => ReactNode;
-  /** Header alignment */
-  headerAlign?: Alignment;
-  /** Cell alignment */
-  cellAlign?: Alignment;
 };
 
 /**
  * Options for checkbox column
  */
-export type CheckboxColumnOptions = {
-  /** Column width */
-  size?: number;
-  /** Sticky position */
-  sticky?: StickyPosition;
-};
+export type CheckboxColumnOptions = Pick<
+  CommonColumnOptions,
+  'size' | 'sticky' | 'hidden'
+>;
 
 /**
  * Options for row number column
  */
-export type RowNumberColumnOptions = {
+export type RowNumberColumnOptions = Omit<
+  CommonColumnOptions,
+  'enableSorting'
+> & {
   /** Column header text */
   header?: string;
-  /** Column width */
-  size?: number;
-  /** Sticky position */
-  sticky?: StickyPosition;
-  /** Header alignment */
-  headerAlign?: Alignment;
-  /** Cell alignment */
-  cellAlign?: Alignment;
 };
 
 /**
@@ -198,21 +168,11 @@ export type RowNumberColumnOptions = {
 export type LinkColumnOptions<
   TData,
   K extends NestedKeyOf<TData> = NestedKeyOf<TData>,
-> = {
+> = CommonColumnOptions & {
   /** Accessor key for the data property */
   accessorKey: K;
   /** Column header text */
   header: string;
-  /** Column width */
-  size?: number;
-  /** Sticky position */
-  sticky?: StickyPosition;
-  /** Enable sorting */
-  enableSorting?: boolean;
-  /** Header alignment */
-  headerAlign?: Alignment;
-  /** Cell alignment */
-  cellAlign?: Alignment;
   /** Static href */
   href?: string;
   /** Route name for named routes */
@@ -268,6 +228,7 @@ export class TableColumnBuilder<TData> {
       enableSorting,
       headerAlign,
       cellAlign,
+      hidden,
       render,
     } = options;
 
@@ -277,6 +238,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
+      enableHiding: hidden !== undefined,
       headerAlign,
       cellAlign,
       cell: render
@@ -302,6 +264,7 @@ export class TableColumnBuilder<TData> {
       enableSorting,
       headerAlign,
       cellAlign,
+      hidden,
       format,
       fallback = '-',
     } = options;
@@ -312,6 +275,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
+      enableHiding: hidden !== undefined,
       headerAlign,
       cellAlign,
       cell: ({ getValue }) => {
@@ -340,6 +304,7 @@ export class TableColumnBuilder<TData> {
       enableSorting,
       headerAlign,
       cellAlign,
+      hidden,
     } = options;
 
     this.columns.push({
@@ -348,6 +313,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
+      enableHiding: hidden !== undefined,
       headerAlign,
       cellAlign,
       cell: ({ getValue }) => {
@@ -375,6 +341,7 @@ export class TableColumnBuilder<TData> {
       enableSorting,
       headerAlign,
       cellAlign,
+      hidden,
     } = options;
 
     this.columns.push({
@@ -383,6 +350,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
+      enableHiding: hidden !== undefined,
       headerAlign,
       cellAlign,
       cell: ({ getValue }) => {
@@ -411,6 +379,7 @@ export class TableColumnBuilder<TData> {
       enableSorting,
       headerAlign,
       cellAlign,
+      hidden,
     } = options;
 
     this.columns.push({
@@ -419,6 +388,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
+      enableHiding: hidden !== undefined,
       headerAlign,
       cellAlign,
       cell: render
@@ -443,6 +413,7 @@ export class TableColumnBuilder<TData> {
       render,
       headerAlign,
       cellAlign,
+      hidden,
     } = options;
 
     this.columns.push({
@@ -451,6 +422,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting: false,
+      enableHiding: hidden !== undefined,
       headerAlign,
       cellAlign,
       cell: ({ row }) => render(row.original),
@@ -463,13 +435,14 @@ export class TableColumnBuilder<TData> {
    * Add a checkbox selection column
    */
   checkbox(options?: CheckboxColumnOptions): this {
-    const { size = 50, sticky } = options || {};
+    const { size = 50, sticky, hidden } = options || {};
 
     this.columns.push({
       id: 'select',
       size,
       sticky,
       enableSorting: false,
+      enableHiding: hidden !== undefined,
       header: ({ table }) => {
         const checked = table.getIsAllPageRowsSelected();
         const indeterminate = table.getIsSomePageRowsSelected();
@@ -508,6 +481,7 @@ export class TableColumnBuilder<TData> {
       sticky,
       headerAlign = 'center',
       cellAlign = 'center',
+      hidden,
     } = options || {};
 
     this.columns.push({
@@ -516,6 +490,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting: false,
+      enableHiding: hidden !== undefined,
       headerAlign,
       cellAlign,
       cell: ({ row }) => row.index + 1,
@@ -538,6 +513,7 @@ export class TableColumnBuilder<TData> {
       enableSorting,
       headerAlign,
       cellAlign,
+      hidden,
       href,
       routeName,
       routeParams,
@@ -552,6 +528,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
+      enableHiding: hidden !== undefined,
       headerAlign,
       cellAlign,
       cell: ({ row }) => {

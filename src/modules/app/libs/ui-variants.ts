@@ -164,7 +164,42 @@ export const getInputClasses = (_hasError?: boolean, className?: string) => {
 };
 
 /**
+ * Textarea variants using CVA for consistent styling with size support
+ * Uses CSS variables defined in global.css for centralized theming
+ */
+export const textareaVariants = cva(
+  cn(
+    'flex min-h-[80px] w-full rounded-[var(--form-radius)] border bg-[var(--form-bg)] text-[var(--form-text)]',
+    'transition-colors duration-200',
+    'placeholder:text-[var(--form-placeholder)]',
+    'focus:outline-none focus:ring-2 focus:ring-offset-0',
+    'disabled:cursor-not-allowed disabled:opacity-[var(--form-disabled-opacity)] disabled:bg-[var(--form-disabled-bg)]',
+    'border-[var(--form-border-color)] focus:border-primary focus:ring-primary/20',
+    'shadow-[var(--form-shadow)]',
+    // Error state classes
+    'aria-invalid:border-destructive',
+    'aria-invalid:focus:border-destructive',
+    'aria-invalid:focus:ring-destructive/20',
+  ),
+  {
+    variants: {
+      size: {
+        default:
+          'px-[var(--form-padding-x)] py-2 text-[length:var(--form-font-size)]',
+        sm: 'px-[var(--form-padding-x-sm)] py-1.5 text-sm min-h-[60px]',
+        xs: 'px-2 py-1 text-xs min-h-[48px]',
+        lg: 'px-[var(--form-padding-x-lg)] py-2.5 text-base min-h-[100px]',
+      },
+    },
+    defaultVariants: {
+      size: 'default',
+    },
+  },
+);
+
+/**
  * Textarea base classes (similar to input but with min-height)
+ * @deprecated Use textareaVariants instead for size support
  */
 export const textareaBaseClasses = cn(
   'flex min-h-[80px] w-full rounded-[var(--form-radius)] border bg-[var(--form-bg)] text-[var(--form-text)]',
@@ -180,6 +215,7 @@ export const textareaBaseClasses = cn(
 
 /**
  * Get complete textarea classes with optional error state
+ * @deprecated Use textareaVariants instead for size support
  */
 export const getTextareaClasses = (_hasError?: boolean, className?: string) => {
   return cn(textareaBaseClasses, inputErrorClasses, className);
