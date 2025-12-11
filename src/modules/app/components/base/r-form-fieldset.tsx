@@ -1,5 +1,6 @@
 import { RSeparator } from '@/modules/app/components/base/r-separator';
 import { useFormConfig } from '@/modules/app/contexts/form-config-context';
+import { cn } from '@/modules/app/libs/utils';
 
 // Type for RFormFieldSet props
 type RFormFieldSetProps = {
@@ -67,9 +68,12 @@ export const RFormFieldSet: React.FC<RFormFieldSetProps> = ({
 
   return (
     <div id={id}>
-      <div className={containerClasses}>
+      <div className={cn('min-w-0', containerClasses)}>
         {/* Title and Subtitle Area */}
-        <div className={titleContainerClasses} style={titleStyle}>
+        <div
+          className={cn('min-w-0', titleContainerClasses)}
+          style={titleStyle}
+        >
           <h3
             className={`text-md font-semibold text-foreground ${isHorizontal ? '' : 'lg:text-xl'}`}
           >
@@ -85,7 +89,7 @@ export const RFormFieldSet: React.FC<RFormFieldSetProps> = ({
         </div>
 
         {/* Form Content Area */}
-        <div className={contentContainerClasses}>
+        <div className={cn('min-w-0', contentContainerClasses)}>
           {/* Form content wrapper with simplified style (p-0). */}
           {isHorizontal ? (
             <div className='p-0'>{children}</div>

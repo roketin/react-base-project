@@ -125,7 +125,9 @@ export function RMenu({
           <div className='flex w-full items-center justify-between gap-3'>
             <span className='flex flex-1 items-start gap-3'>
               {item.icon ? (
-                <span className='text-muted-foreground'>{item.icon}</span>
+                <span className='text-muted-foreground relative top-0.5'>
+                  {item.icon}
+                </span>
               ) : null}
               <span className='flex flex-1 flex-col items-start gap-1'>
                 <span>{item.label}</span>

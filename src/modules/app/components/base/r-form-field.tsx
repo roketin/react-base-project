@@ -30,8 +30,8 @@ type TRenderFn<T extends FieldValues, N extends Path<T>> = (args: {
 type ValuePropName = 'value' | 'checked' | 'radio' | 'slider';
 
 type TRFormFieldProps<T extends FieldValues, N extends Path<T>> = {
-  control: Control<T>;
-  name: N;
+  control?: Control<T>;
+  name?: N;
   label?: string | React.ReactNode;
   labelDescription?: string | React.ReactNode;
   description?: string;
@@ -48,32 +48,39 @@ type TRFormFieldProps<T extends FieldValues, N extends Path<T>> = {
   isLoading?: boolean;
 };
 
+type FieldMode = 'normal' | 'preview' | 'loading';
+
+// ============================================================================
 // Helper Components
+// ============================================================================
+
 const FieldLabel = ({
   label,
   labelDescription,
   fieldId,
-  shouldShowRequired,
+  showRequired,
+  isPreview,
   isHorizontal,
 }: {
-  label: string | React.ReactNode;
-  labelDescription?: string | React.ReactNode;
+  label: React.ReactNode;
+  labelDescription?: React.ReactNode;
   fieldId?: string;
-  shouldShowRequired: boolean;
+  showRequired: boolean;
+  isPreview: boolean;
   isHorizontal: boolean;
 }) => (
   <label
-    className='block text-sm font-medium text-foreground'
+    className={cn(
+      'block text-sm text-foreground',
+      isPreview ? 'font-bold' : 'font-medium',
+    )}
     htmlFor={fieldId}
   >
     {label}
-    {shouldShowRequired && <span className='text-lg text-destructive'>*</span>}
-
+    {showRequired && <span className='text-lg text-destructive'>*</span>}
     {labelDescription && (
       <div
-        className={cn('text-xs text-muted-foreground', {
-          'pr-5': isHorizontal,
-        })}
+        className={cn('text-xs text-muted-foreground', isHorizontal && 'pr-5')}
       >
         {labelDescription}
       </div>
@@ -82,13 +89,13 @@ const FieldLabel = ({
 );
 
 const FieldLabelSkeleton = ({
-  labelDescription,
+  hasDescription,
 }: {
-  labelDescription?: string | React.ReactNode;
+  hasDescription: boolean;
 }) => (
   <div className='block'>
     <RSkeleton className='h-5 w-32' />
-    {labelDescription && <RSkeleton className='h-3 w-24 mt-1' />}
+    {hasDescription && <RSkeleton className='h-3 w-24 mt-1' />}
   </div>
 );
 
@@ -111,6 +118,56 @@ const FieldWrapper = ({
   </div>
 );
 
+const FieldContent = ({
+  mode,
+  content,
+  description,
+  showMessage,
+}: {
+  mode: FieldMode;
+  content: React.ReactNode;
+  description?: string;
+  showMessage?: boolean;
+}) => {
+  if (mode === 'loading') {
+    return (
+      <div>
+        <RSkeleton className='h-8 w-full' />
+        {description && <RSkeleton className='h-3 w-48 mt-1.5' />}
+      </div>
+    );
+  }
+
+  if (mode === 'preview') {
+    return (
+      <div>
+        <div className='text-sm text-muted-foreground'>{content}</div>
+        {description && (
+          <FormDescription className='mt-1.5 text-xs'>
+            {description}
+          </FormDescription>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <FormControl>{content}</FormControl>
+      {description && (
+        <FormDescription className='mt-1.5 text-xs'>
+          {description}
+        </FormDescription>
+      )}
+      {showMessage && <FormMessage className='mt-1.5' />}
+    </div>
+  );
+};
+
+// ============================================================================
+// Main Component
+// ============================================================================
+
 export function RFormField<T extends FieldValues, N extends Path<T>>({
   control,
   name,
@@ -132,7 +189,8 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
   const { t } = useTranslation();
   const formConfig = useFormConfig();
 
-  const fieldId = String(name);
+  // Computed values from props and context
+  const fieldId = name ? String(name) : undefined;
   const computedWidth = labelWidth ?? formConfig?.labelWidth ?? '200px';
   const layoutOrientation = (layout ??
     formConfig?.layout ??
@@ -140,14 +198,78 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
   const isHorizontal = layoutOrientation === 'horizontal';
   const isPreviewMode = isPreview || formConfig?.isPreview || false;
   const isLoadingMode = isLoading || formConfig?.isLoading || false;
-  const shouldShowRequired = !notRequired && !isPreviewMode;
   const isDisabled = formConfig?.disabled ?? false;
   const showSeparator = isHorizontal && !formConfig?.hideHorizontalLine;
+
+  // Determine field mode
+  const mode: FieldMode = isLoadingMode
+    ? 'loading'
+    : isPreviewMode
+      ? 'preview'
+      : 'normal';
+  const showRequired = !notRequired && mode === 'normal';
+
   const placeholder =
     withPlaceholder && typeof label === 'string'
       ? `${t('form.enter')} ${label.toLowerCase()}`
       : undefined;
 
+  // Render wrapper with separator
+  const renderWithWrapper = (content: React.ReactNode) => (
+    <FormItem className={className}>
+      <FieldWrapper isHorizontal={isHorizontal} computedWidth={computedWidth}>
+        {content}
+      </FieldWrapper>
+      {showSeparator && <RSeparator className='mt-4 border-t border-border' />}
+    </FormItem>
+  );
+
+  // Render label based on mode
+  const renderLabel = () => {
+    if (!label) return null;
+
+    if (mode === 'loading') {
+      return <FieldLabelSkeleton hasDescription={!!labelDescription} />;
+    }
+
+    return (
+      <FieldLabel
+        label={label}
+        labelDescription={labelDescription}
+        fieldId={fieldId}
+        showRequired={showRequired}
+        isPreview={mode === 'preview'}
+        isHorizontal={isHorizontal}
+      />
+    );
+  };
+
+  // ============================================================================
+  // Without control/name - simple wrapper mode
+  // ============================================================================
+  if (!control || !name) {
+    const displayContent =
+      mode === 'preview'
+        ? previewContent !== undefined
+          ? previewContent
+          : children
+        : children;
+
+    return renderWithWrapper(
+      <>
+        {renderLabel()}
+        <FieldContent
+          mode={mode}
+          content={displayContent}
+          description={description}
+        />
+      </>,
+    );
+  }
+
+  // ============================================================================
+  // With control/name - full form field mode
+  // ============================================================================
   return (
     <FormField
       control={control}
@@ -160,16 +282,17 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
           ...controllerField
         } = renderProps.field;
 
+        // Map value props based on component type
         const controlPropMap: Record<ValuePropName, Record<string, unknown>> = {
           value: { value, onChange },
           checked: { checked: value, onCheckedChange: onChange },
           radio: { value, onValueChange: onChange },
           slider: { value, onValueChange: onChange },
         };
-
         const resolvedControlProps =
           controlPropMap[valuePropName] ?? controlPropMap.value;
 
+        // Handle ref forwarding
         const childRef =
           React.isValidElement(children) &&
           (
@@ -185,143 +308,53 @@ export function RFormField<T extends FieldValues, N extends Path<T>>({
             (fieldRef as MutableRefObject<HTMLInputElement | null>).current =
               node;
           }
-
-          if (!childRef) return;
-
-          if (typeof childRef === 'function') {
-            childRef(node);
-          } else if (childRef) {
-            (childRef as MutableRefObject<HTMLInputElement | null>).current =
-              node;
+          if (childRef) {
+            if (typeof childRef === 'function') {
+              childRef(node);
+            } else {
+              (childRef as MutableRefObject<HTMLInputElement | null>).current =
+                node;
+            }
           }
         };
 
+        // Enhanced field props
         const enhancedField = {
           ...controllerField,
           ...resolvedControlProps,
           id: fieldId as N,
           name: fieldId as N,
-          ...(isDisabled ? { disabled: isDisabled } : {}),
-          ...(placeholder ? { placeholder } : {}),
+          ...(isDisabled && { disabled: isDisabled }),
+          ...(placeholder && { placeholder }),
           ref: assignRefs,
         };
 
+        // Build control content
         const controlContent = render
           ? render({
               ...renderProps,
-              field: {
-                ...renderProps.field,
-                ...enhancedField,
-              },
+              field: { ...renderProps.field, ...enhancedField },
             })
           : React.isValidElement(children)
             ? React.cloneElement(children, enhancedField)
             : null;
 
-        // Loading mode: show skeleton
-        if (isLoadingMode) {
-          return (
-            <FormItem className={className}>
-              <FieldWrapper
-                isHorizontal={isHorizontal}
-                computedWidth={computedWidth}
-              >
-                {label && (
-                  <FieldLabelSkeleton labelDescription={labelDescription} />
-                )}
+        // Determine display content for preview mode
+        const displayContent =
+          previewContent !== undefined
+            ? previewContent
+            : renderProps.field.value?.toString() || '-';
 
-                <div>
-                  <RSkeleton className='h-8 w-full' />
-                  {description && <RSkeleton className='h-3 w-48 mt-1.5' />}
-                </div>
-              </FieldWrapper>
-              {showSeparator && (
-                <RSeparator className='mt-4 border-t border-border' />
-              )}
-            </FormItem>
-          );
-        }
-
-        // Preview mode: show preview content or field value
-        if (isPreviewMode) {
-          const displayContent =
-            previewContent !== undefined
-              ? previewContent
-              : renderProps.field.value?.toString() || '-';
-
-          return (
-            <FormItem className={className}>
-              <FieldWrapper
-                isHorizontal={isHorizontal}
-                computedWidth={computedWidth}
-              >
-                {label && (
-                  <label className='block text-sm font-medium text-foreground'>
-                    {label}
-
-                    {labelDescription && (
-                      <div
-                        className={cn('text-xs text-muted-foreground', {
-                          'pr-5': isHorizontal,
-                        })}
-                      >
-                        {labelDescription}
-                      </div>
-                    )}
-                  </label>
-                )}
-
-                <div>
-                  <div className='text-sm text-foreground'>
-                    {displayContent}
-                  </div>
-
-                  {description && (
-                    <FormDescription className='mt-1.5 text-xs'>
-                      {description}
-                    </FormDescription>
-                  )}
-                </div>
-              </FieldWrapper>
-              {showSeparator && (
-                <RSeparator className='mt-4 border-t border-border' />
-              )}
-            </FormItem>
-          );
-        }
-
-        // Normal mode: editable form field
-        return (
-          <FormItem className={className}>
-            <FieldWrapper
-              isHorizontal={isHorizontal}
-              computedWidth={computedWidth}
-            >
-              {label && (
-                <FieldLabel
-                  label={label}
-                  labelDescription={labelDescription}
-                  fieldId={fieldId}
-                  shouldShowRequired={shouldShowRequired}
-                  isHorizontal={isHorizontal}
-                />
-              )}
-
-              <div>
-                <FormControl>{controlContent}</FormControl>
-
-                {description && (
-                  <FormDescription className='mt-1.5 text-xs'>
-                    {description}
-                  </FormDescription>
-                )}
-                <FormMessage className='mt-1.5' />
-              </div>
-            </FieldWrapper>
-            {showSeparator && (
-              <RSeparator className='mt-4 border-t border-border' />
-            )}
-          </FormItem>
+        return renderWithWrapper(
+          <>
+            {renderLabel()}
+            <FieldContent
+              mode={mode}
+              content={mode === 'preview' ? displayContent : controlContent}
+              description={description}
+              showMessage={mode === 'normal'}
+            />
+          </>,
         );
       }}
     />

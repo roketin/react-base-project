@@ -20,7 +20,7 @@ export type TRTextareaProps = Omit<
     wrapperClassName?: string;
     fullWidth?: boolean;
     resize?: 'none' | 'vertical' | 'horizontal' | 'both';
-    autoResize?: boolean;
+    autoGrow?: boolean;
   };
 
 export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
@@ -35,7 +35,7 @@ export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
       className,
       disabled,
       id,
-      autoResize = false,
+      autoGrow = false,
       onInput,
       value,
       defaultValue,
@@ -50,21 +50,21 @@ export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
       id || `textarea-${Math.random().toString(36).substr(2, 9)}`;
     const hasError = !!error;
 
-    const handleAutoResize = useCallback(
+    const handleAutoGrow = useCallback(
       (element: HTMLTextAreaElement | null) => {
-        if (!autoResize || !element) return;
+        if (!autoGrow || !element) return;
         element.style.height = 'auto';
         element.style.height = `${element.scrollHeight}px`;
       },
-      [autoResize],
+      [autoGrow],
     );
 
     useEffect(() => {
-      handleAutoResize(textareaRef.current);
-    }, [handleAutoResize, value, defaultValue]);
+      handleAutoGrow(textareaRef.current);
+    }, [handleAutoGrow, value, defaultValue]);
 
     const handleInput = (event: React.FormEvent<HTMLTextAreaElement>): void => {
-      handleAutoResize(event.currentTarget);
+      handleAutoGrow(event.currentTarget);
       onInput?.(event);
     };
 
@@ -78,7 +78,7 @@ export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
       }
     };
 
-    const resizeClass = autoResize
+    const resizeClass = autoGrow
       ? 'resize-none'
       : resize === 'none'
         ? 'resize-none'
@@ -118,7 +118,7 @@ export const RTextarea = forwardRef<HTMLTextAreaElement, TRTextareaProps>(
           defaultValue={defaultValue}
           onInput={handleInput}
           style={{
-            ...(autoResize ? { overflow: 'hidden' } : {}),
+            ...(autoGrow ? { overflow: 'hidden' } : {}),
             ...style,
           }}
           {...props}

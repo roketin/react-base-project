@@ -327,7 +327,7 @@ export function RFilterMenu({
       >
         <div className='rounded-xl border shadow-sm bg-card flex flex-col max-h-[50vh]'>
           {/* Filter fields */}
-          <div className='overflow-auto custom-scrollbar p-4 space-y-4 flex-1 min-h-0'>
+          <div className='overflow-y-auto overflow-x-hidden custom-scrollbar p-4 space-y-4 flex-1 min-h-0'>
             {schema.map((item) => (
               <RFilterField
                 key={item.id}
@@ -339,7 +339,7 @@ export function RFilterMenu({
           </div>
 
           {/* Actions */}
-          <div className='flex justify-end gap-2 p-4 border-t bg-card sticky bottom-0'>
+          <div className='flex justify-end gap-2 px-4 pb-5 rounded-b-lg sticky bottom-0'>
             <RBtn variant='outline' onClick={handleReset}>
               Reset
             </RBtn>

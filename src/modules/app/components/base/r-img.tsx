@@ -135,7 +135,7 @@ export const RImg = forwardRef<HTMLImageElement, TRImgProps>(function RImg(
           src={displaySrc}
           alt={alt}
           className={cn(
-            'block size-full object-cover transition-opacity duration-300',
+            'block size-full transition-opacity duration-300',
             isLoaded ? 'opacity-100' : 'opacity-0',
             imageClassName,
           )}
