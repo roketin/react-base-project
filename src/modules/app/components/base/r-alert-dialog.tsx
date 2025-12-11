@@ -18,6 +18,7 @@ import {
   OctagonAlert,
   ShieldQuestion,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import RBtn from '@/modules/app/components/base/r-btn';
 
 type TRAlertVariant = 'info' | 'success' | 'warning' | 'error' | 'confirm';
@@ -64,43 +65,109 @@ const RAlertDialog = ({
     confirm: <ShieldQuestion className='h-16 w-16 text-warning' />,
   };
 
+  const iconVariants = {
+    hidden: { opacity: 0, scale: 0.5, rotate: -10 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      rotate: 0,
+      transition: {
+        type: 'spring' as const,
+        stiffness: 400,
+        damping: 15,
+        delay: 0.1,
+      },
+    },
+  };
+
+  const contentVariants = {
+    hidden: { opacity: 0, y: 8 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring' as const,
+        stiffness: 300,
+        damping: 24,
+        delay: 0.15,
+      },
+    },
+  };
+
+  const footerVariants = {
+    hidden: { opacity: 0, y: 8 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring' as const,
+        stiffness: 300,
+        damping: 24,
+        delay: 0.2,
+      },
+    },
+  };
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent
         style={{ width, maxWidth: width, boxSizing: 'border-box' }}
-        className='p-8'
+        className='px-6 pt-8 pb-5'
       >
-        <AlertDialogHeader className='text-center items-center'>
-          {(icon ?? defaultIconByVariant[variant]) && (
-            <div className='mb-2'>{icon ?? defaultIconByVariant[variant]}</div>
-          )}
-          <AlertDialogTitle className='text-center'>{title}</AlertDialogTitle>
-          <AlertDialogDescription asChild>
-            <div className='text-sm text-center leading-relaxed'>
-              {description}
-            </div>
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter className='sm:flex-row flex-row gap-3 mt-2'>
-          {extraButtons}
-          {!hideCancel && (
-            <AlertDialogCancel
-              onClick={onCancel}
-              disabled={loading}
-              className='flex-1 m-0'
+        <AnimatePresence mode='wait'>
+          <AlertDialogHeader className='text-center items-center'>
+            {(icon ?? defaultIconByVariant[variant]) && (
+              <motion.div
+                variants={iconVariants}
+                initial='hidden'
+                animate='visible'
+                className='mb-2'
+              >
+                {icon ?? defaultIconByVariant[variant]}
+              </motion.div>
+            )}
+            <motion.div
+              variants={contentVariants}
+              initial='hidden'
+              animate='visible'
             >
-              {cancelText}
-            </AlertDialogCancel>
-          )}
-          <RBtn
-            onClick={onOk}
-            loading={loading}
-            variant={okVariant ?? 'default'}
-            className='flex-1'
+              <AlertDialogTitle className='text-center'>
+                {title}
+              </AlertDialogTitle>
+              <AlertDialogDescription asChild>
+                <div className='text-sm text-center leading-relaxed'>
+                  {description}
+                </div>
+              </AlertDialogDescription>
+            </motion.div>
+          </AlertDialogHeader>
+          <motion.div
+            variants={footerVariants}
+            initial='hidden'
+            animate='visible'
           >
-            {okText}
-          </RBtn>
-        </AlertDialogFooter>
+            <AlertDialogFooter className='sm:flex-row flex-row gap-3 mt-2'>
+              {extraButtons}
+              {!hideCancel && (
+                <AlertDialogCancel
+                  onClick={onCancel}
+                  disabled={loading}
+                  className='flex-1 m-0'
+                >
+                  {cancelText}
+                </AlertDialogCancel>
+              )}
+              <RBtn
+                onClick={onOk}
+                loading={loading}
+                variant={okVariant ?? 'default'}
+                className='flex-1'
+              >
+                {okText}
+              </RBtn>
+            </AlertDialogFooter>
+          </motion.div>
+        </AnimatePresence>
       </AlertDialogContent>
     </AlertDialog>
   );

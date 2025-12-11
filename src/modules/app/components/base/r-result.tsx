@@ -7,6 +7,7 @@ import {
   Inbox,
   OctagonX,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 import { cn } from '@/modules/app/libs/utils';
 
@@ -181,8 +182,37 @@ export function RResult({
       />
     ) : null;
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.05 },
+    },
+  } as const;
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: 'spring' as const, stiffness: 300, damping: 24 },
+    },
+  };
+
+  const iconVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { type: 'spring' as const, stiffness: 400, damping: 20 },
+    },
+  };
+
   return (
-    <div
+    <motion.div
+      variants={containerVariants}
+      initial='hidden'
+      animate='visible'
       className={cn(
         'flex flex-col items-center text-center',
         sizeConfig.container,
@@ -193,11 +223,17 @@ export function RResult({
       )}
     >
       {illustration ? (
-        <div className='flex items-center justify-center'>{illustration}</div>
+        <motion.div
+          variants={iconVariants}
+          className='flex items-center justify-center'
+        >
+          {illustration}
+        </motion.div>
       ) : null}
 
       {renderedIcon ? (
-        <div
+        <motion.div
+          variants={iconVariants}
           className={cn(
             'flex items-center justify-center rounded-full border border-border/40 bg-background/80',
             statusConfig?.wrapperClass,
@@ -206,21 +242,26 @@ export function RResult({
           )}
         >
           {renderedIcon}
-        </div>
+        </motion.div>
       ) : null}
 
       {badge ? (
-        isValidElement(badge) ? (
-          badge
-        ) : (
-          <div className='inline-flex items-center justify-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-medium uppercase tracking-wide text-muted-foreground'>
-            {badge}
-          </div>
-        )
+        <motion.div variants={itemVariants}>
+          {isValidElement(badge) ? (
+            badge
+          ) : (
+            <div className='inline-flex items-center justify-center gap-1 rounded-full bg-muted px-3 py-1 text-xs font-medium uppercase tracking-wide text-muted-foreground'>
+              {badge}
+            </div>
+          )}
+        </motion.div>
       ) : null}
 
       {hasSlotContent ? (
-        <div className={cn('space-y-2', sizeConfig.spacing, bodyClassName)}>
+        <motion.div
+          variants={itemVariants}
+          className={cn('space-y-2', sizeConfig.spacing, bodyClassName)}
+        >
           {title ? (
             <h2 className={cn(sizeConfig.title, subdued && 'text-foreground')}>
               {title}
@@ -236,15 +277,18 @@ export function RResult({
               {children}
             </div>
           ) : null}
-        </div>
+        </motion.div>
       ) : null}
 
       {action ? (
-        <div className='flex flex-wrap items-center justify-center gap-2'>
+        <motion.div
+          variants={itemVariants}
+          className='flex flex-wrap items-center justify-center gap-2'
+        >
           {action}
-        </div>
+        </motion.div>
       ) : null}
-    </div>
+    </motion.div>
   );
 }
 

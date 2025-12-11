@@ -6,6 +6,7 @@ import {
   type TRVirtualScrollProps,
   type TRVirtualScrollHandle,
 } from '@/modules/app/components/base/r-virtual-scroll';
+import { motion, AnimatePresence } from 'framer-motion';
 
 type RenderItemOptions = {
   index: number;
@@ -32,6 +33,8 @@ export type TRListProps<Item extends Record<string, unknown>> = {
   as?: ElementType;
   virtual?: TRListVirtualProps<Item>;
   itemClassName?: string | ((item: Item, index: number) => string | undefined);
+  /** Enable/disable list item animations. Default: true */
+  animate?: boolean;
 };
 
 function resolveEmptyContent<Item extends Record<string, unknown>>(
@@ -50,6 +53,20 @@ function resolveEmptyContent<Item extends Record<string, unknown>>(
   );
 }
 
+const listItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: index * 0.05,
+      duration: 0.3,
+      ease: 'easeOut' as const,
+    },
+  }),
+  exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
+};
+
 function RListInnerComponent<Item extends Record<string, unknown>>(
   {
     items,
@@ -62,6 +79,7 @@ function RListInnerComponent<Item extends Record<string, unknown>>(
     as: As = 'div',
     virtual,
     itemClassName,
+    animate = true,
   }: TRListProps<Item>,
   ref: ForwardedRef<TRVirtualScrollHandle>,
 ) {
@@ -118,6 +136,50 @@ function RListInnerComponent<Item extends Record<string, unknown>>(
         }}
         getKey={getKey}
       />
+    );
+  }
+
+  if (animate) {
+    return (
+      <As className={cn('w-full', className)}>
+        <div {...commonListProps}>
+          <AnimatePresence mode='popLayout'>
+            {items.map((item, index) => {
+              const key = getKey?.(item, index) ?? index;
+              const isFirst = index === 0;
+              const isLast = index === items.length - 1;
+              const resolvedItemClass =
+                typeof itemClassName === 'function'
+                  ? itemClassName(item, index)
+                  : itemClassName;
+
+              return (
+                <motion.div
+                  key={key}
+                  role='listitem'
+                  custom={index}
+                  variants={listItemVariants}
+                  initial='hidden'
+                  animate='visible'
+                  exit='exit'
+                  layout
+                  className={cn(
+                    'rounded-lg border border-border/60 bg-background/80 px-4 py-3 shadow-sm',
+                    resolvedItemClass,
+                  )}
+                >
+                  {renderItem(item, {
+                    index,
+                    count: items.length,
+                    isFirst,
+                    isLast,
+                  })}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
+      </As>
     );
   }
 
