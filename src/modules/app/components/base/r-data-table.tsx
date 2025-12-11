@@ -69,6 +69,7 @@ export type TRDataTableProps<TData, TValue> = TLoadable & {
   toolbarStart?: React.ReactNode;
   toolbarEnd?: React.ReactNode;
   renderOnMobile?: (row: TData, index: number) => React.ReactNode;
+  emptyContent?: React.ReactNode;
 };
 
 export type TRDataTableRef<TData = unknown> = {
@@ -108,6 +109,7 @@ const RDataTableInner = <TData, TValue>(
     toolbarStart,
     toolbarEnd,
     renderOnMobile,
+    emptyContent,
   }: TRDataTableProps<TData, TValue>,
   ref: React.Ref<TRDataTableRef<TData>>,
 ) => {
@@ -192,7 +194,7 @@ const RDataTableInner = <TData, TValue>(
   useEffect(() => {
     const sort = sorting[0];
     handleChange({
-      sort_field: sort
+      sort_by: sort
         ? transformSort
           ? transformSort(sort.id)
           : sort.id
@@ -264,14 +266,16 @@ const RDataTableInner = <TData, TValue>(
     }
     if (!data.length) {
       return (
-        <div className='rounded-md border py-8'>
-          <RResult
-            status='empty'
-            size='sm'
-            title='No results'
-            description='No data available to display'
-          />
-        </div>
+        emptyContent ?? (
+          <div className='rounded-md border py-8'>
+            <RResult
+              status='empty'
+              size='sm'
+              title='No results'
+              description='No data available to display'
+            />
+          </div>
+        )
       );
     }
     return (
@@ -374,14 +378,16 @@ const RDataTableInner = <TData, TValue>(
         ) : (
           <RTr hoverable={false}>
             <RTd colSpan={columns.length || 1}>
-              <div className='py-8'>
-                <RResult
-                  status='empty'
-                  size='sm'
-                  title='No results'
-                  description='No data available to display'
-                />
-              </div>
+              {emptyContent ?? (
+                <div className='py-8'>
+                  <RResult
+                    status='empty'
+                    size='sm'
+                    title='No results'
+                    description='No data available to display'
+                  />
+                </div>
+              )}
             </RTd>
           </RTr>
         )}
