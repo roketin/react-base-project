@@ -38,5 +38,11 @@
   },
   "fileUploader": {
     "description": "Allowed extensions: {{extensions}} | Max size: {{maxSize}}MB"
+  },
+  "leavePageGuard": {
+    "message": "You have unsaved changes. Are you sure you want to leave this page?",
+    "title": "Leave this page?",
+    "leave": "Leave",
+    "stay": "Stay"
   }
 }
