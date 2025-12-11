@@ -252,6 +252,7 @@ export function RDataList<TData extends Record<string, unknown>>({
             {toolbarEnd}
             {allowSort && sortItems.length > 0 && (
               <RMenu
+                align='end'
                 trigger={
                   <RBtn variant='outline' iconStart={<ArrowUpDown />}>
                     {activeSortLabel}
