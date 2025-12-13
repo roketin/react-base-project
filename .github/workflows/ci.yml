@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  quality:
+    name: Code Quality & Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for SonarCloud
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ESLint
+        run: pnpm lint
+
+      - name: Run TypeScript check
+        run: pnpm tsc --noEmit
+
+      - name: Run Unit Tests
+        run: pnpm vitest run --coverage --reporter=json --outputFile=test-results.json
+
+      - name: Extract test results
+        id: test-results
+        run: |
+          TOTAL=$(jq '.numTotalTests' test-results.json)
+          PASSED=$(jq '.numPassedTests' test-results.json)
+          FAILED=$(jq '.numFailedTests' test-results.json)
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+
+      - name: Create test badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        if: github.ref == 'refs/heads/main'
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: ${{ vars.BADGE_GIST_ID }}
+          filename: test-badge.json
+          label: Tests
+          message: ${{ steps.test-results.outputs.passed }} passing
+          color: ${{ steps.test-results.outputs.failed == '0' && 'brightgreen' || 'red' }}
+          namedLogo: vitest
+
+      - name: Create ESLint badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        if: github.ref == 'refs/heads/main' && success()
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: ${{ vars.BADGE_GIST_ID }}
+          filename: eslint-badge.json
+          label: ESLint
+          message: passing
+          color: 4B32C3
+          namedLogo: eslint
+
+      - name: Create TypeScript badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        if: github.ref == 'refs/heads/main' && success()
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: ${{ vars.BADGE_GIST_ID }}
+          filename: typescript-badge.json
+          label: TypeScript
+          message: strict
+          color: 3178C6
+          namedLogo: typescript
+
+      - name: Build
+        run: pnpm build
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.sources=src
+            -Dsonar.tests=tests,src
+            -Dsonar.test.inclusions=**/*.test.ts,**/*.test.tsx,**/__tests__/**
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/*.stories.tsx
