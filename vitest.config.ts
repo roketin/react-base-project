@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -17,12 +17,13 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./tests/setup.ts', './tests/setup-msw.ts'],
+    exclude: [...configDefaults.exclude, '**/*.stories.*'],
     coverage: {
       provider: 'v8',
       reporter: ['html', 'text', 'lcov'],
       reportsDirectory: './coverage',
       include: ['src/**/*.ts?(x)', 'tests/**/*.ts?(x)'],
-      exclude: ['tests/render-with-config.tsx'],
+      exclude: ['tests/render-with-config.tsx', '**/*.stories.*'],
     },
   },
 });

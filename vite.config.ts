@@ -33,10 +33,18 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
+        // Cache busting with content hash
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
         manualChunks: {
           react: ['react', 'react-dom'],
           lucide: ['lucide-react'],
           tanstack: ['@tanstack/react-table'],
+          rhf: ['react-hook-form'],
+          recharts: ['recharts'],
+          framer: ['framer-motion'],
+          sonner: ['sonner'],
         },
       },
     },
