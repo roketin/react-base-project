@@ -1,4 +1,4 @@
-import { CommandItem } from '@/modules/app/components/ui/command';
+import { CommandItem } from '@/modules/app/components/base/r-command';
 import type { TSearchableItem } from '../types/adaptive-search.type';
 import { cn } from '@/modules/app/libs/utils';
 import { FileText, Zap } from 'lucide-react';

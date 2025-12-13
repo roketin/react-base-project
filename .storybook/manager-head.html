@@ -1,0 +1,101 @@
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  /* ===== SHADCN-INSPIRED STORYBOOK THEME ===== */
+
+  /* Sidebar styling */
+  .sidebar-container {
+    border-right: 1px solid var(--appBorderColor) !important;
+  }
+
+  /* Sidebar items - cleaner typography */
+  [data-nodetype='component'] > span,
+  [data-nodetype='story'] > span,
+  [data-nodetype='document'] > span,
+  [data-nodetype='group'] > span {
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  /* Root items */
+  [data-nodetype='root'] > span {
+    font-weight: 600 !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    opacity: 0.6 !important;
+  }
+
+  /* Hover states */
+  button[data-nodetype]:hover {
+    background: rgba(0, 0, 0, 0.04) !important;
+  }
+
+  /* Active/selected state */
+  [data-selected='true'] {
+    background: rgba(0, 0, 0, 0.06) !important;
+  }
+
+  /* Dark mode adjustments */
+  @media (prefers-color-scheme: dark) {
+    button[data-nodetype]:hover {
+      background: rgba(255, 255, 255, 0.04) !important;
+    }
+
+    [data-selected='true'] {
+      background: rgba(255, 255, 255, 0.08) !important;
+    }
+  }
+
+  /* Search input */
+  input[placeholder*='Find'],
+  input[placeholder*='Search'] {
+    border-radius: 6px !important;
+    font-size: 13px !important;
+  }
+
+  /* Panel tabs - cleaner look */
+  #storybook-panel-root button[role='tab'] {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  /* Toolbar - subtle border */
+  [role='main'] > div:first-child {
+    border-bottom: 1px solid var(--appBorderColor) !important;
+  }
+
+  /* Code blocks */
+  pre,
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+    font-size: 13px !important;
+  }
+
+  /* Docs page styling */
+  .sbdocs-wrapper {
+    padding: 2rem !important;
+  }
+
+  .sbdocs-content {
+    max-width: 1000px !important;
+  }
+
+  /* Table styling in docs */
+  .docblock-argstable {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+  }
+
+  /* Story canvas */
+  .sb-show-main {
+    padding: 2rem !important;
+  }
+</style>

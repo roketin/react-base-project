@@ -1,24 +1,50 @@
+## [3.5.0] - 2025-12-13
+
+### 🚀 Features
+
+- _(components)_ Add new primitive components (r-aspect-ratio, r-carousel, r-command, r-context-menu, r-hover-card, r-menubar, r-navigation-menu, r-sheet, r-splitter, r-toaster)
+- _(storybook)_ Add stories for new components
+
+### 🐛 Bug Fixes
+
+- Remove radix & shadcn deps, add sonar eslint rule
+- _(lint)_ Resolve SonarJS lint errors
+
+### 🚜 Refactor
+
+- _(ui)_ [**breaking**] Migrate ui components to base directory
+
+### 🧪 Testing
+
+- _(components)_ Add comprehensive unit tests (877 tests)
+
+### ⚙️ Miscellaneous Tasks
+
+- Add storybook deployment to GitHub Pages
+- Update storybook config, docs, and locales
+
 ## [3.4.0] - 2025-12-11
 
 ### 🚀 Features
 
-- *(app)* Update deps & add framer motion
+- _(app)_ Update deps & add framer motion
 - Textarea support variant & auto grow
 - Improve result, list, alert-dialog with animation
-- *(data-table)* Add prop empty content
-- *(password)* Add prop default visible
-- *(app)* Add form detail context for reusable passing detail to child
-- *(app)* Improve locales on functional hooks
-- *(app)* Improve some reusable helper
+- _(data-table)_ Add prop empty content
+- _(password)_ Add prop default visible
+- _(app)_ Add form detail context for reusable passing detail to child
+- _(app)_ Improve locales on functional hooks
+- _(app)_ Improve some reusable helper
 - Completed unit-test for all r-components & improve some component functional
 
 ### 🐛 Bug Fixes
 
-- *(app)* Remove .env and add example env
+- _(app)_ Remove .env and add example env
 
 ### 🧪 Testing
 
 - Add vitest config with v8 provider
+
 ## [3.3.1] - 2025-12-07
 
 ### 🚀 Features

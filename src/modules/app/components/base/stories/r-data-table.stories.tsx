@@ -1,176 +1,308 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useCallback, useState } from 'react';
-import type { ColumnDef } from '@tanstack/react-table';
+import { RDataTable, type TRDataTableColumnDef } from '../r-data-table';
 
-import { RDataTable, type TRDataTableSelected } from '../r-data-table';
-
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: 'Owner' | 'Editor' | 'Viewer';
-};
-
-const columns: ColumnDef<User>[] = [
-  {
-    header: 'Name',
-    accessorKey: 'name',
-    cell: ({ getValue }) => (
-      <span className='font-medium text-foreground'>{getValue<string>()}</span>
-    ),
-  },
-  {
-    header: 'Email',
-    accessorKey: 'email',
-  },
-  {
-    header: 'Role',
-    accessorKey: 'role',
-    cell: ({ getValue }) => (
-      <span className='inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary'>
-        {getValue<string>()}
-      </span>
-    ),
-  },
-];
-
-const data: User[] = [
-  { id: 1, name: 'Alice Fox', email: 'alice@demo.com', role: 'Owner' },
-  { id: 2, name: 'Ben Stone', email: 'ben@demo.com', role: 'Editor' },
-  { id: 3, name: 'Chloe Li', email: 'chloe@demo.com', role: 'Viewer' },
-  { id: 4, name: 'Diego Alvarez', email: 'diego@demo.com', role: 'Editor' },
-];
-
-const sampleMeta = {
-  total: data.length,
-  per_page: data.length,
-  current_page: 1,
-  last_page: 1,
-  from: 1,
-  to: data.length,
-};
-
-const meta: Meta<typeof RDataTable<User, unknown>> = {
+const meta: Meta<typeof RDataTable> = {
   title: 'Components/Data Display/RDataTable',
-  component: RDataTable<User, unknown>,
+  component: RDataTable,
   parameters: {
-    layout: 'fullscreen',
+    layout: 'padded',
   },
   tags: ['autodocs'],
-  argTypes: {
-    pagination: { control: 'boolean' },
-    allowSearch: { control: 'boolean' },
-    loading: { control: 'boolean' },
-    fixed: { control: 'boolean' },
-    onChange: { action: 'queryChanged' },
-    onChangeSelected: { action: 'selectionChanged' },
-  },
-  args: {
-    columns,
-    data,
-    pagination: true,
-    allowSearch: true,
-    loading: false,
-    meta: sampleMeta,
-    searchPlaceholder: 'Search users…',
-  },
 };
 
 export default meta;
+type Story = StoryObj<typeof RDataTable>;
 
-type Story = StoryObj<typeof RDataTable<User, unknown>>;
-
-export const Playground: Story = {
-  render: (args) => {
-    const {
-      onChange: onQueryChange,
-      onChangeSelected: onSelectionChange,
-      ...tableArgs
-    } = args;
-    const [selection, setSelection] = useState<TRDataTableSelected>({});
-    const [queryParams, setQueryParams] = useState<Record<string, unknown>>({});
-
-    const handleChange = useCallback(
-      (params: Record<string, unknown>) => {
-        onQueryChange?.(params);
-        setQueryParams(params);
-      },
-      [onQueryChange],
-    );
-
-    const handleSelectionChange = useCallback(
-      (next: TRDataTableSelected) => {
-        onSelectionChange?.(next);
-        setSelection(next);
-      },
-      [onSelectionChange],
-    );
-
-    return (
-      <div className='space-y-4 p-6'>
-        <RDataTable<User, unknown>
-          {...tableArgs}
-          onChange={handleChange}
-          onChangeSelected={handleSelectionChange}
-        />
-
-        <div className='grid gap-3 md:grid-cols-2'>
-          <div className='rounded-lg border bg-muted/30 p-3 text-xs'>
-            <div className='mb-1 font-semibold text-muted-foreground'>
-              Query params
-            </div>
-            <pre className='whitespace-pre-wrap break-all text-muted-foreground'>
-              {JSON.stringify(queryParams, null, 2)}
-            </pre>
-          </div>
-          <div className='rounded-lg border bg-muted/30 p-3 text-xs'>
-            <div className='mb-1 font-semibold text-muted-foreground'>
-              Selected rows
-            </div>
-            <pre className='whitespace-pre-wrap break-all text-muted-foreground'>
-              {JSON.stringify(selection, null, 2)}
-            </pre>
-          </div>
-        </div>
-      </div>
-    );
-  },
+// Sample data
+type Person = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  department: string;
+  status: 'active' | 'inactive';
+  joinDate: string;
 };
 
-export const Loading: Story = {
-  args: {
-    loading: true,
+const sampleData: Person[] = [
+  {
+    id: '1',
+    name: 'John Doe',
+    email: 'john@example.com',
+    role: 'Developer',
+    department: 'Engineering',
+    status: 'active',
+    joinDate: '2023-01-15',
   },
-};
-
-export const WithoutSearch: Story = {
-  args: {
-    allowSearch: false,
+  {
+    id: '2',
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    role: 'Designer',
+    department: 'Design',
+    status: 'active',
+    joinDate: '2023-02-20',
   },
-};
+  {
+    id: '3',
+    name: 'Bob Johnson',
+    email: 'bob@example.com',
+    role: 'Manager',
+    department: 'Engineering',
+    status: 'active',
+    joinDate: '2022-11-10',
+  },
+  {
+    id: '4',
+    name: 'Alice Brown',
+    email: 'alice@example.com',
+    role: 'Developer',
+    department: 'Engineering',
+    status: 'inactive',
+    joinDate: '2023-03-05',
+  },
+  {
+    id: '5',
+    name: 'Charlie Wilson',
+    email: 'charlie@example.com',
+    role: 'QA Engineer',
+    department: 'Quality',
+    status: 'active',
+    joinDate: '2023-04-12',
+  },
+];
 
-export const WithMobileView: Story = {
-  args: {
-    renderOnMobile: (row) => (
-      <div className='rounded-lg border bg-card p-4'>
-        <div className='flex items-start justify-between'>
-          <div className='flex-1'>
-            <h4 className='font-medium text-foreground'>{row.name}</h4>
-            <p className='text-sm text-muted-foreground'>{row.email}</p>
-          </div>
-          <span className='inline-flex rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary'>
-            {row.role}
-          </span>
-        </div>
-      </div>
+const columns: TRDataTableColumnDef<Person, unknown>[] = [
+  {
+    id: 'name',
+    accessorKey: 'name',
+    header: 'Name',
+    size: 150,
+  },
+  {
+    id: 'email',
+    accessorKey: 'email',
+    header: 'Email',
+    size: 200,
+  },
+  {
+    id: 'role',
+    accessorKey: 'role',
+    header: 'Role',
+    size: 120,
+  },
+  {
+    id: 'department',
+    accessorKey: 'department',
+    header: 'Department',
+    size: 130,
+  },
+  {
+    id: 'status',
+    accessorKey: 'status',
+    header: 'Status',
+    size: 100,
+    cell: ({ row }) => (
+      <span
+        className={`px-2 py-1 rounded-full text-xs font-medium ${
+          row.original.status === 'active'
+            ? 'bg-green-100 text-green-800'
+            : 'bg-gray-100 text-gray-800'
+        }`}
+      >
+        {row.original.status}
+      </span>
     ),
   },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Resize your browser to mobile width (< 768px) to see the mobile card view. The table will automatically switch between table and card layout with a smooth transition.',
-      },
-    },
+  {
+    id: 'joinDate',
+    accessorKey: 'joinDate',
+    header: 'Join Date',
+    size: 120,
   },
+];
+
+// ============================================================================
+// Stories
+// ============================================================================
+
+export const Default: Story = {
+  render: () => (
+    <RDataTable
+      columns={columns}
+      data={sampleData}
+      pagination={false}
+      allowSearch={false}
+    />
+  ),
+};
+
+export const ResizableColumns: Story = {
+  render: () => (
+    <div className='space-y-4'>
+      <p className='text-sm text-muted-foreground'>
+        Drag the column borders to resize. Widths are persisted to localStorage.
+      </p>
+      <RDataTable
+        columns={columns}
+        data={sampleData}
+        pagination={false}
+        allowSearch={false}
+        resizableColumns
+        columnSizingStorageKey='demo-table'
+      />
+    </div>
+  ),
+};
+
+export const ResizableWithSearch: Story = {
+  render: () => (
+    <RDataTable
+      columns={columns}
+      data={sampleData}
+      pagination={false}
+      allowSearch
+      resizableColumns
+      columnSizingStorageKey='demo-table-search'
+    />
+  ),
+};
+
+export const FixedLayoutResizable: Story = {
+  render: () => (
+    <div className='space-y-4'>
+      <p className='text-sm text-muted-foreground'>
+        Fixed table layout with resizable columns - better for consistent column
+        widths.
+      </p>
+      <RDataTable
+        columns={columns}
+        data={sampleData}
+        pagination={false}
+        allowSearch={false}
+        fixed
+        resizableColumns
+        columnSizingStorageKey='demo-table-fixed'
+      />
+    </div>
+  ),
+};
+
+export const PartialResizable: Story = {
+  render: () => {
+    const partialColumns: TRDataTableColumnDef<Person, unknown>[] = [
+      {
+        id: 'name',
+        accessorKey: 'name',
+        header: 'Name (resizable)',
+        size: 150,
+      },
+      {
+        id: 'email',
+        accessorKey: 'email',
+        header: 'Email (resizable)',
+        size: 200,
+      },
+      {
+        id: 'status',
+        accessorKey: 'status',
+        header: 'Status (fixed)',
+        size: 100,
+        enableResizing: false, // Disable resizing for this column
+        cell: ({ row }) => (
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-medium ${
+              row.original.status === 'active'
+                ? 'bg-green-100 text-green-800'
+                : 'bg-gray-100 text-gray-800'
+            }`}
+          >
+            {row.original.status}
+          </span>
+        ),
+      },
+    ];
+
+    return (
+      <div className='space-y-4'>
+        <p className='text-sm text-muted-foreground'>
+          Some columns can have resizing disabled via{' '}
+          <code>enableResizing: false</code>
+        </p>
+        <RDataTable
+          columns={partialColumns}
+          data={sampleData}
+          pagination={false}
+          allowSearch={false}
+          resizableColumns
+        />
+      </div>
+    );
+  },
+};
+
+export const ColumnToggle: Story = {
+  render: () => (
+    <div className='space-y-4'>
+      <p className='text-sm text-muted-foreground'>
+        Click the "Columns" button to show/hide columns. Visibility is persisted
+        to localStorage.
+      </p>
+      <RDataTable
+        columns={columns}
+        data={sampleData}
+        pagination={false}
+        allowSearch
+        showColumnToggle
+        columnVisibilityStorageKey='demo-table-visibility'
+      />
+    </div>
+  ),
+};
+
+export const ColumnToggleWithInitialHidden: Story = {
+  render: () => (
+    <div className='space-y-4'>
+      <p className='text-sm text-muted-foreground'>
+        Some columns are hidden by default. Click "Columns" to show them.
+      </p>
+      <RDataTable
+        columns={columns}
+        data={sampleData}
+        pagination={false}
+        allowSearch
+        showColumnToggle
+        initialColumnVisibility={{
+          department: false,
+          joinDate: false,
+        }}
+      />
+    </div>
+  ),
+};
+
+export const FullFeatured: Story = {
+  render: () => (
+    <div className='space-y-4'>
+      <p className='text-sm text-muted-foreground'>
+        All features enabled: search, column toggle, resizable columns, and
+        persistence.
+      </p>
+      <RDataTable
+        columns={columns}
+        data={sampleData}
+        pagination={false}
+        allowSearch
+        showColumnToggle
+        resizableColumns
+        columnSizingStorageKey='demo-full-sizing'
+        columnVisibilityStorageKey='demo-full-visibility'
+        toolbarEnd={
+          <button className='px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-md'>
+            Export
+          </button>
+        }
+      />
+    </div>
+  ),
 };

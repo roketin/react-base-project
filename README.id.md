@@ -5,6 +5,23 @@
 <p align="center">
   <img src="https://cms.roketin.com/uploads/Elemen_Brand_Roketin_03_ee99155544.jpg" alt="Roketin Banner" width="512px" />
 </p>
+
+<!-- BADGES:START - Dynamic badges powered by GitHub Actions & SonarCloud -->
+<!-- Replace YOUR_GITHUB_USERNAME, YOUR_GIST_ID, YOUR_SONAR_ORG, YOUR_SONAR_PROJECT after setup -->
+<p align="center">
+  <img src="https://github.com/roketin/react-base-project/actions/workflows/ci.yml/badge.svg" alt="CI" />
+  <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_GIST_ID/raw/eslint-badge.json" alt="ESLint" />
+  <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_GIST_ID/raw/test-badge.json" alt="Tests" />
+  <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_GIST_ID/raw/typescript-badge.json" alt="TypeScript" />
+</p>
+<p align="center">
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=YOUR_SONAR_PROJECT&metric=alert_status" alt="Quality Gate" />
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=YOUR_SONAR_PROJECT&metric=coverage" alt="Coverage" />
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=YOUR_SONAR_PROJECT&metric=bugs" alt="Bugs" />
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=YOUR_SONAR_PROJECT&metric=code_smells" alt="Code Smells" />
+</p>
+<!-- BADGES:END -->
+
 <h3 align="center">💻 Starter Dashboard Modern berbasis React, Vite, dan Konvensi Roketin.</h3>
 
 ---

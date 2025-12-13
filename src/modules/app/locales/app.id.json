@@ -2,6 +2,11 @@
   "title": "R-Skeleton",
   "subTitle": "Kerangka Aplikasi Roketin",
   "back": "Kembali",
+  "table": {
+    "toggleColumns": "Atur kolom",
+    "columnsHidden_one": "{{count}} kolom disembunyikan",
+    "columnsHidden_other": "{{count}} kolom disembunyikan"
+  },
   "submit": "Kirim",
   "save": "Simpan",
   "send": "Kirim",

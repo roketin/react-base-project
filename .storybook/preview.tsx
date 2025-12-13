@@ -7,10 +7,25 @@ import '../src/plugins/i18n';
 
 const preview: Preview = {
   parameters: {
+    layout: 'centered',
     controls: {
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,
+      },
+    },
+    backgrounds: {
+      disable: true,
+    },
+    docs: {
+      toc: {
+        headingSelector: 'h2, h3',
+        title: 'On this page',
+      },
+    },
+    options: {
+      storySort: {
+        order: ['Introduction', 'Components', '*'],
       },
     },
   },
@@ -33,7 +48,9 @@ const preview: Preview = {
 
       return (
         <QueryClientProvider client={queryClient}>
-          <Story />
+          <div className='font-sans antialiased'>
+            <Story />
+          </div>
         </QueryClientProvider>
       );
     },

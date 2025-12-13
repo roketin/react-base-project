@@ -2,6 +2,11 @@
   "title": "R-Skeleton",
   "subTitle": "Roketin App Skeleton",
   "back": "Back",
+  "table": {
+    "toggleColumns": "Toggle columns",
+    "columnsHidden_one": "{{count}} column hidden",
+    "columnsHidden_other": "{{count}} columns hidden"
+  },
   "submit": "Submit",
   "save": "Save",
   "send": "Send",

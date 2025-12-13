@@ -257,3 +257,157 @@ export const InlineAlerts: Story = {
     </div>
   ),
 };
+
+export const Animated: Story = {
+  render: () => {
+    const [visible, setVisible] = useState(true);
+
+    return (
+      <div className='w-[450px] space-y-4'>
+        <RBtn onClick={() => setVisible(!visible)}>
+          {visible ? 'Hide' : 'Show'} Alert
+        </RBtn>
+
+        <RAlert
+          variant='info'
+          title='Fade Animation'
+          description='This alert fades in and out.'
+          animate='fade'
+          visible={visible}
+        />
+      </div>
+    );
+  },
+};
+
+export const AnimationVariants: Story = {
+  render: () => {
+    const [visibleAlerts, setVisibleAlerts] = useState<Record<string, boolean>>(
+      {
+        fade: true,
+        'slide-up': true,
+        'slide-down': true,
+        'slide-left': true,
+        'slide-right': true,
+        scale: true,
+      },
+    );
+
+    const toggleAlert = (key: string) => {
+      setVisibleAlerts((prev) => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    return (
+      <div className='w-[500px] space-y-6'>
+        <div className='flex flex-wrap gap-2'>
+          {Object.keys(visibleAlerts).map((key) => (
+            <RBtn
+              key={key}
+              size='sm'
+              variant={visibleAlerts[key] ? 'default' : 'outline'}
+              onClick={() => toggleAlert(key)}
+            >
+              {key}
+            </RBtn>
+          ))}
+        </div>
+
+        <div className='space-y-4'>
+          <RAlert
+            variant='info'
+            title='Fade'
+            description='Simple fade animation'
+            animate='fade'
+            visible={visibleAlerts.fade}
+          />
+          <RAlert
+            variant='success'
+            title='Slide Up'
+            description='Slides up from below'
+            animate='slide-up'
+            visible={visibleAlerts['slide-up']}
+          />
+          <RAlert
+            variant='warning'
+            title='Slide Down'
+            description='Slides down from above'
+            animate='slide-down'
+            visible={visibleAlerts['slide-down']}
+          />
+          <RAlert
+            variant='error'
+            title='Slide Left'
+            description='Slides in from the right'
+            animate='slide-left'
+            visible={visibleAlerts['slide-left']}
+          />
+          <RAlert
+            variant='default'
+            title='Slide Right'
+            description='Slides in from the left'
+            animate='slide-right'
+            visible={visibleAlerts['slide-right']}
+          />
+          <RAlert
+            variant='info'
+            title='Scale'
+            description='Scales up from smaller size'
+            animate='scale'
+            visible={visibleAlerts.scale}
+          />
+        </div>
+      </div>
+    );
+  },
+};
+
+export const AnimatedClosable: Story = {
+  render: () => {
+    const [alerts, setAlerts] = useState([
+      { id: 1, variant: 'info' as const, title: 'Info Alert' },
+      { id: 2, variant: 'success' as const, title: 'Success Alert' },
+      { id: 3, variant: 'warning' as const, title: 'Warning Alert' },
+    ]);
+
+    const removeAlert = (id: number) => {
+      setAlerts(alerts.filter((a) => a.id !== id));
+    };
+
+    const resetAlerts = () => {
+      setAlerts([
+        { id: 1, variant: 'info' as const, title: 'Info Alert' },
+        { id: 2, variant: 'success' as const, title: 'Success Alert' },
+        { id: 3, variant: 'warning' as const, title: 'Warning Alert' },
+      ]);
+    };
+
+    return (
+      <div className='w-[450px] space-y-4'>
+        <RBtn onClick={resetAlerts} variant='outline' size='sm'>
+          Reset Alerts
+        </RBtn>
+
+        <div className='space-y-3'>
+          {alerts.map((alert) => (
+            <RAlert
+              key={alert.id}
+              variant={alert.variant}
+              title={alert.title}
+              description='Click X to dismiss with animation'
+              closable
+              animate='slide-left'
+              visible={true}
+              onClose={() => removeAlert(alert.id)}
+            />
+          ))}
+        </div>
+
+        {alerts.length === 0 && (
+          <p className='text-center text-muted-foreground'>
+            All alerts dismissed
+          </p>
+        )}
+      </div>
+    );
+  },
+};

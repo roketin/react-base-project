@@ -5,6 +5,23 @@
 <p align="center">
   <img src="https://cms.roketin.com/uploads/Elemen_Brand_Roketin_03_ee99155544.jpg" alt="Roketin Banner" width="512px" />
 </p>
+
+<!-- BADGES:START - Dynamic badges powered by GitHub Actions & SonarCloud -->
+<!-- Replace YOUR_GITHUB_USERNAME, YOUR_GIST_ID, YOUR_SONAR_ORG, YOUR_SONAR_PROJECT after setup -->
+<p align="center">
+  <img src="https://github.com/roketin/react-base-project/actions/workflows/ci.yml/badge.svg" alt="CI" />
+  <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/teguhzundi/81e4e172b3171ccbefac53132f5f6ac4/raw/eslint-badge.json" alt="ESLint" />
+  <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/teguhzundi/81e4e172b3171ccbefac53132f5f6ac4/raw/test-badge.json" alt="Tests" />
+  <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/teguhzundi/81e4e172b3171ccbefac53132f5f6ac4/raw/typescript-badge.json" alt="TypeScript" />
+</p>
+<p align="center">
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=YOUR_SONAR_PROJECT&metric=alert_status" alt="Quality Gate" />
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=YOUR_SONAR_PROJECT&metric=coverage" alt="Coverage" />
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=YOUR_SONAR_PROJECT&metric=bugs" alt="Bugs" />
+  <img src="https://sonarcloud.io/api/project_badges/measure?project=YOUR_SONAR_PROJECT&metric=code_smells" alt="Code Smells" />
+</p>
+<!-- BADGES:END -->
+
 <h3 align="center">💻 A Modern Dashboard Starter powered by React, Vite, and Roketin conventions.</h3>
 
 ---
@@ -18,10 +35,9 @@
 5. [Configuration](#-configuration)
 6. [Localization & Sidebar Menus](#-localization--sidebar-menus)
 7. [Feature Flags & Module Configs](#-feature-flags--module-configs)
-8. [Global Search](#-global-search)
-9. [Module Generator](#-module-generator)
-10. [Project Structure](#-project-structure)
-11. [Conventions & Tooling](#-conventions--tooling)
+8. [Module Generator](#-module-generator)
+9. [Project Structure](#-project-structure)
+10. [Conventions & Tooling](#-conventions--tooling)
 
 ---
 
@@ -36,7 +52,7 @@ This repository provides a batteries-included dashboard scaffold using the Roket
 - **Framework:** React 19 + Vite 7
 - **State & Data:** Zustand, React Query, Immer
 - **Routing & Auth:** React Router v7, custom guards, permission helpers
-- **UI & Styling:** shadcn/ui, Tailwind CSS (via `@tailwindcss/vite`), Lucide icons
+- **UI & Styling:** Tailwind CSS (via `@tailwindcss/vite`), Lucide icons
 - **Forms & Validation:** React Hook Form, Yup, reusable form primitives
 - **Testing:** Vitest, @testing-library, MSW
 - **Quality:** ESLint (strict config), Prettier, Husky hooks, lint-staged, Commitlint
@@ -94,7 +110,6 @@ Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file l
 | `filters.persistence` | `enabled`, `strategy`, `keyPrefix`, `debounceMs`                                                 | Configures how `RFilter` remembers selections (e.g., `local-storage`, custom key prefixes, debounce window).         |
 | `routes.admin`        | `basePath`                                                                                       | Base path prepended to every authenticated route (default `/r-admin`).                                               |
 | `languages`           | `enabled`, `debug`, `supported[]` (`code`, `label`, `isDefault`)                                 | Toggles multi-language support, i18n debug logging, and declares the supported locale list.                          |
-| `search`              | `enableSearchGlobal`                                                                             | Enables or disables the global search feature (command palette) across the application.                              |
 
 ### Config Breakdown
 
@@ -110,8 +125,6 @@ Application-level knobs reside in **`roketin.config.ts`**. Adjusting this file l
   - `enabled`: Hides the language dropdown when set to `false`.
   - `debug`: Mirrors `i18next` debug mode; handy during localisation tweaks.
   - `supported`: Each locale entry must define a `code` (used by i18next), `label` (UI display), and optional `isDefault`.
-- **`search`**:
-  - `enableSearchGlobal`: When set to `true`, displays the global search trigger button and enables the command palette. Set to `false` to completely hide the global search feature from the application.
 
 ---
 
@@ -200,157 +213,6 @@ Notes:
 - Parents that act purely as containers (no `name`) disappear automatically when every child is filtered out (no orphan headers are shown).
 - Use the optional `order` field to enforce deterministic ordering (lower values first, ties fall back to declaration order).
 - CLI scaffolding: `pnpm roketin module user/guard` auto-populates `parentModuleId` and a child `menu` entry; tweak the title, icon, permissions, or order as needed.
-
-## 🔍 Global Search
-
-A powerful command palette for quickly finding and accessing menus and actions across your application.
-
-### Configuration
-
-Global search can be enabled or disabled via `roketin.config.ts`:
-
-```ts
-export default defineRoketinConfig({
-  // ... other configs
-  search: {
-    enableSearchGlobal: true, // Set to false to disable global search
-  },
-});
-```
-
-When `enableSearchGlobal` is set to `false`, both the search trigger button and the search dialog will be hidden from the application.
-
-### Features
-
-- **Fuzzy Search**: Powered by Fuse.js for intelligent matching
-- **Recent History**: Shows your 5 most recently accessed items
-- **Module Filtering**: Filter results by module using searchable dropdown
-- **Custom Actions**: Define quick actions (Create, Edit, etc.) per module
-- **Keyboard Shortcuts**: `Ctrl+K` or `Cmd+K` to open
-- **Encrypted Storage**: Recent history stored securely in LocalStorage
-- **Permission-Based**: Automatically filters based on user permissions
-
-### Usage
-
-1. **Open Search**:
-   - Click the search button in the header
-   - Press `Ctrl+K` (Windows/Linux) or `Cmd+K` (Mac)
-
-2. **Search**:
-   - Type to search menus and actions
-   - Use arrow keys to navigate results
-   - Press `Enter` to select
-   - Press `ESC` to close
-
-3. **Filter by Module**:
-   - Click the module dropdown in the search dialog
-   - Select a specific module to narrow results
-
-### Adding Custom Actions
-
-Define actions in your module config to enable quick access to common tasks:
-
-```ts
-// src/modules/your-module/your-module.config.ts
-import { Plus, Edit } from 'lucide-react';
-import { defineModuleConfig } from '@/modules/app/types/module-config.type';
-
-export const yourModuleConfig = defineModuleConfig({
-  moduleId: 'your-module',
-  featureFlag: 'YOUR_MODULE',
-  menu: {
-    title: 'yourModule:title',
-    icon: YourIcon,
-    name: 'YourModuleIndex',
-  },
-  actions: [
-    {
-      routeName: 'YourModuleCreate',
-      titleKey: 'yourModule:actions.create',
-      badge: 'Create',
-      icon: Plus,
-      permission: 'YOUR_MODULE_CREATE',
-      keywords: ['create', 'new', 'add'],
-    },
-    {
-      routeName: 'YourModuleEdit',
-      titleKey: 'yourModule:actions.edit',
-      badge: 'Edit',
-      icon: Edit,
-      permission: 'YOUR_MODULE_UPDATE',
-      keywords: ['edit', 'update', 'modify'],
-    },
-  ],
-});
-```
-
-**Action Properties:**
-
-- `routeName`: Route name defined in your routes file
-- `titleKey`: Translation key for the action title
-- `badge`: Label shown on the action (e.g., "Create", "Edit")
-- `icon`: Lucide icon component (optional, defaults to Zap icon)
-- `permission`: Permission key for access control (optional)
-- `keywords`: Array of search keywords for better discoverability
-
-### API Integration (Future)
-
-For server-side search integration, the system can be extended to support:
-
-**Endpoint Spec:**
-
-```
-GET /api/search?q={query}&module={moduleId}&limit={limit}
-```
-
-**Request:**
-
-```json
-{
-  "query": "create user",
-  "module": "user-management",
-  "limit": 10
-}
-```
-
-**Response:**
-
-```json
-{
-  "results": [
-    {
-      "type": "menu",
-      "id": "user-list",
-      "title": "User Management",
-      "path": "/admin/users",
-      "module": "user-management",
-      "moduleTitle": "User Management",
-      "icon": "Users",
-      "keywords": ["user", "management", "list"]
-    },
-    {
-      "type": "action",
-      "id": "user-create",
-      "title": "Create User",
-      "path": "/admin/users/create",
-      "module": "user-management",
-      "moduleTitle": "User Management",
-      "icon": "UserPlus",
-      "badge": "Create",
-      "keywords": ["create", "new", "add", "user"]
-    }
-  ],
-  "total": 2
-}
-```
-
-**Implementation Notes:**
-
-- Backend should respect user permissions
-- Results should be sorted by relevance
-- Support pagination for large result sets
-- Cache frequently accessed items
-- Track search analytics for improvements
 
 ---
 
@@ -627,7 +489,7 @@ reactjs-base-project/
   - `base/` # [Only app folder] reusable atoms/molecules prefixed with `r-` (`r-form.tsx`, `r-filter.tsx`, etc.).
   - `layouts/` # top-level layout pieces (`app-layout.tsx`, `app-sidebar.tsx`).
   - `pages/` # entry-point screens for the shell (`app-entry-point.tsx`, error states).
-  - `ui/` # [Only app folder] shadcn-based primitives shared across modules; variant tokens live under `ui/variants/`.
+  - `ui/` # [Only app folder] shared components; variant tokens live under `ui/variants/`.
 - `constants/` # shared constants and enums (permissions, menus) using kebab-case filenames.
 - `contexts/` # React contexts; filename convention: `<feature>-context.ts`.
 - `hooks/` # custom hooks (`use-*.ts/x`), camel-cased after `use`.
