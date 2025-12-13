@@ -12,7 +12,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/modules/app/components/ui/popover';
+} from '@/modules/app/components/base/r-popover-primitives';
 import { AppUserMenu } from './app-layout-user-menu';
 import AppSidebarHeader from './app-sidebar-header';
 import {

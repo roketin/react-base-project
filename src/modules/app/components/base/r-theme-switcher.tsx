@@ -6,7 +6,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/modules/app/components/ui/dropdown-menu';
+} from '@/modules/app/components/base/r-dropdown-menu';
 import RBtn from '@/modules/app/components/base/r-btn';
 
 export type TRThemeSwitcherProps = {

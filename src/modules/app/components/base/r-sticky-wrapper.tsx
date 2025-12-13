@@ -135,8 +135,7 @@ const RStickyWrapper: React.FC<TRRStickyWrapperProps> = memo(
             continue;
           }
           if (typeof target === 'string') {
-            const selector = target.startsWith('#') ? target : target;
-            const el = document.querySelector<HTMLElement>(selector);
+            const el = document.querySelector<HTMLElement>(target);
             if (el) {
               elements.push(el);
             }

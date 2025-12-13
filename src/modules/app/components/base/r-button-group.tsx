@@ -37,7 +37,7 @@ const RButtonGroup = forwardRef<HTMLDivElement, TRButtonGroupProps>(
           attached &&
             orientation === 'vertical' &&
             '[&>button]:rounded-none [&>button:first-child]:rounded-t-md [&>button:last-child]:rounded-b-md [&>button:not(:last-child)]:border-b-0',
-          !attached && (orientation === 'horizontal' ? 'gap-2' : 'gap-2'),
+          !attached && 'gap-2',
           className,
         )}
       >

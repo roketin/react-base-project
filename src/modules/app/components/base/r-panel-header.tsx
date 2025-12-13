@@ -9,7 +9,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/modules/app/components/ui/dropdown-menu';
+} from '@/modules/app/components/base/r-dropdown-menu';
 
 type ButtonVariant = VariantProps<typeof buttonVariants>['variant'];
 type ButtonSize = VariantProps<typeof buttonVariants>['size'];
@@ -61,6 +61,21 @@ export type TRPanelHeaderProps<TPayload = unknown> = {
   responsive?: boolean;
 };
 
+// Helper to get button config with defaults
+function getButtonConfig<T extends ActionButtonConfig>(
+  config: T | undefined,
+  defaults: Required<Omit<ActionButtonConfig, 'payload'>>,
+) {
+  return {
+    label: config?.label ?? defaults.label,
+    icon: config?.icon ?? defaults.icon,
+    variant: config?.variant ?? defaults.variant,
+    size: config?.size ?? defaults.size,
+    iconPlacement: config?.iconPlacement ?? defaults.iconPlacement,
+    disabled: config?.disabled ?? defaults.disabled,
+  };
+}
+
 export function RPanelHeader<TPayload = unknown>({
   title,
   className,
@@ -91,53 +106,50 @@ export function RPanelHeader<TPayload = unknown>({
     if (!sticky || !sentinelRef.current) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsSticky(!entry.isIntersecting);
-      },
-      {
-        threshold: [0, 1],
-      },
+      ([entry]) => setIsSticky(!entry.isIntersecting),
+      { threshold: [0, 1] },
     );
 
     observer.observe(sentinelRef.current);
-
     return () => observer.disconnect();
   }, [sticky]);
-  const closeLabel = closeButton?.label ?? 'Close';
-  const closeIconNode = closeButton?.icon ?? <ArrowLeft className='size-4' />;
-  const closeVariant = closeButton?.variant ?? 'outline';
-  const closeSize = closeButton?.size ?? 'icon';
-  const closeIconPlacement = closeButton?.iconPlacement ?? 'start';
-  const closeDisabled = closeButton?.disabled ?? false;
 
-  const cancelLabel = cancelButton?.label ?? 'Cancel';
-  const cancelIcon = cancelButton?.icon ?? null;
-  const cancelVariant = cancelButton?.variant ?? 'outline';
-  const cancelSize = cancelButton?.size ?? 'default';
-  const cancelIconPlacement = cancelButton?.iconPlacement ?? 'start';
-  const cancelDisabled = cancelButton?.disabled ?? false;
+  const close = getButtonConfig(closeButton, {
+    label: 'Close',
+    icon: <ArrowLeft className='size-4' />,
+    variant: 'outline',
+    size: 'icon',
+    iconPlacement: 'start',
+    disabled: false,
+  });
 
-  const okLabel = okButton?.label ?? 'Ok';
-  const okIcon = okButton?.icon ?? null;
-  const okVariant = okButton?.variant ?? 'default';
-  const okSize = okButton?.size ?? 'default';
-  const okIconPlacement = okButton?.iconPlacement ?? 'end';
+  const cancel = getButtonConfig(cancelButton, {
+    label: 'Cancel',
+    icon: null,
+    variant: 'outline',
+    size: 'default',
+    iconPlacement: 'start',
+    disabled: false,
+  });
 
-  const okDisabled = okButton?.disabled ?? false;
+  const ok = getButtonConfig(okButton, {
+    label: 'Ok',
+    icon: null,
+    variant: 'default',
+    size: 'default',
+    iconPlacement: 'end',
+    disabled: false,
+  });
 
   const closeIconStart =
-    closeSize === 'icon'
-      ? undefined
-      : closeIconPlacement === 'start'
-        ? closeIconNode
-        : undefined;
+    close.size !== 'icon' && close.iconPlacement === 'start'
+      ? close.icon
+      : undefined;
   const closeIconEnd =
-    closeSize === 'icon'
-      ? undefined
-      : closeIconPlacement === 'end'
-        ? closeIconNode
-        : undefined;
-  const closeButtonContent = closeSize === 'icon' ? closeIconNode : closeLabel;
+    close.size !== 'icon' && close.iconPlacement === 'end'
+      ? close.icon
+      : undefined;
+  const closeButtonContent = close.size === 'icon' ? close.icon : close.label;
 
   return (
     <>
@@ -176,11 +188,11 @@ export function RPanelHeader<TPayload = unknown>({
             {showClose && (
               <RBtn
                 type='button'
-                size={closeSize}
-                variant={closeVariant}
+                size={close.size}
+                variant={close.variant}
                 onClick={onClose}
-                aria-label={closeLabel}
-                disabled={loading || closeDisabled}
+                aria-label={close.label}
+                disabled={loading || close.disabled}
                 iconStart={closeIconStart}
                 iconEnd={closeIconEnd}
               >
@@ -224,33 +236,35 @@ export function RPanelHeader<TPayload = unknown>({
               <RBtn
                 type='button'
                 onClick={onCancel}
-                disabled={loading || cancelDisabled}
-                variant={cancelVariant}
-                size={cancelSize}
+                disabled={loading || cancel.disabled}
+                variant={cancel.variant}
+                size={cancel.size}
                 iconStart={
-                  cancelIconPlacement === 'start' ? cancelIcon : undefined
+                  cancel.iconPlacement === 'start' ? cancel.icon : undefined
                 }
-                iconEnd={cancelIconPlacement === 'end' ? cancelIcon : undefined}
+                iconEnd={
+                  cancel.iconPlacement === 'end' ? cancel.icon : undefined
+                }
               >
-                {cancelLabel}
+                {cancel.label}
               </RBtn>
             )}
             {showOk && (
               <RBtn
                 type='button'
                 onClick={onOk}
-                disabled={loading || okDisabled}
-                variant={okVariant}
-                size={okSize}
+                disabled={loading || ok.disabled}
+                variant={ok.variant}
+                size={ok.size}
                 iconStart={
-                  !loading && okIconPlacement === 'start' ? okIcon : undefined
+                  !loading && ok.iconPlacement === 'start' ? ok.icon : undefined
                 }
                 iconEnd={
-                  !loading && okIconPlacement === 'end' ? okIcon : undefined
+                  !loading && ok.iconPlacement === 'end' ? ok.icon : undefined
                 }
                 loading={loading}
               >
-                {okLabel}
+                {ok.label}
               </RBtn>
             )}
           </div>

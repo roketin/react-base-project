@@ -10,7 +10,7 @@ import { routes } from '@/modules/app/routes/app.routes';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/plugins/tanstack-query';
 import './plugins/i18n';
-import { Toaster } from '@/modules/app/components/ui/sonner';
+import { Toaster } from '@/modules/app/components/base/r-toaster';
 
 const router = createBrowserRouter(routes as RouteObject[]);
 

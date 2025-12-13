@@ -129,10 +129,7 @@ const RFileViewer = ({ src, show = false, onClose }: TRFileViewer) => {
             }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className={cn(
-              'relative',
-              isZoomed ? 'overflow-hidden' : 'overflow-hidden',
-            )}
+            className={cn('relative', 'overflow-hidden')}
             style={{
               maxWidth: isZoomed ? undefined : '90vw',
               maxHeight: isZoomed ? undefined : '90svh',

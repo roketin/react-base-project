@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import { toast } from 'sonner';
-import { CustomToast } from '@/modules/app/components/ui/custom-toast';
+import { CustomToast } from '@/modules/app/components/base/r-custom-toast';
 
 type ToastOptions = {
   title: string;

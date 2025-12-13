@@ -1,5 +1,10 @@
 import { cn } from '@/modules/app/libs/utils';
-import { forwardRef, type ComponentPropsWithoutRef } from 'react';
+import {
+  forwardRef,
+  useRef,
+  useEffect,
+  type ComponentPropsWithoutRef,
+} from 'react';
 
 // Base Table Component
 export type TRTableProps = ComponentPropsWithoutRef<'table'> & {
@@ -85,6 +90,9 @@ export type TRThProps = ComponentPropsWithoutRef<'th'> & {
   sticky?: 'left' | 'right' | 'none';
   stickyOffset?: number;
   align?: 'left' | 'center' | 'right';
+  resizable?: boolean;
+  onResize?: (width: number) => void;
+  onResizeEnd?: (width: number) => void;
 };
 
 export const RTh = forwardRef<HTMLTableCellElement, TRThProps>(
@@ -94,7 +102,11 @@ export const RTh = forwardRef<HTMLTableCellElement, TRThProps>(
       sticky = 'none',
       stickyOffset = 0,
       align = 'left',
+      resizable = false,
+      onResize,
+      onResizeEnd,
       style,
+      children,
       ...props
     },
     ref,
@@ -118,15 +130,91 @@ export const RTh = forwardRef<HTMLTableCellElement, TRThProps>(
         className={cn(
           'border-b bg-muted px-4 py-3 font-medium text-muted-foreground transition-colors',
           'text-(length:--table-header-font-size)',
+          resizable && 'relative',
           alignClass,
           className,
         )}
         {...props}
-      />
+      >
+        {children}
+        {resizable && (
+          <RColumnResizer onResize={onResize} onResizeEnd={onResizeEnd} />
+        )}
+      </th>
     );
   },
 );
 RTh.displayName = 'RTh';
+
+// Column Resizer Component
+type TRColumnResizerProps = {
+  onResize?: (delta: number) => void;
+  onResizeEnd?: (delta: number) => void;
+};
+
+function RColumnResizer({ onResize, onResizeEnd }: TRColumnResizerProps) {
+  const startX = useRef(0);
+  const isDragging = useRef(false);
+  const rafId = useRef<number>(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    isDragging.current = true;
+    startX.current = e.clientX;
+
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+
+      rafId.current = requestAnimationFrame(() => {
+        const delta = e.clientX - startX.current;
+        onResize?.(delta);
+      });
+    };
+
+    const handleMouseUp = (e: MouseEvent) => {
+      if (!isDragging.current) return;
+
+      isDragging.current = false;
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+
+      const delta = e.clientX - startX.current;
+      onResizeEnd?.(delta);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+    };
+  }, [onResize, onResizeEnd]);
+
+  return (
+    <div
+      className={cn(
+        'absolute right-0 top-0 h-full w-1 cursor-col-resize',
+        'hover:bg-primary/30 active:bg-primary/50',
+        'transition-colors duration-100',
+      )}
+      onMouseDown={handleMouseDown}
+      onClick={(e) => e.stopPropagation()}
+    />
+  );
+}
 
 // Table Data Cell Component
 export type TRTdProps = ComponentPropsWithoutRef<'td'> & {

@@ -11,7 +11,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/modules/app/components/ui/dropdown-menu';
+} from '@/modules/app/components/base/r-dropdown-menu';
 
 export type TRMenuItem = {
   id: string;

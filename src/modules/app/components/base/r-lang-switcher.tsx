@@ -6,7 +6,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/modules/app/components/ui/popover';
+} from '@/modules/app/components/base/r-popover-primitives';
 import { cn } from '@/modules/app/libs/utils';
 import { toast } from 'sonner';
 import RBtn from '@/modules/app/components/base/r-btn';
@@ -71,7 +71,7 @@ const RLangSwitcher = ({
         setOpen(false);
         return;
       }
-      void i18n.changeLanguage(code);
+      i18n.changeLanguage(code).catch(() => {});
       setOpen(false);
 
       toast.success('Language switched to ' + code, {

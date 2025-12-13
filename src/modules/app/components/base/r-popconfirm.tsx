@@ -12,7 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   PopoverArrow,
-} from '@/modules/app/components/ui/popover';
+} from '@/modules/app/components/base/r-popover-primitives';
 import { cn } from '@/modules/app/libs/utils';
 import RBtn from '@/modules/app/components/base/r-btn';
 import { AlertTriangle, HelpCircle, Info, AlertCircle } from 'lucide-react';

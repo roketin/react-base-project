@@ -5,7 +5,7 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-} from '@/modules/app/components/ui/popover';
+} from '@/modules/app/components/base/r-popover-primitives';
 import RBtn from '@/modules/app/components/base/r-btn';
 import { ChevronDown, Filter as FilterIcon } from 'lucide-react';
 

@@ -2,7 +2,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/modules/app/components/ui/popover';
+} from '@/modules/app/components/base/r-popover-primitives';
 import RAvatar from '@/modules/app/components/base/r-avatar';
 import RBtn from '@/modules/app/components/base/r-btn';
 import { LogOut, UserRound, Sun, Moon, Monitor } from 'lucide-react';

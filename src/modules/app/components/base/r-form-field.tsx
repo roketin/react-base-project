@@ -6,7 +6,7 @@ import {
   FormControl,
   FormMessage,
   FormDescription,
-} from '@/modules/app/components/ui/form';
+} from '@/modules/app/components/base/r-form-primitives';
 import type {
   Control,
   ControllerFieldState,

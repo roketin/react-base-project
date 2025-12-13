@@ -22,8 +22,17 @@ import {
   type Table,
   type Header,
   type RowSelectionState,
+  type ColumnSizingState,
+  type VisibilityState,
 } from '@tanstack/react-table';
-import { ArrowDown, ArrowUp, ChevronsUpDown, Search } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronsUpDown,
+  Search,
+  Columns3,
+} from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   forwardRef,
   useCallback,
@@ -38,6 +47,14 @@ import { useIsMobile } from '@/modules/app/hooks/use-media-query';
 import { RSkeleton } from '@/modules/app/components/base/r-skeleton';
 import { RInput } from '@/modules/app/components/base/r-input';
 import { RResult } from '@/modules/app/components/base/r-result';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+} from '@/modules/app/components/base/r-dropdown-menu';
+import { RCheckbox } from '@/modules/app/components/base/r-checkbox';
+import { RTooltip } from '@/modules/app/components/base/r-tooltip';
 
 export type StickyPosition = 'left' | 'right' | 'none';
 type Alignment = 'left' | 'center' | 'right';
@@ -47,6 +64,7 @@ export type TRDataTableColumnDef<TData, TValue> = ColumnDef<TData, TValue> & {
   stickyOffset?: number;
   headerAlign?: Alignment;
   cellAlign?: Alignment;
+  enableResizing?: boolean;
 };
 
 export type TRDataTableProps<TData, TValue> = TLoadable & {
@@ -70,6 +88,18 @@ export type TRDataTableProps<TData, TValue> = TLoadable & {
   toolbarEnd?: React.ReactNode;
   renderOnMobile?: (row: TData, index: number) => React.ReactNode;
   emptyContent?: React.ReactNode;
+  /** Enable column resizing */
+  resizableColumns?: boolean;
+  /** Storage key for persisting column widths */
+  columnSizingStorageKey?: string;
+  /** Show column visibility toggle button */
+  showColumnToggle?: boolean;
+  /** Initial column visibility state */
+  initialColumnVisibility?: VisibilityState;
+  /** Callback when column visibility changes */
+  onColumnVisibilityChange?: (visibility: VisibilityState) => void;
+  /** Storage key for persisting column visibility */
+  columnVisibilityStorageKey?: string;
 };
 
 export type TRDataTableRef<TData = unknown> = {
@@ -86,6 +116,44 @@ const JUSTIFY_CLASS: Record<Alignment, string> = {
 
 const RSkeleton_ROWS = Array.from({ length: 8 });
 const MOBILE_RSkeleton_ROWS = Array.from({ length: 5 });
+
+// Column sizing storage helpers
+function getStoredColumnSizing(key: string): ColumnSizingState | null {
+  try {
+    const stored = localStorage.getItem(`table_cols_${key}`);
+    if (stored) return JSON.parse(stored);
+  } catch {
+    // Ignore
+  }
+  return null;
+}
+
+function storeColumnSizing(key: string, sizing: ColumnSizingState): void {
+  try {
+    localStorage.setItem(`table_cols_${key}`, JSON.stringify(sizing));
+  } catch {
+    // Ignore
+  }
+}
+
+// Column visibility storage helpers
+function getStoredColumnVisibility(key: string): VisibilityState | null {
+  try {
+    const stored = localStorage.getItem(`table_vis_${key}`);
+    if (stored) return JSON.parse(stored);
+  } catch {
+    // Ignore
+  }
+  return null;
+}
+
+function storeColumnVisibility(key: string, visibility: VisibilityState): void {
+  try {
+    localStorage.setItem(`table_vis_${key}`, JSON.stringify(visibility));
+  } catch {
+    // Ignore
+  }
+}
 
 const RDataTableInner = <TData, TValue>(
   {
@@ -110,15 +178,44 @@ const RDataTableInner = <TData, TValue>(
     toolbarEnd,
     renderOnMobile,
     emptyContent,
+    resizableColumns = false,
+    columnSizingStorageKey,
+    showColumnToggle = false,
+    initialColumnVisibility = {},
+    onColumnVisibilityChange,
+    columnVisibilityStorageKey,
   }: TRDataTableProps<TData, TValue>,
   ref: React.Ref<TRDataTableRef<TData>>,
 ) => {
+  const { t } = useTranslation('app');
   const [rowSelection, setRowSelection] =
     useState<RowSelectionState>(initialSelected);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [search, setSearch] = useState(initialSearch);
+  const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(() => {
+    if (columnSizingStorageKey) {
+      return getStoredColumnSizing(columnSizingStorageKey) ?? {};
+    }
+    return {};
+  });
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    () => {
+      if (columnVisibilityStorageKey) {
+        return (
+          getStoredColumnVisibility(columnVisibilityStorageKey) ??
+          initialColumnVisibility
+        );
+      }
+      return initialColumnVisibility;
+    },
+  );
   const isInitialized = useRef(false);
   const isMobile = useIsMobile();
+
+  // Refs for live resizing (no re-render during drag)
+  const tableRef = useRef<HTMLTableElement>(null);
+  const resizingColumnId = useRef<string | null>(null);
+  const resizingStartWidth = useRef(0);
 
   // Debounced view mode with fade transition (like iPadOS)
   const [viewMode, setViewMode] = useState<'mobile' | 'desktop'>(
@@ -168,18 +265,82 @@ const RDataTableInner = <TData, TValue>(
     [columns],
   );
 
+  // Handle column visibility change
+  const handleColumnVisibilityChange = useCallback(
+    (
+      updater: VisibilityState | ((old: VisibilityState) => VisibilityState),
+    ) => {
+      setColumnVisibility((prev) => {
+        const newVisibility =
+          typeof updater === 'function' ? updater(prev) : updater;
+        if (columnVisibilityStorageKey) {
+          storeColumnVisibility(columnVisibilityStorageKey, newVisibility);
+        }
+        onColumnVisibilityChange?.(newVisibility);
+        return newVisibility;
+      });
+    },
+    [columnVisibilityStorageKey, onColumnVisibilityChange],
+  );
+
   const table = useReactTable({
     data,
     columns,
-    state: { rowSelection, sorting },
+    state: { rowSelection, sorting, columnSizing, columnVisibility },
     manualSorting: true,
     manualPagination: true,
     enableRowSelection: true,
+    enableColumnResizing: resizableColumns,
+    columnResizeMode: 'onChange',
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
+    onColumnSizingChange: setColumnSizing,
+    onColumnVisibilityChange: handleColumnVisibilityChange,
     getCoreRowModel: getCoreRowModel(),
     getRowId,
   });
+
+  // Handle column resize - direct DOM manipulation for performance
+  const handleColumnResize = useCallback((headerId: string, delta: number) => {
+    if (!tableRef.current) return;
+
+    const th = tableRef.current.querySelector(`[data-column-id="${headerId}"]`);
+    if (!th) return;
+
+    if (!resizingColumnId.current) {
+      resizingColumnId.current = headerId;
+      resizingStartWidth.current = th.getBoundingClientRect().width;
+    }
+
+    const newWidth = Math.max(50, resizingStartWidth.current + delta);
+    (th as HTMLElement).style.width = `${newWidth}px`;
+
+    // Also update corresponding td cells
+    const cells = tableRef.current.querySelectorAll(
+      `[data-cell-column="${headerId}"]`,
+    );
+    cells.forEach((cell) => {
+      (cell as HTMLElement).style.width = `${newWidth}px`;
+    });
+  }, []);
+
+  const handleColumnResizeEnd = useCallback(
+    (headerId: string, delta: number) => {
+      const newWidth = Math.max(50, resizingStartWidth.current + delta);
+
+      setColumnSizing((prev) => {
+        const updated = { ...prev, [headerId]: newWidth };
+        if (columnSizingStorageKey) {
+          storeColumnSizing(columnSizingStorageKey, updated);
+        }
+        return updated;
+      });
+
+      resizingColumnId.current = null;
+      resizingStartWidth.current = 0;
+    },
+    [columnSizingStorageKey],
+  );
 
   const handleChange = useCallback(
     (params: Partial<TApiDefaultQueryParams>) => onChange?.(params),
@@ -243,6 +404,28 @@ const RDataTableInner = <TData, TValue>(
   const headers = table.getHeaderGroups()[0]?.headers ?? [];
   const rows = table.getRowModel().rows;
 
+  // Get all toggleable columns (exclude selection column, etc.)
+  const toggleableColumns = table
+    .getAllColumns()
+    .filter(
+      (column) =>
+        typeof column.accessorFn !== 'undefined' && column.getCanHide(),
+    );
+
+  const hiddenColumns = toggleableColumns.filter(
+    (column) => !column.getIsVisible(),
+  );
+
+  const hasColumnToggle = showColumnToggle && toggleableColumns.length > 0;
+
+  const getColumnLabel = (column: (typeof toggleableColumns)[0]) => {
+    const header = column.columnDef.header;
+    return typeof header === 'string'
+      ? header
+      : column.id.charAt(0).toUpperCase() +
+          column.id.slice(1).replace(/_/g, ' ');
+  };
+
   const renderRSkeletonRows = () =>
     RSkeleton_ROWS.map((_, idx) => (
       <RTr key={idx} hoverable={false}>
@@ -290,14 +473,20 @@ const RDataTableInner = <TData, TValue>(
     const sticky = def.sticky ?? 'none';
     const offset = def.stickyOffset ?? 0;
     const align = (def.headerAlign ?? 'left') as Alignment;
+    const canResize = resizableColumns && def.enableResizing !== false;
+    const columnWidth = columnSizing[header.id] ?? header.getSize();
 
     return (
       <RTh
         key={header.id}
+        data-column-id={header.id}
         sticky={sticky}
         stickyOffset={offset}
         align={align}
-        style={{ width: header.getSize() }}
+        resizable={canResize}
+        onResize={(delta) => handleColumnResize(header.id, delta)}
+        onResizeEnd={(delta) => handleColumnResizeEnd(header.id, delta)}
+        style={{ width: columnWidth, minWidth: canResize ? 50 : undefined }}
         className={cn(header.column.getCanSort() && 'hover:bg-muted/70')}
       >
         {!header.isPlaceholder && (
@@ -331,12 +520,111 @@ const RDataTableInner = <TData, TValue>(
     );
   };
 
+  const visibleColumnsCount = toggleableColumns.filter((col) =>
+    col.getIsVisible(),
+  ).length;
+
+  const handleToggleColumn = (
+    column: (typeof toggleableColumns)[0],
+    value: boolean,
+  ) => {
+    // Prevent hiding if it's the last visible column
+    if (!value && visibleColumnsCount <= 1) return;
+    column.toggleVisibility(value);
+  };
+
+  const renderColumnToggleHeader = () => {
+    if (!showColumnToggle || toggleableColumns.length === 0) return null;
+
+    const tooltipText =
+      hiddenColumns.length > 0
+        ? t('table.columnsHidden', { count: hiddenColumns.length })
+        : t('table.toggleColumns');
+
+    const allVisible = hiddenColumns.length === 0;
+    const someVisible =
+      visibleColumnsCount > 0 && visibleColumnsCount < toggleableColumns.length;
+
+    const handleSelectAllChange = (checked: boolean) => {
+      if (checked) {
+        // Show all
+        toggleableColumns.forEach((col) => col.toggleVisibility(true));
+      } else {
+        // Hide all except first
+        toggleableColumns.forEach((col, idx) =>
+          col.toggleVisibility(idx === 0),
+        );
+      }
+    };
+
+    return (
+      <RTh
+        align='center'
+        className='w-10 px-1!'
+        style={{ width: 40, minWidth: 40 }}
+      >
+        <RTooltip content={tooltipText} side='left' delayDuration={0}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type='button'
+                className={cn(
+                  'inline-flex items-center justify-center w-7 h-7 rounded-md transition-colors',
+                  'hover:bg-accent hover:text-accent-foreground',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                  hiddenColumns.length > 0
+                    ? 'text-primary'
+                    : 'text-muted-foreground',
+                )}
+              >
+                <Columns3 size={16} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end' className='w-48'>
+              <div className='px-2 py-1.5'>
+                <RCheckbox
+                  checked={allVisible}
+                  indeterminate={someVisible}
+                  onCheckedChange={handleSelectAllChange}
+                  label={t('table.toggleColumns')}
+                  className='h-4 w-4'
+                />
+              </div>
+              <DropdownMenuSeparator />
+              {toggleableColumns.map((column) => {
+                const isVisible = column.getIsVisible();
+                return (
+                  <div key={column.id} className='px-2 py-1'>
+                    <RCheckbox
+                      checked={isVisible}
+                      onCheckedChange={(value) =>
+                        handleToggleColumn(column, value)
+                      }
+                      label={getColumnLabel(column)}
+                      className='h-4 w-4'
+                    />
+                  </div>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </RTooltip>
+      </RTh>
+    );
+  };
+
   const renderTableContent = () => (
-    <RTable key={columnKey} fixed={fixed} className={tableClassName}>
+    <RTable
+      ref={tableRef}
+      key={columnKey}
+      fixed={fixed}
+      className={tableClassName}
+    >
       <RThead>
         {table.getHeaderGroups().map((headerGroup) => (
           <RTr key={headerGroup.id} hoverable={false}>
             {headerGroup.headers.map(renderHeaderCell)}
+            {renderColumnToggleHeader()}
           </RTr>
         ))}
       </RThead>
@@ -361,23 +649,31 @@ const RDataTableInner = <TData, TValue>(
                 const align = (def.cellAlign ??
                   def.headerAlign ??
                   'left') as Alignment;
+                const columnWidth =
+                  columnSizing[cell.column.id] ?? cell.column.getSize();
 
                 return (
                   <RTd
                     key={cell.id}
+                    data-cell-column={cell.column.id}
                     sticky={sticky}
                     stickyOffset={offset}
                     align={align}
+                    style={
+                      resizableColumns ? { width: columnWidth } : undefined
+                    }
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </RTd>
                 );
               })}
+              {/* Empty cell for column toggle alignment */}
+              {hasColumnToggle && <RTd className='w-10 px-1!' />}
             </RTr>
           ))
         ) : (
           <RTr hoverable={false}>
-            <RTd colSpan={columns.length || 1}>
+            <RTd colSpan={(columns.length || 1) + (hasColumnToggle ? 1 : 0)}>
               {emptyContent ?? (
                 <div className='py-8'>
                   <RResult
@@ -395,24 +691,31 @@ const RDataTableInner = <TData, TValue>(
     </RTable>
   );
 
+  const hasToolbar = allowSearch || toolbarStart || toolbarEnd;
+
   return (
     <div>
-      <div className='mb-4 flex flex-wrap items-center gap-3 md:justify-between'>
-        <div className='flex items-center gap-3 flex-1'>
-          {allowSearch && (
-            <div className='flex-1'>
-              <RInput
-                placeholder={searchPlaceholder}
-                onChange={handleSearchChange}
-                leftIcon={<Search size={16} />}
-                value={search}
-              />
-            </div>
+      {/* Main toolbar row */}
+      {hasToolbar && (
+        <div className='mb-3 flex flex-wrap items-center gap-3 md:justify-between'>
+          <div className='flex items-center gap-3 flex-1'>
+            {allowSearch && (
+              <div className='flex-1 max-w-sm'>
+                <RInput
+                  placeholder={searchPlaceholder}
+                  onChange={handleSearchChange}
+                  leftIcon={<Search size={16} />}
+                  value={search}
+                />
+              </div>
+            )}
+            {toolbarStart}
+          </div>
+          {toolbarEnd && (
+            <div className='flex items-center gap-2'>{toolbarEnd}</div>
           )}
-          {toolbarStart}
         </div>
-        {toolbarEnd}
-      </div>
+      )}
 
       <div
         className={cn(

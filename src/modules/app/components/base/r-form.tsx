@@ -1,5 +1,5 @@
 import { showAlertValidation } from '@/modules/app/components/base/show-alert-validation';
-import { Form } from '@/modules/app/components/ui/form';
+import { Form } from '@/modules/app/components/base/r-form-primitives';
 import { FormConfigContext } from '@/modules/app/contexts/form-config-context';
 import type {
   TDisableable,

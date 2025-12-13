@@ -9,9 +9,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/modules/app/components/ui/dialog';
+} from '@/modules/app/components/base/r-dialog-primitives';
 import { cn } from '@/modules/app/libs/utils';
-import type { DialogProps } from '@radix-ui/react-dialog';
+
+type DialogProps = {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  defaultOpen?: boolean;
+  modal?: boolean;
+};
 
 type Size = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 
