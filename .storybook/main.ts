@@ -30,6 +30,12 @@ const config: StorybookConfig = {
       '@config': path.resolve(__dirname, '../roketin.config.ts'),
     };
 
+    // Set base path for GitHub Pages deployment (use STORYBOOK_BASE_PATH env var)
+    // Example: STORYBOOK_BASE_PATH=/my-project/ pnpm build-storybook
+    if (process.env.STORYBOOK_BASE_PATH) {
+      config.base = process.env.STORYBOOK_BASE_PATH;
+    }
+
     return config;
   },
 };
