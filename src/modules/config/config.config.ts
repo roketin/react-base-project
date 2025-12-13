@@ -4,7 +4,7 @@ import { Cog } from 'lucide-react';
 export const ConfigModuleConfig = defineModuleConfig({
   moduleId: 'config',
   featureFlag: 'CONFIG',
-  // TODO: Update translations, icon, permissions, and route names to fit your module.
+  // NOTE: Update translations, icon, permissions, and route names to fit your module.
   // Set menu to false if this module should stay hidden in the sidebar.
   menu: {
     title: 'Config',

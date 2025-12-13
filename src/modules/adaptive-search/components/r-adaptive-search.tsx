@@ -8,7 +8,7 @@ import {
   CommandInput,
   CommandList,
   CommandSeparator,
-} from '@/modules/app/components/ui/command';
+} from '@/modules/app/components/base/r-command';
 import { useAdaptiveSearchStore } from '../stores/adaptive-search.store';
 import { useSearchEngine } from '../hooks/use-search-engine';
 import { useAppSearchAdapter } from '../adapters/app-adapter';
@@ -84,6 +84,67 @@ export function RAdaptiveSearch({ apiEnabled = false }: TRAdaptiveSearchProps) {
     return () => document.removeEventListener('keydown', down);
   }, [isOpen, setIsOpen]);
 
+  // Handler for dynamic data items (from API)
+  const handleDataItemSelect = (item: TSearchableItem) => {
+    const mapping = apiMappings.find((m) => m.moduleId === item.module);
+    if (!mapping?.onSelect || !item._raw) return false;
+
+    const context = {
+      getCurrentQuery: () => query,
+      navigate: (path: string) => navigate(path),
+      navigateByName: (
+        name: string,
+        params?: Record<string, string>,
+        options?: { query?: Record<string, string | number | boolean> },
+      ) => navigateByName(name, params || {}, options),
+      openDialog: (id: string, data?: unknown) => {
+        console.log('Open dialog:', id, data);
+      },
+    };
+    mapping.onSelect(item._raw, context);
+    return true;
+  };
+
+  // Handler for navigate-with-query action type
+  const handleNavigateWithQuery = (
+    item: TSearchableItem,
+    searchTerm: string,
+  ) => {
+    if (item.actionType !== 'navigate-with-query' || !item.actionPayload)
+      return false;
+
+    const { path, routeName, queryParamKey } = item.actionPayload;
+    const queryParams: Record<string, string> = {};
+    if (queryParamKey && searchTerm) {
+      queryParams[queryParamKey] = searchTerm;
+    }
+
+    if (routeName) {
+      navigateByName(routeName, {}, { query: queryParams });
+    } else if (path) {
+      const searchParams = new URLSearchParams(queryParams);
+      const url =
+        Object.keys(queryParams).length > 0
+          ? `${path}?${searchParams.toString()}`
+          : path;
+      navigate(url);
+    }
+    return true;
+  };
+
+  // Handler for navigate action type
+  const handleNavigateAction = (item: TSearchableItem) => {
+    if (item.actionType !== 'navigate' || !item.actionPayload) return false;
+
+    const { path, routeName, params } = item.actionPayload;
+    if (routeName) {
+      navigateByName(routeName, params || {});
+    } else if (path) {
+      navigate(path);
+    }
+    return true;
+  };
+
   // Handle item selection
   const onSelect = (item: TSearchableItem) => {
     // Track access
@@ -91,21 +152,7 @@ export function RAdaptiveSearch({ apiEnabled = false }: TRAdaptiveSearchProps) {
 
     // Handle dynamic data items (from API)
     if (item.type === 'data' && item._raw) {
-      const mapping = apiMappings.find((m) => m.moduleId === item.module);
-      if (mapping?.onSelect) {
-        const context = {
-          getCurrentQuery: () => query,
-          navigate: (path: string) => navigate(path),
-          navigateByName: (
-            name: string,
-            params?: Record<string, string>,
-            options?: { query?: Record<string, string | number | boolean> },
-          ) => navigateByName(name, params || {}, options),
-          openDialog: (id: string, data?: unknown) => {
-            console.log('Open dialog:', id, data);
-          },
-        };
-        mapping.onSelect(item._raw, context);
+      if (handleDataItemSelect(item)) {
         setIsOpen(false);
         setQuery('');
         return;
@@ -114,44 +161,15 @@ export function RAdaptiveSearch({ apiEnabled = false }: TRAdaptiveSearchProps) {
 
     // Handle static actions
     if (item.type === 'action') {
-      // Use parsedQuery.query from search engine (text after identifier)
       const searchTerm = parsedQuery.hasIdentifier ? parsedQuery.query : query;
 
-      // Handle navigate-with-query action type
-      if (item.actionType === 'navigate-with-query' && item.actionPayload) {
-        const { path, routeName, queryParamKey } = item.actionPayload;
-
-        // Build query params
-        const queryParams: Record<string, string> = {};
-        if (queryParamKey && searchTerm) {
-          queryParams[queryParamKey] = searchTerm;
-        }
-
-        // Navigate using routeName if available, otherwise use path
-        if (routeName) {
-          navigateByName(routeName, {}, { query: queryParams });
-        } else if (path) {
-          if (Object.keys(queryParams).length > 0) {
-            const searchParams = new URLSearchParams(queryParams);
-            navigate(`${path}?${searchParams.toString()}`);
-          } else {
-            navigate(path);
-          }
-        }
+      if (handleNavigateWithQuery(item, searchTerm)) {
         setIsOpen(false);
         setQuery('');
         return;
       }
 
-      // Handle navigate action type
-      if (item.actionType === 'navigate' && item.actionPayload) {
-        const { path, routeName, params } = item.actionPayload;
-
-        if (routeName) {
-          navigateByName(routeName, params || {});
-        } else if (path) {
-          navigate(path);
-        }
+      if (handleNavigateAction(item)) {
         setIsOpen(false);
         setQuery('');
         return;

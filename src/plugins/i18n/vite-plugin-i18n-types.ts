@@ -35,7 +35,9 @@ async function generateTypes() {
   const resources: Record<string, string[]> = {};
 
   for (const file of files) {
-    const match = file.match(/modules\/.+\/locales\/(.+)\.(.+)\.json$/);
+    const match = file.match(
+      /modules\/[^/]+\/locales\/([^.]+)\.([^.]+)\.json$/,
+    );
     if (!match) continue;
 
     const [, filenameRaw] = match;

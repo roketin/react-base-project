@@ -52,7 +52,7 @@ const AuthPasswordConfirmDialog = ({
       setIsLoading(true);
       setError('');
 
-      // TODO: Replace with actual API call
+      // Placeholder: Replace with actual API call when backend is ready
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       // Simple password check - replace with actual validation

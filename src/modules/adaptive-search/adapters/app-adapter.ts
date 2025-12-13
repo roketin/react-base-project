@@ -17,8 +17,8 @@ import type { TPermission } from '@/modules/app/constants/permission.constant';
  * Options for app search adapter
  */
 type TUseAppSearchAdapterOptions = {
-  query: string; // TODO: Will be used when API is enabled
-  apiEnabled?: boolean; // TODO: Will be used when API is enabled
+  query: string; // NOTE: Used when API is enabled
+  apiEnabled?: boolean; // NOTE: Enable to fetch from API
 };
 
 /**
@@ -53,7 +53,7 @@ export function useAppSearchAdapter(options: TUseAppSearchAdapterOptions) {
         keywords: action.keywords,
         keywordsText: action.keywords?.join(' '),
         permission: action.permission,
-        path: action.routeName ? undefined : undefined,
+        path: action.routeName ?? undefined,
         actionType: action.actionType,
         actionPayload: action.actionPayload,
       }),

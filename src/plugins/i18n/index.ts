@@ -13,7 +13,9 @@ const resources: Resource = {};
 
 for (const path in modulesLocales) {
   // path contoh: ../modules/auth/locales/en.json
-  const match = path.match(/modules\/(.+)\/locales\/(.+)\.(.+)\.json$/);
+  const match = path.match(
+    /modules\/([^/]+)\/locales\/([^.]+)\.([^.]+)\.json$/,
+  );
   if (match) {
     const [, , namespace, lng] = match;
     const camelNamespace = namespace.replace(/-([a-z])/g, (_, c) =>

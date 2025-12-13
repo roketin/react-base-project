@@ -14,8 +14,6 @@ export type TPatternOptions = {
   negative: boolean;
 };
 
-const GROUP_SEPARATOR_REGEX = /\B(?=(\d{3})+(?!\d))/g;
-
 /** Remove thousand separators (commas) from string */
 export const stripGrouping = (value: string): string => value.replace(/,/g, '');
 
@@ -47,9 +45,23 @@ export const createInputPattern = ({
   return new RegExp(`^${signPart}\\d*${decimalPart}$`);
 };
 
+// Safe thousand separator without backtracking regex
+const addThousandSeparators = (value: string): string => {
+  const parts = value.split('');
+  const result: string[] = [];
+  let count = 0;
+  for (let i = parts.length - 1; i >= 0; i--) {
+    if (count > 0 && count % 3 === 0) {
+      result.unshift(',');
+    }
+    result.unshift(parts[i]);
+    count++;
+  }
+  return result.join('');
+};
+
 /** Add thousand separators to integer string */
-const formatInteger = (value: string): string =>
-  value.replace(GROUP_SEPARATOR_REGEX, ',');
+const formatInteger = (value: string): string => addThousandSeparators(value);
 
 /** Safe rounding to avoid floating point issues */
 const safeRound = (value: number, decimals: number): number => {
@@ -75,7 +87,7 @@ export const formatDisplayValue = (
   const unsigned = sanitized.replace('-', '');
   const shouldFormatDecimal = allowDecimal && decimalLimit > 0;
 
-  let integerPart = unsigned;
+  let integerPart: string;
   let decimalPart = '';
 
   if (shouldFormatDecimal) {

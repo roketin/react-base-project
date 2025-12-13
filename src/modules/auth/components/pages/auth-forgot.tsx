@@ -42,6 +42,18 @@ const AuthForgot = () => {
   const { mutate } = useAuthForgot();
 
   /**
+   * Handle success alert callback
+   */
+  const handleSuccessAlertCallback = useCallback(
+    ({ ok }: { ok: boolean }) => {
+      if (ok) {
+        navigate('AuthLogin');
+      }
+    },
+    [navigate],
+  );
+
+  /**
    * Submit form
    * @param values
    */
@@ -74,11 +86,7 @@ const AuthForgot = () => {
                   description: t('forgot.successDesc'),
                   icon: <CircleCheck className='text-green-600' size={50} />,
                 },
-                ({ ok }) => {
-                  if (ok) {
-                    navigate('AuthLogin');
-                  }
-                },
+                handleSuccessAlertCallback,
               );
               close();
             },
@@ -90,7 +98,7 @@ const AuthForgot = () => {
         },
       );
     },
-    [mutate, navigate, t, tApp],
+    [handleSuccessAlertCallback, mutate, t, tApp],
   );
 
   return (

@@ -131,7 +131,7 @@ export function useLeavePageGuard({
 
     confirmingNavigationRef.current = true;
 
-    void (async () => {
+    (async () => {
       const shouldProceed = await confirmNavigation();
       if (shouldProceed) {
         blockerProceed?.();

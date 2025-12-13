@@ -73,6 +73,39 @@ const SampleFormIndex = () => {
     navigate('SampleFormAdd');
   }, [navigate]);
 
+  /**
+   * Handle delete confirmation callback
+   */
+  const handleDeleteConfirm = useCallback(({ ok }: { ok: boolean }) => {
+    if (ok) {
+      showAlert({
+        variant: 'success',
+        type: 'alert',
+        title: 'Success',
+        description: 'Successfully deleted entry',
+        okVariant: 'success',
+      });
+    }
+  }, []);
+
+  /**
+   * Handle delete action
+   */
+  const handleDelete = useCallback(
+    (item: TSampleItem) => {
+      showAlert(
+        {
+          type: 'confirm',
+          title: 'Delete this entry?',
+          description: `Are you sure you want to delete "${item.name}"? This action cannot be undone.`,
+          variant: 'confirm',
+        },
+        handleDeleteConfirm,
+      );
+    },
+    [handleDeleteConfirm],
+  );
+
   // Filters
   const columns = useMemo<TRDataTableColumnDef<TSampleItem, unknown>[]>(
     () => [
@@ -149,27 +182,7 @@ const SampleFormIndex = () => {
                 size='iconSm'
                 variant='destructive'
                 soft
-                onClick={() => {
-                  showAlert(
-                    {
-                      type: 'confirm',
-                      title: 'Delete this entry?',
-                      description: `Are you sure you want to delete "${row.original.name}"? This action cannot be undone.`,
-                      variant: 'confirm',
-                    },
-                    ({ ok }) => {
-                      if (ok) {
-                        showAlert({
-                          variant: 'success',
-                          type: 'alert',
-                          title: 'Success',
-                          description: 'Successfully deleted entry',
-                          okVariant: 'success',
-                        });
-                      }
-                    },
-                  );
-                }}
+                onClick={() => handleDelete(row.original)}
               >
                 <Trash size={20} className='text-destructive' />
               </RBtn>
@@ -178,7 +191,7 @@ const SampleFormIndex = () => {
         ),
       },
     ],
-    [navigate, t],
+    [handleDelete, navigate, t],
   );
 
   const filters = useMemo<TFilterItem[]>(

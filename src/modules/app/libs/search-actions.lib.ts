@@ -8,6 +8,7 @@ import { nameToPath } from '@/modules/app/hooks/use-named-route';
  * Actions are now defined in each module's config file
  * Supports both navigation (routeName) and custom execution (onExecute)
  */
+// eslint-disable-next-line sonarjs/cognitive-complexity -- Complex iteration logic across module configs
 export function generateSearchActions(
   t: (key: string) => string,
 ): SearchableActionItem[] {

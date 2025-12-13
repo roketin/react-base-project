@@ -35,6 +35,35 @@ export type TFilterItem<TValue = unknown> = TFilterBase<TValue>;
 
 type PrimitiveOption = string | number;
 
+type TLabeledValue = {
+  value: string;
+  label?: string;
+};
+
+// Shared helper functions for value normalization
+const toLabeledValue = (
+  val: string | number | TLabeledValue | null | undefined,
+): TLabeledValue | null => {
+  if (val === null || val === undefined) return null;
+  if (typeof val === 'object' && 'value' in val) {
+    return {
+      value: String((val as TLabeledValue).value),
+      label: (val as TLabeledValue).label,
+    };
+  }
+  const stringVal = String(val);
+  return { value: stringVal, label: stringVal };
+};
+
+const normalizeArrayValue = (
+  val: unknown,
+): Array<TLabeledValue> | undefined => {
+  if (!Array.isArray(val)) return undefined;
+  return val
+    .map((item) => toLabeledValue(item as string | TLabeledValue))
+    .filter((item): item is TLabeledValue => Boolean(item?.value));
+};
+
 type FilterComponentOptions<
   TValue,
   TComponentProps,
@@ -79,11 +108,6 @@ export function filterInput({
 }
 
 type SelectMode = 'single' | 'multiple';
-
-type TLabeledValue = {
-  value: string;
-  label?: string;
-};
 
 type FilterSelectValue<TMode extends SelectMode> = TMode extends 'multiple'
   ? Array<string | TLabeledValue> | null
@@ -184,29 +208,6 @@ export function filterSelect<
       });
 
   const optionFilterProp = fieldNames?.label ?? 'label';
-
-  const toLabeledValue = (
-    val: string | number | TLabeledValue | null | undefined,
-  ): TLabeledValue | null => {
-    if (val === null || val === undefined) return null;
-    if (typeof val === 'object' && 'value' in val) {
-      return {
-        value: String((val as TLabeledValue).value),
-        label: (val as TLabeledValue).label,
-      };
-    }
-    const stringVal = String(val);
-    return { value: stringVal, label: stringVal };
-  };
-
-  const normalizeArrayValue = (
-    val: unknown,
-  ): Array<TLabeledValue> | undefined => {
-    if (!Array.isArray(val)) return undefined;
-    return val
-      .map((item) => toLabeledValue(item as string | TLabeledValue))
-      .filter((item): item is TLabeledValue => Boolean(item?.value));
-  };
 
   return {
     id,
@@ -575,29 +576,6 @@ export function filterSelectInfinite<
   TValue
 >): TFilterItem<FilterSelectInfiniteValue> {
   const isMultiple = multiple === true;
-
-  const toLabeledValue = (
-    val: string | number | TLabeledValue | null | undefined,
-  ): TLabeledValue | null => {
-    if (val === null || val === undefined) return null;
-    if (typeof val === 'object' && 'value' in val) {
-      return {
-        value: String((val as TLabeledValue).value),
-        label: (val as TLabeledValue).label,
-      };
-    }
-    const stringVal = String(val);
-    return { value: stringVal, label: stringVal };
-  };
-
-  const normalizeArrayValue = (
-    val: unknown,
-  ): Array<TLabeledValue> | undefined => {
-    if (!Array.isArray(val)) return undefined;
-    return val
-      .map((item) => toLabeledValue(item as string | TLabeledValue))
-      .filter((item): item is TLabeledValue => Boolean(item?.value));
-  };
 
   return {
     id,

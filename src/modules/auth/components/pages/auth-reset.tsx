@@ -50,6 +50,18 @@ const AuthReset = () => {
   const { mutate } = useAuthReset();
 
   /**
+   * Handle success alert callback
+   */
+  const handleSuccessAlertCallback = useCallback(
+    ({ ok }: { ok: boolean }) => {
+      if (ok) {
+        navigate('AuthLogin');
+      }
+    },
+    [navigate],
+  );
+
+  /**
    * Submit form
    * @param values
    */
@@ -82,11 +94,7 @@ const AuthReset = () => {
                   description: t('reset.successDesc'),
                   icon: <Lock className='text-green-600' size={50} />,
                 },
-                ({ ok }) => {
-                  if (ok) {
-                    navigate('AuthLogin');
-                  }
-                },
+                handleSuccessAlertCallback,
               );
               close();
             },
@@ -98,7 +106,7 @@ const AuthReset = () => {
         },
       );
     },
-    [mutate, navigate, t, tApp],
+    [handleSuccessAlertCallback, mutate, t, tApp],
   );
 
   return (
