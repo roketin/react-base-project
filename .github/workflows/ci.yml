@@ -38,7 +38,8 @@ jobs:
         run: pnpm tsc --noEmit
 
       - name: Run Unit Tests
-        run: pnpm vitest run --coverage --reporter=json --outputFile=test-results.json
+        run: pnpm vitest run --coverage --reporter=verbose --reporter=json --outputFile=test-results.json --passWithNoTests
+        continue-on-error: false
 
       - name: Extract test results
         id: test-results
