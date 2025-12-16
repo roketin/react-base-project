@@ -31,13 +31,6 @@ type TRTooltipProps = {
   container?: HTMLElement | null;
 };
 
-const arrowStyles: Record<TTooltipSide, string> = {
-  top: 'bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45',
-  bottom: 'top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45',
-  left: 'right-0 top-1/2 translate-x-1/2 -translate-y-1/2 rotate-45',
-  right: 'left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45',
-};
-
 // Get the appropriate container for portal
 function getPortalContainer(
   customContainer?: HTMLElement | null,
@@ -76,6 +69,7 @@ function RTooltip({
     left: number;
   } | null>(null);
   const [actualSide, setActualSide] = useState(side);
+  const [arrowOffset, setArrowOffset] = useState<number | null>(null);
   const [visible, setVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [portalContainer, setPortalContainer] = useState<HTMLElement | null>(
@@ -130,11 +124,13 @@ function RTooltip({
     if (isOpen && !disabled) {
       setShouldRender(true);
       setPosition(null);
+      setArrowOffset(null);
     } else {
       setVisible(false);
       const timeout = setTimeout(() => {
         setShouldRender(false);
         setPosition(null);
+        setArrowOffset(null);
       }, 150);
       return () => clearTimeout(timeout);
     }
@@ -209,14 +205,45 @@ function RTooltip({
           ({ top, left } = calcPos('left'));
         }
 
-        left = Math.max(
+        const constrainedLeft = Math.max(
           pad,
           Math.min(left, viewport.width - content.width - pad),
         );
-        top = Math.max(
+        const constrainedTop = Math.max(
           pad,
           Math.min(top, viewport.height - content.height - pad),
         );
+
+        // Calculate arrow offset to point at trigger center
+        if (finalSide === 'top' || finalSide === 'bottom') {
+          const tooltipCenterX = constrainedLeft + content.width / 2;
+          const triggerCenterX = trigger.left + trigger.width / 2;
+          const offset = triggerCenterX - tooltipCenterX;
+
+          // Only apply offset if there's meaningful difference (> 2px)
+          if (Math.abs(offset) > 2) {
+            const maxOffset = content.width / 2 - 12;
+            setArrowOffset(Math.max(-maxOffset, Math.min(offset, maxOffset)));
+          } else {
+            setArrowOffset(null);
+          }
+        } else {
+          const tooltipCenterY = constrainedTop + content.height / 2;
+          const triggerCenterY = trigger.top + trigger.height / 2;
+          const offset = triggerCenterY - tooltipCenterY;
+
+          if (Math.abs(offset) > 2) {
+            const maxOffset = content.height / 2 - 12;
+            setArrowOffset(Math.max(-maxOffset, Math.min(offset, maxOffset)));
+          } else {
+            setArrowOffset(null);
+          }
+        }
+
+        left = constrainedLeft;
+        top = constrainedTop;
+      } else {
+        setArrowOffset(null);
       }
 
       setActualSide(finalSide);
@@ -236,6 +263,50 @@ function RTooltip({
   }, [shouldRender, side, align, sideOffset, alignOffset, avoidCollisions]);
 
   if (!children) return null;
+
+  // Generate arrow styles with offset
+  const getArrowStyle = (): React.CSSProperties => {
+    const isHorizontalSide = actualSide === 'top' || actualSide === 'bottom';
+
+    if (arrowOffset !== null) {
+      if (isHorizontalSide) {
+        return {
+          left: `calc(50% + ${arrowOffset}px)`,
+          ...(actualSide === 'top'
+            ? {
+                bottom: 0,
+                transform: 'translateX(-50%) translateY(50%) rotate(45deg)',
+              }
+            : {
+                top: 0,
+                transform: 'translateX(-50%) translateY(-50%) rotate(45deg)',
+              }),
+        };
+      } else {
+        return {
+          top: `calc(50% + ${arrowOffset}px)`,
+          ...(actualSide === 'left'
+            ? {
+                right: 0,
+                transform: 'translateY(-50%) translateX(50%) rotate(45deg)',
+              }
+            : {
+                left: 0,
+                transform: 'translateY(-50%) translateX(-50%) rotate(45deg)',
+              }),
+        };
+      }
+    }
+
+    return {};
+  };
+
+  const arrowBaseClasses: Record<TTooltipSide, string> = {
+    top: 'bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45',
+    bottom: 'top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45',
+    left: 'right-0 top-1/2 translate-x-1/2 -translate-y-1/2 rotate-45',
+    right: 'left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-45',
+  };
 
   const tooltipContent = shouldRender && (
     <div
@@ -260,8 +331,9 @@ function RTooltip({
         <div
           className={cn(
             'absolute w-2 h-2 bg-foreground',
-            arrowStyles[actualSide],
+            arrowOffset === null && arrowBaseClasses[actualSide],
           )}
+          style={arrowOffset !== null ? getArrowStyle() : undefined}
         />
       )}
     </div>
