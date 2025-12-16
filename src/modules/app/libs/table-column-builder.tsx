@@ -10,7 +10,10 @@ import {
 } from '@/modules/app/libs/table-utils';
 import { DATE_FORMAT } from '@/modules/app/constants/app.constant';
 import { RCheckbox } from '@/modules/app/components/base/r-checkbox';
-import { RBadge } from '@/modules/app/components/base/r-badge';
+import {
+  RBadge,
+  type TRBadgeProps,
+} from '@/modules/app/components/base/r-badge';
 
 type Alignment = 'left' | 'center' | 'right';
 
@@ -116,6 +119,12 @@ export type CurrencyColumnOptions<
 };
 
 /**
+ * Badge variant type extracted from RBadge props
+ */
+type BadgeVariant = TRBadgeProps['variant'];
+type BadgeSize = TRBadgeProps['size'];
+
+/**
  * Options for badge column
  */
 export type BadgeColumnOptions<
@@ -126,8 +135,14 @@ export type BadgeColumnOptions<
   accessorKey: K;
   /** Column header text */
   header: string;
-  /** Custom render function for badge */
+  /** Custom render function for badge (overrides variant/badgeSize/label) */
   render?: (value: unknown, row: TData) => ReactNode;
+  /** Static variant or function to determine variant based on value */
+  variant?: BadgeVariant | ((value: unknown, row: TData) => BadgeVariant);
+  /** Static badge size or function to determine size based on value */
+  badgeSize?: BadgeSize | ((value: unknown, row: TData) => BadgeSize);
+  /** Static label or function to transform the displayed text */
+  label?: string | ((value: unknown, row: TData) => string);
 };
 
 /**
@@ -238,7 +253,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
-      enableHiding: hidden !== undefined,
+      enableHiding: !hidden,
       headerAlign,
       cellAlign,
       cell: render
@@ -275,7 +290,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
-      enableHiding: hidden !== undefined,
+      enableHiding: !hidden,
       headerAlign,
       cellAlign,
       cell: ({ getValue }) => {
@@ -313,7 +328,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
-      enableHiding: hidden !== undefined,
+      enableHiding: !hidden,
       headerAlign,
       cellAlign,
       cell: ({ getValue }) => {
@@ -350,7 +365,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
-      enableHiding: hidden !== undefined,
+      enableHiding: !hidden,
       headerAlign,
       cellAlign,
       cell: ({ getValue }) => {
@@ -373,7 +388,7 @@ export class TableColumnBuilder<TData> {
     const {
       accessorKey,
       header,
-      size,
+      size: columnSize,
       render,
       sticky,
       enableSorting,
@@ -382,21 +397,48 @@ export class TableColumnBuilder<TData> {
       hidden,
     } = options;
 
+    const variantOption = options.variant ?? 'secondary';
+    const sizeOption = options.badgeSize ?? 'lg';
+    const labelOption = options.label;
+
     this.columns.push({
       accessorKey: accessorKey as string,
       header,
-      size,
+      size: columnSize,
       sticky,
       enableSorting,
-      enableHiding: hidden !== undefined,
+      enableHiding: !hidden,
       headerAlign,
       cellAlign,
       cell: render
-        ? ({ row }) =>
-            render(row.original[accessorKey as keyof TData], row.original)
-        : ({ getValue }) => (
-            <RBadge variant='secondary'>{String(getValue())}</RBadge>
-          ),
+        ? ({ row }) => {
+            // Support nested accessor like 'status.value'
+            const value = this.getNestedValue(
+              row.original,
+              accessorKey as string,
+            );
+            return render(value, row.original);
+          }
+        : ({ row, getValue }) => {
+            const value = getValue();
+            const resolvedVariant =
+              typeof variantOption === 'function'
+                ? variantOption(value, row.original)
+                : variantOption;
+            const resolvedSize =
+              typeof sizeOption === 'function'
+                ? sizeOption(value, row.original)
+                : sizeOption;
+            const resolvedLabel =
+              typeof labelOption === 'function'
+                ? labelOption(value, row.original)
+                : (labelOption ?? String(value ?? '-'));
+            return (
+              <RBadge variant={resolvedVariant} size={resolvedSize}>
+                {resolvedLabel}
+              </RBadge>
+            );
+          },
     });
 
     return this;
@@ -422,7 +464,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting: false,
-      enableHiding: hidden !== undefined,
+      enableHiding: !hidden,
       headerAlign,
       cellAlign,
       cell: ({ row }) => render(row.original),
@@ -442,7 +484,7 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting: false,
-      enableHiding: hidden !== undefined,
+      enableHiding: !hidden,
       header: ({ table }) => {
         const checked = table.getIsAllPageRowsSelected();
         const indeterminate = table.getIsSomePageRowsSelected();
@@ -490,13 +532,26 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting: false,
-      enableHiding: hidden !== undefined,
+      enableHiding: !hidden,
       headerAlign,
       cellAlign,
       cell: ({ row }) => row.index + 1,
     });
 
     return this;
+  }
+
+  /**
+   * Helper to get nested value from object using dot notation
+   * e.g. getNestedValue({ client: { value: 'Test' } }, 'client.value') => 'Test'
+   */
+  private getNestedValue(obj: TData, path: string): unknown {
+    return path.split('.').reduce<unknown>((current, key) => {
+      if (current && typeof current === 'object' && key in current) {
+        return (current as Record<string, unknown>)[key];
+      }
+      return undefined;
+    }, obj);
   }
 
   /**
@@ -528,11 +583,12 @@ export class TableColumnBuilder<TData> {
       size,
       sticky,
       enableSorting,
-      enableHiding: hidden !== undefined,
+      enableHiding: !hidden,
       headerAlign,
       cellAlign,
       cell: ({ row }) => {
-        const value = row.original[accessorKey as keyof TData];
+        // Support nested accessor like 'client.value'
+        const value = this.getNestedValue(row.original, accessorKey as string);
         const label = renderLabel
           ? renderLabel(value, row.original)
           : String(value ?? '-');
