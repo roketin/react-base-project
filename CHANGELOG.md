@@ -1,3 +1,27 @@
+## [3.5.1] - 2025-12-16
+
+### 🚀 Features
+
+- *(tooltip)* Enhance arrow positioning with dynamic offset calculation
+- *(badge)* Enhance BadgeColumnOptions with dynamic variant, size, and label support
+
+### 🐛 Bug Fixes
+
+- *(ci)* Add verbose reporter alongside json for vitest
+- *(storybook)* Use dynamic base path for GitHub Pages
+
+### 📚 Documentation
+
+- Add Storybook and R-KIT links to README
+
+### 🧪 Testing
+
+- Remove non-component unit tests to fix CI
+
+### ⚙️ Miscellaneous Tasks
+
+- Update husky hooks for v10 compatibility
+- Comment out SonarCloud until configured
 ## [3.5.0] - 2025-12-13
 
 ### 🚀 Features
