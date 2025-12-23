@@ -1,0 +1,20 @@
+{
+  "name": "@roketin/components-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for React Base Project component documentation and code generation",
+  "type": "module",
+  "main": "server.js",
+  "bin": {
+    "roketin-components-mcp": "./server.js"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "build:catalog": "node scripts/build-catalog.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
