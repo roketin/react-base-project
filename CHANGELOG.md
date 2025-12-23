@@ -1,3 +1,12 @@
+## [3.5.2] - 2025-12-23
+
+### 🚀 Features
+
+- Add agents.md documentation and MCP server for components
+
+### ⚙️ Miscellaneous Tasks
+
+- *(release)* Bump version to 3.5.1 and update CHANGELOG
 ## [3.5.1] - 2025-12-16
 
 ### 🚀 Features
