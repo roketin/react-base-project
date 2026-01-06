@@ -1,3 +1,13 @@
+## [3.6.0] - 2026-01-06
+
+### 🚀 Features
+
+- _(dev-tools)_ Add dev-tools module with faker integration
+
+### 📚 Documentation
+
+- _(agents)_ Add comprehensive auth, api, forms, state, i18n patterns
+
 ## [3.5.2] - 2025-12-23
 
 ### 🚀 Features
@@ -6,18 +16,19 @@
 
 ### ⚙️ Miscellaneous Tasks
 
-- *(release)* Bump version to 3.5.1 and update CHANGELOG
+- _(release)_ Bump version to 3.5.1 and update CHANGELOG
+
 ## [3.5.1] - 2025-12-16
 
 ### 🚀 Features
 
-- *(tooltip)* Enhance arrow positioning with dynamic offset calculation
-- *(badge)* Enhance BadgeColumnOptions with dynamic variant, size, and label support
+- _(tooltip)_ Enhance arrow positioning with dynamic offset calculation
+- _(badge)_ Enhance BadgeColumnOptions with dynamic variant, size, and label support
 
 ### 🐛 Bug Fixes
 
-- *(ci)* Add verbose reporter alongside json for vitest
-- *(storybook)* Use dynamic base path for GitHub Pages
+- _(ci)_ Add verbose reporter alongside json for vitest
+- _(storybook)_ Use dynamic base path for GitHub Pages
 
 ### 📚 Documentation
 
@@ -31,6 +42,7 @@
 
 - Update husky hooks for v10 compatibility
 - Comment out SonarCloud until configured
+
 ## [3.5.0] - 2025-12-13
 
 ### 🚀 Features
