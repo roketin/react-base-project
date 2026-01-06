@@ -62,6 +62,7 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/prompt-cli": "^19.8.1",
     "@eslint/js": "^9.39.1",
+    "@faker-js/faker": "^10.2.0",
     "@inquirer/prompts": "^7.10.1",
     "@storybook/addon-a11y": "^10.1.7",
     "@storybook/addon-docs": "^10.1.7",
